@@ -165,6 +165,171 @@
     <span class="badge badge-success badge-lg"><span class="dot"></span>lg</span>
   </div>
 
+  <!-- ========================================================================
+       Sprint 0.3 · Compuestos: cards, table, KPI card, alert banner
+       ======================================================================== -->
+
+  <h2 class="t-h2" style="margin: var(--space-8) 0 var(--space-4);">Cards</h2>
+
+  <div class="row" style="align-items: stretch;">
+    <div class="card" style="width: 320px;">
+      <div class="card-header">
+        <div>
+          <div class="card-meta">Producto</div>
+          <div class="card-title">Arepa de queso</div>
+        </div>
+        <span class="badge badge-success"><span class="dot"></span>Activo</span>
+      </div>
+      <div class="card-body">
+        <p class="t-body-s" style="color: var(--muted);">Categoría: Comidas rápidas · Precio: $ 6.500 · IVA incluido.</p>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-secondary btn-sm">Cancelar</button>
+        <button class="btn btn-primary btn-sm">Editar</button>
+      </div>
+    </div>
+
+    <div class="card" style="width: 320px;">
+      <div class="card-header">
+        <div class="card-title">Sin header con meta</div>
+      </div>
+      <div class="card-body">
+        <p class="t-body-s">Tarjeta simple con header y body. Sin footer.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="t-h2" style="margin: var(--space-8) 0 var(--space-4);">Tabla</h2>
+
+  <div class="card">
+    <table class="table table-stack">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>SKU</th>
+          <th>Stock</th>
+          <th>Precio</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="table-row">
+          <td data-label="Producto">Arepa de queso</td>
+          <td data-label="SKU">ARP-001</td>
+          <td data-label="Stock">142</td>
+          <td data-label="Precio">$ 6.500</td>
+          <td data-label="Estado"><span class="badge badge-success"><span class="dot"></span>OK</span></td>
+        </tr>
+        <tr class="table-row is-active">
+          <td data-label="Producto">Empanada de carne</td>
+          <td data-label="SKU">EMP-002</td>
+          <td data-label="Stock">28</td>
+          <td data-label="Precio">$ 3.500</td>
+          <td data-label="Estado"><span class="badge badge-warning"><span class="dot"></span>Bajo</span></td>
+        </tr>
+        <tr class="table-row">
+          <td data-label="Producto">Bandeja paisa</td>
+          <td data-label="SKU">BND-003</td>
+          <td data-label="Stock">0</td>
+          <td data-label="Precio">$ 28.000</td>
+          <td data-label="Estado"><span class="badge badge-error"><span class="dot"></span>Agotado</span></td>
+        </tr>
+        <tr class="table-row">
+          <td data-label="Producto">Jugo de lulo</td>
+          <td data-label="SKU">JUG-004</td>
+          <td data-label="Stock">87</td>
+          <td data-label="Precio">$ 5.000</td>
+          <td data-label="Estado"><span class="badge badge-success"><span class="dot"></span>OK</span></td>
+        </tr>
+        <tr class="table-row">
+          <td data-label="Producto">Café con leche</td>
+          <td data-label="SKU">CAF-005</td>
+          <td data-label="Stock">203</td>
+          <td data-label="Precio">$ 4.000</td>
+          <td data-label="Estado"><span class="badge badge-info"><span class="dot"></span>Promo</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="t-h2" style="margin: var(--space-8) 0 var(--space-4);">KPI Cards</h2>
+
+  <div class="row" style="align-items: stretch;">
+    <div class="kpi-card" style="width: 200px;">
+      <div class="kpi-card-head">
+        <span class="kpi-label">Ventas hoy</span>
+        <span class="kpi-icon-wrap">$</span>
+      </div>
+      <div class="kpi-value">$ 1.240.500</div>
+      <div class="kpi-delta up">▲ 12,4% vs ayer</div>
+    </div>
+
+    <div class="kpi-card tone-success" style="width: 200px;">
+      <div class="kpi-card-head">
+        <span class="kpi-label">Pedidos</span>
+        <span class="kpi-icon-wrap">#</span>
+      </div>
+      <div class="kpi-value">87</div>
+      <div class="kpi-delta up">▲ 5,1%</div>
+    </div>
+
+    <div class="kpi-card tone-warning" style="width: 200px;">
+      <div class="kpi-card-head">
+        <span class="kpi-label">Stock bajo</span>
+        <span class="kpi-icon-wrap">!</span>
+      </div>
+      <div class="kpi-value">12</div>
+      <div class="kpi-delta flat">— sin cambio</div>
+    </div>
+
+    <div class="kpi-card tone-error" style="width: 200px;">
+      <div class="kpi-card-head">
+        <span class="kpi-label">Devoluciones</span>
+        <span class="kpi-icon-wrap">↺</span>
+      </div>
+      <div class="kpi-value">3</div>
+      <div class="kpi-delta down">▼ 1 vs ayer</div>
+    </div>
+
+    <div class="kpi-card tone-muted" style="width: 200px;">
+      <div class="kpi-card-head">
+        <span class="kpi-label">Borradores</span>
+        <span class="kpi-icon-wrap">·</span>
+      </div>
+      <div class="kpi-value">5</div>
+      <div class="kpi-delta flat">— sin cambio</div>
+    </div>
+  </div>
+
+  <h2 class="t-h2" style="margin: var(--space-8) 0 var(--space-4);">Alert Banner</h2>
+
+  <div class="alert-banner" style="max-width: 680px;">
+    <div class="alert-banner-title">
+      <span class="alert-banner-icon-wrap">⚠</span>
+      Atención · 2 alertas críticas
+    </div>
+
+    <div class="alert-banner-item">
+      <div class="meta">Hace 5 min · Sucursal: Centro</div>
+      <div class="title">Bandeja paisa quedó sin stock</div>
+      <div class="detail">El producto BND-003 llegó a cero unidades en la sucursal Centro. Reponer antes del próximo turno.</div>
+      <div class="alert-banner-actions">
+        <button class="btn btn-destructive btn-sm">Reponer ahora</button>
+        <button class="btn btn-secondary btn-sm">Ver detalle</button>
+      </div>
+    </div>
+
+    <div class="alert-banner-item">
+      <div class="meta">Hace 22 min · DIAN</div>
+      <div class="title">3 facturas con error de transmisión</div>
+      <div class="detail">No se pudieron enviar las facturas FE-2026-0098, FE-2026-0099 y FE-2026-0100 al servicio DIAN. Revisar credenciales.</div>
+      <div class="alert-banner-actions">
+        <button class="btn btn-destructive btn-sm">Reintentar</button>
+        <button class="btn btn-ghost btn-sm">Ir a Facturación</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Toggle de tema (versión inline mínima — la versión real va en Sprint 0.5)
     document.getElementById('themeToggle').addEventListener('click', () => {
