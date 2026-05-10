@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Test · Tokens (Sprint 0.1)</title>
+  <title>Test · Design System (Sprint 0)</title>
   <link rel="stylesheet" href="./assets/css/tokens.css" />
+  <link rel="stylesheet" href="./assets/css/components.css" />
   <style>
     body { padding: var(--space-6); }
     .row { display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: flex-start; margin-bottom: var(--space-6); }
@@ -29,7 +30,7 @@
 </head>
 <body>
   <header class="row" style="justify-content: space-between; align-items: center;">
-    <h1 class="t-h1">Test de tokens · Sprint 0.1</h1>
+    <h1 class="t-h1">Test · Design System (Sprint 0)</h1>
     <button class="toggle" id="themeToggle">Toggle tema</button>
   </header>
 
@@ -74,6 +75,94 @@
     <div style="background: var(--accent); color: #fff; padding: var(--space-3); border-radius: var(--radius-md);">radius-md 8</div>
     <div style="background: var(--accent); color: #fff; padding: var(--space-3); border-radius: var(--radius-lg);">radius-lg 11</div>
     <div style="background: var(--accent); color: #fff; padding: var(--space-3); border-radius: var(--radius-xl);">radius-xl 14</div>
+  </div>
+
+  <!-- ========================================================================
+       Sprint 0.2 · Atómicos: botones, inputs, badges
+       ======================================================================== -->
+
+  <h2 class="t-h2" style="margin: var(--space-8) 0 var(--space-4);">Botones</h2>
+
+  <p class="t-overline" style="margin-bottom: var(--space-2);">Variantes (estado normal)</p>
+  <div class="row">
+    <button class="btn btn-primary">Confirmar venta</button>
+    <button class="btn btn-secondary">Cancelar</button>
+    <button class="btn btn-ghost">Ver detalle</button>
+    <button class="btn btn-destructive">Eliminar producto</button>
+  </div>
+
+  <p class="t-overline" style="margin-bottom: var(--space-2);">Estado :disabled</p>
+  <div class="row">
+    <button class="btn btn-primary" disabled>Confirmar</button>
+    <button class="btn btn-secondary" disabled>Cancelar</button>
+    <button class="btn btn-ghost" disabled>Ver</button>
+    <button class="btn btn-destructive" disabled>Eliminar</button>
+  </div>
+
+  <p class="t-overline" style="margin-bottom: var(--space-2);">Tamaños</p>
+  <div class="row" style="align-items: center;">
+    <button class="btn btn-primary btn-sm">Botón sm</button>
+    <button class="btn btn-primary">Botón md (default)</button>
+    <button class="btn btn-primary btn-lg">Botón lg</button>
+  </div>
+
+  <h2 class="t-h2" style="margin: var(--space-8) 0 var(--space-4);">Inputs</h2>
+
+  <div style="max-width: 420px;">
+    <div class="field">
+      <label class="field-label" for="i-1">Nombre del producto<span class="field-required-mark">*</span></label>
+      <input class="field-input" id="i-1" type="text" placeholder="Ej: Arepa de queso" />
+      <div class="field-hint">Mínimo 3 caracteres.</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="i-2">Precio</label>
+      <input class="field-input" id="i-2" type="text" value="$ 12.500" />
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="i-3">NIT del cliente</label>
+      <input class="field-input is-error" id="i-3" type="text" value="900.123.456" />
+      <div class="field-error">El NIT no es válido.</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="i-4">Categoría (deshabilitado)</label>
+      <input class="field-input" id="i-4" type="text" value="Bebidas" disabled />
+      <div class="field-hint">Configurada desde administración.</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="i-5">Notas</label>
+      <textarea class="field-input" id="i-5" placeholder="Observaciones del pedido…"></textarea>
+    </div>
+  </div>
+
+  <h2 class="t-h2" style="margin: var(--space-8) 0 var(--space-4);">Badges</h2>
+
+  <p class="t-overline" style="margin-bottom: var(--space-2);">Variantes (con dot)</p>
+  <div class="row" style="align-items: center;">
+    <span class="badge badge-success"><span class="dot"></span>Pagado</span>
+    <span class="badge badge-error"><span class="dot"></span>Sin stock</span>
+    <span class="badge badge-warning"><span class="dot"></span>Stock bajo</span>
+    <span class="badge badge-info"><span class="dot"></span>Pendiente</span>
+    <span class="badge badge-muted"><span class="dot"></span>Borrador</span>
+  </div>
+
+  <p class="t-overline" style="margin-bottom: var(--space-2);">Sin dot</p>
+  <div class="row" style="align-items: center;">
+    <span class="badge badge-success">Pagado</span>
+    <span class="badge badge-error">Sin stock</span>
+    <span class="badge badge-warning">Stock bajo</span>
+    <span class="badge badge-info">Pendiente</span>
+    <span class="badge badge-muted">Borrador</span>
+  </div>
+
+  <p class="t-overline" style="margin-bottom: var(--space-2);">Tamaños</p>
+  <div class="row" style="align-items: center;">
+    <span class="badge badge-success badge-sm"><span class="dot"></span>sm</span>
+    <span class="badge badge-success badge-md"><span class="dot"></span>md (default)</span>
+    <span class="badge badge-success badge-lg"><span class="dot"></span>lg</span>
   </div>
 
   <script>
