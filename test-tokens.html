@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test · Tokens (Sprint 0.1)</title>
+  <link rel="stylesheet" href="./assets/css/tokens.css" />
+  <style>
+    body { padding: var(--space-6); }
+    .row { display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: flex-start; margin-bottom: var(--space-6); }
+    .swatch { width: 120px; padding: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--alt); }
+    .swatch .box { width: 100%; height: 64px; border-radius: var(--radius-sm); margin-bottom: var(--space-2); border: 1px solid var(--border); }
+    .swatch small { color: var(--muted); font-size: var(--fs-overline); text-transform: uppercase; letter-spacing: var(--ls-overline); display: block; margin-top: 2px; }
+    .toggle { padding: var(--space-2) var(--space-4); background: var(--accent); color: #fff; border: none; border-radius: var(--radius-md); cursor: pointer; font-family: var(--ff-base); font-size: var(--fs-body-s); font-weight: 600; }
+    .toggle:hover { background: var(--accent-hover); }
+    .typo { padding: var(--space-3); border: 1px dashed var(--border); border-radius: var(--radius-md); margin-bottom: var(--space-2); }
+    h1, h2, h3, p { font-family: var(--ff-base); }
+    .t-display { font-size: var(--fs-display); font-weight: var(--fw-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); }
+    .t-h1 { font-size: var(--fs-h1); font-weight: var(--fw-h1); line-height: var(--lh-h1); letter-spacing: var(--ls-h1); }
+    .t-h2 { font-size: var(--fs-h2); font-weight: var(--fw-h2); line-height: var(--lh-h2); }
+    .t-h3 { font-size: var(--fs-h3); font-weight: var(--fw-h3); line-height: var(--lh-h3); }
+    .t-body-l { font-size: var(--fs-body-l); }
+    .t-body { font-size: var(--fs-body); }
+    .t-body-s { font-size: var(--fs-body-s); }
+    .t-caption { font-size: var(--fs-caption); font-weight: var(--fw-caption); color: var(--muted); }
+    .t-overline { font-size: var(--fs-overline); font-weight: var(--fw-overline); letter-spacing: var(--ls-overline); text-transform: uppercase; color: var(--muted); }
+    .shadow-demo { padding: var(--space-4); border-radius: var(--radius-md); background: var(--bg); border: 1px solid var(--border); width: 180px; }
+  </style>
+</head>
+<body>
+  <header class="row" style="justify-content: space-between; align-items: center;">
+    <h1 class="t-h1">Test de tokens · Sprint 0.1</h1>
+    <button class="toggle" id="themeToggle">Toggle tema</button>
+  </header>
+
+  <h2 class="t-h3" style="margin-bottom: var(--space-3);">Paleta base</h2>
+  <div class="row">
+    <div class="swatch"><div class="box" style="background: var(--bg);"></div><strong>--bg</strong><small id="hex-bg"></small></div>
+    <div class="swatch"><div class="box" style="background: var(--alt);"></div><strong>--alt</strong><small id="hex-alt"></small></div>
+    <div class="swatch"><div class="box" style="background: var(--text);"></div><strong>--text</strong><small id="hex-text"></small></div>
+    <div class="swatch"><div class="box" style="background: var(--muted);"></div><strong>--muted</strong><small id="hex-muted"></small></div>
+    <div class="swatch"><div class="box" style="background: var(--accent);"></div><strong>--accent</strong><small>#4F46E5</small></div>
+    <div class="swatch"><div class="box" style="background: var(--accent-hover);"></div><strong>--accent-hover</strong><small>#4338CA</small></div>
+    <div class="swatch"><div class="box" style="background: var(--border);"></div><strong>--border</strong><small id="hex-border"></small></div>
+  </div>
+
+  <h2 class="t-h3" style="margin-bottom: var(--space-3);">Estados</h2>
+  <div class="row">
+    <div class="swatch"><div class="box" style="background: var(--success);"></div><strong>--success</strong><small>#10B981</small></div>
+    <div class="swatch"><div class="box" style="background: var(--error);"></div><strong>--error</strong><small>#EF4444</small></div>
+    <div class="swatch"><div class="box" style="background: var(--warning);"></div><strong>--warning</strong><small>#F59E0B</small></div>
+    <div class="swatch"><div class="box" style="background: var(--info);"></div><strong>--info</strong><small>#3B82F6</small></div>
+  </div>
+
+  <h2 class="t-h3" style="margin-bottom: var(--space-3);">Escala tipográfica</h2>
+  <div class="typo"><span class="t-overline">Display</span><div class="t-display">El Buen Sabor · Restaurante</div></div>
+  <div class="typo"><span class="t-overline">H1</span><div class="t-h1">Dashboard · Inventario POS</div></div>
+  <div class="typo"><span class="t-overline">H2</span><div class="t-h2">Ventas del día</div></div>
+  <div class="typo"><span class="t-overline">H3</span><div class="t-h3">Productos top</div></div>
+  <div class="typo"><span class="t-overline">Body L</span><div class="t-body-l">Texto de cuerpo grande para destacar contenido importante.</div></div>
+  <div class="typo"><span class="t-overline">Body</span><div class="t-body">Texto de cuerpo base de la aplicación.</div></div>
+  <div class="typo"><span class="t-overline">Body S</span><div class="t-body-s">Texto de cuerpo pequeño para descripciones y meta.</div></div>
+  <div class="typo"><span class="t-overline">Caption</span><div class="t-caption">Caption · Etiquetas y notas</div></div>
+  <div class="typo"><span class="t-overline">Overline</span><div class="t-overline">Overline · Etiqueta superior</div></div>
+
+  <h2 class="t-h3" style="margin: var(--space-6) 0 var(--space-3);">Espaciado · Radios · Sombras</h2>
+  <div class="row">
+    <div class="shadow-demo" style="box-shadow: var(--shadow-sm);">--shadow-sm</div>
+    <div class="shadow-demo" style="box-shadow: var(--shadow-md);">--shadow-md</div>
+    <div class="shadow-demo" style="box-shadow: var(--shadow-lg);">--shadow-lg</div>
+  </div>
+  <div class="row">
+    <div style="background: var(--accent); color: #fff; padding: var(--space-3); border-radius: var(--radius-sm);">radius-sm 6</div>
+    <div style="background: var(--accent); color: #fff; padding: var(--space-3); border-radius: var(--radius-md);">radius-md 8</div>
+    <div style="background: var(--accent); color: #fff; padding: var(--space-3); border-radius: var(--radius-lg);">radius-lg 11</div>
+    <div style="background: var(--accent); color: #fff; padding: var(--space-3); border-radius: var(--radius-xl);">radius-xl 14</div>
+  </div>
+
+  <script>
+    // Toggle de tema (versión inline mínima — la versión real va en Sprint 0.5)
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme') || 'light';
+      html.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+      paintHex();
+    });
+
+    // Mostrar el HEX computado de cada variable (útil para validar)
+    function paintHex() {
+      const cs = getComputedStyle(document.documentElement);
+      const vars = ['bg', 'alt', 'text', 'muted', 'border'];
+      vars.forEach(v => {
+        const el = document.getElementById('hex-' + v);
+        if (el) el.textContent = cs.getPropertyValue('--' + v).trim();
+      });
+    }
+    paintHex();
+  </script>
+</body>
+</html>
