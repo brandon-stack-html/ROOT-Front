@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventario POS · Demo</title>
+  <script src="./assets/js/theme.js"></script>
+  <link rel="stylesheet" href="./assets/css/tokens.css" />
+  <link rel="stylesheet" href="./assets/css/components.css" />
+  <style>
+    /* ---------- Landing-only styles ---------- */
+    .landing-header {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .landing-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .landing-brand-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: var(--accent);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .landing-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .landing-header-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: var(--radius-md);
+    }
+    .landing-header-link:hover { color: var(--text); background: var(--alt); }
+    .landing-header-link svg { width: 14px; height: 14px; }
+
+    main { max-width: 1200px; margin: 0 auto; padding: var(--space-10) 24px var(--space-10); }
+
+    /* ---------- Hero ---------- */
+    .hero { margin-bottom: var(--space-10); }
+    .hero h1 {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-display);
+      line-height: var(--lh-display);
+      letter-spacing: var(--ls-display);
+      margin-bottom: var(--space-3);
+      color: var(--text);
+    }
+    .hero .subtitle {
+      font-size: var(--fs-body-l);
+      color: var(--muted);
+      margin-bottom: var(--space-6);
+      max-width: 640px;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color .15s ease, transform .05s ease;
+    }
+    .hero-cta:hover { background: var(--accent-hover); }
+    .hero-cta:active { transform: translateY(1px); }
+    .hero-cta svg { width: 16px; height: 16px; }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 28px; }
+    }
+
+    /* ---------- Section title ---------- */
+    .section-title {
+      font-size: var(--fs-overline);
+      font-weight: var(--fw-overline);
+      letter-spacing: var(--ls-overline);
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: var(--space-4);
+    }
+
+    /* ---------- Grid de módulos ---------- */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-10);
+    }
+    .module-card {
+      padding: 24px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      color: inherit;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .module-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+    .module-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: #EEF2FF;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    [data-theme="dark"] .module-card-icon {
+      background: rgba(79, 70, 229, 0.16);
+    }
+    .module-card-icon svg { width: 20px; height: 20px; }
+    .module-card h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+    }
+    .module-card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+      flex: 1;
+    }
+    .module-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: var(--space-2);
+    }
+    .module-card-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      background: var(--alt);
+      color: var(--muted);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .module-card-arrow {
+      color: var(--muted);
+      transition: transform .15s ease, color .15s ease;
+    }
+    .module-card-arrow svg { width: 16px; height: 16px; }
+    .module-card:hover .module-card-arrow {
+      color: var(--accent);
+      transform: translateX(2px);
+    }
+
+    /* ---------- Card especial: sistema base ---------- */
+    .system-base-card {
+      padding: 24px;
+      background: var(--alt);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-10);
+    }
+    .system-base-card .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .system-base-card .icon svg { width: 22px; height: 22px; }
+    .system-base-card .info {
+      flex: 1;
+      min-width: 240px;
+    }
+    .system-base-card .info h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 4px;
+    }
+    .system-base-card .info p {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: var(--space-6) 24px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    footer .sep { margin: 0 8px; opacity: 0.5; }
+  </style>
+</head>
+<body>
+
+  <header class="landing-header">
+    <a href="./index.html" class="landing-brand">
+      <span class="landing-brand-logo">I</span>
+      Inventario
+    </a>
+    <div class="landing-header-actions">
+      <a class="landing-header-link" href="#" aria-label="GitHub">
+        <i data-lucide="github"></i>
+        GitHub
+      </a>
+      <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+        <i data-lucide="sun" class="theme-icon-light"></i>
+        <i data-lucide="moon" class="theme-icon-dark"></i>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ====================== HERO ====================== -->
+    <section class="hero">
+      <h1>Inventario POS — Demo del sistema</h1>
+      <p class="subtitle">7 módulos · ~46 pantallas · navegación completa</p>
+      <a href="./backoffice/dashboard.html" class="hero-cta">
+        Empezar por el Backoffice
+        <i data-lucide="arrow-right"></i>
+      </a>
+    </section>
+
+    <!-- ====================== GRID DE MÓDULOS ====================== -->
+    <div class="section-title">Módulos</div>
+    <section class="modules-grid">
+
+      <a href="./auth/login.html" class="module-card">
+        <span class="module-card-icon"><i data-lucide="lock"></i></span>
+        <h3>Auth</h3>
+        <p>Acceso al sistema</p>
+        <div class="module-card-meta">
+          <span class="module-card-count">5 pantallas</span>
+          <span class="module-card-arrow"><i data-lucide="arrow-right"></i></span>
+        </div>
+      </a>
+
+      <a href="./pos/mapa.html" class="module-card">
+        <span class="module-card-icon"><i data-lucide="shopping-bag"></i></span>
+        <h3>POS Web</h3>
+        <p>Punto de venta para mesero/cajero</p>
+        <div class="module-card-meta">
+          <span class="module-card-count">5 pantallas</span>
+          <span class="module-card-arrow"><i data-lucide="arrow-right"></i></span>
+        </div>
+      </a>
+
+      <a href="./mesero/login.html" class="module-card">
+        <span class="module-card-icon"><i data-lucide="utensils"></i></span>
+        <h3>App Mesero</h3>
+        <p>App móvil para meseros</p>
+        <div class="module-card-meta">
+          <span class="module-card-count">9 pantallas</span>
+          <span class="module-card-arrow"><i data-lucide="arrow-right"></i></span>
+        </div>
+      </a>
+
+      <a href="./kds/main.html" class="module-card">
+        <span class="module-card-icon"><i data-lucide="chef-hat"></i></span>
+        <h3>KDS</h3>
+        <p>Pantalla de cocina</p>
+        <div class="module-card-meta">
+          <span class="module-card-count">2 pantallas</span>
+          <span class="module-card-arrow"><i data-lucide="arrow-right"></i></span>
+        </div>
+      </a>
+
+      <a href="./backoffice/dashboard.html" class="module-card">
+        <span class="module-card-icon"><i data-lucide="layout-dashboard"></i></span>
+        <h3>Backoffice</h3>
+        <p>Administración del negocio</p>
+        <div class="module-card-meta">
+          <span class="module-card-count">20 pantallas</span>
+          <span class="module-card-arrow"><i data-lucide="arrow-right"></i></span>
+        </div>
+      </a>
+
+      <a href="./storefront/carta.html" class="module-card">
+        <span class="module-card-icon"><i data-lucide="store"></i></span>
+        <h3>Storefront</h3>
+        <p>Cara al cliente (carta + tienda)</p>
+        <div class="module-card-meta">
+          <span class="module-card-count">6 pantallas</span>
+          <span class="module-card-arrow"><i data-lucide="arrow-right"></i></span>
+        </div>
+      </a>
+
+    </section>
+
+    <!-- ====================== SISTEMA BASE ====================== -->
+    <div class="section-title">Sistema base</div>
+    <a href="./test-ds.html" class="system-base-card" style="text-decoration: none;">
+      <span class="icon"><i data-lucide="palette"></i></span>
+      <div class="info">
+        <h4>Design System · Sprint 0</h4>
+        <p>Tokens, componentes atómicos y compuestos, overlays, shells y plantilla del backoffice.</p>
+      </div>
+      <span class="btn btn-secondary btn-sm">Ver tokens</span>
+    </a>
+
+  </main>
+
+  <footer>
+    Inventario POS<span class="sep">·</span>Demo v1.0<span class="sep">·</span>2026
+  </footer>
+
+  <script src="./assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+</body>
+</html>
