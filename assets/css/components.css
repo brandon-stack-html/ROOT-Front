@@ -903,3 +903,33 @@ textarea.field-input {
 .tab-panel.is-active {
   display: block;
 }
+
+
+/* ============================================================================
+   ICON BUTTON + Theme toggle  (Sprint 0.5)
+   ============================================================================ */
+.btn-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: var(--alt);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  transition: background-color .12s ease, color .12s ease, border-color .12s ease;
+  padding: 0;
+}
+.btn-icon:hover {
+  background: var(--border);
+  color: var(--text);
+}
+.btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+[data-theme="light"] .theme-icon-dark  { display: none; }
+[data-theme="dark"]  .theme-icon-light { display: none; }

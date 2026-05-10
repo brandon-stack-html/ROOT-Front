@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Test · Design System (Sprint 0)</title>
+  <script src="./assets/js/theme.js"></script>
   <link rel="stylesheet" href="./assets/css/tokens.css" />
   <link rel="stylesheet" href="./assets/css/components.css" />
   <style>
@@ -31,7 +32,10 @@
 <body>
   <header class="row" style="justify-content: space-between; align-items: center;">
     <h1 class="t-h1">Test · Design System (Sprint 0)</h1>
-    <button class="toggle" id="themeToggle">Toggle tema</button>
+    <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+      <i data-lucide="sun" class="theme-icon-light"></i>
+      <i data-lucide="moon" class="theme-icon-dark"></i>
+    </button>
   </header>
 
   <h2 class="t-h3" style="margin-bottom: var(--space-3);">Paleta base</h2>
@@ -440,14 +444,10 @@
   </div>
 
   <script src="./assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
-    // Toggle de tema (versión inline mínima — la versión real va en Sprint 0.5)
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      const html = document.documentElement;
-      const current = html.getAttribute('data-theme') || 'light';
-      html.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
-      paintHex();
-    });
+    // Inicializar íconos lucide
+    if (window.lucide) window.lucide.createIcons();
 
     // Mostrar el HEX computado de cada variable (útil para validar)
     function paintHex() {
@@ -459,6 +459,7 @@
       });
     }
     paintHex();
+    document.addEventListener('themechange', paintHex);
   </script>
 </body>
 </html>
