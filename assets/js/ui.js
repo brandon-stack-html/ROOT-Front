@@ -195,6 +195,32 @@
 
     // Inicializar todos los grupos de tabs declarados con [data-tabs]
     $$('[data-tabs]').forEach(root => UI.tabs(root));
+
+    // Backoffice: toggle del sidebar en mobile via [data-toggle-sidebar]
+    document.body.addEventListener('click', function (e) {
+      const trigger = e.target.closest('[data-toggle-sidebar]');
+      if (trigger) {
+        const sidebar = $('.bo-sidebar');
+        const backdrop = $('.bo-sidebar-backdrop');
+        if (sidebar) sidebar.classList.toggle('is-open');
+        if (backdrop) backdrop.classList.toggle('is-open');
+        return;
+      }
+      // Click en el backdrop del sidebar cierra
+      if (e.target.classList.contains('bo-sidebar-backdrop')) {
+        $('.bo-sidebar')?.classList.remove('is-open');
+        e.target.classList.remove('is-open');
+      }
+    });
+
+    // Si el viewport pasa a desktop, cerrar el drawer del sidebar
+    const desktopMQ = window.matchMedia('(min-width: 1024px)');
+    desktopMQ.addEventListener('change', function (e) {
+      if (e.matches) {
+        $('.bo-sidebar')?.classList.remove('is-open');
+        $('.bo-sidebar-backdrop')?.classList.remove('is-open');
+      }
+    });
   };
 
   // ----------------------------------------------------------------------------

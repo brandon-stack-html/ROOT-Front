@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     Plantilla de referencia del Backoffice.
+     COPIAR a [pagina].html y rellenar:
+       - <title> de la pestaña
+       - .is-active en el item correcto del sidebar
+       - .bo-breadcrumb (texto del path actual)
+       - <main class="bo-content"> con el contenido específico de la página
+     ============================================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backoffice · Inventario POS</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+</head>
+<body>
+  <div class="bo-shell">
+
+    <!-- ====================== SIDEBAR ====================== -->
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <span class="bo-sidebar-logo">I</span>
+          <span class="bo-sidebar-brand-name">Inventario</span>
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info">
+            <span class="label">Negocio</span>
+            <span class="name">El Buen Sabor</span>
+          </span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+
+      <nav class="bo-sidebar-nav">
+
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item is-active">
+            <i data-lucide="layout-dashboard"></i>Dashboard
+          </a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item">
+            <i data-lucide="shopping-cart"></i>POS
+          </a>
+          <a href="../kds/main.html" class="bo-sidebar-item">
+            <i data-lucide="chef-hat"></i>KDS
+          </a>
+          <a href="./caja.html" class="bo-sidebar-item">
+            <i data-lucide="dollar-sign"></i>Caja
+          </a>
+        </div>
+
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item">
+            <i data-lucide="package"></i>Catálogo
+          </a>
+          <a href="./inventario.html" class="bo-sidebar-item">
+            <i data-lucide="archive"></i>Inventario
+          </a>
+          <a href="./clientes.html" class="bo-sidebar-item">
+            <i data-lucide="users"></i>Clientes
+          </a>
+          <a href="./proveedores.html" class="bo-sidebar-item">
+            <i data-lucide="truck"></i>Proveedores
+          </a>
+          <a href="./gastos.html" class="bo-sidebar-item">
+            <i data-lucide="receipt"></i>Gastos
+          </a>
+        </div>
+
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item">
+            <i data-lucide="file-text"></i>Facturación DIAN
+          </a>
+          <a href="./contabilidad.html" class="bo-sidebar-item">
+            <i data-lucide="book-open"></i>Contabilidad
+          </a>
+          <a href="./reportes.html" class="bo-sidebar-item">
+            <i data-lucide="bar-chart-3"></i>Reportes
+          </a>
+        </div>
+
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item">
+            <i data-lucide="settings"></i>Configuración
+          </a>
+          <a href="./usuarios.html" class="bo-sidebar-item">
+            <i data-lucide="user-circle"></i>Usuarios
+          </a>
+          <a href="./roles.html" class="bo-sidebar-item">
+            <i data-lucide="shield"></i>Roles
+          </a>
+        </div>
+
+      </nav>
+
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info">
+          <span class="name">Carlos Ramírez</span>
+          <span class="role">Administrador</span>
+        </span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Backdrop del sidebar (visible solo en mobile/tablet) -->
+    <div class="bo-sidebar-backdrop"></div>
+
+    <!-- ====================== CONTENT WRAP ====================== -->
+    <div class="bo-content-wrap">
+
+      <!-- ====================== TOPBAR ====================== -->
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Inicio</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Módulo</span>
+        </nav>
+
+        <div class="bo-topbar-spacer"></div>
+
+        <button class="bo-topbar-sucursal" type="button">
+          <i data-lucide="store"></i>
+          <span class="label">Sucursal Centro</span>
+        </button>
+
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar">
+            <i data-lucide="search"></i>
+          </button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones">
+            <i data-lucide="bell"></i>
+            <span class="notification-dot"></span>
+          </button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button" aria-label="Perfil">CR</button>
+        </div>
+      </header>
+
+      <!-- ====================== MAIN CONTENT ====================== -->
+      <main class="bo-content">
+        <!-- Reemplazar este placeholder con el contenido real de la página -->
+        <h1 class="t-h1" style="margin-bottom: var(--space-2);">Plantilla del Backoffice</h1>
+        <p class="t-body" style="color: var(--muted); margin-bottom: var(--space-6);">
+          Copiá este archivo, ajustá el item activo del sidebar, el breadcrumb y rellená el contenido.
+        </p>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Bienvenido</div>
+            <span class="badge badge-info"><span class="dot"></span>Demo</span>
+          </div>
+          <div class="card-body">
+            <p class="t-body">Esta es la zona donde va el contenido específico de cada página del backoffice.</p>
+          </div>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+</body>
+</html>
