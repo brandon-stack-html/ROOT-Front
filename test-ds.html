@@ -330,6 +330,116 @@
     </div>
   </div>
 
+  <!-- ========================================================================
+       Sprint 0.4 · Overlays: modal, drawer, toasts, tabs
+       ======================================================================== -->
+
+  <h2 class="t-h2" style="margin: var(--space-8) 0 var(--space-4);">Overlays</h2>
+
+  <div class="row" style="align-items: center;">
+    <button class="btn btn-primary" data-open-modal="m-confirm">Abrir modal sm</button>
+    <button class="btn btn-secondary" data-open-modal="m-form">Abrir modal md</button>
+    <button class="btn btn-secondary" data-open-drawer="d-detalle">Abrir drawer</button>
+    <button class="btn btn-secondary" onclick="UI.toast({ type:'success', title:'Venta registrada', sub:'Factura FE-2026-0101' })">Toast éxito</button>
+    <button class="btn btn-secondary" onclick="UI.toast({ type:'error', title:'Error al guardar', sub:'Revisá los campos' })">Toast error</button>
+    <button class="btn btn-secondary" onclick="UI.toast({ type:'warning', title:'Stock bajo', sub:'Empanada de carne · 5 uds.' })">Toast warning</button>
+  </div>
+
+  <!-- Modal sm -->
+  <div id="m-confirm" class="modal-backdrop">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        Confirmar venta
+        <button class="modal-close" data-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de cobrar <strong>$ 28.500</strong> a Juan Pérez?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-primary" data-close>Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal md -->
+  <div id="m-form" class="modal-backdrop">
+    <div class="modal modal-md">
+      <div class="modal-header">
+        Nuevo producto
+        <button class="modal-close" data-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label class="field-label">Nombre<span class="field-required-mark">*</span></label>
+          <input class="field-input" placeholder="Ej: Arepa de queso" />
+        </div>
+        <div class="field">
+          <label class="field-label">Precio</label>
+          <input class="field-input" placeholder="$ 0" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-primary" data-close>Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawer -->
+  <div id="d-detalle" class="drawer-backdrop">
+    <div class="drawer">
+      <div class="drawer-header">
+        Detalle del pedido #ORD-0421
+        <button class="drawer-close" data-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="drawer-body">
+        <p class="t-overline" style="margin-bottom: var(--space-2);">Cliente</p>
+        <p class="t-body" style="margin-bottom: var(--space-4);">María Rodríguez · NIT 901.234.567-8</p>
+
+        <p class="t-overline" style="margin-bottom: var(--space-2);">Productos</p>
+        <ul style="list-style: none; margin-bottom: var(--space-4);">
+          <li style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px dashed var(--border);">
+            <span>2× Arepa de queso</span><span>$ 13.000</span>
+          </li>
+          <li style="display:flex; justify-content:space-between; padding: 6px 0; border-bottom: 1px dashed var(--border);">
+            <span>1× Bandeja paisa</span><span>$ 28.000</span>
+          </li>
+          <li style="display:flex; justify-content:space-between; padding: 6px 0;">
+            <span>2× Jugo de lulo</span><span>$ 10.000</span>
+          </li>
+        </ul>
+
+        <p class="t-overline" style="margin-bottom: var(--space-2);">Total</p>
+        <p class="t-h3">$ 51.000</p>
+      </div>
+      <div class="drawer-footer">
+        <button class="btn btn-secondary" data-close>Cerrar</button>
+        <button class="btn btn-primary" data-close>Imprimir factura</button>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="t-h2" style="margin: var(--space-8) 0 var(--space-4);">Tabs</h2>
+
+  <div data-tabs style="max-width: 540px;">
+    <div class="tabs">
+      <button class="tab" data-tab="general">General</button>
+      <button class="tab" data-tab="precios">Precios</button>
+      <button class="tab" data-tab="stock">Stock</button>
+    </div>
+    <div class="tab-panel" data-panel="general">
+      <p class="t-body">Panel General: nombre, categoría, descripción.</p>
+    </div>
+    <div class="tab-panel" data-panel="precios">
+      <p class="t-body">Panel Precios: precio base, IVA, descuentos.</p>
+    </div>
+    <div class="tab-panel" data-panel="stock">
+      <p class="t-body">Panel Stock: unidades por sucursal, alertas.</p>
+    </div>
+  </div>
+
+  <script src="./assets/js/ui.js"></script>
   <script>
     // Toggle de tema (versión inline mínima — la versión real va en Sprint 0.5)
     document.getElementById('themeToggle').addEventListener('click', () => {
