@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Histórico del turno · POS · Inventario</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/pos-shell.css" />
+</head>
+<body>
+  <div class="pos-shell">
+
+    <header class="pos-topbar">
+      <div class="pos-topbar-brand">
+        <span class="pos-brand-logo">I</span>
+        <span class="pos-brand-name">Inventario</span>
+        <span class="pos-brand-badge">POS</span>
+      </div>
+      <nav class="pos-topbar-zones">
+        <button class="pos-zone-tab is-active" type="button">Salón Principal</button>
+        <button class="pos-zone-tab" type="button">Terraza</button>
+        <button class="pos-zone-tab" type="button">Barra</button>
+      </nav>
+      <div class="pos-topbar-meta">
+        <div class="pos-monto-chip">
+          <i data-lucide="banknote"></i>
+          <span>$1.234.000</span>
+        </div>
+        <button class="pos-topbar-iconbtn" type="button" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="pos-notif-dot"></span>
+        </button>
+        <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="pos-topbar-avatar" type="button" aria-label="Perfil">AG</button>
+      </div>
+    </header>
+
+    <main class="pos-content">
+      <div class="pos-historico-page">
+
+        <!-- Breadcrumb -->
+        <div class="pos-historico-breadcrumb">
+          <a href="./mapa.html"><i data-lucide="arrow-left"></i> Volver al mapa</a>
+          <span>·</span>
+          <span>POS</span>
+          <i data-lucide="chevron-right"></i>
+          <span class="here">Ventas del turno</span>
+        </div>
+
+        <!-- Título + acciones -->
+        <div class="pos-historico-title-row">
+          <div>
+            <div class="pos-historico-title">Turno tarde</div>
+            <div class="pos-historico-sub">12:03 a 19:47 · Caja 1 · Juan Camilo Restrepo</div>
+          </div>
+          <div class="pos-historico-actions">
+            <button class="btn btn-secondary btn-sm" type="button">
+              <i data-lucide="download"></i> Exportar
+            </button>
+            <button class="btn btn-secondary btn-sm" type="button">
+              <i data-lucide="printer"></i> Imprimir Z
+            </button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="pos-kpi-grid">
+          <div class="pos-kpi-card">
+            <div class="pos-kpi-card-icon is-success"><i data-lucide="dollar-sign"></i></div>
+            <div>
+              <div class="lbl">Total ventas</div>
+              <div class="val">$1.234.000</div>
+            </div>
+          </div>
+          <div class="pos-kpi-card">
+            <div class="pos-kpi-card-icon is-info"><i data-lucide="receipt"></i></div>
+            <div>
+              <div class="lbl">Transacciones</div>
+              <div class="val">18</div>
+            </div>
+          </div>
+          <div class="pos-kpi-card">
+            <div class="pos-kpi-card-icon is-accent"><i data-lucide="trending-up"></i></div>
+            <div>
+              <div class="lbl">Ticket prom.</div>
+              <div class="val">$68.555</div>
+            </div>
+          </div>
+          <div class="pos-kpi-card">
+            <div class="pos-kpi-card-icon is-error"><i data-lucide="x-circle"></i></div>
+            <div>
+              <div class="lbl">Anuladas</div>
+              <div class="val">2</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="pos-filtros-row">
+          <div class="pos-tabs-pill">
+            <button class="pos-tabs-pill-btn is-active" type="button">Todas <span class="n">18</span></button>
+            <button class="pos-tabs-pill-btn" type="button">Cerradas <span class="n">16</span></button>
+            <button class="pos-tabs-pill-btn" type="button">Anuladas <span class="n">2</span></button>
+          </div>
+          <div class="pos-filtros-right">
+            <div class="pos-filtros-search">
+              <i data-lucide="search"></i>
+              <input type="text" id="searchVentas" placeholder="Buscar por mesa o cliente" />
+            </div>
+            <button class="pos-filtros-select" type="button">
+              <i data-lucide="filter"></i> Medio de pago <i data-lucide="chevron-down"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="pos-historico-table">
+          <div class="pos-historico-thead">
+            <div>#</div>
+            <div>Hora</div>
+            <div>Mesa / Tipo</div>
+            <div>Cliente</div>
+            <div class="center">Items</div>
+            <div class="right">Total</div>
+            <div>Pago</div>
+            <div>Factura</div>
+            <div></div>
+          </div>
+
+          <div class="pos-historico-row" data-ticket="1">
+            <div class="col-num">1</div>
+            <div class="col-hora">12:15</div>
+            <div class="col-mesa"><span class="mesa-name">Mesa 3</span></div>
+            <div class="col-cliente is-empty">—</div>
+            <div class="col-items">4</div>
+            <div class="col-total">$88.000</div>
+            <div class="col-pago"><i data-lucide="banknote"></i><span>Efectivo</span></div>
+            <div class="col-fact"><span class="pos-fact-pos">POS</span></div>
+            <div class="col-action">
+              <button type="button" aria-label="Acciones"><i data-lucide="more-horizontal"></i></button>
+            </div>
+          </div>
+
+          <div class="pos-historico-row" data-ticket="2">
+            <div class="col-num">2</div>
+            <div class="col-hora">12:43</div>
+            <div class="col-mesa"><span class="mesa-name">Mesa 7</span></div>
+            <div class="col-cliente">Juan Restrepo</div>
+            <div class="col-items">6</div>
+            <div class="col-total">$134.000</div>
+            <div class="col-pago"><i data-lucide="credit-card"></i><span>Tarjeta</span></div>
+            <div class="col-fact"><span class="pos-fact-fe">FE ✓</span></div>
+            <div class="col-action">
+              <button type="button" aria-label="Acciones"><i data-lucide="more-horizontal"></i></button>
+            </div>
+          </div>
+
+          <div class="pos-historico-row" data-ticket="3">
+            <div class="col-num">3</div>
+            <div class="col-hora">13:10</div>
+            <div class="col-mesa"><span class="mesa-name">Mostrador</span></div>
+            <div class="col-cliente is-empty">—</div>
+            <div class="col-items">2</div>
+            <div class="col-total">$24.000</div>
+            <div class="col-pago"><i data-lucide="banknote"></i><span>Efectivo</span></div>
+            <div class="col-fact"><span class="pos-fact-none">—</span></div>
+            <div class="col-action">
+              <button type="button" aria-label="Acciones"><i data-lucide="more-horizontal"></i></button>
+            </div>
+          </div>
+
+          <div class="pos-historico-row" data-ticket="4">
+            <div class="col-num">4</div>
+            <div class="col-hora">13:55</div>
+            <div class="col-mesa"><span class="mesa-name">Mesa 2</span></div>
+            <div class="col-cliente is-empty">—</div>
+            <div class="col-items">8</div>
+            <div class="col-total">$210.000</div>
+            <div class="col-pago"><i data-lucide="shuffle"></i><span>Múltiple</span></div>
+            <div class="col-fact"><span class="pos-fact-none">—</span></div>
+            <div class="col-action">
+              <button type="button" aria-label="Acciones"><i data-lucide="more-horizontal"></i></button>
+            </div>
+          </div>
+
+          <div class="pos-historico-row is-anulada" data-ticket="5">
+            <div class="col-num">5</div>
+            <div class="col-hora">14:20</div>
+            <div class="col-mesa">
+              <span class="mesa-name">Mesa 1</span>
+              <span class="pos-anulada-tag">ANULADA</span>
+            </div>
+            <div class="col-cliente is-empty">—</div>
+            <div class="col-items">3</div>
+            <div class="col-total">$67.000</div>
+            <div class="col-pago"><span>—</span></div>
+            <div class="col-fact"><span class="pos-fact-none">—</span></div>
+            <div class="col-action">
+              <button type="button" aria-label="Acciones"><i data-lucide="more-horizontal"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paginación -->
+        <div class="pos-paginacion">
+          <div class="pos-paginacion-info">Mostrando 1–5 de 18 ventas</div>
+          <div class="pos-paginacion-controls">
+            <button class="pos-pag-btn" type="button">&lt;</button>
+            <button class="pos-pag-btn is-active" type="button">1</button>
+            <button class="pos-pag-btn" type="button">2</button>
+            <button class="pos-pag-btn" type="button">3</button>
+            <button class="pos-pag-btn" type="button">4</button>
+            <button class="pos-pag-btn" type="button">&gt;</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // Tabs filtro (mock)
+    document.querySelectorAll('.pos-tabs-pill-btn').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.pos-tabs-pill-btn').forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+      });
+    });
+
+    // Zone tabs
+    document.querySelectorAll('.pos-zone-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.pos-zone-tab').forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+      });
+    });
+
+    // Paginación (mock)
+    document.querySelectorAll('.pos-pag-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.textContent === '<' || btn.textContent === '>') return;
+        document.querySelectorAll('.pos-pag-btn').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+      });
+    });
+
+    // Buscador: filtra filas en vivo por mesa o cliente
+    document.getElementById('searchVentas').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll('.pos-historico-row').forEach((row) => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = (q === '' || text.includes(q)) ? '' : 'none';
+      });
+    });
+
+    // Click en fila: toast con detalle (mock)
+    document.querySelectorAll('.pos-historico-row').forEach((row) => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return; // ignorar clic en menú de acciones
+        const ticket = row.dataset.ticket;
+        const total = row.querySelector('.col-total').textContent;
+        UI.toast({
+          type: 'info',
+          title: 'Ticket #' + ticket,
+          sub: 'Total ' + total + ' — abrir detalle (próximamente)',
+        });
+      });
+    });
+  </script>
+</body>
+</html>
