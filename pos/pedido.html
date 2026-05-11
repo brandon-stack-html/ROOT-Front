@@ -249,8 +249,137 @@
     </div>
   </div>
 
-  <!-- ====================== MODAL COBRO (se rellena en 6.4) ====================== -->
-  <div id="modalCobro" class="modal-backdrop"></div>
+  <!-- ====================== MODAL COBRO ====================== -->
+  <div id="modalCobro" class="modal-backdrop">
+    <div class="pos-cobro-modal" role="dialog" aria-labelledby="modalCobroTitle">
+
+      <div class="pos-cobro-header">
+        <div>
+          <div class="pos-cobro-head-mesa" id="modalCobroTitle">Cobrar <span id="cobroMesaName">mesa 6</span></div>
+          <div class="pos-cobro-head-label">Total a pagar</div>
+          <div class="pos-cobro-head-amount" id="cobroBaseTotal">$122.040</div>
+        </div>
+        <button class="pos-cobro-close" type="button" data-close aria-label="Cerrar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="pos-cobro-body">
+
+        <!-- Medio de pago -->
+        <div>
+          <div class="pos-cobro-section-title">Medio de pago</div>
+          <div class="pos-medios-grid">
+            <button class="pos-medio is-sel" type="button" data-medio="efectivo">
+              <span class="pos-medio-check">✓</span>
+              <i data-lucide="banknote"></i>
+              <span class="lbl">Efectivo</span>
+            </button>
+            <button class="pos-medio" type="button" data-medio="debito">
+              <span class="pos-medio-check">✓</span>
+              <i data-lucide="credit-card"></i>
+              <span class="lbl">Débito</span>
+            </button>
+            <button class="pos-medio" type="button" data-medio="credito">
+              <span class="pos-medio-check">✓</span>
+              <i data-lucide="credit-card"></i>
+              <span class="lbl">Crédito</span>
+            </button>
+            <button class="pos-medio" type="button" data-medio="transfer">
+              <span class="pos-medio-check">✓</span>
+              <i data-lucide="smartphone"></i>
+              <span class="lbl">Transferencia</span>
+            </button>
+            <button class="pos-medio" type="button" data-medio="cuenta">
+              <span class="pos-medio-check">✓</span>
+              <i data-lucide="book-open"></i>
+              <span class="lbl">Cta. corriente</span>
+            </button>
+            <button class="pos-medio" type="button" data-medio="multiple">
+              <span class="pos-medio-check">✓</span>
+              <i data-lucide="shuffle"></i>
+              <span class="lbl">Múltiple</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sección efectivo -->
+        <div class="pos-efectivo-card" id="seccionEfectivo">
+          <label for="recibidoInput">Valor recibido</label>
+          <div class="pos-recibido-wrap">
+            <span class="prefix">$</span>
+            <input id="recibidoInput" class="pos-recibido-input" type="text" value="150.000" />
+          </div>
+
+          <div class="pos-cambio-pill" id="cambioPill">
+            <span class="lbl">Cambio</span>
+            <span class="val" id="cambioVal">$21.858</span>
+          </div>
+
+          <div class="pos-quick-cash">
+            <button class="pos-quick-cash-btn is-sel" type="button" data-quick="150000">$150.000</button>
+            <button class="pos-quick-cash-btn" type="button" data-quick="130000">$130.000</button>
+            <button class="pos-quick-cash-btn" type="button" data-quick="200000">$200.000</button>
+            <button class="pos-quick-cash-btn" type="button" data-quick="0">Otro</button>
+          </div>
+        </div>
+
+        <!-- Propina -->
+        <div>
+          <div class="pos-propina-row">
+            <div class="pos-cobro-section-title" style="margin: 0;">Propina</div>
+            <i data-lucide="chevron-up" style="color: var(--muted)"></i>
+          </div>
+          <div class="pos-propina-chips">
+            <button class="pos-propina-chip is-sel" type="button" data-prop="5">
+              <span class="pct">5%</span>
+              <span class="val">$6.102</span>
+            </button>
+            <button class="pos-propina-chip" type="button" data-prop="10">
+              <span class="pct">10%</span>
+              <span class="val">$12.204</span>
+            </button>
+            <button class="pos-propina-chip" type="button" data-prop="15">
+              <span class="pct">15%</span>
+              <span class="val">$18.306</span>
+            </button>
+            <button class="pos-propina-chip" type="button" data-prop="0">
+              <span class="pct">Otro</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Switch factura electrónica -->
+        <div class="pos-fe-row">
+          <div>
+            <div class="title">Generar factura electrónica</div>
+            <div class="sub">DIAN · NIT o cédula del cliente</div>
+          </div>
+          <button class="switch" type="button" data-fe-toggle aria-pressed="false"></button>
+        </div>
+
+        <!-- Resumen -->
+        <div class="pos-resumen-card">
+          <div class="pos-cobro-section-title">Resumen</div>
+          <div class="pos-resumen-line"><span>Subtotal</span><span class="v" id="resumenSub">$113.000</span></div>
+          <div class="pos-resumen-line"><span>IVA</span><span class="v" id="resumenIva">$9.040</span></div>
+          <div class="pos-resumen-line accent">
+            <span>Propina (<span id="resumenPropPct">5</span>%)</span>
+            <span class="v" id="resumenPropVal">$6.102</span>
+          </div>
+          <div class="pos-resumen-total"><span>Total cobrado</span><span id="resumenTotal">$128.142</span></div>
+          <div class="pos-resumen-cambio"><span>Cambio</span><span id="resumenCambio">$21.858</span></div>
+        </div>
+      </div>
+
+      <div class="pos-cobro-footer">
+        <button class="btn btn-secondary" type="button" data-close>Cancelar</button>
+        <button class="btn btn-success btn-lg" type="button" id="btnConfirmarCobro">
+          <i data-lucide="check"></i> Confirmar cobro
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -433,6 +562,118 @@
         document.querySelectorAll('.pos-catalog-tab').forEach((t) => t.classList.remove('is-active'));
         tab.classList.add('is-active');
       });
+    });
+
+    // ----------------------------------------------------------------------
+    // Modal de cobro (C4)
+    // ----------------------------------------------------------------------
+    const cobro = {
+      recibido: 150000,
+      propinaPct: 5,
+      medio: 'efectivo',
+    };
+
+    function parseMoney(s) {
+      const n = parseInt((s || '').replace(/\D/g, ''), 10);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function refreshCobro() {
+      const t = calcTotals();
+      const base = t.total; // 122040 sobre los items actuales
+      const propina = Math.round(base * (cobro.propinaPct / 100));
+      const totalCobrado = base + propina;
+      const cambio = cobro.recibido - totalCobrado;
+
+      document.getElementById('cobroMesaName').textContent = mesaParam === 'mostrador' ? 'mostrador' : 'mesa ' + mesaParam;
+      document.getElementById('cobroBaseTotal').textContent = fmt(base);
+      document.getElementById('resumenSub').textContent = fmt(t.sub);
+      document.getElementById('resumenIva').textContent = fmt(t.iva);
+      document.getElementById('resumenPropPct').textContent = String(cobro.propinaPct);
+      document.getElementById('resumenPropVal').textContent = fmt(propina);
+      document.getElementById('resumenTotal').textContent = fmt(totalCobrado);
+      document.getElementById('resumenCambio').textContent = fmt(cambio);
+      document.getElementById('cambioVal').textContent = fmt(cambio);
+      document.getElementById('cambioPill').classList.toggle('is-negative', cambio < 0);
+
+      // Recalcular propina chips en vivo
+      document.querySelectorAll('.pos-propina-chip').forEach((chip) => {
+        const pct = parseInt(chip.dataset.prop, 10);
+        const valEl = chip.querySelector('.val');
+        if (valEl && pct > 0) {
+          valEl.textContent = fmt(Math.round(base * (pct / 100)));
+        }
+      });
+    }
+
+    // Recalcular al abrir el modal (por si se eliminó algún item)
+    document.querySelector('[data-open-modal="modalCobro"]').addEventListener('click', () => {
+      // Mostrar la sección efectivo solo si el medio es efectivo
+      refreshCobro();
+    });
+
+    // Input valor recibido
+    document.getElementById('recibidoInput').addEventListener('input', (e) => {
+      cobro.recibido = parseMoney(e.target.value);
+      // Desmarcar quick chips
+      document.querySelectorAll('.pos-quick-cash-btn').forEach((b) => b.classList.remove('is-sel'));
+      refreshCobro();
+    });
+
+    // Quick cash chips
+    document.querySelectorAll('.pos-quick-cash-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pos-quick-cash-btn').forEach((b) => b.classList.remove('is-sel'));
+        btn.classList.add('is-sel');
+        const val = parseInt(btn.dataset.quick, 10);
+        if (val > 0) {
+          cobro.recibido = val;
+          document.getElementById('recibidoInput').value = val.toLocaleString('es-CO');
+          refreshCobro();
+        } else {
+          document.getElementById('recibidoInput').focus();
+          document.getElementById('recibidoInput').select();
+        }
+      });
+    });
+
+    // Chips de propina
+    document.querySelectorAll('.pos-propina-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.pos-propina-chip').forEach((c) => c.classList.remove('is-sel'));
+        chip.classList.add('is-sel');
+        cobro.propinaPct = parseInt(chip.dataset.prop, 10);
+        refreshCobro();
+      });
+    });
+
+    // Medio de pago
+    document.querySelectorAll('.pos-medio').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pos-medio').forEach((b) => b.classList.remove('is-sel'));
+        btn.classList.add('is-sel');
+        cobro.medio = btn.dataset.medio;
+        // Mostrar/ocultar sección efectivo
+        document.getElementById('seccionEfectivo').style.display = cobro.medio === 'efectivo' ? '' : 'none';
+      });
+    });
+
+    // Switch factura electrónica
+    document.querySelector('[data-fe-toggle]').addEventListener('click', (e) => {
+      const on = e.currentTarget.classList.toggle('is-on');
+      e.currentTarget.setAttribute('aria-pressed', String(on));
+    });
+
+    // Confirmar cobro
+    document.getElementById('btnConfirmarCobro').addEventListener('click', () => {
+      const ticket = 4800 + Math.floor(Math.random() * 100);
+      UI.toast({
+        type: 'success',
+        title: 'Venta #' + ticket + ' registrada',
+        sub: 'Imprimiendo factura…',
+      });
+      UI.closeModal('modalCobro');
+      setTimeout(() => { location.href = './mapa.html'; }, 1200);
     });
   </script>
 </body>
