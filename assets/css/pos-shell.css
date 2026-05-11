@@ -1,0 +1,506 @@
+/* ============================================================================
+   pos-shell.css — Shell del POS Web (Sprint 6)
+   ============================================================================ */
+
+/* ----------------------------------------------------------------------------
+   Layout principal
+---------------------------------------------------------------------------- */
+.pos-shell {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.pos-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ----------------------------------------------------------------------------
+   Topbar POS (56px)
+---------------------------------------------------------------------------- */
+.pos-topbar {
+  height: 56px;
+  flex-shrink: 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  gap: 18px;
+}
+
+.pos-topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 160px;
+}
+
+.pos-brand-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pos-brand-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.pos-brand-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(79, 70, 229, 0.10);
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+[data-theme="dark"] .pos-brand-badge {
+  background: rgba(79, 70, 229, 0.20);
+}
+
+.pos-topbar-zones {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+
+.pos-zone-tab {
+  padding: 7px 14px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--ff-base);
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--muted);
+  transition: background-color .12s ease, color .12s ease;
+}
+.pos-zone-tab:hover {
+  background: var(--alt);
+  color: var(--text);
+}
+.pos-zone-tab.is-active {
+  background: var(--alt);
+  color: var(--text);
+}
+
+.pos-topbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 160px;
+  justify-content: flex-end;
+}
+
+.pos-monto-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--alt);
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.pos-monto-chip svg { color: var(--success); }
+
+.pos-topbar-iconbtn {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .12s ease, color .12s ease;
+}
+.pos-topbar-iconbtn:hover {
+  background: var(--alt);
+  color: var(--text);
+}
+.pos-topbar-iconbtn svg { width: 16px; height: 16px; }
+
+.pos-notif-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--error);
+}
+
+.pos-topbar-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #FCA5A5;
+  color: #7F1D1D;
+  font-weight: 600;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Mobile: el centro de zonas se vuelve scroll-x y se compactan brand/meta */
+@media (max-width: 768px) {
+  .pos-topbar { gap: 10px; padding: 0 12px; }
+  .pos-topbar-brand { min-width: 0; }
+  .pos-brand-badge { display: none; }
+  .pos-topbar-zones {
+    overflow-x: auto;
+    scrollbar-width: none;
+    justify-content: flex-start;
+  }
+  .pos-topbar-zones::-webkit-scrollbar { display: none; }
+  .pos-topbar-meta { min-width: 0; gap: 8px; }
+  .pos-monto-chip { display: none; }
+}
+
+/* ----------------------------------------------------------------------------
+   Bottombar opcional (algunas pantallas)
+---------------------------------------------------------------------------- */
+.pos-bottombar {
+  height: 56px;
+  flex-shrink: 0;
+  background: var(--alt);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  gap: 12px;
+}
+
+
+/* ============================================================================
+   C1 — Apertura de turno
+   ============================================================================ */
+.pos-apertura-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background opaco del POS detrás del modal */
+.pos-apertura-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  pointer-events: none;
+}
+.pos-apertura-bg-tile {
+  height: 90px;
+  background: var(--alt);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+/* Overlay oscuro */
+.pos-apertura-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.pos-apertura-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  max-width: calc(100vw - 24px);
+  max-height: 92%;
+  overflow-y: auto;
+  background: var(--bg);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.pos-apertura-header {
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.pos-apertura-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pos-apertura-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: rgba(79, 70, 229, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+[data-theme="dark"] .pos-apertura-icon-wrap {
+  background: rgba(79, 70, 229, 0.20);
+}
+.pos-apertura-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+.pos-apertura-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.pos-apertura-body {
+  padding: 18px 24px 22px;
+}
+
+/* Datos del turno (card alt con lista clave-valor) */
+.pos-data-card {
+  background: var(--alt);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+}
+.pos-data-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+}
+.pos-data-row:first-child { border-top: none; }
+.pos-data-row .lbl {
+  font-size: 12px;
+  color: var(--muted);
+}
+.pos-data-row .val {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Input grande con prefijo $ */
+.pos-amount-field { margin-bottom: 14px; }
+.pos-amount-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+  margin-bottom: 8px;
+}
+.pos-amount-wrap {
+  position: relative;
+}
+.pos-amount-prefix {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--muted);
+  pointer-events: none;
+}
+.pos-amount-input {
+  width: 100%;
+  padding: 14px 16px 14px 40px;
+  font-size: 32px;
+  font-weight: 600;
+  font-family: var(--ff-base);
+  background: var(--bg);
+  border: 1.5px solid var(--accent);
+  border-radius: 10px;
+  color: var(--text);
+  outline: none;
+  box-sizing: border-box;
+  font-variant-numeric: tabular-nums;
+}
+.pos-amount-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Toggle row (calculadora) */
+.pos-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--alt);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.pos-toggle-label {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pos-toggle-label svg { color: var(--muted); }
+
+.pos-toggle {
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--border);
+  position: relative;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background-color .15s ease;
+}
+.pos-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  background: #fff;
+  transition: transform .15s ease;
+}
+.pos-toggle.is-on { background: var(--accent); }
+.pos-toggle.is-on::after { transform: translateX(14px); }
+
+/* Calculadora de denominaciones */
+.pos-denom-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.pos-denom-grid.is-hidden { display: none; }
+.pos-denom-card {
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pos-denom-card .label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pos-denom-card .row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pos-denom-qty {
+  width: 36px;
+  padding: 4px 6px;
+  font-size: 12px;
+  font-family: var(--ff-base);
+  text-align: center;
+  background: var(--alt);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text);
+  outline: none;
+}
+.pos-denom-qty:focus { border-color: var(--accent); }
+.pos-denom-card .subtotal {
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 500;
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.pos-obs-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  display: block;
+  margin-bottom: 6px;
+}
+.pos-obs-label .opt {
+  color: var(--muted);
+  font-weight: 400;
+}
+.pos-obs-input {
+  width: 100%;
+  min-height: 54px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-family: var(--ff-base);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  outline: none;
+  box-sizing: border-box;
+  resize: vertical;
+}
+.pos-obs-input:focus { border-color: var(--accent); }
+
+.pos-apertura-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .pos-apertura-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+  }
+  .pos-apertura-bg {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

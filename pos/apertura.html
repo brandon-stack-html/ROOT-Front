@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abrir turno · POS · Inventario</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/pos-shell.css" />
+</head>
+<body>
+  <div class="pos-shell">
+
+    <!-- Topbar (idéntico al _layout, queda detrás del modal) -->
+    <header class="pos-topbar">
+      <div class="pos-topbar-brand">
+        <span class="pos-brand-logo">I</span>
+        <span class="pos-brand-name">Inventario</span>
+        <span class="pos-brand-badge">POS</span>
+      </div>
+      <nav class="pos-topbar-zones">
+        <button class="pos-zone-tab is-active" type="button">Salón Principal</button>
+        <button class="pos-zone-tab" type="button">Terraza</button>
+        <button class="pos-zone-tab" type="button">Barra</button>
+      </nav>
+      <div class="pos-topbar-meta">
+        <div class="pos-monto-chip">
+          <i data-lucide="banknote"></i>
+          <span>$1.234.000</span>
+        </div>
+        <button class="pos-topbar-iconbtn" type="button" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="pos-notif-dot"></span>
+        </button>
+        <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="pos-topbar-avatar" type="button" aria-label="Perfil">AG</button>
+      </div>
+    </header>
+
+    <main class="pos-content">
+      <div class="pos-apertura-wrap">
+
+        <!-- Background atenuado del POS -->
+        <div class="pos-apertura-bg" aria-hidden="true">
+          <div class="pos-apertura-bg-tile"></div>
+          <div class="pos-apertura-bg-tile"></div>
+          <div class="pos-apertura-bg-tile"></div>
+          <div class="pos-apertura-bg-tile"></div>
+          <div class="pos-apertura-bg-tile"></div>
+          <div class="pos-apertura-bg-tile"></div>
+          <div class="pos-apertura-bg-tile"></div>
+          <div class="pos-apertura-bg-tile"></div>
+        </div>
+
+        <div class="pos-apertura-backdrop"></div>
+
+        <!-- Modal de apertura -->
+        <div class="pos-apertura-modal" role="dialog" aria-labelledby="aperturaTitle">
+          <div class="pos-apertura-header">
+            <div class="pos-apertura-header-row">
+              <div class="pos-apertura-icon-wrap">
+                <i data-lucide="calculator"></i>
+              </div>
+              <div>
+                <div class="pos-apertura-title" id="aperturaTitle">Abrir turno</div>
+                <div class="pos-apertura-sub">Ingresa el efectivo inicial en la caja antes de comenzar</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pos-apertura-body">
+
+            <!-- Datos del turno -->
+            <div class="pos-data-card">
+              <div class="pos-data-row">
+                <span class="lbl">Sucursal</span>
+                <span class="val">Sede Norte</span>
+              </div>
+              <div class="pos-data-row">
+                <span class="lbl">Caja</span>
+                <span class="val">Caja 1 - Mostrador</span>
+              </div>
+              <div class="pos-data-row">
+                <span class="lbl">Turno</span>
+                <span class="val">Turno tarde (12:00 - 20:00)</span>
+              </div>
+              <div class="pos-data-row">
+                <span class="lbl">Responsable</span>
+                <span class="val">Juan Camilo Restrepo</span>
+              </div>
+            </div>
+
+            <!-- Efectivo inicial -->
+            <div class="pos-amount-field">
+              <label class="pos-amount-label" for="efectivoInicial">Efectivo inicial en caja</label>
+              <div class="pos-amount-wrap">
+                <span class="pos-amount-prefix">$</span>
+                <input id="efectivoInicial" class="pos-amount-input" type="text" value="150.000" />
+              </div>
+              <div class="pos-amount-hint">Este valor queda registrado en el arqueo</div>
+            </div>
+
+            <!-- Toggle calculadora -->
+            <div class="pos-toggle-row">
+              <span class="pos-toggle-label">
+                <i data-lucide="calculator"></i>
+                Usar calculadora de denominaciones
+              </span>
+              <button class="pos-toggle is-on" type="button" data-toggle-denom aria-pressed="true"></button>
+            </div>
+
+            <!-- Calculadora de denominaciones -->
+            <div class="pos-denom-grid" id="denomGrid">
+              <div class="pos-denom-card">
+                <div class="label">$50.000</div>
+                <div class="row">
+                  <input type="text" class="pos-denom-qty" data-denom="50000" value="2" />
+                  <span class="subtotal" data-subtotal>$100.000</span>
+                </div>
+              </div>
+              <div class="pos-denom-card">
+                <div class="label">$20.000</div>
+                <div class="row">
+                  <input type="text" class="pos-denom-qty" data-denom="20000" value="2" />
+                  <span class="subtotal" data-subtotal>$40.000</span>
+                </div>
+              </div>
+              <div class="pos-denom-card">
+                <div class="label">$10.000</div>
+                <div class="row">
+                  <input type="text" class="pos-denom-qty" data-denom="10000" value="1" />
+                  <span class="subtotal" data-subtotal>$10.000</span>
+                </div>
+              </div>
+              <div class="pos-denom-card">
+                <div class="label">$5.000</div>
+                <div class="row">
+                  <input type="text" class="pos-denom-qty" data-denom="5000" value="1" />
+                  <span class="subtotal" data-subtotal>$5.000</span>
+                </div>
+              </div>
+              <div class="pos-denom-card">
+                <div class="label">$2.000</div>
+                <div class="row">
+                  <input type="text" class="pos-denom-qty" data-denom="2000" value="1" />
+                  <span class="subtotal" data-subtotal>$2.000</span>
+                </div>
+              </div>
+              <div class="pos-denom-card">
+                <div class="label">$1.000</div>
+                <div class="row">
+                  <input type="text" class="pos-denom-qty" data-denom="1000" value="1" />
+                  <span class="subtotal" data-subtotal>$1.000</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Observaciones -->
+            <label class="pos-obs-label" for="obsTurno">
+              Observaciones del turno <span class="opt">(opcional)</span>
+            </label>
+            <textarea id="obsTurno" class="pos-obs-input" placeholder="Notas para el cierre…"></textarea>
+          </div>
+
+          <div class="pos-apertura-footer">
+            <button class="btn btn-ghost" type="button" data-action="cancelar">Cancelar</button>
+            <button class="btn btn-primary btn-lg" type="button" data-action="abrir-caja">
+              <i data-lucide="unlock"></i> Abrir caja
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // ----------------------------------------------------------------------
+    // Calculadora de denominaciones — actualiza subtotales y total en vivo
+    // ----------------------------------------------------------------------
+    (function () {
+      const fmt = (n) => '$' + Number(n).toLocaleString('es-CO');
+      const parseQty = (s) => {
+        const n = parseInt((s || '').replace(/\D/g, ''), 10);
+        return isNaN(n) ? 0 : n;
+      };
+
+      const grid = document.getElementById('denomGrid');
+      const cards = grid.querySelectorAll('.pos-denom-card');
+      const amountInput = document.getElementById('efectivoInicial');
+
+      function recompute() {
+        let total = 0;
+        cards.forEach((card) => {
+          const input = card.querySelector('.pos-denom-qty');
+          const subEl = card.querySelector('[data-subtotal]');
+          const denom = parseInt(input.dataset.denom, 10);
+          const qty = parseQty(input.value);
+          const sub = denom * qty;
+          subEl.textContent = fmt(sub);
+          total += sub;
+        });
+        amountInput.value = total.toLocaleString('es-CO');
+      }
+
+      cards.forEach((card) => {
+        const input = card.querySelector('.pos-denom-qty');
+        input.addEventListener('input', recompute);
+      });
+
+      // Toggle calculadora
+      const toggle = document.querySelector('[data-toggle-denom]');
+      toggle.addEventListener('click', () => {
+        const on = toggle.classList.toggle('is-on');
+        toggle.setAttribute('aria-pressed', String(on));
+        grid.classList.toggle('is-hidden', !on);
+      });
+
+      // Acciones del footer
+      document.querySelector('[data-action="cancelar"]').addEventListener('click', () => {
+        location.href = '../index.html';
+      });
+      document.querySelector('[data-action="abrir-caja"]').addEventListener('click', () => {
+        location.href = './mapa.html';
+      });
+    })();
+  </script>
+</body>
+</html>

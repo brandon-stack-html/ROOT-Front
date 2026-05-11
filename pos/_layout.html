@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     Plantilla del shell POS Web (Sprint 6).
+     COPIAR a [pagina].html y rellenar:
+       - <title>
+       - .is-active en la zone tab correspondiente
+       - <main class="pos-content"> con el contenido específico
+     ============================================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS · Inventario</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/pos-shell.css" />
+</head>
+<body>
+  <div class="pos-shell">
+
+    <!-- ====================== TOPBAR POS ====================== -->
+    <header class="pos-topbar">
+      <div class="pos-topbar-brand">
+        <span class="pos-brand-logo">I</span>
+        <span class="pos-brand-name">Inventario</span>
+        <span class="pos-brand-badge">POS</span>
+      </div>
+
+      <nav class="pos-topbar-zones">
+        <button class="pos-zone-tab is-active" type="button">Salón Principal</button>
+        <button class="pos-zone-tab" type="button">Terraza</button>
+        <button class="pos-zone-tab" type="button">Barra</button>
+      </nav>
+
+      <div class="pos-topbar-meta">
+        <div class="pos-monto-chip">
+          <i data-lucide="banknote"></i>
+          <span>$1.234.000</span>
+        </div>
+        <button class="pos-topbar-iconbtn" type="button" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="pos-notif-dot"></span>
+        </button>
+        <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="pos-topbar-avatar" type="button" aria-label="Perfil">AG</button>
+      </div>
+    </header>
+
+    <!-- ====================== CONTENIDO ====================== -->
+    <main class="pos-content">
+      <!-- Reemplazar este placeholder con el contenido específico de la pantalla -->
+      <div style="padding: 24px; color: var(--muted); font-size: 13px;">
+        Plantilla del shell POS. Copiá este archivo y rellená <code>.pos-content</code>.
+      </div>
+    </main>
+
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+</body>
+</html>
