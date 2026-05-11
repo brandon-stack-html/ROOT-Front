@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pantalla Cocina · KDS · Inventario</title>
+  <!-- Dark por defecto en KDS -->
+  <script>document.documentElement.setAttribute('data-theme','dark');</script>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/kds.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+  <script src="../assets/js/ui.js" defer></script>
+</head>
+<body>
+
+<div class="kds-shell">
+
+  <!-- TOPBAR -->
+  <header class="kds-topbar">
+    <div class="kds-topbar-brand">
+      <i data-lucide="chef-hat" style="color:var(--accent)"></i>
+      <button id="stationBtn" onclick="toggleStationMenu()">
+        <span id="stationLabel">Cocina Caliente</span>
+        <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--muted)"></i>
+      </button>
+      <!-- Station dropdown -->
+      <div id="stationMenu" style="display:none;position:absolute;top:50px;left:18px;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:4px;z-index:20;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,.4)">
+        <button class="kds-station-opt is-active" onclick="selectStation('Cocina Caliente','caliente')">Cocina Caliente</button>
+        <button class="kds-station-opt" onclick="selectStation('Cocina Fría','fria')">Cocina Fría</button>
+        <button class="kds-station-opt" onclick="selectStation('Barra','barra')">Barra</button>
+        <button class="kds-station-opt" onclick="selectStation('Todas','todas')">Todas</button>
+      </div>
+    </div>
+
+    <div class="kds-topbar-clock" id="kdsClock">00:00:00</div>
+
+    <div class="kds-topbar-right">
+      <button class="kds-tab is-active" data-filter="pendientes" onclick="setTab(this,'pendientes')">
+        Pendientes <span class="kds-tab-badge" id="countPendientes">0</span>
+      </button>
+      <button class="kds-tab" data-filter="preparacion" onclick="setTab(this,'preparacion')">
+        En preparación <span class="kds-tab-badge" id="countPreparacion">0</span>
+      </button>
+      <button class="kds-tab" data-filter="listos" onclick="setTab(this,'listos')">
+        Listos <span class="kds-tab-badge" id="countListos">0</span>
+      </button>
+
+      <button class="kds-topbar-btn" title="Configuración" onclick="location.href='config.html'">
+        <i data-lucide="settings" style="width:16px;height:16px"></i>
+      </button>
+      <button class="kds-topbar-btn btn-icon" data-toggle-theme title="Cambiar tema">
+        <i data-lucide="sun" class="theme-icon-light" style="width:16px;height:16px"></i>
+        <i data-lucide="moon" class="theme-icon-dark" style="width:16px;height:16px"></i>
+      </button>
+      <button class="kds-topbar-btn" title="Pantalla completa" onclick="toggleFullscreen()">
+        <i data-lucide="maximize" style="width:16px;height:16px"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- GRID DE COMANDAS -->
+  <main class="kds-content">
+    <div class="kds-grid" id="kdsGrid">
+
+      <!-- #018 | Mesa 3 | URGENTE 14:23 -->
+      <div class="kds-ticket is-urgent" data-ticket="018" data-station="caliente" data-elapsed="863" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">Mesa 3</div>
+            <div class="kds-ticket-num">#018</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">14:23</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Bandeja Paisa</span></div>
+            <div class="kds-item-mod minus">→ Sin chicharrón</div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Ajiaco Bogotano</span></div>
+            <div class="kds-item-mod plus">→ Extra papa ✓</div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Limonada Natural</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #019 | Mesa 7 | ATENCIÓN 09:45 -->
+      <div class="kds-ticket is-warn" data-ticket="019" data-station="caliente" data-elapsed="585" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">Mesa 7</div>
+            <div class="kds-ticket-num">#019</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">09:45</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Lomo al Trapo</span></div>
+            <div class="kds-item-mod minus">→ Término: 3/4</div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Trucha en Salsa</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #020 | Mesa 1 | NORMAL 03:12 -->
+      <div class="kds-ticket" data-ticket="020" data-station="caliente" data-elapsed="192" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">Mesa 1</div>
+            <div class="kds-ticket-num">#020</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">03:12</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×3</span><span class="kds-item-title">Pollo a la Plancha</span></div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Agua con gas</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #021 | Mostrador | NUEVO 00:42 -->
+      <div class="kds-ticket is-nuevo" data-ticket="021" data-station="barra" data-elapsed="42" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">
+              Mostrador
+              <span class="kds-nuevo-badge">NUEVO</span>
+            </div>
+            <div class="kds-ticket-num">#021</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">00:42</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Sancocho de Gallina</span></div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Jugo de Mora</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #022 | Mesa 5 | URGENTE 16:12 -->
+      <div class="kds-ticket is-urgent" data-ticket="022" data-station="caliente" data-elapsed="972" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">Mesa 5</div>
+            <div class="kds-ticket-num">#022</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">16:12</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Tamales Tolimenses</span></div>
+            <div class="kds-item-mod minus">→ Sin cerdo</div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Sopa de Mondongo</span></div>
+            <div class="kds-item-mod plus">→ Extra cilantro</div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×3</span><span class="kds-item-title">Chicharrón</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #023 | Mesa 9 | ATENCIÓN 08:30 -->
+      <div class="kds-ticket is-warn" data-ticket="023" data-station="caliente" data-elapsed="510" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">Mesa 9</div>
+            <div class="kds-ticket-num">#023</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">08:30</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Arroz con Pollo</span></div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Ensalada César</span></div>
+            <div class="kds-item-mod minus">→ Sin aderezo</div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #024 | Mesa 2 | NORMAL 04:55 -->
+      <div class="kds-ticket" data-ticket="024" data-station="caliente" data-elapsed="295" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">Mesa 2</div>
+            <div class="kds-ticket-num">#024</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">04:55</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Caldo de Costilla</span></div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Arepa con Hogao</span></div>
+            <div class="kds-item-mod plus">→ Extra hogao</div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #025 | Mesa 4 | ATENCIÓN 10:20 | fria -->
+      <div class="kds-ticket is-warn" data-ticket="025" data-station="fria" data-elapsed="620" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">Mesa 4</div>
+            <div class="kds-ticket-num">#025</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">10:20</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Ensalada de Frutas</span></div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Helado de Guanábana</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #026 | Mesa 6 | NORMAL 06:10 | barra -->
+      <div class="kds-ticket" data-ticket="026" data-station="barra" data-elapsed="370" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">Mesa 6</div>
+            <div class="kds-ticket-num">#026</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">06:10</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Limonada de Coco</span></div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Jugo de Lulo</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #027 | Mesa 8 | NUEVO 00:15 -->
+      <div class="kds-ticket is-nuevo" data-ticket="027" data-station="caliente" data-elapsed="15" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">
+              Mesa 8
+              <span class="kds-nuevo-badge">NUEVO</span>
+            </div>
+            <div class="kds-ticket-num">#027</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">00:15</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×3</span><span class="kds-item-title">Empanadas</span></div>
+            <div class="kds-item-mod plus">→ Ají de maní al lado</div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Mazamorra</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #028 | Terraza | ATENCIÓN 09:05 -->
+      <div class="kds-ticket is-warn" data-ticket="028" data-station="caliente" data-elapsed="545" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">Terraza</div>
+            <div class="kds-ticket-num">#028</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">09:05</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×1</span><span class="kds-item-title">Bandeja Paisa</span></div>
+            <div class="kds-item-mod minus">→ Sin morcilla</div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Agua Panela con Queso</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+      <!-- #029 | Mesa 10 | NUEVO 00:50 | barra -->
+      <div class="kds-ticket is-nuevo" data-ticket="029" data-station="barra" data-elapsed="50" data-status="pendiente">
+        <div class="kds-ticket-header">
+          <div class="kds-ticket-header-left">
+            <div class="kds-ticket-mesa">
+              Mesa 10
+              <span class="kds-nuevo-badge">NUEVO</span>
+            </div>
+            <div class="kds-ticket-num">#029</div>
+          </div>
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">00:50</span>
+          </div>
+        </div>
+        <div class="kds-ticket-body">
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×2</span><span class="kds-item-title">Chocolate Caliente</span></div>
+          </div>
+          <div class="kds-item">
+            <div class="kds-item-name"><span class="kds-item-qty">×3</span><span class="kds-item-title">Almojábanas</span></div>
+          </div>
+        </div>
+        <div class="kds-ticket-footer">
+          <button class="kds-btn-prep" onclick="togglePrep(this)">
+            <i data-lucide="flame" style="width:14px;height:14px"></i>
+            Preparando
+          </button>
+          <button class="kds-btn-listo" onclick="servirTicket(this)">
+            <i data-lucide="check" style="width:15px;height:15px;stroke-width:2.6"></i>
+            Listo
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<style>
+  /* Extra inline: station dropdown options */
+  .kds-station-opt {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: var(--ff-base);
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+    transition: background .12s;
+  }
+  .kds-station-opt:hover { background: var(--border); }
+  .kds-station-opt.is-active { color: var(--accent); font-weight: 600; }
+</style>
+
+<script>
+  // ── Clock ──────────────────────────────────────────────────────
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('kdsClock').textContent = `${h}:${m}:${s}`;
+  }
+  updateClock();
+
+  // ── Ticket state tracking ──────────────────────────────────────
+  const listoCount = { count: 0 };
+
+  // Init data-start from data-elapsed
+  const LOAD_TIME = Date.now();
+  document.querySelectorAll('.kds-ticket').forEach(t => {
+    const elapsed = parseInt(t.dataset.elapsed) || 0;
+    t.dataset.start = LOAD_TIME - elapsed * 1000;
+  });
+
+  // Urgency thresholds (seconds) — from KDS_URGENCY in JSX
+  const THRESH_NUEVO   = 60;   // < 60s → nuevo
+  const THRESH_WARN    = 480;  // 480s (8min) → warn
+  const THRESH_URGENT  = 720;  // 720s (12min) → urgent
+
+  function getUrgencyClass(elapsed) {
+    if (elapsed < THRESH_NUEVO)  return 'is-nuevo';
+    if (elapsed < THRESH_WARN)   return '';
+    if (elapsed < THRESH_URGENT) return 'is-warn';
+    return 'is-urgent';
+  }
+
+  function updateUrgency(ticket, elapsed) {
+    const cls = getUrgencyClass(elapsed);
+    const wasUrgent = ticket.classList.contains('is-urgent');
+    ticket.classList.remove('is-nuevo','is-warn','is-urgent');
+    if (cls) ticket.classList.add(cls);
+
+    // Remove NUEVO badge once past threshold
+    if (cls !== 'is-nuevo') {
+      const badge = ticket.querySelector('.kds-nuevo-badge');
+      if (badge) badge.remove();
+    }
+    // Warning if just became urgent
+    if (!wasUrgent && cls === 'is-urgent') {
+      const num = ticket.dataset.ticket;
+      UI.toast({ type:'warning', title:`Ticket #${num} lleva más de 12 min`, sub:'Comanda crítica — requiere atención' });
+    }
+  }
+
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  // ── Timer loop ─────────────────────────────────────────────────
+  function tickTimers() {
+    const now = Date.now();
+    document.querySelectorAll('.kds-ticket:not(.is-serving)').forEach(ticket => {
+      const start = parseInt(ticket.dataset.start);
+      if (!start) return;
+      const elapsed = Math.floor((now - start) / 1000);
+      ticket.querySelector('.kds-timer-display').textContent = formatTime(elapsed);
+      if (ticket.dataset.status === 'pendiente') {
+        updateUrgency(ticket, elapsed);
+      }
+    });
+    updateCounts();
+  }
+
+  // ── Tab counts ─────────────────────────────────────────────────
+  function updateCounts() {
+    const tickets = document.querySelectorAll('.kds-ticket:not(.is-serving)');
+    let pending = 0, prep = 0;
+    tickets.forEach(t => {
+      if (t.dataset.status === 'pendiente') pending++;
+      else if (t.dataset.status === 'preparacion') prep++;
+    });
+    document.getElementById('countPendientes').textContent = pending;
+    document.getElementById('countPreparacion').textContent = prep;
+    document.getElementById('countListos').textContent = listoCount.count;
+  }
+
+  // ── Interactions ───────────────────────────────────────────────
+  function togglePrep(btn) {
+    const ticket = btn.closest('.kds-ticket');
+    if (ticket.dataset.status === 'pendiente') {
+      ticket.dataset.status = 'preparacion';
+      btn.classList.add('is-active');
+    } else {
+      ticket.dataset.status = 'pendiente';
+      btn.classList.remove('is-active');
+    }
+    updateCounts();
+    applyTabFilter();
+  }
+
+  function servirTicket(btn) {
+    const ticket = btn.closest('.kds-ticket');
+    const num = ticket.dataset.ticket;
+    ticket.classList.add('is-serving');
+    listoCount.count++;
+    UI.toast({ type: 'success', title: `Ticket #${num} servido`, sub: 'Comanda completada' });
+    setTimeout(() => { ticket.remove(); updateCounts(); }, 320);
+  }
+
+  // ── Tab filter ─────────────────────────────────────────────────
+  let activeFilter = 'pendientes';
+  let activeStation = 'todas';
+
+  function setTab(btn, filter) {
+    document.querySelectorAll('.kds-tab').forEach(t => t.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    activeFilter = filter;
+    applyTabFilter();
+  }
+
+  function applyTabFilter() {
+    document.querySelectorAll('.kds-ticket').forEach(ticket => {
+      const matchStation = activeStation === 'todas' || ticket.dataset.station === activeStation;
+      let matchFilter = true;
+      if (activeFilter === 'pendientes')  matchFilter = ticket.dataset.status === 'pendiente';
+      if (activeFilter === 'preparacion') matchFilter = ticket.dataset.status === 'preparacion';
+      if (activeFilter === 'listos')      matchFilter = false; // removed from DOM
+      ticket.classList.toggle('is-hidden', !(matchStation && matchFilter));
+    });
+  }
+
+  // ── Station selector ───────────────────────────────────────────
+  function toggleStationMenu() {
+    const menu = document.getElementById('stationMenu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function selectStation(label, key) {
+    document.getElementById('stationLabel').textContent = label;
+    document.getElementById('stationMenu').style.display = 'none';
+    document.querySelectorAll('.kds-station-opt').forEach(b => b.classList.remove('is-active'));
+    event.target.classList.add('is-active');
+    activeStation = key;
+    applyTabFilter();
+  }
+
+  // Close station menu clicking outside
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#stationBtn') && !e.target.closest('#stationMenu')) {
+      document.getElementById('stationMenu').style.display = 'none';
+    }
+  });
+
+  // ── Fullscreen ─────────────────────────────────────────────────
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  // ── Start ──────────────────────────────────────────────────────
+  setInterval(updateClock, 1000);
+  setInterval(tickTimers, 1000);
+  tickTimers();
+
+  window.addEventListener('load', () => {
+    lucide.createIcons();
+    updateCounts();
+  });
+</script>
+</body>
+</html>
