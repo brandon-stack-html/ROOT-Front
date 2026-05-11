@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuración KDS · Inventario</title>
+  <script>document.documentElement.setAttribute('data-theme','dark');</script>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/kds.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+  <script src="../assets/js/ui.js" defer></script>
+</head>
+<body>
+
+<!-- KDS background (atenuado) -->
+<div class="kds-config-bg">
+  <div class="kds-shell">
+    <header class="kds-topbar" style="pointer-events:none">
+      <div class="kds-topbar-brand">
+        <i data-lucide="chef-hat" style="color:var(--accent)"></i>
+        <span>Cocina Caliente</span>
+      </div>
+      <div class="kds-topbar-clock">19:34:22</div>
+      <div class="kds-topbar-right">
+        <button class="kds-tab is-active">Pendientes <span class="kds-tab-badge">4</span></button>
+        <button class="kds-tab">En preparación <span class="kds-tab-badge">3</span></button>
+        <button class="kds-tab">Listos <span class="kds-tab-badge">2</span></button>
+      </div>
+    </header>
+    <div class="kds-content" style="pointer-events:none">
+      <div class="kds-grid">
+        <div style="height:260px;background:var(--alt);border-radius:11px;border:1px solid var(--border)"></div>
+        <div style="height:260px;background:var(--alt);border-radius:11px;border:2px solid #F59E0B"></div>
+        <div style="height:260px;background:var(--alt);border-radius:11px;border:2px solid #EF4444"></div>
+        <div style="height:260px;background:var(--alt);border-radius:11px;border:2px solid #3B82F6"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dark overlay + blur -->
+<div class="kds-config-overlay">
+
+  <!-- Config modal -->
+  <div class="kds-config-modal">
+
+    <!-- Header -->
+    <div class="kds-config-header">
+      <div class="kds-config-title">
+        <i data-lucide="settings" style="color:var(--accent)"></i>
+        Configuración KDS
+      </div>
+      <button class="kds-config-close" onclick="location.href='main.html'" title="Cerrar">
+        <i data-lucide="x" style="width:15px;height:15px"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="kds-config-body">
+
+      <!-- Sección: Apariencia -->
+      <div class="kds-config-section">
+        <div class="kds-config-section-title">
+          <i data-lucide="paintbrush" style="width:14px;height:14px"></i>
+          Apariencia
+        </div>
+
+        <div class="kds-config-row">
+          <span class="kds-config-label">Tamaño de texto</span>
+          <div class="kds-seg" id="textSizeSeg">
+            <button class="kds-seg-btn" onclick="activateSeg(this,'textSizeSeg')">S</button>
+            <button class="kds-seg-btn is-active" onclick="activateSeg(this,'textSizeSeg')">M</button>
+            <button class="kds-seg-btn" onclick="activateSeg(this,'textSizeSeg')">L</button>
+            <button class="kds-seg-btn" onclick="activateSeg(this,'textSizeSeg')">XL</button>
+          </div>
+        </div>
+
+        <div class="kds-config-row">
+          <span class="kds-config-label">Tema</span>
+          <div class="kds-seg" id="themeSeg">
+            <button class="kds-seg-btn" onclick="activateSeg(this,'themeSeg');setThemeFromSeg('light')" style="display:flex;align-items:center;gap:5px">
+              <i data-lucide="sun" style="width:12px;height:12px"></i> Claro
+            </button>
+            <button class="kds-seg-btn is-active" onclick="activateSeg(this,'themeSeg');setThemeFromSeg('dark')" style="display:flex;align-items:center;gap:5px">
+              <i data-lucide="moon" style="width:12px;height:12px"></i> Oscuro
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Sonidos -->
+      <div class="kds-config-section">
+        <div class="kds-config-section-title">
+          <i data-lucide="volume-2" style="width:14px;height:14px"></i>
+          Sonidos
+        </div>
+
+        <div class="kds-config-row">
+          <span class="kds-config-label">Sonido al recibir comanda</span>
+          <button class="kds-switch is-on" onclick="toggleSwitch(this)"></button>
+        </div>
+        <div class="kds-config-row">
+          <span class="kds-config-label">Sonido de alerta por demora</span>
+          <button class="kds-switch is-on" onclick="toggleSwitch(this)"></button>
+        </div>
+        <div class="kds-config-row">
+          <span class="kds-config-label">Tono de alerta</span>
+          <select class="kds-threshold-input" style="width:auto;padding:5px 10px;text-align:left">
+            <option selected>Campana suave</option>
+            <option>Chime</option>
+            <option>Ding</option>
+            <option>Bell</option>
+            <option>Ping</option>
+          </select>
+        </div>
+        <div class="kds-config-row">
+          <span class="kds-config-label"></span>
+          <button class="btn btn-secondary btn-sm" style="display:flex;align-items:center;gap:6px" onclick="UI.toast({type:'info',title:'Reproduciendo: Campana suave',sub:'Prueba de sonido'})">
+            <i data-lucide="play" style="width:11px;height:11px"></i>
+            Probar sonido
+          </button>
+        </div>
+      </div>
+
+      <!-- Sección: Alertas de tiempo -->
+      <div class="kds-config-section">
+        <div class="kds-config-section-title">
+          <i data-lucide="clock" style="width:14px;height:14px"></i>
+          Alertas de tiempo
+        </div>
+
+        <div class="kds-config-row">
+          <span class="kds-config-label">Alertar en amarillo después de</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <input type="number" class="kds-threshold-input" id="threshWarn" value="8" min="1" max="60" oninput="cascadeThresholds(this)"/>
+            <span style="font-size:12px;color:var(--muted)">minutos</span>
+          </div>
+        </div>
+        <div class="kds-config-row">
+          <span class="kds-config-label">Alertar en rojo después de</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <input type="number" class="kds-threshold-input" id="threshUrgent" value="12" min="2" max="120" oninput="cascadeThresholds(this)"/>
+            <span style="font-size:12px;color:var(--muted)">minutos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Estación -->
+      <div class="kds-config-section" style="border-bottom:none;margin-bottom:0">
+        <div class="kds-config-section-title">
+          <i data-lucide="chef-hat" style="width:14px;height:14px"></i>
+          Estación
+        </div>
+
+        <div class="kds-radio-group">
+          <label class="kds-radio-opt is-selected" onclick="selectRadio(this)">
+            <span class="kds-radio-dot"><span class="kds-radio-dot-inner"></span></span>
+            <span>Cocina caliente</span>
+          </label>
+          <label class="kds-radio-opt" onclick="selectRadio(this)">
+            <span class="kds-radio-dot"></span>
+            <span>Cocina fría</span>
+          </label>
+          <label class="kds-radio-opt" onclick="selectRadio(this)">
+            <span class="kds-radio-dot"></span>
+            <span>Barra</span>
+          </label>
+          <label class="kds-radio-opt" onclick="selectRadio(this)">
+            <span class="kds-radio-dot"></span>
+            <span>Todas</span>
+          </label>
+        </div>
+      </div>
+
+    </div><!-- /kds-config-body -->
+
+    <!-- Footer -->
+    <div class="kds-config-footer">
+      <button class="btn btn-secondary" onclick="location.href='main.html'">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarConfig()">Guardar configuración</button>
+    </div>
+
+  </div><!-- /kds-config-modal -->
+</div><!-- /kds-config-overlay -->
+
+<script>
+  // Segmented control
+  function activateSeg(btn, segId) {
+    document.querySelectorAll(`#${segId} .kds-seg-btn`).forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+  }
+
+  // Theme from config
+  function setThemeFromSeg(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    lucide.createIcons();
+  }
+
+  // Switch toggle
+  function toggleSwitch(btn) {
+    btn.classList.toggle('is-on');
+  }
+
+  // Threshold cascade: warn < urgent
+  function cascadeThresholds(input) {
+    const warn   = parseInt(document.getElementById('threshWarn').value)   || 8;
+    const urgent = parseInt(document.getElementById('threshUrgent').value) || 12;
+    if (input.id === 'threshWarn' && warn >= urgent) {
+      document.getElementById('threshUrgent').value = warn + 1;
+    }
+    if (input.id === 'threshUrgent' && urgent <= warn) {
+      document.getElementById('threshWarn').value = urgent - 1;
+    }
+  }
+
+  // Radio select
+  function selectRadio(opt) {
+    opt.closest('.kds-radio-group').querySelectorAll('.kds-radio-opt').forEach(o => {
+      o.classList.remove('is-selected');
+      const dot = o.querySelector('.kds-radio-dot');
+      dot.innerHTML = '';
+    });
+    opt.classList.add('is-selected');
+    const dot = opt.querySelector('.kds-radio-dot');
+    dot.innerHTML = '<span class="kds-radio-dot-inner"></span>';
+  }
+
+  // Save + redirect
+  function guardarConfig() {
+    UI.toast({ type:'success', title:'Configuración guardada', sub:'Los cambios se aplicaron al KDS' });
+    setTimeout(() => { location.href = 'main.html'; }, 1200);
+  }
+
+  window.addEventListener('load', () => {
+    lucide.createIcons();
+  });
+</script>
+</body>
+</html>
