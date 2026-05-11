@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedido · POS · Inventario</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/pos-shell.css" />
+</head>
+<body>
+  <div class="pos-shell">
+
+    <!-- Topbar slim del pedido -->
+    <header class="pos-pedido-topbar">
+      <a href="./mapa.html" class="pos-pedido-back">
+        <i data-lucide="arrow-left"></i> Volver
+      </a>
+      <div class="pos-pedido-crumb">
+        Mapa de mesas
+        <i data-lucide="chevron-right"></i>
+        <span class="here" id="crumbMesa">Mesa 6</span>
+      </div>
+      <div class="pos-pedido-topbar-spacer"></div>
+      <div class="pos-pedido-mesero">Mesero: <span class="name">Andrea García</span></div>
+      <button class="btn-icon pos-pedido-theme-btn" type="button" data-toggle-theme aria-label="Cambiar tema">
+        <i data-lucide="sun" class="theme-icon-light"></i>
+        <i data-lucide="moon" class="theme-icon-dark"></i>
+      </button>
+    </header>
+
+    <!-- Switcher mobile -->
+    <div class="pos-pedido-switcher">
+      <button class="pos-switch-tab is-active" type="button" data-switch="catalog">Catálogo</button>
+      <button class="pos-switch-tab" type="button" data-switch="comanda">
+        Comanda <span class="count" id="switchCount">(3) · $122.040</span>
+      </button>
+    </div>
+
+    <div class="pos-pedido-layout show-catalog" id="pedidoLayout">
+
+      <!-- ============ CATÁLOGO ============ -->
+      <section class="pos-catalog">
+
+        <div class="pos-catalog-search-row">
+          <div class="pos-catalog-search">
+            <span class="ico"><i data-lucide="search"></i></span>
+            <input type="text" placeholder="Buscar productos..." />
+            <button class="scan" type="button" aria-label="Escanear">
+              <i data-lucide="scan-line"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="pos-catalog-tabs">
+          <button class="pos-catalog-tab" type="button">Entradas <span class="n">14</span></button>
+          <button class="pos-catalog-tab is-active" type="button">Platos fuertes <span class="n">22</span></button>
+          <button class="pos-catalog-tab" type="button">Bebidas <span class="n">18</span></button>
+          <button class="pos-catalog-tab" type="button">Postres <span class="n">9</span></button>
+          <button class="pos-catalog-tab" type="button">Combos <span class="n">6</span></button>
+        </div>
+
+        <div class="pos-catalog-grid-wrap">
+          <div class="pos-catalog-grid" id="catalogGrid">
+            <button class="pos-product" type="button"
+                    data-id="1" data-nombre="Bandeja Paisa" data-precio="32000">
+              <div class="pos-product-img" style="background:#FED7AA;"><i data-lucide="utensils"></i></div>
+              <div class="pos-product-body">
+                <div class="pos-product-name">Bandeja Paisa</div>
+                <div class="pos-product-bottom">
+                  <span class="pos-product-price">$32.000</span>
+                  <span class="pos-product-add"><i data-lucide="plus"></i></span>
+                </div>
+              </div>
+            </button>
+
+            <button class="pos-product" type="button"
+                    data-id="2" data-nombre="Ajiaco Bogotano" data-precio="28000">
+              <div class="pos-product-img" style="background:#FECACA;"><i data-lucide="utensils"></i></div>
+              <div class="pos-product-body">
+                <div class="pos-product-name">Ajiaco Bogotano</div>
+                <div class="pos-product-bottom">
+                  <span class="pos-product-price">$28.000</span>
+                  <span class="pos-product-add"><i data-lucide="plus"></i></span>
+                </div>
+              </div>
+            </button>
+
+            <button class="pos-product" type="button"
+                    data-id="3" data-nombre="Sancocho de Gallina" data-precio="25000">
+              <div class="pos-product-img" style="background:#FEF3C7;"><i data-lucide="utensils"></i></div>
+              <div class="pos-product-body">
+                <div class="pos-product-name">Sancocho de Gallina</div>
+                <div class="pos-product-bottom">
+                  <span class="pos-product-price">$25.000</span>
+                  <span class="pos-product-add"><i data-lucide="plus"></i></span>
+                </div>
+              </div>
+            </button>
+
+            <button class="pos-product is-highlight" type="button"
+                    data-id="4" data-nombre="Lomo al Trapo" data-precio="45000" data-has-mods="1">
+              <div class="pos-product-img" style="background:#FCA5A5;"><i data-lucide="utensils"></i></div>
+              <div class="pos-product-body">
+                <div class="pos-product-name">Lomo al Trapo</div>
+                <div class="pos-product-bottom">
+                  <span class="pos-product-price">$45.000</span>
+                  <span class="pos-product-add"><i data-lucide="plus"></i></span>
+                </div>
+              </div>
+            </button>
+
+            <button class="pos-product" type="button"
+                    data-id="5" data-nombre="Pollo a la Plancha" data-precio="22000">
+              <div class="pos-product-img" style="background:#D9F99D;"><i data-lucide="utensils"></i></div>
+              <div class="pos-product-body">
+                <div class="pos-product-name">Pollo a la Plancha</div>
+                <div class="pos-product-bottom">
+                  <span class="pos-product-price">$22.000</span>
+                  <span class="pos-product-add"><i data-lucide="plus"></i></span>
+                </div>
+              </div>
+            </button>
+
+            <button class="pos-product is-out" type="button"
+                    data-id="6" data-nombre="Trucha en Salsa" data-precio="38000" disabled>
+              <div class="pos-product-img" style="background:#A5F3FC;">
+                <i data-lucide="utensils"></i>
+                <span class="pos-product-out-badge">SIN STOCK</span>
+              </div>
+              <div class="pos-product-body">
+                <div class="pos-product-name">Trucha en Salsa</div>
+                <div class="pos-product-bottom">
+                  <span class="pos-product-price">$38.000</span>
+                  <span class="pos-product-add"><i data-lucide="plus"></i></span>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ COMANDA ============ -->
+      <aside class="pos-comanda">
+
+        <div class="pos-comanda-header">
+          <div class="row1">
+            <span class="pos-comanda-mesa" id="comandaMesa">Mesa 6</span>
+            <span class="pos-comanda-zone">SALÓN PRINCIPAL</span>
+          </div>
+          <div class="pos-comanda-meta">
+            <span class="mesero-pill">
+              <span class="av">AG</span> Andrea García
+            </span>
+            <span>·</span>
+            <span class="opened"><i data-lucide="clock"></i> Abierta hace 00:14</span>
+          </div>
+          <button class="pos-comanda-assign" type="button">+ Asignar cliente</button>
+        </div>
+
+        <div class="pos-comanda-items" id="comandaItems">
+          <!-- Items se renderizan vía JS -->
+        </div>
+
+        <div class="pos-comanda-totals" id="comandaTotals">
+          <div class="line"><span>Subtotal</span><span class="v" data-sum="sub">$113.000</span></div>
+          <div class="line"><span>IVA (8%)</span><span class="v" data-sum="iva">$9.040</span></div>
+          <div class="total"><span>Total</span><span class="v" data-sum="total">$122.040</span></div>
+        </div>
+
+        <div class="pos-comanda-actions">
+          <button class="btn btn-primary" type="button" id="btnCocina">
+            <i data-lucide="chef-hat"></i> Cocina
+          </button>
+          <button class="btn btn-secondary" type="button" id="btnPrecuenta">
+            <i data-lucide="receipt"></i> Pre-cuenta
+          </button>
+          <button class="btn btn-success" type="button" data-open-modal="modalCobro">
+            <i data-lucide="credit-card"></i> Cobrar
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ====================== MODAL MODIFICADORES ====================== -->
+  <div id="modalModificadores" class="modal-backdrop">
+    <div class="pos-mod-modal" role="dialog" aria-labelledby="modModTitle">
+      <div class="pos-mod-img">
+        <i data-lucide="utensils"></i>
+        <button class="pos-mod-close" type="button" data-close aria-label="Cerrar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="pos-mod-body">
+        <div class="pos-mod-title-row">
+          <div>
+            <div class="pos-mod-name" id="modModTitle">Lomo al Trapo</div>
+            <div class="pos-mod-sub">Plato fuerte · 350g</div>
+          </div>
+          <div class="pos-mod-price">$45.000</div>
+        </div>
+
+        <div class="pos-mod-qty-row">
+          <span class="pos-mod-qty-label">Cantidad</span>
+          <div class="pos-mod-qty-ctrl">
+            <button class="pos-mod-qty-btn minus" type="button" data-mod-qty="-1">−</button>
+            <span class="pos-mod-qty-val" id="modQty">1</span>
+            <button class="pos-mod-qty-btn plus" type="button" data-mod-qty="1">+</button>
+          </div>
+        </div>
+
+        <div class="pos-mod-group" data-mod-group>
+          <div class="pos-mod-group-title">Término</div>
+          <div class="pos-mod-chips">
+            <button class="pos-mod-chip is-sel" type="button">3/4</button>
+            <button class="pos-mod-chip" type="button">Bien cocido</button>
+            <button class="pos-mod-chip" type="button">A punto</button>
+          </div>
+        </div>
+
+        <div class="pos-mod-group" data-mod-group>
+          <div class="pos-mod-group-title">Acompañamiento</div>
+          <div class="pos-mod-chips">
+            <button class="pos-mod-chip is-sel" type="button">Papa criolla</button>
+            <button class="pos-mod-chip" type="button">Yuca</button>
+            <button class="pos-mod-chip" type="button">Ensalada</button>
+          </div>
+        </div>
+
+        <div class="pos-mod-group">
+          <div class="pos-mod-group-title">Observación</div>
+          <textarea class="pos-mod-obs-input" placeholder="Ej: sin sal, término extra…"></textarea>
+        </div>
+
+        <div class="pos-mod-total-row">
+          <span class="lbl">Total</span>
+          <span class="val" id="modTotal">$45.000</span>
+        </div>
+
+        <div class="pos-mod-actions">
+          <button class="btn btn-secondary" type="button" data-close style="flex:1;">Cancelar</button>
+          <button class="btn btn-primary" type="button" id="modAgregar" style="flex:1;">
+            <i data-lucide="arrow-right"></i> Agregar a la mesa
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== MODAL COBRO (se rellena en 6.4) ====================== -->
+  <div id="modalCobro" class="modal-backdrop"></div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // ----------------------------------------------------------------------
+    // Estado de la comanda
+    // ----------------------------------------------------------------------
+    const params = new URLSearchParams(location.search);
+    const mesaParam = params.get('mesa') || '6';
+    const esNuevo = params.get('nuevo') === '1';
+    const mesaLabel = (mesaParam === 'mostrador') ? 'Mostrador' : 'Mesa ' + mesaParam;
+    document.getElementById('crumbMesa').textContent = mesaLabel;
+    document.getElementById('comandaMesa').textContent = mesaLabel;
+
+    const fmt = (n) => '$' + Number(n).toLocaleString('es-CO');
+
+    // Items iniciales según el JSX (o vacío si es nuevo)
+    let nextItemId = 100;
+    const comanda = esNuevo ? [] : [
+      { id: 1, nombre: 'Bandeja Paisa',    qty: 2, precio: 32000, obs: 'Sin chicharrón' },
+      { id: 2, nombre: 'Ajiaco Bogotano',  qty: 1, precio: 28000, mod: 'Extra aguacate +$3.000', extra: 3000 },
+      { id: 3, nombre: 'Limonada Natural', qty: 2, precio: 9000 },
+    ];
+
+    function calcLine(it) {
+      return it.qty * it.precio + (it.extra || 0);
+    }
+    function calcTotals() {
+      const sub = comanda.reduce((acc, it) => acc + calcLine(it), 0);
+      const iva = Math.round(sub * 0.08);
+      const total = sub + iva;
+      return { sub, iva, total };
+    }
+
+    function render() {
+      const wrap = document.getElementById('comandaItems');
+      wrap.innerHTML = '';
+      if (comanda.length === 0) {
+        wrap.innerHTML = '<div style="padding:30px 0; text-align:center; color:var(--muted); font-size:12px;">Comanda vacía. Agregá productos desde el catálogo.</div>';
+      } else {
+        comanda.forEach((it) => {
+          const div = document.createElement('div');
+          div.className = 'pos-comanda-item';
+          div.innerHTML =
+            '<div class="pos-comanda-item-row">' +
+              '<span class="pos-comanda-qty">×' + it.qty + '</span>' +
+              '<div class="pos-comanda-item-info">' +
+                '<div class="pos-comanda-item-name"></div>' +
+                (it.obs ? '<div class="pos-comanda-item-obs">↳ </div>' : '') +
+                (it.mod ? '<div class="pos-comanda-item-mod">↳ </div>' : '') +
+              '</div>' +
+              '<span class="pos-comanda-item-price">' + fmt(calcLine(it)) + '</span>' +
+              '<button class="pos-comanda-item-del" data-del="' + it.id + '" aria-label="Eliminar">' +
+                '<i data-lucide="x"></i></button>' +
+            '</div>';
+          div.querySelector('.pos-comanda-item-name').textContent = it.nombre;
+          if (it.obs) div.querySelector('.pos-comanda-item-obs').textContent = '↳ ' + it.obs;
+          if (it.mod) div.querySelector('.pos-comanda-item-mod').textContent = '↳ ' + it.mod;
+          wrap.appendChild(div);
+        });
+      }
+
+      const t = calcTotals();
+      document.querySelector('[data-sum="sub"]').textContent = fmt(t.sub);
+      document.querySelector('[data-sum="iva"]').textContent = fmt(t.iva);
+      document.querySelector('[data-sum="total"]').textContent = fmt(t.total);
+
+      const totalItems = comanda.reduce((acc, it) => acc + it.qty, 0);
+      document.getElementById('switchCount').textContent = '(' + totalItems + ') · ' + fmt(t.total);
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+    render();
+
+    // Eliminar item
+    document.getElementById('comandaItems').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-del]');
+      if (!btn) return;
+      const id = parseInt(btn.dataset.del, 10);
+      const idx = comanda.findIndex((it) => it.id === id);
+      if (idx >= 0) {
+        comanda.splice(idx, 1);
+        render();
+      }
+    });
+
+    // ----------------------------------------------------------------------
+    // Click en producto del catálogo
+    // ----------------------------------------------------------------------
+    const modState = { qty: 1, basePrecio: 0, nombre: '', extra: 0 };
+
+    document.getElementById('catalogGrid').addEventListener('click', (e) => {
+      const card = e.target.closest('.pos-product');
+      if (!card || card.classList.contains('is-out')) return;
+      const nombre = card.dataset.nombre;
+      const precio = parseInt(card.dataset.precio, 10);
+      const hasMods = card.dataset.hasMods === '1';
+
+      if (hasMods) {
+        modState.qty = 1;
+        modState.basePrecio = precio;
+        modState.nombre = nombre;
+        modState.extra = 0;
+        document.getElementById('modQty').textContent = '1';
+        document.getElementById('modTotal').textContent = fmt(precio);
+        UI.openModal('modalModificadores');
+      } else {
+        comanda.push({ id: nextItemId++, nombre, qty: 1, precio });
+        render();
+      }
+    });
+
+    // ----------------------------------------------------------------------
+    // Modal modificadores: qty, chips, agregar
+    // ----------------------------------------------------------------------
+    function refreshModTotal() {
+      const total = modState.qty * (modState.basePrecio + modState.extra);
+      document.getElementById('modTotal').textContent = fmt(total);
+    }
+
+    document.querySelectorAll('[data-mod-qty]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const delta = parseInt(btn.dataset.modQty, 10);
+        modState.qty = Math.max(1, modState.qty + delta);
+        document.getElementById('modQty').textContent = String(modState.qty);
+        refreshModTotal();
+      });
+    });
+
+    document.querySelectorAll('[data-mod-group]').forEach((group) => {
+      group.querySelectorAll('.pos-mod-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          group.querySelectorAll('.pos-mod-chip').forEach((c) => c.classList.remove('is-sel'));
+          chip.classList.add('is-sel');
+        });
+      });
+    });
+
+    document.getElementById('modAgregar').addEventListener('click', () => {
+      comanda.push({
+        id: nextItemId++,
+        nombre: modState.nombre,
+        qty: modState.qty,
+        precio: modState.basePrecio,
+        mod: '3/4, Papa criolla',
+      });
+      UI.closeModal('modalModificadores');
+      render();
+      UI.toast({ type: 'success', title: 'Agregado a la mesa', sub: modState.nombre + ' × ' + modState.qty });
+    });
+
+    // ----------------------------------------------------------------------
+    // Botones de acción de la comanda
+    // ----------------------------------------------------------------------
+    document.getElementById('btnCocina').addEventListener('click', () => {
+      UI.toast({ type: 'info', title: 'Comanda enviada al KDS', sub: 'Cocina recibió ' + comanda.length + ' item(s)' });
+    });
+    document.getElementById('btnPrecuenta').addEventListener('click', () => {
+      UI.toast({ type: 'success', title: 'Pre-cuenta impresa', sub: 'Total: ' + fmt(calcTotals().total) });
+    });
+
+    // ----------------------------------------------------------------------
+    // Switcher mobile
+    // ----------------------------------------------------------------------
+    document.querySelectorAll('[data-switch]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-switch]').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const layout = document.getElementById('pedidoLayout');
+        layout.classList.remove('show-catalog', 'show-comanda');
+        layout.classList.add('show-' + btn.dataset.switch);
+      });
+    });
+
+    // Tabs de categoría (mock)
+    document.querySelectorAll('.pos-catalog-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.pos-catalog-tab').forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+      });
+    });
+  </script>
+</body>
+</html>
