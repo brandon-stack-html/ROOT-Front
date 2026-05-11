@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapa de mesas · POS · Inventario</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/pos-shell.css" />
+</head>
+<body>
+  <div class="pos-shell">
+
+    <header class="pos-topbar">
+      <div class="pos-topbar-brand">
+        <span class="pos-brand-logo">I</span>
+        <span class="pos-brand-name">Inventario</span>
+        <span class="pos-brand-badge">POS</span>
+      </div>
+      <nav class="pos-topbar-zones">
+        <button class="pos-zone-tab is-active" type="button">Salón Principal</button>
+        <button class="pos-zone-tab" type="button">Terraza</button>
+        <button class="pos-zone-tab" type="button">Barra</button>
+      </nav>
+      <div class="pos-topbar-meta">
+        <div class="pos-monto-chip">
+          <i data-lucide="banknote"></i>
+          <span>$1.234.000</span>
+        </div>
+        <button class="pos-topbar-iconbtn" type="button" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="pos-notif-dot"></span>
+        </button>
+        <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="pos-topbar-avatar" type="button" aria-label="Perfil">AG</button>
+      </div>
+    </header>
+
+    <main class="pos-content">
+
+      <!-- Área principal del mapa -->
+      <div class="pos-mapa-main">
+
+        <div class="pos-mapa-header">
+          <div>
+            <div class="sala">Salón Principal</div>
+            <div class="title">Mapa de mesas <span class="meta">· 12 mesas · 5 ocupadas</span></div>
+          </div>
+          <div class="pos-mapa-header-actions">
+            <button class="btn btn-secondary btn-sm" type="button">
+              <i data-lucide="filter"></i> Filtrar
+            </button>
+            <button class="btn btn-secondary btn-sm" type="button">
+              <i data-lucide="layout-grid"></i> Vista lista
+            </button>
+          </div>
+        </div>
+
+        <div class="pos-mapa-canvas">
+          <!-- Líneas decorativas del salón -->
+          <svg class="deco" viewBox="0 0 640 450" preserveAspectRatio="none">
+            <line x1="40" y1="155" x2="600" y2="155" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
+            <line x1="40" y1="285" x2="600" y2="285" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
+            <line x1="160" y1="20" x2="160" y2="430" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
+            <line x1="300" y1="20" x2="300" y2="430" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
+            <line x1="440" y1="20" x2="440" y2="430" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
+          </svg>
+
+          <!-- Mesa 1 — libre -->
+          <a href="./pedido.html?mesa=1&nuevo=1" class="mesa-pos is-libre" style="left: 60px; top: 50px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">1</span>
+            </div>
+            <div class="mesa-pos-libre-label">LIBRE</div>
+          </a>
+
+          <!-- Mesa 2 — ocupada -->
+          <a href="./pedido.html?mesa=2" class="mesa-pos is-ocupada" style="left: 200px; top: 50px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">2</span>
+              <span class="mesa-pos-badge">OCUPADA</span>
+            </div>
+            <div class="mesa-pos-spacer"></div>
+            <div class="mesa-pos-mesero-row">
+              <span class="mesa-pos-mesero-avatar">JC</span>
+              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:23</span>
+            </div>
+            <div class="mesa-pos-total">$45.000</div>
+          </a>
+
+          <!-- Mesa 3 — ocupada -->
+          <a href="./pedido.html?mesa=3" class="mesa-pos is-ocupada" style="left: 340px; top: 50px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">3</span>
+              <span class="mesa-pos-badge">OCUPADA</span>
+            </div>
+            <div class="mesa-pos-spacer"></div>
+            <div class="mesa-pos-mesero-row">
+              <span class="mesa-pos-mesero-avatar">AG</span>
+              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:18</span>
+            </div>
+            <div class="mesa-pos-total">$38.000</div>
+          </a>
+
+          <!-- Mesa 7 — libre -->
+          <a href="./pedido.html?mesa=7&nuevo=1" class="mesa-pos is-libre" style="left: 480px; top: 50px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">7</span>
+            </div>
+            <div class="mesa-pos-libre-label">LIBRE</div>
+          </a>
+
+          <!-- Mesa 4 — en cocina -->
+          <a href="./pedido.html?mesa=4" class="mesa-pos is-cocina" style="left: 60px; top: 180px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">4</span>
+              <span class="mesa-pos-badge">EN COCINA</span>
+            </div>
+            <div class="mesa-pos-spacer"></div>
+            <div class="mesa-pos-mesero-row">
+              <span class="mesa-pos-mesero-avatar">JC</span>
+              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:42</span>
+            </div>
+            <div class="mesa-pos-total">$92.000</div>
+          </a>
+
+          <!-- Mesa 5 — en cocina -->
+          <a href="./pedido.html?mesa=5" class="mesa-pos is-cocina" style="left: 200px; top: 180px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">5</span>
+              <span class="mesa-pos-badge">EN COCINA</span>
+            </div>
+            <div class="mesa-pos-spacer"></div>
+            <div class="mesa-pos-mesero-row">
+              <span class="mesa-pos-mesero-avatar">SR</span>
+              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:35</span>
+            </div>
+            <div class="mesa-pos-total">$67.000</div>
+          </a>
+
+          <!-- Mesa 6 — lista -->
+          <a href="./pedido.html?mesa=6" class="mesa-pos is-lista" style="left: 340px; top: 180px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">6</span>
+              <span class="mesa-pos-badge">¡LISTO!</span>
+            </div>
+            <div class="mesa-pos-spacer"></div>
+            <div class="mesa-pos-mesero-row">
+              <span class="mesa-pos-mesero-avatar">AG</span>
+              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:14</span>
+            </div>
+            <div class="mesa-pos-total">$78.000</div>
+          </a>
+
+          <!-- Mesa 8 — libre -->
+          <a href="./pedido.html?mesa=8&nuevo=1" class="mesa-pos is-libre" style="left: 480px; top: 180px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">8</span>
+            </div>
+            <div class="mesa-pos-libre-label">LIBRE</div>
+          </a>
+
+          <!-- Mesa 9 — libre -->
+          <a href="./pedido.html?mesa=9&nuevo=1" class="mesa-pos is-libre" style="left: 60px; top: 310px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">9</span>
+            </div>
+            <div class="mesa-pos-libre-label">LIBRE</div>
+          </a>
+
+          <!-- Mesa 10 — libre -->
+          <a href="./pedido.html?mesa=10&nuevo=1" class="mesa-pos is-libre" style="left: 200px; top: 310px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">10</span>
+            </div>
+            <div class="mesa-pos-libre-label">LIBRE</div>
+          </a>
+
+          <!-- Mesa 11 — ocupada con warn (1h 20m) -->
+          <a href="./pedido.html?mesa=11" class="mesa-pos is-ocupada is-warn" style="left: 340px; top: 310px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">11</span>
+              <span class="mesa-pos-badge">OCUPADA</span>
+            </div>
+            <div class="mesa-pos-spacer"></div>
+            <div class="mesa-pos-warn-row">
+              <i data-lucide="alert-triangle"></i>
+              <span class="lbl">1h 20m</span>
+            </div>
+            <div class="mesa-pos-mesero-row">
+              <span class="mesa-pos-mesero-avatar">SR</span>
+            </div>
+            <div class="mesa-pos-total">$128.000</div>
+          </a>
+
+          <!-- Mesa 12 — libre -->
+          <a href="./pedido.html?mesa=12&nuevo=1" class="mesa-pos is-libre" style="left: 480px; top: 310px;">
+            <div class="mesa-pos-top">
+              <span class="mesa-pos-number">12</span>
+            </div>
+            <div class="mesa-pos-libre-label">LIBRE</div>
+          </a>
+        </div>
+
+        <!-- FAB venta mostrador -->
+        <a href="./pedido.html?mesa=mostrador&nuevo=1" class="pos-mapa-fab">
+          <i data-lucide="plus"></i> Venta mostrador
+        </a>
+      </div>
+
+      <!-- Sidebar del turno -->
+      <aside class="pos-turno-sidebar">
+        <div class="pos-turno-overline">Turno actual</div>
+
+        <div class="pos-turno-kpi">
+          <div class="lbl">Ventas</div>
+          <div class="val">$1.234.000</div>
+        </div>
+
+        <div class="pos-turno-sep"></div>
+
+        <div class="pos-turno-row-2">
+          <div class="pos-turno-kpi">
+            <div class="lbl">Mesas atendidas</div>
+            <div class="val">8</div>
+          </div>
+          <div class="pos-turno-kpi">
+            <div class="lbl">Ticket prom.</div>
+            <div class="val">$68.555</div>
+          </div>
+        </div>
+
+        <div class="pos-turno-sep" style="margin: 8px 0;"></div>
+
+        <div class="pos-turno-section-title">Mesas activas</div>
+
+        <div class="pos-mesa-active">
+          <div class="num">6</div>
+          <div class="info">
+            <div class="mesero">Andrea G.</div>
+            <div class="tiempo">14m</div>
+          </div>
+          <div class="total">$78.000</div>
+        </div>
+
+        <div class="pos-mesa-active">
+          <div class="num">2</div>
+          <div class="info">
+            <div class="mesero">Juan C.</div>
+            <div class="tiempo">23m</div>
+          </div>
+          <div class="total">$45.000</div>
+        </div>
+
+        <div class="pos-mesa-active is-warn">
+          <div class="num">11</div>
+          <div class="info">
+            <div class="mesero">Sofía R.</div>
+            <div class="tiempo">1h 20m</div>
+          </div>
+          <div class="total">$128.000</div>
+        </div>
+
+        <button class="pos-turno-link" type="button" onclick="location.href='./historico.html'">
+          Ver todas las ventas →
+        </button>
+
+        <div class="pos-turno-spacer"></div>
+
+        <button class="pos-cerrar-caja" type="button" data-open-modal="modalCerrarCaja">
+          <i data-lucide="lock"></i> Cerrar caja
+        </button>
+      </aside>
+
+    </main>
+  </div>
+
+  <!-- Modal cerrar caja -->
+  <div id="modalCerrarCaja" class="modal-backdrop">
+    <div class="modal modal-sm" role="dialog" aria-labelledby="modalCerrarCajaTitle">
+      <div class="modal-header">
+        <span id="modalCerrarCajaTitle">Cerrar caja</span>
+        <button class="modal-close" type="button" data-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="modal-body">
+        ¿Seguro que querés cerrar el turno actual? Vas a poder consultar el resumen en el histórico de ventas.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-close>Cancelar</button>
+        <button class="btn btn-destructive" type="button" id="confirmCerrarCaja">
+          <i data-lucide="lock"></i> Cerrar turno
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // Zone tabs: alternar activo (mock)
+    document.querySelectorAll('.pos-zone-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.pos-zone-tab').forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+      });
+    });
+
+    // Confirmar cierre de caja
+    document.getElementById('confirmCerrarCaja').addEventListener('click', () => {
+      UI.closeModal('modalCerrarCaja');
+      UI.toast({ type: 'success', title: 'Caja cerrada', sub: 'Redirigiendo al histórico…' });
+      setTimeout(() => { location.href = './historico.html'; }, 900);
+    });
+  </script>
+</body>
+</html>
