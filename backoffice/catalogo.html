@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Catálogo · ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<div class="bo-shell">
+
+  <!-- ====================== SIDEBAR ====================== -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info">
+          <span class="label">Negocio</span>
+          <span class="name">El Buen Sabor</span>
+        </span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html"    class="bo-sidebar-item is-active"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html"  class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html"    class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html"      class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html"     class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info">
+        <span class="name">Juan Camilo</span>
+        <span class="role">Administrador</span>
+      </span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop" id="boBackdrop"></div>
+
+  <!-- ====================== CONTENT WRAP ====================== -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+        <i data-lucide="menu"></i>
+      </button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Catálogo</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button">
+        <i data-lucide="store"></i>
+        <span class="label">Sede Norte</span>
+      </button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="notification-dot"></span>
+        </button>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar" aria-label="Perfil">JC</button>
+      </div>
+    </header>
+
+    <!-- ====================== MAIN CONTENT ====================== -->
+    <main id="main" class="bo-content">
+
+      <!-- Drawer de categorías (mobile) -->
+      <div id="categoriasTree" class="drawer-backdrop">
+        <div class="drawer" style="width:280px">
+          <div class="drawer-header">
+            Categorías
+            <button class="drawer-close" data-close aria-label="Cerrar">×</button>
+          </div>
+          <div class="drawer-body">
+            <div class="cat-sidebar-title" style="margin-top:0">Categorías</div>
+            <button class="cat-item"><i data-lucide="salad"></i>Entradas<span class="cat-count">12</span></button>
+            <button class="cat-item is-active"><i data-lucide="utensils-crossed"></i>Platos fuertes<span class="cat-count">18</span></button>
+            <button class="cat-item"><i data-lucide="glass-water"></i>Bebidas<span class="cat-count">24</span></button>
+            <button class="cat-item"><i data-lucide="cake"></i>Postres<span class="cat-count">8</span></button>
+            <button class="cat-item"><i data-lucide="package"></i>Combos<span class="cat-count">6</span></button>
+            <button class="cat-add-btn"><i data-lucide="plus"></i>Nueva categoría</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page header -->
+      <div class="bo-page-header">
+        <div>
+          <div class="bo-page-title">Catálogo</div>
+          <div class="bo-page-subtitle">68 productos · 5 categorías</div>
+        </div>
+        <div class="bo-page-actions">
+          <button class="btn btn-secondary">
+            <i data-lucide="upload" style="width:14px;height:14px"></i>
+            Importar
+          </button>
+          <a href="./producto.html?nuevo=1" class="btn btn-primary">
+            <i data-lucide="plus" style="width:14px;height:14px"></i>
+            Nuevo producto
+          </a>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="bo-toolbar">
+        <!-- Botón categorías solo en mobile/tablet -->
+        <button class="btn btn-secondary" data-open-drawer="categoriasTree" id="btnCatsMobile" style="display:none">
+          <i data-lucide="filter" style="width:14px;height:14px"></i>
+          Categorías
+        </button>
+        <div class="bo-toolbar-search">
+          <i data-lucide="search"></i>
+          <input type="text" placeholder="Buscar producto..." id="catalogSearch"/>
+        </div>
+        <button class="bo-filter-btn">
+          <span class="lbl">Categoría:</span>
+          <span>Platos fuertes</span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+        <button class="bo-filter-btn">
+          <span class="lbl">Estado:</span>
+          <span>Todos</span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+        <div class="bo-toolbar-spacer"></div>
+        <div class="bo-view-btns">
+          <button aria-label="Vista lista"><i data-lucide="list"></i></button>
+          <button class="is-active" aria-label="Vista grid"><i data-lucide="layout-grid"></i></button>
+        </div>
+      </div>
+
+      <!-- Layout: categorías izq + grid der -->
+      <div class="catalogo-layout">
+        <!-- Sidebar categorías (solo desktop/tablet) -->
+        <div class="cat-sidebar" id="catSidebarDesktop">
+          <div class="cat-sidebar-title">Categorías</div>
+          <button class="cat-item"><i data-lucide="salad"></i>Entradas<span class="cat-count">12</span></button>
+          <button class="cat-item is-active"><i data-lucide="utensils-crossed"></i>Platos fuertes<span class="cat-count">18</span></button>
+          <button class="cat-item"><i data-lucide="glass-water"></i>Bebidas<span class="cat-count">24</span></button>
+          <button class="cat-item"><i data-lucide="cake"></i>Postres<span class="cat-count">8</span></button>
+          <button class="cat-item"><i data-lucide="package"></i>Combos<span class="cat-count">6</span></button>
+          <button class="cat-add-btn"><i data-lucide="plus"></i>Nueva categoría</button>
+        </div>
+
+        <!-- Grid de productos -->
+        <div class="product-grid-wrap">
+          <div class="product-grid" id="productGrid">
+
+            <!-- 1. Bandeja Paisa -->
+            <div class="product-card" onclick="location.href='./producto.html?id=1'">
+              <div class="product-img" style="background:#FED7AA">
+                <i data-lucide="utensils" style="width:32px;height:32px"></i>
+              </div>
+              <div class="product-body">
+                <div class="product-cat">Plato fuerte</div>
+                <div class="product-name">Bandeja Paisa</div>
+                <div class="product-footer-row">
+                  <span class="product-price">$32.000</span>
+                  <span class="stock-indicator"><span class="stock-dot-ind" style="background:var(--success)"></span>Stock alto</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Ajiaco Bogotano -->
+            <div class="product-card" onclick="location.href='./producto.html?id=2'">
+              <div class="product-img" style="background:#FECACA">
+                <i data-lucide="utensils" style="width:32px;height:32px"></i>
+                <span class="product-img-badge" style="background:#FEF3C7;color:#92400E">Popular</span>
+              </div>
+              <div class="product-body">
+                <div class="product-cat">Plato fuerte</div>
+                <div class="product-name">Ajiaco Bogotano</div>
+                <div class="product-footer-row">
+                  <span class="product-price">$28.000</span>
+                  <span class="stock-indicator"><span class="stock-dot-ind" style="background:var(--success)"></span>Stock alto</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Sancocho de Gallina -->
+            <div class="product-card" onclick="location.href='./producto.html?id=3'">
+              <div class="product-img" style="background:#FEF3C7">
+                <i data-lucide="utensils" style="width:32px;height:32px"></i>
+              </div>
+              <div class="product-body">
+                <div class="product-cat">Plato fuerte</div>
+                <div class="product-name">Sancocho de Gallina</div>
+                <div class="product-footer-row">
+                  <span class="product-price">$25.000</span>
+                  <span class="stock-indicator"><span class="stock-dot-ind" style="background:var(--warning)"></span>Stock medio</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Lomo al Trapo -->
+            <div class="product-card" onclick="location.href='./producto.html?id=4'">
+              <div class="product-img" style="background:#FCA5A5">
+                <i data-lucide="utensils" style="width:32px;height:32px"></i>
+                <span class="product-img-badge" style="background:#DBEAFE;color:#1E40AF">Nuevo</span>
+              </div>
+              <div class="product-body">
+                <div class="product-cat">Plato fuerte</div>
+                <div class="product-name">Lomo al Trapo</div>
+                <div class="product-footer-row">
+                  <span class="product-price">$45.000</span>
+                  <span class="stock-indicator"><span class="stock-dot-ind" style="background:var(--success)"></span>Stock alto</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Pollo a la Plancha -->
+            <div class="product-card" onclick="location.href='./producto.html?id=5'">
+              <div class="product-img" style="background:#D9F99D">
+                <i data-lucide="utensils" style="width:32px;height:32px"></i>
+              </div>
+              <div class="product-body">
+                <div class="product-cat">Plato fuerte</div>
+                <div class="product-name">Pollo a la Plancha</div>
+                <div class="product-footer-row">
+                  <span class="product-price">$22.000</span>
+                  <span class="stock-indicator"><span class="stock-dot-ind" style="background:var(--success)"></span>Stock alto</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Trucha en Salsa -->
+            <div class="product-card" onclick="location.href='./producto.html?id=6'">
+              <div class="product-img" style="background:#A5F3FC">
+                <i data-lucide="utensils" style="width:32px;height:32px"></i>
+              </div>
+              <div class="product-body">
+                <div class="product-cat">Plato fuerte</div>
+                <div class="product-name">Trucha en Salsa</div>
+                <div class="product-footer-row">
+                  <span class="product-price">$38.000</span>
+                  <span class="stock-indicator"><span class="stock-dot-ind" style="background:var(--warning)"></span>Stock bajo</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 7. Cazuela de Mariscos -->
+            <div class="product-card" onclick="location.href='./producto.html?id=7'" style="opacity:.7">
+              <div class="product-img" style="background:#BFDBFE">
+                <i data-lucide="utensils" style="width:32px;height:32px"></i>
+                <span class="product-img-badge" style="background:#FEE2E2;color:#991B1B">Sin stock</span>
+              </div>
+              <div class="product-body">
+                <div class="product-cat">Plato fuerte</div>
+                <div class="product-name">Cazuela de Mariscos</div>
+                <div class="product-footer-row">
+                  <span class="product-price">$42.000</span>
+                  <span class="stock-indicator"><span class="stock-dot-ind" style="background:var(--error)"></span>Sin stock</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 8. Mojarra Frita -->
+            <div class="product-card" onclick="location.href='./producto.html?id=8'">
+              <div class="product-img" style="background:#DDD6FE">
+                <i data-lucide="utensils" style="width:32px;height:32px"></i>
+              </div>
+              <div class="product-body">
+                <div class="product-cat">Plato fuerte</div>
+                <div class="product-name">Mojarra Frita</div>
+                <div class="product-footer-row">
+                  <span class="product-price">$35.000</span>
+                  <span class="stock-indicator"><span class="stock-dot-ind" style="background:var(--success)"></span>Stock alto</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 9. Sobrebarriga -->
+            <div class="product-card" onclick="location.href='./producto.html?id=9'">
+              <div class="product-img" style="background:#FBCFE8">
+                <i data-lucide="utensils" style="width:32px;height:32px"></i>
+              </div>
+              <div class="product-body">
+                <div class="product-cat">Plato fuerte</div>
+                <div class="product-name">Sobrebarriga</div>
+                <div class="product-footer-row">
+                  <span class="product-price">$30.000</span>
+                  <span class="stock-indicator"><span class="stock-dot-ind" style="background:var(--warning)"></span>Stock medio</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /product-grid -->
+
+          <!-- Empty state -->
+          <div class="empty-state" id="catalogEmpty" hidden>
+            <div class="empty-state-icon"><i data-lucide="package"></i></div>
+            <div class="empty-state-title">No encontramos productos</div>
+            <div class="empty-state-text">Probá con otro nombre o categoría.</div>
+            <button type="button" class="btn btn-secondary empty-state-action" id="catalogClearSearch">
+              Limpiar búsqueda
+            </button>
+          </div>
+
+          <!-- Paginación -->
+          <div class="bo-pagination">
+            <span class="bo-pagination-info">Mostrando 1–9 de 68 productos</span>
+            <div class="bo-pagination-pages">
+              <button class="bo-page-btn" aria-label="Anterior"><i data-lucide="chevron-left" style="width:13px;height:13px"></i></button>
+              <button class="bo-page-btn is-active">1</button>
+              <button class="bo-page-btn">2</button>
+              <button class="bo-page-btn">3</button>
+              <button class="bo-page-btn">…</button>
+              <button class="bo-page-btn">8</button>
+              <button class="bo-page-btn" aria-label="Siguiente"><i data-lucide="chevron-right" style="width:13px;height:13px"></i></button>
+            </div>
+          </div>
+        </div><!-- /product-grid-wrap -->
+      </div><!-- /catalogo-layout -->
+
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) window.lucide.createIcons();
+
+  // Mostrar botón de categorías en mobile/tablet
+  function updateCatBtn() {
+    const btn = document.getElementById('btnCatsMobile');
+    const desk = document.getElementById('catSidebarDesktop');
+    if (window.innerWidth < 1024) {
+      btn.style.display = 'inline-flex';
+      desk.style.display = 'none';
+    } else {
+      btn.style.display = 'none';
+      desk.style.display = 'block';
+    }
+  }
+  updateCatBtn();
+  window.addEventListener('resize', updateCatBtn);
+
+  // Highlight cat-items (decorativo)
+  document.querySelectorAll('.cat-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const parent = btn.closest('.cat-sidebar, .drawer-body');
+      parent.querySelectorAll('.cat-item').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+    });
+  });
+
+  // View btns toggle (decorativo)
+  document.querySelectorAll('.bo-view-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.bo-view-btns button').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+    });
+  });
+
+  // Búsqueda en vivo + empty state
+  const catalogSearch = document.getElementById('catalogSearch');
+  const catalogEmpty = document.getElementById('catalogEmpty');
+  function filterCatalogo() {
+    const q = (catalogSearch?.value || '').toLowerCase().trim();
+    let visibles = 0;
+    document.querySelectorAll('#productGrid .product-card').forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const show = q === '' || text.includes(q);
+      card.style.display = show ? '' : 'none';
+      if (show) visibles++;
+    });
+    if (catalogEmpty) catalogEmpty.hidden = visibles > 0;
+  }
+  catalogSearch?.addEventListener('input', filterCatalogo);
+  document.getElementById('catalogClearSearch')?.addEventListener('click', function () {
+    if (catalogSearch) catalogSearch.value = '';
+    filterCatalogo();
+  });
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

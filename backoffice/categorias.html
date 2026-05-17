@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Catálogo · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* Tab panels */
+    [data-tabs] [data-panel] { display: none; }
+    [data-tabs] [data-panel].is-active { display: block; }
+
+    /* Catalog tabs */
+    .cat-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .cat-tab {
+      padding: 10px 16px; border: none; border-bottom: 2px solid transparent;
+      background: transparent; cursor: pointer; font-family: var(--ff-base);
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      display: flex; align-items: center; gap: 7px; margin-bottom: -1px;
+      transition: color 0.15s;
+    }
+    .cat-tab.is-active { font-weight: 600; color: var(--text); border-bottom-color: var(--accent); }
+    .cat-tab-badge {
+      padding: 1px 7px; border-radius: 8px; font-size: 10px; font-weight: 600;
+      background: var(--alt); color: var(--muted);
+    }
+    .cat-tab.is-active .cat-tab-badge { background: #EEF2FF; color: var(--accent); }
+    [data-theme="dark"] .cat-tab.is-active .cat-tab-badge { background: rgba(99,102,241,.18); }
+
+    /* Page header */
+    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .bo-ph-actions { display: flex; align-items: center; gap: 8px; }
+
+    /* Toolbar */
+    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .toolbar-search { position: relative; }
+    .toolbar-search input {
+      padding: 8px 12px 8px 34px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text);
+      font-family: var(--ff-base); font-size: 13px; width: 220px; outline: none;
+    }
+    .toolbar-search input:focus { border-color: var(--accent); }
+    .toolbar-search .s-icon {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); display: flex; pointer-events: none;
+    }
+    .toolbar-spacer { flex: 1; min-width: 8px; }
+
+    /* Tree table */
+    .tree-table { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .tree-header {
+      display: grid; grid-template-columns: 40px 30px 1.4fr 100px 90px 90px;
+      padding: 12px 18px; background: var(--alt); border-bottom: 1px solid var(--border);
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      letter-spacing: .04em; text-transform: uppercase; align-items: center;
+    }
+    .tree-row {
+      display: grid; grid-template-columns: 40px 30px 1.4fr 100px 90px 90px;
+      padding: 13px 18px; align-items: center; border-bottom: 1px solid var(--border);
+    }
+    .tree-row:last-child { border-bottom: none; }
+    .tree-row.child { background: rgba(244,244,245,.4); }
+    [data-theme="dark"] .tree-row.child { background: rgba(24,24,27,.4); }
+
+    .row-drag { display: flex; align-items: center; justify-content: center; cursor: grab; color: var(--muted); }
+    .color-dot { border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    .row-name { display: flex; align-items: center; gap: 8px; }
+    .row-name-txt { font-size: 13px; font-weight: 600; color: var(--text); }
+    .row-name-txt.sm { font-size: 12px; font-weight: 500; }
+    .sub-badge { font-size: 10px; color: var(--muted); font-weight: 500; padding: 1px 6px; border-radius: 5px; background: var(--alt); }
+    .row-count { text-align: right; font-size: 13px; color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .row-count.sm { font-size: 12px; color: var(--muted); }
+    .row-visible { display: flex; justify-content: center; }
+    .row-actions { display: flex; justify-content: flex-end; gap: 6px; }
+
+    .expand-btn {
+      width: 24px; height: 24px; border-radius: 5px; border: none; background: var(--alt);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--muted); flex-shrink: 0;
+    }
+    .expand-btn:hover { background: var(--border); }
+
+    .icon-btn {
+      width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted);
+    }
+    .icon-btn:hover { background: var(--alt); }
+    .icon-btn.sm { width: 26px; height: 26px; }
+
+    /* Toggle switch */
+    .toggle { position: relative; display: inline-flex; width: 34px; height: 18px; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; inset: 0; background: var(--border);
+      border-radius: 18px; cursor: pointer; transition: background 0.2s;
+    }
+    .toggle-track::before {
+      content: ''; position: absolute;
+      height: 12px; width: 12px; left: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle input:checked + .toggle-track::before { transform: translateX(16px); }
+
+    /* Info hint */
+    .info-hint {
+      margin-top: 14px; padding: 10px 14px; border-radius: 8px;
+      background: #EFF6FF; border: 1px solid #BFDBFE;
+      display: flex; align-items: center; gap: 10px; font-size: 12px; color: #1E40AF;
+    }
+    [data-theme="dark"] .info-hint { background: rgba(59,130,246,.10); border-color: rgba(59,130,246,.4); color: #93C5FD; }
+
+    /* Modificadores */
+    .mod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .mod-card { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .mod-card-head {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .mod-card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .mod-card-type { font-size: 11px; color: var(--muted); padding: 2px 8px; border-radius: 6px; background: var(--alt); }
+    .mod-option {
+      padding: 9px 16px; display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text);
+    }
+    .mod-option:last-child { border-bottom: none; }
+    .mod-option-price { margin-left: auto; font-size: 11px; color: var(--muted); }
+
+    /* Color palette */
+    .color-palette { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .color-chip {
+      width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+      border: 3px solid transparent; transition: transform 0.15s, border-color 0.15s;
+    }
+    .color-chip:hover { transform: scale(1.1); }
+    .color-chip.selected { border-color: var(--text); }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .tree-header { display: none; }
+      .tree-row {
+        grid-template-columns: 24px 1fr;
+        grid-template-rows: auto auto;
+        gap: 6px;
+        padding: 12px 14px;
+      }
+      .tree-row.child { padding-left: 36px; }
+      .row-drag { display: none; }
+      .row-count { font-size: 12px; }
+      .row-visible { justify-content: flex-start; }
+      .toolbar-search input { width: 100%; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .mod-grid { grid-template-columns: 1fr; }
+      .bo-ph { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info">
+            <span class="label">Negocio</span>
+            <span class="name">El Buen Sabor</span>
+          </span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item is-active"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+        </div>
+      </nav>
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info">
+          <span class="name">Carlos Ramírez</span>
+          <span class="role">Administrador</span>
+        </span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+    <div class="bo-sidebar-backdrop"></div>
+
+    <div class="bo-content-wrap">
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Gestión</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item">Catálogo</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Categorías</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button">
+          <i data-lucide="store"></i>
+          <span class="label">Sucursal Centro</span>
+        </button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones">
+            <i data-lucide="bell"></i><span class="notification-dot"></span>
+          </button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button" aria-label="Perfil">CR</button>
+        </div>
+      </header>
+
+      <main id="main" class="bo-content">
+
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Catálogo</div>
+            <div class="bo-ph-sub">Organiza productos en categorías y subcategorías</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-ghost" onclick="UI.toast({type:'info',title:'Reordenar',sub:'Arrastrá las filas para reordenar'})">Reordenar</button>
+            <button class="btn btn-primary" data-open-modal="modalCategoria">
+              <i data-lucide="plus"></i> Nueva categoría
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div data-tabs="catalogo">
+          <div class="cat-tabs">
+            <button class="cat-tab is-active" data-tab="categorias">
+              Categorías <span class="cat-tab-badge">5</span>
+            </button>
+            <button class="cat-tab" data-tab="modificadores">
+              Modificadores <span class="cat-tab-badge">8</span>
+            </button>
+            <button class="cat-tab" data-tab="listas">
+              Listas de precios <span class="cat-tab-badge">3</span>
+            </button>
+          </div>
+
+          <!-- Panel Categorías -->
+          <div data-panel="categorias" class="is-active">
+            <div class="toolbar">
+              <div class="toolbar-search">
+                <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+                <input type="text" placeholder="Buscar categoría...">
+              </div>
+              <div class="toolbar-spacer"></div>
+              <button class="btn btn-ghost" id="btnExpandAll">
+                <i data-lucide="chevrons-down"></i> Expandir todo
+              </button>
+            </div>
+
+            <div class="tree-table">
+              <div class="tree-header">
+                <div></div><div></div>
+                <div>Nombre</div>
+                <div style="text-align:right">Productos</div>
+                <div style="text-align:center">Visible</div>
+                <div></div>
+              </div>
+
+              <!-- Entradas -->
+              <div class="tree-row" data-id="cat1">
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:14px;height:14px;"></i></div>
+                <div><span class="color-dot" style="width:14px;height:14px;background:#F97316;"></span></div>
+                <div class="row-name">
+                  <button class="expand-btn" data-expand="cat1" aria-label="Bajar"><i data-lucide="chevron-down" style="width:12px;height:12px;"></i></button>
+                  <span class="row-name-txt">Entradas</span>
+                  <span class="sub-badge">2 subcategorías</span>
+                </div>
+                <div class="row-count">12</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn" aria-label="Editar"><i data-lucide="pencil" style="width:13px;height:13px;"></i></button>
+                  <button class="icon-btn" aria-label="Eliminar"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>
+                </div>
+              </div>
+              <div class="tree-row child" data-parent="cat1">
+                <div></div>
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:12px;height:12px;"></i></div>
+                <div class="row-name" style="padding-left:18px;">
+                  <i data-lucide="corner-down-right" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+                  <span class="color-dot" style="width:9px;height:9px;background:#F97316;"></span>
+                  <span class="row-name-txt sm">Sopas</span>
+                </div>
+                <div class="row-count sm">4</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn sm" aria-label="Editar"><i data-lucide="pencil" style="width:11px;height:11px;"></i></button>
+                  <button class="icon-btn sm" aria-label="Eliminar"><i data-lucide="trash-2" style="width:11px;height:11px;"></i></button>
+                </div>
+              </div>
+              <div class="tree-row child" data-parent="cat1">
+                <div></div>
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:12px;height:12px;"></i></div>
+                <div class="row-name" style="padding-left:18px;">
+                  <i data-lucide="corner-down-right" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+                  <span class="color-dot" style="width:9px;height:9px;background:#F97316;"></span>
+                  <span class="row-name-txt sm">Ensaladas</span>
+                </div>
+                <div class="row-count sm">8</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn sm" aria-label="Editar"><i data-lucide="pencil" style="width:11px;height:11px;"></i></button>
+                  <button class="icon-btn sm" aria-label="Eliminar"><i data-lucide="trash-2" style="width:11px;height:11px;"></i></button>
+                </div>
+              </div>
+
+              <!-- Platos fuertes -->
+              <div class="tree-row" data-id="cat2">
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:14px;height:14px;"></i></div>
+                <div><span class="color-dot" style="width:14px;height:14px;background:#3B82F6;"></span></div>
+                <div class="row-name">
+                  <button class="expand-btn" data-expand="cat2" aria-label="Bajar"><i data-lucide="chevron-down" style="width:12px;height:12px;"></i></button>
+                  <span class="row-name-txt">Platos fuertes</span>
+                  <span class="sub-badge">3 subcategorías</span>
+                </div>
+                <div class="row-count">18</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn" aria-label="Editar"><i data-lucide="pencil" style="width:13px;height:13px;"></i></button>
+                  <button class="icon-btn" aria-label="Eliminar"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>
+                </div>
+              </div>
+              <div class="tree-row child" data-parent="cat2">
+                <div></div>
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:12px;height:12px;"></i></div>
+                <div class="row-name" style="padding-left:18px;">
+                  <i data-lucide="corner-down-right" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+                  <span class="color-dot" style="width:9px;height:9px;background:#3B82F6;"></span>
+                  <span class="row-name-txt sm">Carnes</span>
+                </div>
+                <div class="row-count sm">8</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn sm" aria-label="Editar"><i data-lucide="pencil" style="width:11px;height:11px;"></i></button>
+                  <button class="icon-btn sm" aria-label="Eliminar"><i data-lucide="trash-2" style="width:11px;height:11px;"></i></button>
+                </div>
+              </div>
+              <div class="tree-row child" data-parent="cat2">
+                <div></div>
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:12px;height:12px;"></i></div>
+                <div class="row-name" style="padding-left:18px;">
+                  <i data-lucide="corner-down-right" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+                  <span class="color-dot" style="width:9px;height:9px;background:#3B82F6;"></span>
+                  <span class="row-name-txt sm">Aves</span>
+                </div>
+                <div class="row-count sm">6</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn sm" aria-label="Editar"><i data-lucide="pencil" style="width:11px;height:11px;"></i></button>
+                  <button class="icon-btn sm" aria-label="Eliminar"><i data-lucide="trash-2" style="width:11px;height:11px;"></i></button>
+                </div>
+              </div>
+              <div class="tree-row child" data-parent="cat2">
+                <div></div>
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:12px;height:12px;"></i></div>
+                <div class="row-name" style="padding-left:18px;">
+                  <i data-lucide="corner-down-right" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+                  <span class="color-dot" style="width:9px;height:9px;background:#3B82F6;"></span>
+                  <span class="row-name-txt sm">Mariscos</span>
+                </div>
+                <div class="row-count sm">4</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn sm" aria-label="Editar"><i data-lucide="pencil" style="width:11px;height:11px;"></i></button>
+                  <button class="icon-btn sm" aria-label="Eliminar"><i data-lucide="trash-2" style="width:11px;height:11px;"></i></button>
+                </div>
+              </div>
+
+              <!-- Bebidas -->
+              <div class="tree-row" data-id="cat3">
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:14px;height:14px;"></i></div>
+                <div><span class="color-dot" style="width:14px;height:14px;background:#10B981;"></span></div>
+                <div class="row-name"><span class="row-name-txt">Bebidas</span></div>
+                <div class="row-count">24</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn" aria-label="Editar"><i data-lucide="pencil" style="width:13px;height:13px;"></i></button>
+                  <button class="icon-btn" aria-label="Eliminar"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>
+                </div>
+              </div>
+
+              <!-- Postres -->
+              <div class="tree-row" data-id="cat4">
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:14px;height:14px;"></i></div>
+                <div><span class="color-dot" style="width:14px;height:14px;background:#8B5CF6;"></span></div>
+                <div class="row-name"><span class="row-name-txt">Postres</span></div>
+                <div class="row-count">8</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn" aria-label="Editar"><i data-lucide="pencil" style="width:13px;height:13px;"></i></button>
+                  <button class="icon-btn" aria-label="Eliminar"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>
+                </div>
+              </div>
+
+              <!-- Combos -->
+              <div class="tree-row" data-id="cat5">
+                <div class="row-drag"><i data-lucide="grip-vertical" style="width:14px;height:14px;"></i></div>
+                <div><span class="color-dot" style="width:14px;height:14px;background:#EC4899;"></span></div>
+                <div class="row-name"><span class="row-name-txt">Combos</span></div>
+                <div class="row-count">6</div>
+                <div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>
+                <div class="row-actions">
+                  <button class="icon-btn" aria-label="Editar"><i data-lucide="pencil" style="width:13px;height:13px;"></i></button>
+                  <button class="icon-btn" aria-label="Eliminar"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-hint">
+              <i data-lucide="info" style="width:14px;height:14px;flex-shrink:0;"></i>
+              Arrastrá los íconos <i data-lucide="grip-vertical" style="width:11px;height:11px;vertical-align:middle;"></i> para reordenar categorías y subcategorías.
+            </div>
+          </div>
+
+          <!-- Panel Modificadores -->
+          <div data-panel="modificadores">
+            <div class="toolbar">
+              <div class="toolbar-search">
+                <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+                <input type="text" placeholder="Buscar modificador...">
+              </div>
+              <div class="toolbar-spacer"></div>
+              <button class="btn btn-primary"><i data-lucide="plus"></i> Nuevo grupo</button>
+            </div>
+            <div class="mod-grid">
+              <div class="mod-card">
+                <div class="mod-card-head">
+                  <span class="mod-card-title">Tamaño</span>
+                  <span class="mod-card-type">Radio · 1 selección</span>
+                </div>
+                <div class="mod-option"><input type="radio" name="r-tam" checked style="accent-color:var(--accent)"><span>Pequeño</span></div>
+                <div class="mod-option"><input type="radio" name="r-tam" style="accent-color:var(--accent)"><span>Mediano</span><span class="mod-option-price">+$2.000</span></div>
+                <div class="mod-option"><input type="radio" name="r-tam" style="accent-color:var(--accent)"><span>Grande</span><span class="mod-option-price">+$4.000</span></div>
+              </div>
+              <div class="mod-card">
+                <div class="mod-card-head">
+                  <span class="mod-card-title">Adiciones</span>
+                  <span class="mod-card-type">Checkbox · máx 3</span>
+                </div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Queso extra</span><span class="mod-option-price">+$1.500</span></div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Aguacate</span><span class="mod-option-price">+$2.000</span></div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Tocineta</span><span class="mod-option-price">+$2.500</span></div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Huevo frito</span><span class="mod-option-price">+$1.000</span></div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Champiñones</span><span class="mod-option-price">+$1.800</span></div>
+              </div>
+              <div class="mod-card">
+                <div class="mod-card-head">
+                  <span class="mod-card-title">Punto de cocción</span>
+                  <span class="mod-card-type">Radio · 1 selección</span>
+                </div>
+                <div class="mod-option"><input type="radio" name="r-coc" checked style="accent-color:var(--accent)"><span>Término rojo</span></div>
+                <div class="mod-option"><input type="radio" name="r-coc" style="accent-color:var(--accent)"><span>Término medio</span></div>
+                <div class="mod-option"><input type="radio" name="r-coc" style="accent-color:var(--accent)"><span>Tres cuartos</span></div>
+                <div class="mod-option"><input type="radio" name="r-coc" style="accent-color:var(--accent)"><span>Bien cocido</span></div>
+              </div>
+              <div class="mod-card">
+                <div class="mod-card-head">
+                  <span class="mod-card-title">Temperatura</span>
+                  <span class="mod-card-type">Radio · 1 selección</span>
+                </div>
+                <div class="mod-option"><input type="radio" name="r-tmp" checked style="accent-color:var(--accent)"><span>Frío</span></div>
+                <div class="mod-option"><input type="radio" name="r-tmp" style="accent-color:var(--accent)"><span>Caliente</span></div>
+                <div class="mod-option"><input type="radio" name="r-tmp" style="accent-color:var(--accent)"><span>A temperatura ambiente</span></div>
+              </div>
+              <div class="mod-card">
+                <div class="mod-card-head">
+                  <span class="mod-card-title">Exclusiones</span>
+                  <span class="mod-card-type">Checkbox · máx 2</span>
+                </div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Sin cebolla</span></div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Sin cilantro</span></div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Sin picante</span></div>
+              </div>
+              <div class="mod-card">
+                <div class="mod-card-head">
+                  <span class="mod-card-title">Salsas</span>
+                  <span class="mod-card-type">Checkbox · máx 3</span>
+                </div>
+                <div class="mod-option"><input type="checkbox" checked style="accent-color:var(--accent)"><span>Chimichurri</span></div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>BBQ</span></div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Ajo</span></div>
+                <div class="mod-option"><input type="checkbox" style="accent-color:var(--accent)"><span>Hogao</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel Listas de precios -->
+          <div data-panel="listas">
+            <div class="toolbar">
+              <div class="toolbar-spacer"></div>
+              <button class="btn btn-primary"><i data-lucide="plus"></i> Nueva lista</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+              <div class="card">
+                <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div class="card-title">Lista Carta</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px;">Por defecto · 68 productos</div>
+                  </div>
+                  <span class="badge badge-success"><span class="dot"></span>Activa</span>
+                </div>
+                <div class="card-body" style="font-size:12px;color:var(--muted);">Precios base del menú. Sin descuento adicional.</div>
+              </div>
+              <div class="card">
+                <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div class="card-title">Lista Domicilios</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px;">Rappi / iFood · 68 productos</div>
+                  </div>
+                  <span class="badge badge-success"><span class="dot"></span>Activa</span>
+                </div>
+                <div class="card-body" style="font-size:12px;color:var(--muted);">+15% sobre lista carta para cubrir comisión de plataformas.</div>
+              </div>
+              <div class="card">
+                <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div class="card-title">Lista Corporativa</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px;">Empresas · 45 productos</div>
+                  </div>
+                  <span class="badge badge-muted"><span class="dot"></span>Inactiva</span>
+                </div>
+                <div class="card-body" style="font-size:12px;color:var(--muted);">−10% sobre lista carta para clientes empresariales.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Nueva categoría -->
+        <div id="modalCategoria" class="modal-backdrop">
+          <div class="modal modal-md">
+            <div class="modal-header">
+              Nueva categoría
+              <button class="modal-close" data-close aria-label="Cerrar">×</button>
+            </div>
+            <div class="modal-body">
+              <div class="field">
+                <label class="field-label">Nombre <span style="color:var(--error)">*</span></label>
+                <input type="text" class="field-input" id="catNombre" placeholder="Ej. Ensaladas frías">
+              </div>
+              <div class="field">
+                <label class="field-label">Categoría padre</label>
+                <select class="field-input">
+                  <option value="">Sin categoría padre (raíz)</option>
+                  <option>Entradas</option>
+                  <option>Platos fuertes</option>
+                  <option>Bebidas</option>
+                  <option>Postres</option>
+                  <option>Combos</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label">Descripción</label>
+                <textarea class="field-input" rows="2" placeholder="Descripción opcional..."></textarea>
+              </div>
+              <div class="field">
+                <label class="field-label">Color</label>
+                <div class="color-palette" id="colorPalette">
+                  <span class="color-chip selected" data-color="#F97316" style="background:#F97316;"></span>
+                  <span class="color-chip" data-color="#3B82F6" style="background:#3B82F6;"></span>
+                  <span class="color-chip" data-color="#10B981" style="background:#10B981;"></span>
+                  <span class="color-chip" data-color="#8B5CF6" style="background:#8B5CF6;"></span>
+                  <span class="color-chip" data-color="#EC4899" style="background:#EC4899;"></span>
+                  <span class="color-chip" data-color="#EAB308" style="background:#EAB308;"></span>
+                </div>
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+                  <span class="field-label" style="margin:0;">Categoría activa</span>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" data-close>Cancelar</button>
+              <button class="btn btn-primary" id="btnCrearCat">Crear categoría</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // Expand / collapse hijos
+    document.querySelectorAll('[data-expand]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = this.dataset.expand;
+        var rows = document.querySelectorAll('[data-parent="' + id + '"]');
+        var open = rows.length && !rows[0].hidden;
+        rows.forEach(function (r) { r.hidden = open; });
+        var ic = btn.querySelector('[data-lucide]');
+        if (ic) {
+          ic.setAttribute('data-lucide', open ? 'chevron-right' : 'chevron-down');
+          if (window.lucide) window.lucide.createIcons();
+        }
+      });
+    });
+
+    // Expandir / contraer todo
+    var allExpanded = true;
+    document.getElementById('btnExpandAll').addEventListener('click', function () {
+      allExpanded = !allExpanded;
+      document.querySelectorAll('[data-parent]').forEach(function (r) { r.hidden = !allExpanded; });
+      document.querySelectorAll('[data-expand]').forEach(function (btn) {
+        var ic = btn.querySelector('[data-lucide]');
+        if (ic) ic.setAttribute('data-lucide', allExpanded ? 'chevron-down' : 'chevron-right');
+      });
+      this.innerHTML = allExpanded
+        ? '<i data-lucide="chevrons-down"></i> Expandir todo'
+        : '<i data-lucide="chevrons-up"></i> Contraer todo';
+      if (window.lucide) window.lucide.createIcons();
+    });
+
+    // Paleta de colores
+    document.getElementById('colorPalette').addEventListener('click', function (e) {
+      var chip = e.target.closest('.color-chip');
+      if (!chip) return;
+      this.querySelectorAll('.color-chip').forEach(function (c) { c.classList.remove('selected'); });
+      chip.classList.add('selected');
+    });
+
+    // Crear categoría
+    document.getElementById('btnCrearCat').addEventListener('click', function () {
+      var nombre = document.getElementById('catNombre').value.trim() || 'Nueva categoría';
+      UI.closeModal('modalCategoria');
+      UI.toast({ type: 'success', title: 'Categoría creada', sub: nombre });
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

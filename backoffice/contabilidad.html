@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Contabilidad · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* ── Page header ── */
+    .bo-ph { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+    .bo-ph-title { font-size:22px; font-weight:700; color:var(--text); letter-spacing:-.01em; }
+    .bo-ph-sub   { font-size:13px; color:var(--muted); margin-top:3px; }
+    .bo-ph-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+    /* ── Integration banner ── */
+    .cont-banner {
+      display:flex; align-items:center; gap:14px; padding:14px 18px;
+      border-radius:10px; margin-bottom:20px; flex-wrap:wrap;
+    }
+    .cont-banner.connected {
+      background: #F0FDF4; border:1px solid #BBF7D0; border-left:4px solid var(--success);
+    }
+    [data-theme="dark"] .cont-banner.connected {
+      background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.35); border-left-color: var(--success);
+    }
+    .cont-banner-icon {
+      width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      background:#DCFCE7; color:var(--success);
+    }
+    [data-theme="dark"] .cont-banner-icon { background:rgba(16,185,129,.18); }
+    .cont-banner-info { flex:1; min-width:200px; }
+    .cont-banner-title { font-size:13px; font-weight:600; color:#14532D; }
+    [data-theme="dark"] .cont-banner-title { color:#86EFAC; }
+    .cont-banner-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+    .cont-banner-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+    /* ── KPI grid ── */
+    .kpi-grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
+    @media(max-width:1024px){ .kpi-grid-4{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:480px){  .kpi-grid-4{ grid-template-columns:1fr; } }
+
+    /* ── Tabs ── */
+    .cont-tabs { display:flex; border-bottom:1px solid var(--border); margin-bottom:24px; overflow-x:auto; scrollbar-width:none; }
+    .cont-tabs::-webkit-scrollbar { display:none; }
+    .cont-tab {
+      padding:10px 18px; border:none; border-bottom:2px solid transparent; background:transparent;
+      cursor:pointer; font-family:var(--ff-base); font-size:13px; font-weight:500;
+      color:var(--muted); white-space:nowrap; margin-bottom:-1px; flex-shrink:0;
+    }
+    .cont-tab.is-active { font-weight:600; color:var(--text); border-bottom-color:var(--accent); }
+    .cont-panel { display:none; }
+    .cont-panel.is-active { display:block; }
+
+    /* ── Toolbar ── */
+    .toolbar { display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+    .toolbar-search { position:relative; }
+    .toolbar-search input {
+      padding:8px 12px 8px 34px; border-radius:8px;
+      border:1px solid var(--border); background:var(--bg); color:var(--text);
+      font-family:var(--ff-base); font-size:13px; width:240px; outline:none;
+    }
+    .toolbar-search input:focus { border-color:var(--accent); }
+    .toolbar-search .s-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--muted); display:flex; pointer-events:none; }
+    .toolbar-select {
+      padding:8px 12px; border-radius:8px; border:1px solid var(--border);
+      background:var(--bg); color:var(--text); font-family:var(--ff-base);
+      font-size:13px; outline:none; cursor:pointer;
+    }
+    .toolbar-spacer { flex:1; min-width:8px; }
+
+    /* ── Mobile ── */
+    @media(max-width:768px){
+      .bo-ph { flex-direction:column; gap:10px; }
+      .toolbar { flex-direction:column; align-items:stretch; }
+      .toolbar-search input { width:100%; }
+    }
+
+    /* ── P&L Table ── */
+    .cont-card { background:var(--bg); border:1px solid var(--border); border-radius:11px; overflow:hidden; margin-bottom:20px; }
+    .cont-card-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .cont-card-title { font-size:14px; font-weight:700; color:var(--text); }
+    .cont-card-sub { font-size:12px; color:var(--muted); }
+    .pl-table { width:100%; border-collapse:collapse; }
+    .pl-table td { padding:8px 18px; font-size:13px; }
+    .pl-section td { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:.05em; text-transform:uppercase; padding-top:16px; padding-bottom:4px; background:var(--alt); }
+    .pl-item td:first-child { padding-left:34px; color:var(--text); }
+    .pl-item td:last-child { text-align:right; font-variant-numeric:tabular-nums; color:var(--muted); }
+    .pl-subtotal td { font-weight:700; color:var(--text); border-top:1px solid var(--border); }
+    .pl-subtotal td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+    .pl-result td { font-weight:700; font-size:14px; border-top:2px solid var(--border); background:#F0FDF4; }
+    [data-theme="dark"] .pl-result td { background:rgba(16,185,129,.08); }
+    .pl-result td:first-child { color:#14532D; }
+    [data-theme="dark"] .pl-result td:first-child { color:#86EFAC; }
+    .pl-result td:last-child { text-align:right; color:var(--success); font-variant-numeric:tabular-nums; }
+    .pl-total td { font-weight:600; color:var(--text); border-top:1px solid var(--border); }
+    .pl-total td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+    .pl-imp td { color:var(--muted); }
+    .pl-imp td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+    /* ── Comparativo ── */
+    .comp-table { width:100%; border-collapse:collapse; }
+    .comp-table th { padding:9px 18px; font-size:11px; font-weight:600; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; text-align:right; background:var(--alt); border-bottom:1px solid var(--border); }
+    .comp-table th:first-child { text-align:left; }
+    .comp-table td { padding:10px 18px; font-size:13px; text-align:right; border-bottom:1px solid var(--border); font-variant-numeric:tabular-nums; }
+    .comp-table td:first-child { text-align:left; font-weight:600; color:var(--text); }
+    .comp-table tr:last-child td { border-bottom:none; }
+    .delta-up-text { color:var(--success); font-weight:600; }
+    .delta-down-text { color:var(--error); font-weight:600; }
+
+    /* ── Plan de cuentas (tree) ── */
+    .tree-table { width:100%; border-collapse:collapse; }
+    .tree-table th { padding:9px 18px; font-size:11px; font-weight:600; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; background:var(--alt); border-bottom:1px solid var(--border); text-align:left; }
+    .tree-table th:last-child, .tree-table th:nth-child(3), .tree-table th:nth-child(4) { text-align:right; }
+    .tree-row { border-bottom:1px solid var(--border); }
+    .tree-row:last-child { border-bottom:none; }
+    .tree-row td { padding:9px 18px; font-size:13px; }
+    .tree-row.level-0 td { font-weight:700; background:var(--alt); font-size:12px; letter-spacing:.02em; }
+    .tree-row.level-1 td { font-weight:600; background:var(--bg); font-size:12px; }
+    .tree-row.level-2 td { font-weight:400; background:var(--bg); padding-left:0; }
+    .tree-toggle { background:transparent; border:none; cursor:pointer; color:var(--muted); display:inline-flex; align-items:center; margin-right:4px; padding:0; transition:transform .15s; }
+    .tree-toggle.open { transform:rotate(90deg); }
+    .tree-indent-0 { padding-left:8px; }
+    .tree-indent-1 { padding-left:28px; }
+    .tree-indent-2 { padding-left:52px; }
+    .tree-code { font-family:monospace; color:var(--accent); font-size:12px; white-space:nowrap; }
+    .tree-saldo { text-align:right; font-variant-numeric:tabular-nums; }
+    .tree-actions { text-align:right; }
+    .tree-btn { width:26px; height:26px; border-radius:6px; border:none; background:transparent; cursor:pointer; color:var(--muted); display:inline-flex; align-items:center; justify-content:center; }
+    .tree-btn:hover { background:var(--alt); }
+    .tree-row.hidden { display:none; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+
+    <!-- ====================== SIDEBAR ====================== -->
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info">
+            <span class="label">Negocio</span>
+            <span class="name">El Buen Sabor</span>
+          </span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html"    class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html"  class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html"    class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html"      class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html"     class="bo-sidebar-item is-active"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+          <a href="./integraciones.html" class="bo-sidebar-item"><i data-lucide="plug"></i>Integraciones</a>
+        </div>
+      </nav>
+
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info">
+          <span class="name">Carlos Ramírez</span>
+          <span class="role">Administrador</span>
+        </span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+
+    <div class="bo-sidebar-backdrop"></div>
+
+    <!-- ====================== CONTENT WRAP ====================== -->
+    <div class="bo-content-wrap">
+
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Finanzas</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Contabilidad</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button">
+          <i data-lucide="store"></i>
+          <span class="label">Sucursal Centro</span>
+        </button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones">
+            <i data-lucide="bell"></i><span class="notification-dot"></span>
+          </button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button" aria-label="Perfil">CR</button>
+        </div>
+      </header>
+
+      <!-- ====================== MAIN ====================== -->
+      <main id="main" class="bo-content">
+
+        <!-- ── Page header ── -->
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Contabilidad</div>
+            <div class="bo-ph-sub">Marzo 2025 · El Buen Sabor — NIT 900.123.456-7</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-ghost"><i data-lucide="calendar"></i> Mar 2025</button>
+            <button class="btn btn-ghost"><i data-lucide="download"></i> Exportar libros</button>
+            <button class="btn btn-primary" id="btnConectarSoftware"><i data-lucide="plug"></i> Conectar software</button>
+          </div>
+        </div>
+
+        <!-- ── Banner integración Siigo ── -->
+        <div class="cont-banner connected">
+          <div class="cont-banner-icon">
+            <i data-lucide="check-circle" style="width:18px;height:18px;"></i>
+          </div>
+          <div class="cont-banner-info">
+            <div class="cont-banner-title">Siigo Conectado</div>
+            <div class="cont-banner-sub">Última sincronización: hace 15 min · 487 movimientos sincronizados · Resolución vigente</div>
+          </div>
+          <div class="cont-banner-actions">
+            <button class="btn btn-ghost btn-sm" onclick="UI.toast({type:'info',title:'Sincronizando...',sub:'Esto puede tardar unos segundos'})">
+              <i data-lucide="refresh-cw"></i> Sincronizar
+            </button>
+            <button class="btn btn-ghost btn-sm">Configurar</button>
+          </div>
+        </div>
+
+        <!-- ── KPIs ── -->
+        <div class="kpi-grid-4">
+          <div class="kpi-card tone-success">
+            <div class="kpi-header">
+              <span class="kpi-label">Ingresos del mes</span>
+              <span class="kpi-icon"><i data-lucide="trending-up"></i></span>
+            </div>
+            <div class="kpi-value">$18.450.000</div>
+            <div class="kpi-delta delta-up"><i data-lucide="trending-up"></i> +12% vs feb</div>
+          </div>
+          <div class="kpi-card tone-error">
+            <div class="kpi-header">
+              <span class="kpi-label">Gastos del mes</span>
+              <span class="kpi-icon"><i data-lucide="trending-down"></i></span>
+            </div>
+            <div class="kpi-value">$11.230.000</div>
+            <div class="kpi-delta delta-up"><i data-lucide="trending-up"></i> +3% vs feb</div>
+          </div>
+          <div class="kpi-card tone-muted">
+            <div class="kpi-header">
+              <span class="kpi-label">Utilidad bruta</span>
+              <span class="kpi-icon"><i data-lucide="calculator"></i></span>
+            </div>
+            <div class="kpi-value">$7.220.000</div>
+            <div class="kpi-helper">Margen: 39.1%</div>
+          </div>
+          <div class="kpi-card tone-warning">
+            <div class="kpi-header">
+              <span class="kpi-label">Impuestos causados</span>
+              <span class="kpi-icon"><i data-lucide="percent"></i></span>
+            </div>
+            <div class="kpi-value">$1.580.000</div>
+            <div class="kpi-helper">IVA + ICA + Retenciones</div>
+          </div>
+        </div>
+
+        <!-- ── Tabs ── -->
+        <div class="cont-tabs" role="tablist">
+          <button class="cont-tab is-active" data-ctab="resumen" role="tab">Resumen</button>
+          <button class="cont-tab" data-ctab="plan" role="tab">Plan de cuentas</button>
+          <button class="cont-tab" data-ctab="libros" role="tab">Libros auxiliares</button>
+          <button class="cont-tab" data-ctab="costos" role="tab">Centro de costos</button>
+          <button class="cont-tab" data-ctab="impuestos" role="tab">Impuestos</button>
+        </div>
+
+        <!-- Panels (content added in 11.G, 11.H, 11.I) -->
+        <div id="panel-resumen" class="cont-panel is-active">
+
+          <!-- Estado de Resultados -->
+          <div class="cont-card">
+            <div class="cont-card-header">
+              <div>
+                <div class="cont-card-title">Estado de Resultados (P&amp;L)</div>
+                <div class="cont-card-sub">Marzo 2025 · El Buen Sabor</div>
+              </div>
+              <button class="btn btn-ghost btn-sm"><i data-lucide="download"></i> Exportar</button>
+            </div>
+            <table class="pl-table">
+              <!-- INGRESOS -->
+              <tr class="pl-section"><td colspan="2">Ingresos</td></tr>
+              <tr class="pl-item"><td>Ventas POS</td><td>$14.200.000</td></tr>
+              <tr class="pl-item"><td>Ventas Delivery</td><td>$2.800.000</td></tr>
+              <tr class="pl-item"><td>Ventas Storefront</td><td>$1.450.000</td></tr>
+              <tr class="pl-subtotal"><td>Total ingresos</td><td>$18.450.000</td></tr>
+              <!-- COSTO DE VENTAS -->
+              <tr class="pl-section"><td colspan="2">Costo de ventas</td></tr>
+              <tr class="pl-item"><td>Materia prima</td><td>$5.430.000</td></tr>
+              <tr class="pl-item"><td>Mano de obra directa</td><td>$2.100.000</td></tr>
+              <tr class="pl-subtotal"><td>Total costo de ventas</td><td>$7.530.000</td></tr>
+              <!-- UTILIDAD BRUTA -->
+              <tr class="pl-total"><td>Utilidad bruta</td><td>$10.920.000</td></tr>
+              <!-- GASTOS OPERACIONALES -->
+              <tr class="pl-section"><td colspan="2">Gastos operacionales</td></tr>
+              <tr class="pl-item"><td>Arriendo</td><td>$2.800.000</td></tr>
+              <tr class="pl-item"><td>Servicios públicos</td><td>$680.000</td></tr>
+              <tr class="pl-item"><td>Nómina administrativa</td><td>$1.500.000</td></tr>
+              <tr class="pl-item"><td>Marketing</td><td>$350.000</td></tr>
+              <tr class="pl-item"><td>Otros gastos</td><td>$420.000</td></tr>
+              <tr class="pl-subtotal"><td>Total gastos operacionales</td><td>$5.750.000</td></tr>
+              <!-- UTILIDAD OPERACIONAL -->
+              <tr class="pl-total"><td>Utilidad operacional</td><td>$5.170.000</td></tr>
+              <!-- OTROS GASTOS -->
+              <tr class="pl-section"><td colspan="2">Otros gastos</td></tr>
+              <tr class="pl-item"><td>Financieros</td><td>$230.000</td></tr>
+              <tr class="pl-item"><td>Depreciación</td><td>$180.000</td></tr>
+              <tr class="pl-subtotal"><td>Total otros gastos</td><td>$410.000</td></tr>
+              <!-- UTILIDAD ANTES DE IMP -->
+              <tr class="pl-total"><td>Utilidad antes de impuestos</td><td>$4.760.000</td></tr>
+              <tr class="pl-imp"><td style="padding-left:34px;">Impuestos</td><td style="text-align:right;">$1.580.000</td></tr>
+              <!-- UTILIDAD NETA -->
+              <tr class="pl-result"><td>Utilidad neta</td><td>$3.180.000</td></tr>
+            </table>
+          </div>
+
+          <!-- Comparativo mensual -->
+          <div class="cont-card">
+            <div class="cont-card-header">
+              <div class="cont-card-title">Comparativo mensual</div>
+            </div>
+            <table class="comp-table">
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th>Enero</th>
+                  <th>Febrero</th>
+                  <th>Marzo</th>
+                  <th>Var %</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Ingresos</td>
+                  <td>$15.200.000</td>
+                  <td>$16.480.000</td>
+                  <td>$18.450.000</td>
+                  <td class="delta-up-text">+12.0%</td>
+                </tr>
+                <tr>
+                  <td>Gastos</td>
+                  <td>$9.800.000</td>
+                  <td>$10.900.000</td>
+                  <td>$11.230.000</td>
+                  <td class="delta-down-text">+3.0%</td>
+                </tr>
+                <tr>
+                  <td>Utilidad</td>
+                  <td>$5.400.000</td>
+                  <td>$5.580.000</td>
+                  <td>$7.220.000</td>
+                  <td class="delta-up-text">+29.4%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+        <div id="panel-plan" class="cont-panel">
+          <!-- Toolbar -->
+          <div class="toolbar" style="margin-bottom:16px;">
+            <div class="toolbar-search">
+              <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+              <input type="text" id="planSearch" placeholder="Buscar cuenta...">
+            </div>
+            <select class="toolbar-select" id="planFiltroClase">
+              <option value="">Clase: Todas</option>
+              <option value="1">1 — Activo</option>
+              <option value="2">2 — Pasivo</option>
+              <option value="3">3 — Patrimonio</option>
+              <option value="4">4 — Ingresos</option>
+              <option value="5">5 — Gastos</option>
+              <option value="6">6 — Costos</option>
+            </select>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-ghost btn-sm"><i data-lucide="plus"></i> Nueva cuenta</button>
+          </div>
+
+          <div class="cont-card">
+            <table class="tree-table" id="planTable">
+              <thead>
+                <tr>
+                  <th style="width:110px;">Código</th>
+                  <th>Nombre de cuenta</th>
+                  <th style="width:100px;text-align:right;">Tipo</th>
+                  <th style="width:130px;text-align:right;">Saldo</th>
+                  <th style="width:44px;"></th>
+                </tr>
+              </thead>
+              <tbody id="planBody">
+                <!-- Clase 1 ACTIVO -->
+                <tr class="tree-row level-0" data-key="1" data-parent="">
+                  <td><span class="tree-indent-0"><button class="tree-toggle open" data-target="1"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></button><span class="tree-code">1</span></span></td>
+                  <td>ACTIVO</td><td></td><td class="tree-saldo">$12.475.000</td><td></td>
+                </tr>
+                <!-- 11 DISPONIBLE -->
+                <tr class="tree-row level-1" data-key="11" data-parent="1">
+                  <td><span class="tree-indent-1"><button class="tree-toggle open" data-target="11"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button><span class="tree-code">11</span></span></td>
+                  <td>Disponible</td><td></td><td class="tree-saldo">$9.675.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="1105" data-parent="11">
+                  <td><span class="tree-indent-2"><span class="tree-code">1105</span></span></td>
+                  <td>Caja</td>
+                  <td style="text-align:right;"><span class="badge badge-info">Débito</span></td>
+                  <td class="tree-saldo">$1.445.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="1110" data-parent="11">
+                  <td><span class="tree-indent-2"><span class="tree-code">1110</span></span></td>
+                  <td>Bancos</td>
+                  <td style="text-align:right;"><span class="badge badge-info">Débito</span></td>
+                  <td class="tree-saldo">$8.230.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+                <!-- 13 DEUDORES -->
+                <tr class="tree-row level-1" data-key="13" data-parent="1">
+                  <td><span class="tree-indent-1"><button class="tree-toggle open" data-target="13"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button><span class="tree-code">13</span></span></td>
+                  <td>Deudores</td><td></td><td class="tree-saldo">$2.800.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="1305" data-parent="13">
+                  <td><span class="tree-indent-2"><span class="tree-code">1305</span></span></td>
+                  <td>Clientes</td>
+                  <td style="text-align:right;"><span class="badge badge-info">Débito</span></td>
+                  <td class="tree-saldo">$2.450.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="1355" data-parent="13">
+                  <td><span class="tree-indent-2"><span class="tree-code">1355</span></span></td>
+                  <td>Anticipos y avances</td>
+                  <td style="text-align:right;"><span class="badge badge-info">Débito</span></td>
+                  <td class="tree-saldo">$350.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+                <!-- Clase 2 PASIVO -->
+                <tr class="tree-row level-0" data-key="2" data-parent="">
+                  <td><span class="tree-indent-0"><button class="tree-toggle open" data-target="2"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></button><span class="tree-code">2</span></span></td>
+                  <td>PASIVO</td><td></td><td class="tree-saldo">$4.570.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-1" data-key="22" data-parent="2">
+                  <td><span class="tree-indent-1"><button class="tree-toggle open" data-target="22"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button><span class="tree-code">22</span></span></td>
+                  <td>Proveedores</td><td></td><td class="tree-saldo">$3.450.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="2205" data-parent="22">
+                  <td><span class="tree-indent-2"><span class="tree-code">2205</span></span></td>
+                  <td>Proveedores nacionales</td>
+                  <td style="text-align:right;"><span class="badge badge-muted">Crédito</span></td>
+                  <td class="tree-saldo">$3.450.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+                <tr class="tree-row level-1" data-key="24" data-parent="2">
+                  <td><span class="tree-indent-1"><button class="tree-toggle open" data-target="24"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button><span class="tree-code">24</span></span></td>
+                  <td>Impuestos por pagar</td><td></td><td class="tree-saldo">$1.120.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="2408" data-parent="24">
+                  <td><span class="tree-indent-2"><span class="tree-code">2408</span></span></td>
+                  <td>IVA por pagar</td>
+                  <td style="text-align:right;"><span class="badge badge-muted">Crédito</span></td>
+                  <td class="tree-saldo">$1.120.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+                <!-- Clase 4 INGRESOS -->
+                <tr class="tree-row level-0" data-key="4" data-parent="">
+                  <td><span class="tree-indent-0"><button class="tree-toggle open" data-target="4"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></button><span class="tree-code">4</span></span></td>
+                  <td>INGRESOS</td><td></td><td class="tree-saldo">$18.450.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-1" data-key="41" data-parent="4">
+                  <td><span class="tree-indent-1"><button class="tree-toggle open" data-target="41"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button><span class="tree-code">41</span></span></td>
+                  <td>Operacionales</td><td></td><td class="tree-saldo">$18.450.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="4135" data-parent="41">
+                  <td><span class="tree-indent-2"><span class="tree-code">4135</span></span></td>
+                  <td>Comercio al por menor</td>
+                  <td style="text-align:right;"><span class="badge badge-muted">Crédito</span></td>
+                  <td class="tree-saldo">$18.450.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+                <!-- Clase 5 GASTOS -->
+                <tr class="tree-row level-0" data-key="5" data-parent="">
+                  <td><span class="tree-indent-0"><button class="tree-toggle open" data-target="5"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></button><span class="tree-code">5</span></span></td>
+                  <td>GASTOS</td><td></td><td class="tree-saldo">$6.400.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-1" data-key="51" data-parent="5">
+                  <td><span class="tree-indent-1"><button class="tree-toggle open" data-target="51"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button><span class="tree-code">51</span></span></td>
+                  <td>Operacionales de administración</td><td></td><td class="tree-saldo">$6.400.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="5105" data-parent="51">
+                  <td><span class="tree-indent-2"><span class="tree-code">5105</span></span></td>
+                  <td>Gastos de personal</td>
+                  <td style="text-align:right;"><span class="badge badge-info">Débito</span></td>
+                  <td class="tree-saldo">$3.600.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="5120" data-parent="51">
+                  <td><span class="tree-indent-2"><span class="tree-code">5120</span></span></td>
+                  <td>Arrendamientos</td>
+                  <td style="text-align:right;"><span class="badge badge-info">Débito</span></td>
+                  <td class="tree-saldo">$2.800.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+                <!-- Clase 6 COSTOS -->
+                <tr class="tree-row level-0" data-key="6" data-parent="">
+                  <td><span class="tree-indent-0"><button class="tree-toggle open" data-target="6"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></button><span class="tree-code">6</span></span></td>
+                  <td>COSTOS</td><td></td><td class="tree-saldo">$7.530.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-1" data-key="61" data-parent="6">
+                  <td><span class="tree-indent-1"><button class="tree-toggle open" data-target="61"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button><span class="tree-code">61</span></span></td>
+                  <td>Costo de ventas</td><td></td><td class="tree-saldo">$7.530.000</td><td></td>
+                </tr>
+                <tr class="tree-row level-2" data-key="6135" data-parent="61">
+                  <td><span class="tree-indent-2"><span class="tree-code">6135</span></span></td>
+                  <td>Comercio al por menor</td>
+                  <td style="text-align:right;"><span class="badge badge-info">Débito</span></td>
+                  <td class="tree-saldo">$7.530.000</td>
+                  <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- ── PANEL LIBROS AUXILIARES ── -->
+        <div id="panel-libros" class="cont-panel">
+          <div class="toolbar" style="margin-bottom:16px;">
+            <select class="toolbar-select">
+              <option>1105 · Caja</option>
+              <option>1110 · Bancos</option>
+              <option>4135 · Ingresos operacionales</option>
+              <option>5105 · Gastos de personal</option>
+            </select>
+            <select class="toolbar-select">
+              <option>Marzo 2025</option>
+              <option>Febrero 2025</option>
+              <option>Enero 2025</option>
+            </select>
+            <button class="btn btn-secondary btn-sm"><i data-lucide="search"></i> Consultar</button>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-ghost btn-sm"><i data-lucide="download"></i> Exportar</button>
+          </div>
+
+          <div class="cont-card">
+            <div class="cont-card-header">
+              <div>
+                <div class="cont-card-title">1105 · Caja — Libro auxiliar</div>
+                <div class="cont-card-sub">Marzo 2025 · Saldo: <strong style="color:var(--success);">$1.445.000</strong></div>
+              </div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="background:var(--alt);border-bottom:1px solid var(--border);">
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Fecha</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Documento</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Tercero</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Débito</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Crédito</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Saldo</th>
+                </tr>
+              </thead>
+              <tbody id="librosBody">
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:9px 18px;font-size:12px;color:var(--muted);">01/03</td><td style="padding:9px 18px;font-size:12px;">Apertura caja</td><td style="padding:9px 18px;font-size:12px;color:var(--muted);">Administración</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--success);font-weight:600;">$200.000</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--muted);">—</td><td style="padding:9px 18px;font-size:12px;text-align:right;font-weight:600;">$200.000</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:9px 18px;font-size:12px;color:var(--muted);">01/03</td><td style="padding:9px 18px;font-size:12px;">FE-1801</td><td style="padding:9px 18px;font-size:12px;">Juan Restrepo</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--success);font-weight:600;">$87.000</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--muted);">—</td><td style="padding:9px 18px;font-size:12px;text-align:right;font-weight:600;">$287.000</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:9px 18px;font-size:12px;color:var(--muted);">02/03</td><td style="padding:9px 18px;font-size:12px;">FE-1805</td><td style="padding:9px 18px;font-size:12px;">Andrea López</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--success);font-weight:600;">$156.000</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--muted);">—</td><td style="padding:9px 18px;font-size:12px;text-align:right;font-weight:600;">$443.000</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:9px 18px;font-size:12px;color:var(--muted);">03/03</td><td style="padding:9px 18px;font-size:12px;">Egreso #45</td><td style="padding:9px 18px;font-size:12px;">Dist. El Valle</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--muted);">—</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--error);font-weight:600;">$450.000</td><td style="padding:9px 18px;font-size:12px;text-align:right;font-weight:600;color:var(--error);">-$7.000</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:9px 18px;font-size:12px;color:var(--muted);">03/03</td><td style="padding:9px 18px;font-size:12px;">FE-1812</td><td style="padding:9px 18px;font-size:12px;">Café El Portal</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--success);font-weight:600;">$320.000</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--muted);">—</td><td style="padding:9px 18px;font-size:12px;text-align:right;font-weight:600;">$313.000</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:9px 18px;font-size:12px;color:var(--muted);">07/03</td><td style="padding:9px 18px;font-size:12px;">FE-1834</td><td style="padding:9px 18px;font-size:12px;">María Rodríguez</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--success);font-weight:600;">$245.000</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--muted);">—</td><td style="padding:9px 18px;font-size:12px;text-align:right;font-weight:600;">$558.000</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:9px 18px;font-size:12px;color:var(--muted);">10/03</td><td style="padding:9px 18px;font-size:12px;">Egreso #67</td><td style="padding:9px 18px;font-size:12px;">Carnes Premium</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--muted);">—</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--error);font-weight:600;">$380.000</td><td style="padding:9px 18px;font-size:12px;text-align:right;font-weight:600;">$178.000</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:9px 18px;font-size:12px;color:var(--muted);">12/03</td><td style="padding:9px 18px;font-size:12px;">FE-1867</td><td style="padding:9px 18px;font-size:12px;">Varios clientes</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--success);font-weight:600;">$892.000</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--muted);">—</td><td style="padding:9px 18px;font-size:12px;text-align:right;font-weight:600;">$1.070.000</td></tr>
+                <tr><td style="padding:9px 18px;font-size:12px;color:var(--muted);">14/03</td><td style="padding:9px 18px;font-size:12px;">Cierre turno</td><td style="padding:9px 18px;font-size:12px;">Arqueo caja</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--success);font-weight:600;">$375.000</td><td style="padding:9px 18px;font-size:12px;text-align:right;color:var(--muted);">—</td><td style="padding:9px 18px;font-size:12px;text-align:right;font-weight:600;color:var(--success);">$1.445.000</td></tr>
+              </tbody>
+              <tfoot>
+                <tr style="background:var(--alt);border-top:2px solid var(--border);">
+                  <td colspan="3" style="padding:10px 18px;font-size:12px;font-weight:600;color:var(--muted);">Totales del período</td>
+                  <td style="padding:10px 18px;font-size:13px;font-weight:700;text-align:right;color:var(--success);">$2.275.000</td>
+                  <td style="padding:10px 18px;font-size:13px;font-weight:700;text-align:right;color:var(--error);">$830.000</td>
+                  <td style="padding:10px 18px;font-size:13px;font-weight:700;text-align:right;color:var(--success);">$1.445.000</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── PANEL CENTRO DE COSTOS ── -->
+        <div id="panel-costos" class="cont-panel">
+          <div class="toolbar" style="margin-bottom:16px;">
+            <select class="toolbar-select"><option>Marzo 2025</option><option>Febrero 2025</option></select>
+            <div class="toolbar-spacer"></div>
+            <button class="btn btn-ghost btn-sm"><i data-lucide="download"></i> Exportar</button>
+          </div>
+
+          <div class="cont-card">
+            <div class="cont-card-header">
+              <div class="cont-card-title">Comparativo por sede — Marzo 2025</div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="background:var(--alt);border-bottom:1px solid var(--border);">
+                  <th style="padding:10px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Centro de costo</th>
+                  <th style="padding:10px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Ingresos</th>
+                  <th style="padding:10px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Gastos</th>
+                  <th style="padding:10px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Utilidad</th>
+                  <th style="padding:10px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Margen %</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:12px 18px;font-size:13px;font-weight:600;">Sede Norte</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$8.200.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$5.100.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;">$3.100.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;"><span style="color:var(--success);font-weight:700;">37.8%</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:12px 18px;font-size:13px;font-weight:600;">Sede Centro</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$6.450.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$3.980.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;">$2.470.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;"><span style="color:var(--success);font-weight:700;">38.3%</span></td>
+                </tr>
+                <tr style="border-bottom:2px solid var(--border);">
+                  <td style="padding:12px 18px;font-size:13px;font-weight:600;">Sede Chapinero</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$3.800.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$2.150.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;">$1.650.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;"><span style="color:var(--success);font-weight:700;">43.4%</span></td>
+                </tr>
+                <tr style="background:var(--alt);">
+                  <td style="padding:12px 18px;font-size:13px;font-weight:700;">Total</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;">$18.450.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;">$11.230.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;">$7.220.000</td>
+                  <td style="padding:12px 18px;font-size:13px;text-align:right;"><span style="color:var(--success);font-weight:700;">39.1%</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── PANEL IMPUESTOS ── -->
+        <div id="panel-impuestos" class="cont-panel">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
+            <div class="kpi-card tone-warning">
+              <div class="kpi-header"><span class="kpi-label">IVA por pagar</span><span class="kpi-icon"><i data-lucide="percent"></i></span></div>
+              <div class="kpi-value">$1.120.000</div>
+              <div class="kpi-helper">Período mar 2025</div>
+            </div>
+            <div class="kpi-card tone-warning">
+              <div class="kpi-header"><span class="kpi-label">ICA</span><span class="kpi-icon"><i data-lucide="building-2"></i></span></div>
+              <div class="kpi-value">$285.000</div>
+              <div class="kpi-helper">Tarifa 0.414%</div>
+            </div>
+            <div class="kpi-card tone-warning">
+              <div class="kpi-header"><span class="kpi-label">Retención en la fuente</span><span class="kpi-icon"><i data-lucide="file-minus"></i></span></div>
+              <div class="kpi-value">$175.000</div>
+              <div class="kpi-helper">Aplicada sobre servicios</div>
+            </div>
+          </div>
+
+          <div class="cont-card">
+            <div class="cont-card-header">
+              <div class="cont-card-title">Obligaciones tributarias</div>
+              <button class="btn btn-ghost btn-sm" onclick="UI.toast({type:'info',title:'Generando declaración...',sub:'Funcionalidad en desarrollo'})">
+                <i data-lucide="file-text"></i> Generar declaración
+              </button>
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="background:var(--alt);border-bottom:1px solid var(--border);">
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Impuesto</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Base gravable</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Tarifa</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;">Valor</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Vencimiento</th>
+                  <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:10px 18px;font-size:13px;font-weight:600;">IVA</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$14.200.000</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;">19%</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;">$1.120.000</td>
+                  <td style="padding:10px 18px;font-size:12px;color:var(--muted);">15/04/2025</td>
+                  <td style="padding:10px 18px;"><span class="badge badge-warning"><span class="dot"></span>Pendiente</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:10px 18px;font-size:13px;font-weight:600;">ICA</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$18.450.000</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;">0.414%</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;">$285.000</td>
+                  <td style="padding:10px 18px;font-size:12px;color:var(--muted);">18/04/2025</td>
+                  <td style="padding:10px 18px;"><span class="badge badge-warning"><span class="dot"></span>Pendiente</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:10px 18px;font-size:13px;font-weight:600;">ReteFuente</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$5.750.000</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;">3.5%</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;">$175.000</td>
+                  <td style="padding:10px 18px;font-size:12px;color:var(--muted);">15/04/2025</td>
+                  <td style="padding:10px 18px;"><span class="badge badge-warning"><span class="dot"></span>Pendiente</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:10px 18px;font-size:13px;font-weight:600;">IVA <span style="font-weight:400;color:var(--muted);">(febrero)</span></td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$12.800.000</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;">19%</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$980.000</td>
+                  <td style="padding:10px 18px;font-size:12px;color:var(--muted);">15/03/2025</td>
+                  <td style="padding:10px 18px;"><span class="badge badge-success"><span class="dot"></span>Pagado</span></td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 18px;font-size:13px;font-weight:600;">ICA <span style="font-weight:400;color:var(--muted);">(febrero)</span></td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$16.100.000</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;">0.414%</td>
+                  <td style="padding:10px 18px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums;">$248.000</td>
+                  <td style="padding:10px 18px;font-size:12px;color:var(--muted);">18/03/2025</td>
+                  <td style="padding:10px 18px;"><span class="badge badge-success"><span class="dot"></span>Pagado</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    // Tab switching
+    document.querySelectorAll('.cont-tab').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('.cont-tab').forEach(function(t){ t.classList.remove('is-active'); });
+        document.querySelectorAll('.cont-panel').forEach(function(p){ p.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        var panel = document.getElementById('panel-' + btn.dataset.ctab);
+        if(panel) panel.classList.add('is-active');
+      });
+    });
+
+    document.getElementById('btnConectarSoftware').addEventListener('click', function(){
+      UI.toast({type:'info', title:'Software contable', sub:'Modal disponible en Mini-Sprint 11.J'});
+    });
+
+    // ── Plan de cuentas: expand/collapse ──
+    document.addEventListener('click', function(e){
+      var btn = e.target.closest('.tree-toggle');
+      if(!btn) return;
+      var target = btn.dataset.target;
+      var isOpen = btn.classList.contains('open');
+      btn.classList.toggle('open', !isOpen);
+      // Toggle direct children
+      document.querySelectorAll('.tree-row[data-parent="'+target+'"]').forEach(function(row){
+        var childKey = row.dataset.key;
+        var nowHidden = isOpen; // if was open, now closing → hide
+        row.classList.toggle('hidden', nowHidden);
+        // Also collapse grandchildren if closing
+        if(nowHidden){
+          document.querySelectorAll('.tree-row[data-parent="'+childKey+'"]').forEach(function(r){ r.classList.add('hidden'); });
+          var childBtn = row.querySelector('.tree-toggle');
+          if(childBtn) childBtn.classList.remove('open');
+        }
+      });
+    });
+
+    // ── Plan de cuentas: search ──
+    var planSearchEl = document.getElementById('planSearch');
+    if(planSearchEl){
+      planSearchEl.addEventListener('input', function(){
+        var q = this.value.toLowerCase().trim();
+        document.querySelectorAll('#planBody .tree-row').forEach(function(row){
+          if(!q){ row.classList.remove('hidden'); return; }
+          var txt = row.textContent.toLowerCase();
+          row.classList.toggle('hidden', !txt.includes(q));
+        });
+      });
+    }
+
+    if(window.lucide) window.lucide.createIcons();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

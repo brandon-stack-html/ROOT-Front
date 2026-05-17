@@ -2,18 +2,23 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pantalla Cocina · KDS · Inventario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Pantalla Cocina · KDS · ROOT</title>
   <!-- Dark por defecto en KDS -->
   <script>document.documentElement.setAttribute('data-theme','dark');</script>
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/kds.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
   <script src="../assets/js/ui.js" defer></script>
 </head>
 <body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
 
 <div class="kds-shell">
 
@@ -47,21 +52,21 @@
         Listos <span class="kds-tab-badge" id="countListos">0</span>
       </button>
 
-      <button class="kds-topbar-btn" title="Configuración" onclick="location.href='config.html'">
+      <button class="kds-topbar-btn" title="Configuración" onclick="location.href='config.html'" aria-label="Configuración">
         <i data-lucide="settings" style="width:16px;height:16px"></i>
       </button>
-      <button class="kds-topbar-btn btn-icon" data-toggle-theme title="Cambiar tema">
+      <button class="kds-topbar-btn btn-icon" data-toggle-theme title="Cambiar tema" aria-label="Cambiar tema">
         <i data-lucide="sun" class="theme-icon-light" style="width:16px;height:16px"></i>
         <i data-lucide="moon" class="theme-icon-dark" style="width:16px;height:16px"></i>
       </button>
-      <button class="kds-topbar-btn" title="Pantalla completa" onclick="toggleFullscreen()">
+      <button class="kds-topbar-btn" title="Pantalla completa" onclick="toggleFullscreen()" aria-label="Pantalla completa">
         <i data-lucide="maximize" style="width:16px;height:16px"></i>
       </button>
     </div>
   </header>
 
   <!-- GRID DE COMANDAS -->
-  <main class="kds-content">
+  <main id="main" class="kds-content">
     <div class="kds-grid" id="kdsGrid">
 
       <!-- #018 | Mesa 3 | URGENTE 14:23 -->
@@ -668,5 +673,6 @@
     updateCounts();
   });
 </script>
+  <script src="../assets/js/nav.js"></script>
 </body>
 </html>

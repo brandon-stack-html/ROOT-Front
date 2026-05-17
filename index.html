@@ -2,11 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inventario POS · Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ROOT · Demo</title>
   <script src="./assets/js/theme.js"></script>
   <link rel="stylesheet" href="./assets/css/tokens.css" />
   <link rel="stylesheet" href="./assets/css/components.css" />
+  <link rel="stylesheet" href="./assets/css/utilities.css">
   <style>
     /* ---------- Landing-only styles ---------- */
     .landing-header {
@@ -30,17 +33,9 @@
       color: var(--text);
       text-decoration: none;
     }
-    .landing-brand-logo {
-      width: 30px;
+    .landing-brand-logo-img {
       height: 30px;
-      border-radius: 7px;
-      background: var(--accent);
-      color: #fff;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
+      width: auto;
     }
     .landing-header-actions {
       display: flex;
@@ -239,11 +234,12 @@
   </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
 
   <header class="landing-header">
     <a href="./index.html" class="landing-brand">
-      <span class="landing-brand-logo">I</span>
-      Inventario
+      <img src="./ROOT.png" class="landing-brand-logo-img" alt="[ROOT]">
     </a>
     <div class="landing-header-actions">
       <a class="landing-header-link" href="#" aria-label="GitHub">
@@ -257,11 +253,11 @@
     </div>
   </header>
 
-  <main>
+  <main id="main">
 
     <!-- ====================== HERO ====================== -->
     <section class="hero">
-      <h1>Inventario POS — Demo del sistema</h1>
+      <h1>ROOT — Demo del sistema</h1>
       <p class="subtitle">7 módulos · ~46 pantallas · navegación completa</p>
       <a href="./backoffice/dashboard.html" class="hero-cta">
         Empezar por el Backoffice
@@ -298,7 +294,7 @@
         <h3>App Mesero</h3>
         <p>App móvil para meseros</p>
         <div class="module-card-meta">
-          <span class="module-card-count">9 pantallas</span>
+          <span class="module-card-count">13 pantallas</span>
           <span class="module-card-arrow"><i data-lucide="arrow-right"></i></span>
         </div>
       </a>
@@ -318,7 +314,17 @@
         <h3>Backoffice</h3>
         <p>Administración del negocio</p>
         <div class="module-card-meta">
-          <span class="module-card-count">20 pantallas</span>
+          <span class="module-card-count">24 pantallas</span>
+          <span class="module-card-arrow"><i data-lucide="arrow-right"></i></span>
+        </div>
+      </a>
+
+      <a href="./backoffice/nomina.html" class="module-card">
+        <span class="module-card-icon"><i data-lucide="wallet"></i></span>
+        <h3>Nómina</h3>
+        <p>Gestión de nómina y adelantos</p>
+        <div class="module-card-meta">
+          <span class="module-card-count">Sprint 13</span>
           <span class="module-card-arrow"><i data-lucide="arrow-right"></i></span>
         </div>
       </a>
@@ -349,7 +355,7 @@
   </main>
 
   <footer>
-    Inventario POS<span class="sep">·</span>Demo v1.0<span class="sep">·</span>2026
+    ROOT<span class="sep">·</span>Demo v1.0<span class="sep">·</span>2026
   </footer>
 
   <script src="./assets/js/ui.js"></script>
@@ -357,5 +363,6 @@
   <script>
     if (window.lucide) window.lucide.createIcons();
   </script>
+  <script src="./assets/js/nav.js"></script>
 </body>
 </html>

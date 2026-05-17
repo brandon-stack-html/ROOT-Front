@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Nómina · Backoffice ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* Modal registrar pago */
+    .nomina-table-wrap { overflow-x: auto; }
+    .nomina-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .nomina-table th {
+      padding: 10px 14px; text-align: left;
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .04em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .nomina-table td {
+      padding: 12px 14px; font-size: 13px; color: var(--text);
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .nomina-table tr:last-child td { border-bottom: none; }
+    .nomina-table tr { cursor: pointer; transition: background .1s; }
+    .nomina-table tr:hover td { background: var(--alt); }
+    .nomina-table .emp-name { font-weight: 600; }
+    .nomina-table .emp-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .nomina-table .num { font-variant-numeric: tabular-nums; }
+    .nomina-table .neto { font-weight: 700; color: var(--text); }
+    .nomina-badge-adv {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+      background: rgba(245,158,11,.12); color: #92400E;
+    }
+    [data-theme="dark"] .nomina-badge-adv { background: rgba(245,158,11,.18); color: #FCD34D; }
+    .period-tag { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600; background: rgba(79,70,229,.1); color: var(--accent); }
+    [data-theme="dark"] .period-tag { background: rgba(79,70,229,.2); }
+
+    /* Filtros */
+    .nomina-filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+    .nomina-search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .nomina-search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--muted); pointer-events: none; }
+    .nomina-search { width: 100%; padding: 8px 10px 8px 32px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-family: var(--ff-base); font-size: 13px; }
+    .nomina-search:focus { outline: none; border-color: var(--accent); }
+    .nomina-select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-family: var(--ff-base); font-size: 13px; cursor: pointer; }
+    .nomina-select:focus { outline: none; border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+<div class="bo-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info">
+          <span class="label">Negocio</span>
+          <span class="name">El Buen Sabor</span>
+        </span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html"    class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html"  class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html"    class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html"      class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html"          class="bo-sidebar-item is-active"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html"        class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos <span class="badge-count" id="sidebarBadge" style="display:none"></span></a>
+        <a href="./nomina-empleado.html"  class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html"     class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info">
+        <span class="name">Juan Camilo</span>
+        <span class="role">Administrador</span>
+      </span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop" id="boBackdrop"></div>
+
+  <!-- CONTENT WRAP -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Nómina</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button" id="btnSucursalTopbar"><i data-lucide="store"></i><span class="label" id="topbarSucursalLabel">Todas las sedes</span></button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar">JC</button>
+      </div>
+    </header>
+
+    <main id="main" class="bo-content">
+
+      <!-- Page header -->
+      <div class="bo-page-header">
+        <div>
+          <div class="bo-page-title">Nómina</div>
+          <div class="bo-page-subtitle" id="subtitlePeriod">Periodo actual · mayo 2026</div>
+        </div>
+        <div class="bo-page-actions">
+          <button class="btn btn-primary" id="btnRegistrarPago" type="button">
+            <i data-lucide="check-circle" style="width:13px;height:13px"></i>
+            Registrar pago
+          </button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card">
+          <div class="kpi-card-head"><span class="kpi-label">Total a pagar</span><div class="kpi-icon-wrap" style="color:var(--accent)"><i data-lucide="wallet" style="width:15px;height:15px"></i></div></div>
+          <div class="kpi-value" id="kpiTotal">—</div>
+          <div class="kpi-delta" id="kpiTotalSub" style="color:var(--muted)">Periodo en curso</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-card-head"><span class="kpi-label">Adelantos pendientes</span><div class="kpi-icon-wrap" style="color:var(--warning)"><i data-lucide="clock" style="width:15px;height:15px"></i></div></div>
+          <div class="kpi-value" id="kpiAdvPend">—</div>
+          <div class="kpi-delta" id="kpiAdvMonto" style="color:var(--muted)">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-card-head"><span class="kpi-label">Empleados activos</span><div class="kpi-icon-wrap" style="color:var(--success)"><i data-lucide="users" style="width:15px;height:15px"></i></div></div>
+          <div class="kpi-value" id="kpiEmps">—</div>
+          <div class="kpi-delta" style="color:var(--muted)" id="kpiEmpsSubs">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-card-head"><span class="kpi-label">Próximo corte</span><div class="kpi-icon-wrap" style="color:var(--info)"><i data-lucide="calendar" style="width:15px;height:15px"></i></div></div>
+          <div class="kpi-value" id="kpiCorte">—</div>
+          <div class="kpi-delta" id="kpiCorteSub" style="color:var(--muted)">—</div>
+        </div>
+      </div>
+
+      <!-- Filtros + tabla -->
+      <div class="dash-card">
+        <div class="nomina-filters">
+          <div class="nomina-search-wrap">
+            <i data-lucide="search"></i>
+            <input type="search" class="nomina-search" id="searchInput" placeholder="Buscar empleado…" />
+          </div>
+          <select class="nomina-select" id="sucursalFilter">
+            <option value="">Todas las sedes</option>
+            <option value="suc-norte">Sede Norte</option>
+            <option value="suc-sur">Sede Sur</option>
+          </select>
+          <select class="nomina-select" id="periodicidadFilter">
+            <option value="">Todas las periodicidades</option>
+            <option value="quincenal">Quincenal</option>
+            <option value="mensual">Mensual</option>
+          </select>
+        </div>
+
+        <div class="nomina-table-wrap">
+          <table class="nomina-table" id="nominaTable">
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>Sucursal</th>
+                <th>Salario base</th>
+                <th>Periodicidad</th>
+                <th>Devengado</th>
+                <th>Adelantos</th>
+                <th>Neto a pagar</th>
+              </tr>
+            </thead>
+            <tbody id="nominaTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Modal registrar pago -->
+<div class="modal-backdrop" id="modalPagoBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Registrar pago" style="max-width:420px">
+    <div class="modal-header">
+      <div class="modal-title">Registrar pago de nómina</div>
+      <button class="modal-close" type="button" id="modalPagoClose" aria-label="Cerrar"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Registra el pago del periodo actual para un empleado. Esto marcará la nómina como pagada.</p>
+      <div class="form-group">
+        <label class="form-label">Empleado</label>
+        <select class="form-select" id="pagoEmpSelect"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Método de pago</label>
+        <select class="form-select" id="pagoMetodo">
+          <option value="transferencia">Transferencia bancaria</option>
+          <option value="efectivo">Efectivo</option>
+          <option value="cheque">Cheque</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nota (opcional)</label>
+        <input type="text" class="form-input" id="pagoNota" placeholder="Ej: pagado con nómina mayo Q2" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" type="button" id="modalPagoCancelar">Cancelar</button>
+      <button class="btn btn-primary" type="button" id="modalPagoConfirmar">
+        <i data-lucide="check" style="width:13px;height:13px"></i>
+        Confirmar pago
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/constants.js"></script>
+<script src="../assets/js/data/nomina-mock.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) window.lucide.createIcons();
+
+  var NM = window.NominaMock;
+  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  function fmtDate(str) { var d = new Date(str + 'T12:00:00'); return d.getDate() + ' ' + meses[d.getMonth()]; }
+
+  var filtrSuc = '';
+  var filtrPer = '';
+  var filtrQ   = '';
+
+  function render() {
+    var state = NM.loadState();
+    var emps  = state.empleados;
+    var adv   = state.adelantos;
+    var per   = state.periodos;
+    var suc   = state.sucursales;
+
+    // KPI: adelantos pendientes
+    var advPend = adv.filter(function(a){ return a.estado === 'pendiente'; });
+    var advPendMonto = advPend.reduce(function(s,a){ return s + a.monto_solicitado; }, 0);
+    document.getElementById('kpiAdvPend').textContent = advPend.length;
+    document.getElementById('kpiAdvMonto').textContent = window.formatCOP(advPendMonto) + ' en solicitudes';
+
+    // Badge sidebar
+    var badge = document.getElementById('sidebarBadge');
+    if (advPend.length > 0) { badge.textContent = advPend.length; badge.style.display = 'inline-flex'; }
+
+    // Empleados filtrados
+    var q = document.getElementById('searchInput').value.toLowerCase();
+    var sucVal = document.getElementById('sucursalFilter').value;
+    var perVal = document.getElementById('periodicidadFilter').value;
+
+    var empsFiltrados = emps.filter(function(e){
+      if (sucVal && e.sucursal_id !== sucVal) return false;
+      if (perVal && e.periodicidad !== perVal) return false;
+      if (q && e.nombre.toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+
+    // KPI totales
+    var totalNeto = 0;
+    empsFiltrados.forEach(function(e){
+      var perEmp = NM.periodoCurrent(e, per);
+      if (!perEmp) return;
+      var devengado = NM.calcularDevengado(e, perEmp);
+      var advEmp = adv.filter(function(a){
+        return a.empleado_id === e.id && a.periodo_id === perEmp.id &&
+               (a.estado === 'aprobada' || a.estado === 'pagada' || a.estado === 'descontada');
+      }).reduce(function(s,a){ return s + (a.monto_aprobado || 0); }, 0);
+      totalNeto += devengado - advEmp;
+    });
+
+    document.getElementById('kpiTotal').textContent = window.formatCOP(totalNeto);
+    document.getElementById('kpiTotalSub').textContent = empsFiltrados.length + ' empleados incluidos';
+    document.getElementById('kpiEmps').textContent = emps.length;
+    document.getElementById('kpiEmpsSubs').textContent =
+      emps.filter(function(e){ return e.sucursal_id === 'suc-norte'; }).length + ' N · ' +
+      emps.filter(function(e){ return e.sucursal_id === 'suc-sur'; }).length + ' S';
+
+    // Próximo corte (quincenal → 31 mayo, mensual → 31 mayo)
+    document.getElementById('kpiCorte').textContent = '31 may';
+    document.getElementById('kpiCorteSub').textContent = 'Fin del periodo';
+
+    // Tabla
+    var tbody = document.getElementById('nominaTbody');
+    tbody.innerHTML = '';
+    empsFiltrados.forEach(function(e){
+      var perEmp = NM.periodoCurrent(e, per);
+      var devengado  = perEmp ? NM.calcularDevengado(e, perEmp) : 0;
+      var advTotal   = perEmp ? adv.filter(function(a){
+        return a.empleado_id === e.id && a.periodo_id === perEmp.id &&
+               (a.estado === 'aprobada' || a.estado === 'pagada' || a.estado === 'descontada');
+      }).reduce(function(s,a){ return s + (a.monto_aprobado || 0); }, 0) : 0;
+      var neto       = devengado - advTotal;
+      var sucNombre  = (suc.find(function(s){ return s.id === e.sucursal_id; }) || {}).nombre || e.sucursal_id;
+      var advPendEmp = adv.filter(function(a){ return a.empleado_id === e.id && a.estado === 'pendiente'; });
+
+      var tr = document.createElement('tr');
+      tr.dataset.empId = e.id;
+      tr.innerHTML =
+        '<td><div class="emp-name">' + e.nombre + '</div><div class="emp-meta">Ingreso: ' + e.fecha_ingreso + '</div></td>' +
+        '<td>' + sucNombre + '</td>' +
+        '<td class="num">' + window.formatCOP(e.salario_base) + '</td>' +
+        '<td><span class="period-tag">' + (e.periodicidad === 'quincenal' ? 'Quincenal' : 'Mensual') + '</span></td>' +
+        '<td class="num">' + window.formatCOP(devengado) + '</td>' +
+        '<td>' + (advTotal > 0 ? '<span class="nomina-badge-adv">−' + window.formatCOP(advTotal) + '</span>' : '<span style="color:var(--muted)">$0</span>') +
+               (advPendEmp.length > 0 ? ' <span style="font-size:10px;color:var(--warning)">+' + advPendEmp.length + ' pend.</span>' : '') + '</td>' +
+        '<td class="num neto">' + window.formatCOP(neto) + '</td>';
+      tr.addEventListener('click', function(){
+        window.location.href = './nomina-empleado.html?id=' + e.id;
+      });
+      tbody.appendChild(tr);
+    });
+
+    if (empsFiltrados.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">Sin resultados</td></tr>';
+    }
+  }
+
+  document.getElementById('searchInput').addEventListener('input', render);
+  document.getElementById('sucursalFilter').addEventListener('change', render);
+  document.getElementById('periodicidadFilter').addEventListener('change', render);
+
+  // Modal pago
+  function openModalPago() {
+    var state = NM.loadState();
+    var sel = document.getElementById('pagoEmpSelect');
+    sel.innerHTML = '';
+    state.empleados.forEach(function(e){
+      var opt = document.createElement('option');
+      opt.value = e.id;
+      opt.textContent = e.nombre;
+      sel.appendChild(opt);
+    });
+    document.getElementById('modalPagoBackdrop').classList.add('is-open');
+    if (window.lucide) window.lucide.createIcons();
+  }
+  function closeModalPago() { document.getElementById('modalPagoBackdrop').classList.remove('is-open'); }
+
+  document.getElementById('btnRegistrarPago').addEventListener('click', openModalPago);
+  document.getElementById('modalPagoClose').addEventListener('click', closeModalPago);
+  document.getElementById('modalPagoCancelar').addEventListener('click', closeModalPago);
+  document.getElementById('modalPagoConfirmar').addEventListener('click', function(){
+    var empId  = document.getElementById('pagoEmpSelect').value;
+    var metodo = document.getElementById('pagoMetodo').value;
+    var state  = NM.loadState();
+    var emp    = state.empleados.find(function(e){ return e.id === empId; });
+    var per    = NM.periodoCurrent(emp, state.periodos);
+    if (!per) { UI.toast({ type: 'error', title: 'Sin periodo activo' }); return; }
+    var devengado = NM.calcularDevengado(emp, per);
+    var advDesc   = state.adelantos.filter(function(a){
+      return a.empleado_id === emp.id && a.periodo_id === per.id &&
+             (a.estado === 'aprobada' || a.estado === 'pagada');
+    }).reduce(function(s,a){ return s + (a.monto_aprobado || 0); }, 0);
+    var pago = {
+      id: 'pay-' + Date.now(),
+      empleado_id: emp.id, sucursal_id: emp.sucursal_id, periodo_id: per.id,
+      bruto: devengado, adelantos_descontados: advDesc, neto: devengado - advDesc,
+      fecha_pago: new Date().toISOString().slice(0,10), metodo: metodo,
+    };
+    state.pagos.push(pago);
+    NM.saveState(state);
+    closeModalPago();
+    UI.toast({ type: 'success', title: 'Pago registrado', body: emp.nombre + ' — ' + window.formatCOP(pago.neto) });
+    render();
+  });
+
+  document.getElementById('modalPagoBackdrop').addEventListener('click', function(e){
+    if (e.target === this) closeModalPago();
+  });
+
+  render();
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

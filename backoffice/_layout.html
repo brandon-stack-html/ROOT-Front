@@ -5,27 +5,31 @@
        - <title> de la pestaña
        - .is-active en el item correcto del sidebar
        - .bo-breadcrumb (texto del path actual)
-       - <main class="bo-content"> con el contenido específico de la página
+       - <main id="main" class="bo-content"> con el contenido específico de la página
      ============================================================================ -->
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Backoffice · Inventario POS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Backoffice · ROOT</title>
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
 </head>
 <body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
   <div class="bo-shell">
 
     <!-- ====================== SIDEBAR ====================== -->
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="bo-sidebar-logo">I</span>
-          <span class="bo-sidebar-brand-name">Inventario</span>
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -75,6 +79,12 @@
         </div>
 
         <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
           <div class="bo-sidebar-group-title">Finanzas</div>
           <a href="./facturacion-dian.html" class="bo-sidebar-item">
             <i data-lucide="file-text"></i>Facturación DIAN
@@ -97,6 +107,9 @@
           </a>
           <a href="./roles.html" class="bo-sidebar-item">
             <i data-lucide="shield"></i>Roles
+          </a>
+          <a href="./integraciones.html" class="bo-sidebar-item">
+            <i data-lucide="plug"></i>Integraciones
           </a>
         </div>
 
@@ -182,5 +195,6 @@
   <script>
     if (window.lucide) window.lucide.createIcons();
   </script>
+  <script src="../assets/js/nav.js"></script>
 </body>
 </html>

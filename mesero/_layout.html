@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     Plantilla App Mesero móvil (Sprint 7).
+     COPIAR a [pagina].html y rellenar:
+       - <title> de la pestaña
+       - Topbar (left/center/right)
+       - <main id="main" class="mesero-content"> con el contenido específico
+       - Bottom-nav: marcar la pestaña activa correspondiente
+     Sin bottom-nav en login.html y cobro.html (flujos modales / pre-login).
+     ============================================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>App Mesero · ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <!-- ====================== STATUS BAR (iOS look) ====================== -->
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <!-- signal / wifi / battery -->
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <!-- ====================== BODY INNER ====================== -->
+      <div class="mesero-body-inner">
+
+        <!-- ----- TOPBAR (placeholder) ----- -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side">
+            <!-- Botón back o avatar -->
+          </div>
+          <div class="mesero-topbar-center is-stacked">
+            <div class="mesero-topbar-title">Título</div>
+            <div class="mesero-topbar-subtitle">Subtítulo</div>
+          </div>
+          <div class="mesero-topbar-side">
+            <!-- Acción derecha -->
+          </div>
+        </header>
+
+        <!-- ----- CONTENT ----- -->
+        <main class="mesero-content">
+          <!-- Reemplazar este placeholder con el contenido real -->
+          <div style="padding: 18px;">
+            <p style="font-size: 14px; color: var(--muted); line-height: 1.5;">
+              Plantilla del mesero. Copiá este archivo, rellená la topbar, el contenido
+              y marcá la pestaña activa del bottom-nav.
+            </p>
+          </div>
+        </main>
+
+        <!-- ----- BOTTOM NAV ----- -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="layout-grid"></i>
+            </span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="clipboard-list"></i>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Nómina</span>
+          </a>
+                    <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <!-- ====================== HOME INDICATOR ====================== -->
+      <div class="mesero-home-indicator"></div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

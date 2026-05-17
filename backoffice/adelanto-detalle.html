@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Detalle adelanto · Backoffice ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* Detail layout: sidebar + main with a drawer */
+    .adv-detail-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start; }
+    @media (max-width: 960px) { .adv-detail-grid { grid-template-columns: 1fr; } }
+
+    /* Drawer panel */
+    .adv-drawer {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .adv-drawer-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--alt);
+    }
+    .adv-drawer-amount { font-size: 30px; font-weight: 700; color: var(--text); letter-spacing: -.03em; font-variant-numeric: tabular-nums; margin-bottom: 6px; }
+    .adv-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .adv-badge.pendiente  { background: rgba(245,158,11,.12); color: #92400E; }
+    .adv-badge.aprobada   { background: rgba(59,130,246,.12);  color: #1E40AF; }
+    .adv-badge.rechazada  { background: rgba(239,68,68,.12);   color: #991B1B; }
+    .adv-badge.pagada     { background: rgba(16,185,129,.12);  color: #065F46; }
+    .adv-badge.descontada { background: rgba(113,113,122,.12); color: var(--muted); }
+    [data-theme="dark"] .adv-badge.pendiente  { background: rgba(245,158,11,.18); color: #FCD34D; }
+    [data-theme="dark"] .adv-badge.aprobada   { background: rgba(59,130,246,.18); color: #93C5FD; }
+    [data-theme="dark"] .adv-badge.rechazada  { background: rgba(239,68,68,.18); color: #FCA5A5; }
+    [data-theme="dark"] .adv-badge.pagada     { background: rgba(16,185,129,.18); color: #6EE7B7; }
+    [data-theme="dark"] .adv-badge.descontada { background: rgba(113,113,122,.18); color: var(--muted); }
+
+    .adv-drawer-body { padding: 0; }
+    .adv-detail-section { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .adv-detail-section:last-child { border-bottom: none; }
+    .adv-detail-section-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+    .adv-detail-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+    .adv-detail-row .label { color: var(--muted); }
+    .adv-detail-row .val   { font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+
+    /* Acciones en drawer */
+    .adv-drawer-actions { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+
+    /* Timeline panel (izquierdo) */
+    .adv-timeline-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .adv-timeline-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+    .tl-item { display: flex; gap: 14px; padding: 6px 0; }
+    .tl-line { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .tl-dot  { width: 12px; height: 12px; border-radius: 6px; background: var(--border); border: 2px solid var(--bg); box-shadow: 0 0 0 1.5px var(--border); flex-shrink: 0; margin-top: 2px; }
+    .tl-dot.active { background: var(--accent); box-shadow: 0 0 0 1.5px var(--accent); }
+    .tl-dot.success { background: var(--success); box-shadow: 0 0 0 1.5px var(--success); }
+    .tl-dot.error   { background: var(--error);   box-shadow: 0 0 0 1.5px var(--error); }
+    .tl-connector { width: 2px; flex: 1; background: var(--border); min-height: 20px; }
+    .tl-content  { flex: 1; padding-bottom: 8px; }
+    .tl-label    { font-size: 14px; font-weight: 600; color: var(--text); }
+    .tl-date     { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .tl-actor    { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .tl-nota     { font-size: 12px; color: var(--text); margin-top: 4px; padding: 6px 10px; background: var(--alt); border-radius: 6px; border-left: 3px solid var(--accent); }
+
+    /* Empleado info card */
+    .emp-info-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+    .emp-info-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+    .emp-info-name   { font-size: 15px; font-weight: 700; color: var(--text); }
+    .emp-info-meta   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .emp-info-link   { font-size: 12px; color: var(--accent); text-decoration: none; font-weight: 600; margin-top: 4px; display: inline-block; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+<div class="bo-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html"    class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html"  class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html"    class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html"      class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html"         class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html"       class="bo-sidebar-item is-active"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html"     class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info"><span class="name">Juan Camilo</span><span class="role">Administrador</span></span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop" id="boBackdrop"></div>
+
+  <!-- CONTENT WRAP -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+      <nav class="bo-breadcrumb">
+        <a href="./adelantos.html" class="bo-breadcrumb-item" style="text-decoration:none;color:inherit">Adelantos</a>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active" id="breadcrumbId">Detalle</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" aria-label="Notificaciones"><i data-lucide="bell"></i></button>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar">JC</button>
+      </div>
+    </header>
+
+    <main id="main" class="bo-content">
+
+      <div class="bo-page-header">
+        <div>
+          <div class="bo-page-title">Detalle del adelanto</div>
+          <div class="bo-page-subtitle" id="pageSubtitle">—</div>
+        </div>
+        <a href="./adelantos.html" class="btn btn-secondary">
+          <i data-lucide="arrow-left" style="width:13px;height:13px"></i>
+          Volver a adelantos
+        </a>
+      </div>
+
+      <!-- Empleado info -->
+      <div class="emp-info-card" id="empInfoCard">
+        <div class="emp-info-avatar" id="empAvatar">—</div>
+        <div>
+          <div class="emp-info-name" id="empName">—</div>
+          <div class="emp-info-meta" id="empMeta">—</div>
+          <a class="emp-info-link" id="empLink" href="#">Ver perfil →</a>
+        </div>
+      </div>
+
+      <div class="adv-detail-grid">
+        <!-- Izquierda: Timeline -->
+        <div>
+          <div class="adv-timeline-card">
+            <div class="adv-timeline-title">Historial de transiciones</div>
+            <div id="timeline"></div>
+          </div>
+        </div>
+
+        <!-- Derecha: Drawer detalle -->
+        <div class="adv-drawer">
+          <div class="adv-drawer-header">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+              <span class="adv-badge" id="advBadge">—</span>
+            </div>
+            <div class="adv-drawer-amount" id="advAmount">—</div>
+          </div>
+          <div class="adv-drawer-body">
+            <div class="adv-detail-section">
+              <div class="adv-detail-section-title">Solicitud</div>
+              <div class="adv-detail-row"><span class="label">Motivo</span><span class="val" id="advMotivo">—</span></div>
+              <div class="adv-detail-row"><span class="label">Solicitado</span><span class="val" id="advSolicitado">—</span></div>
+              <div class="adv-detail-row"><span class="label">Aprobado</span><span class="val" id="advAprobado">—</span></div>
+              <div class="adv-detail-row" id="advNotaRow"><span class="label">Nota admin</span><span class="val" id="advNota">—</span></div>
+            </div>
+            <div class="adv-detail-section">
+              <div class="adv-detail-section-title">Contexto del periodo</div>
+              <div class="adv-detail-row"><span class="label">Periodo</span><span class="val" id="advPeriodo">—</span></div>
+              <div class="adv-detail-row"><span class="label">Devengado al solicitar</span><span class="val" id="advDevengado">—</span></div>
+              <div class="adv-detail-row"><span class="label">% del devengado</span><span class="val" id="advPct">—</span></div>
+            </div>
+          </div>
+          <div class="adv-drawer-actions" id="advAcciones"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/constants.js"></script>
+<script src="../assets/js/data/nomina-mock.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) window.lucide.createIcons();
+
+  var NM     = window.NominaMock;
+  var LABELS = NM.ESTADO_LABELS;
+  var meses  = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  function fmtDate(str){ if (!str) return '—'; var d = new Date(str); return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear(); }
+  function fmtDateTime(str){ if (!str) return '—'; var d = new Date(str); return fmtDate(str) + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+
+  var urlParams = new URLSearchParams(window.location.search);
+  var advId = urlParams.get('id') || 'adv-001';
+
+  function renderPage() {
+    var state = NM.loadState();
+    var adv   = state.adelantos.find(function(a){ return a.id === advId; });
+    if (!adv) { document.getElementById('pageSubtitle').textContent = 'Adelanto no encontrado'; return; }
+
+    var emp = state.empleados.find(function(e){ return e.id === adv.empleado_id; }) || {};
+    var per = state.periodos.find(function(p){ return p.id === adv.periodo_id; });
+    var suc = state.sucursales.find(function(s){ return s.id === adv.sucursal_id; }) || {};
+    var devengado = per ? NM.calcularDevengado(emp, per) : 0;
+    var pct = devengado > 0 ? Math.round((adv.monto_solicitado / devengado) * 100) : 0;
+
+    // Breadcrumb + subtitle
+    document.getElementById('breadcrumbId').textContent = advId.toUpperCase();
+    document.getElementById('pageSubtitle').textContent = 'Solicitud del ' + fmtDate(adv.fecha_solicitud);
+
+    // Empleado card
+    var initials = emp.nombre ? emp.nombre.split(' ').map(function(w){ return w[0]; }).slice(0,2).join('').toUpperCase() : '?';
+    document.getElementById('empAvatar').textContent = initials;
+    document.getElementById('empName').textContent   = emp.nombre || '—';
+    document.getElementById('empMeta').textContent   = 'Mesero · ' + (suc.nombre || adv.sucursal_id);
+    document.getElementById('empLink').href = './nomina-empleado.html?id=' + emp.id;
+
+    // Drawer header
+    document.getElementById('advBadge').className   = 'adv-badge ' + adv.estado;
+    document.getElementById('advBadge').textContent = LABELS[adv.estado] || adv.estado;
+    document.getElementById('advAmount').textContent = window.formatCOP(adv.monto_solicitado);
+
+    // Drawer body
+    document.getElementById('advMotivo').textContent    = adv.motivo || 'Sin especificar';
+    document.getElementById('advSolicitado').textContent = window.formatCOP(adv.monto_solicitado);
+    document.getElementById('advAprobado').textContent  = adv.monto_aprobado != null ? window.formatCOP(adv.monto_aprobado) : '—';
+    var notaRow = document.getElementById('advNotaRow');
+    if (adv.nota_admin) { notaRow.style.display = 'flex'; document.getElementById('advNota').textContent = adv.nota_admin; }
+    else notaRow.style.display = 'none';
+
+    document.getElementById('advPeriodo').textContent   = per ? per.inicio + ' al ' + per.fin : '—';
+    document.getElementById('advDevengado').textContent = window.formatCOP(devengado);
+    document.getElementById('advPct').textContent       = pct + '%';
+
+    // Acciones según estado
+    var accionesEl = document.getElementById('advAcciones');
+    accionesEl.innerHTML = '';
+    if (adv.estado === 'aprobada') {
+      var btnPagar = document.createElement('button');
+      btnPagar.type = 'button';
+      btnPagar.className = 'btn btn-primary';
+      btnPagar.innerHTML = '<i data-lucide="check-circle" style="width:13px;height:13px"></i> Marcar como pagada';
+      btnPagar.addEventListener('click', function(){
+        if (!confirm('¿Confirmas que se entregó ' + window.formatCOP(adv.monto_aprobado) + ' a ' + emp.nombre + '?')) return;
+        NM.marcarPagada(advId);
+        UI.toast({ type: 'success', title: 'Marcado como pagado' });
+        renderPage();
+        if (window.lucide) window.lucide.createIcons();
+      });
+      accionesEl.appendChild(btnPagar);
+    }
+    if (adv.estado === 'pagada') {
+      var btnDescontar = document.createElement('button');
+      btnDescontar.type = 'button';
+      btnDescontar.className = 'btn btn-secondary';
+      btnDescontar.innerHTML = '<i data-lucide="minus-circle" style="width:13px;height:13px"></i> Marcar como descontada';
+      btnDescontar.addEventListener('click', function(){
+        if (!confirm('¿Confirmas que el adelanto ya fue descontado de la nómina de ' + emp.nombre + '?')) return;
+        NM.marcarDescontada(advId);
+        UI.toast({ type: 'success', title: 'Marcado como descontado' });
+        renderPage();
+        if (window.lucide) window.lucide.createIcons();
+      });
+      accionesEl.appendChild(btnDescontar);
+    }
+    if (adv.estado === 'pagada' || adv.estado === 'descontada') {
+      var btnPdf = document.createElement('button');
+      btnPdf.type = 'button';
+      btnPdf.className = 'btn btn-secondary';
+      btnPdf.innerHTML = '<i data-lucide="download" style="width:13px;height:13px"></i> Descargar comprobante';
+      btnPdf.addEventListener('click', function(){
+        if (window.generarComprobante) window.generarComprobante(advId);
+        else UI.toast({ type: 'info', title: 'Comprobante', body: 'Generando PDF…' });
+      });
+      accionesEl.appendChild(btnPdf);
+    }
+
+    // Timeline
+    var tl = document.getElementById('timeline');
+    tl.innerHTML = '';
+    var transiciones = adv.transiciones || [];
+    transiciones.forEach(function(t, i){
+      var isLast = i === transiciones.length - 1;
+      var label  = t.a ? (LABELS[t.a] || t.a) : 'Creado';
+      var dotCls = isLast
+        ? (adv.estado === 'rechazada' ? 'error' : adv.estado === 'pagada' || adv.estado === 'descontada' ? 'success' : 'active')
+        : '';
+      var actorLabel = t.actor === 'admin-001' ? 'Admin' : t.actor ? 'Empleado' : '';
+      var item = document.createElement('div');
+      item.className = 'tl-item';
+      item.innerHTML =
+        '<div class="tl-line">' +
+          '<div class="tl-dot ' + dotCls + '"></div>' +
+          (isLast ? '' : '<div class="tl-connector"></div>') +
+        '</div>' +
+        '<div class="tl-content">' +
+          '<div class="tl-label">' + label + '</div>' +
+          '<div class="tl-date">' + fmtDateTime(t.fecha) + '</div>' +
+          (actorLabel ? '<div class="tl-actor">Por: ' + actorLabel + '</div>' : '') +
+          (t.nota ? '<div class="tl-nota">"' + t.nota + '"</div>' : '') +
+        '</div>';
+      tl.appendChild(item);
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  renderPage();
+</script>
+  <script src="../assets/js/comprobante.js"></script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

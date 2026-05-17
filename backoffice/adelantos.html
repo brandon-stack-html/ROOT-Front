@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Adelantos · Backoffice ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    .adv-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 20px; overflow-x: auto; scrollbar-width: none; }
+    .adv-tabs::-webkit-scrollbar { display: none; }
+    .adv-tab {
+      padding: 10px 16px; font-size: 13px; font-weight: 600;
+      color: var(--muted); border: none; background: transparent;
+      cursor: pointer; font-family: var(--ff-base);
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      white-space: nowrap; display: flex; align-items: center; gap: 6px;
+      transition: color .15s;
+    }
+    .adv-tab.is-active { color: var(--accent); border-bottom-color: var(--accent); }
+    .adv-tab-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 18px; height: 18px; border-radius: 9px; padding: 0 5px;
+      font-size: 10px; font-weight: 700;
+      background: var(--alt); color: var(--muted);
+    }
+    .adv-tab.is-active .adv-tab-count { background: var(--accent); color: #fff; }
+
+    .adv-table-wrap { overflow-x: auto; }
+    .adv-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    .adv-table th { padding: 9px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .adv-table td { padding: 12px 14px; font-size: 13px; color: var(--text); border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .adv-table tr:last-child td { border-bottom: none; }
+    .adv-table .emp-name { font-weight: 600; }
+    .adv-table .emp-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .adv-table .num { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .adv-actions { display: flex; gap: 6px; }
+
+    .adv-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .adv-badge.pendiente  { background: rgba(245,158,11,.12); color: #92400E; }
+    .adv-badge.aprobada   { background: rgba(59,130,246,.12);  color: #1E40AF; }
+    .adv-badge.rechazada  { background: rgba(239,68,68,.12);   color: #991B1B; }
+    .adv-badge.pagada     { background: rgba(16,185,129,.12);  color: #065F46; }
+    .adv-badge.descontada { background: rgba(113,113,122,.12); color: var(--muted); }
+    .adv-badge.borrador   { background: rgba(113,113,122,.1);  color: var(--muted); }
+    [data-theme="dark"] .adv-badge.pendiente  { background: rgba(245,158,11,.18); color: #FCD34D; }
+    [data-theme="dark"] .adv-badge.aprobada   { background: rgba(59,130,246,.18); color: #93C5FD; }
+    [data-theme="dark"] .adv-badge.rechazada  { background: rgba(239,68,68,.18); color: #FCA5A5; }
+    [data-theme="dark"] .adv-badge.pagada     { background: rgba(16,185,129,.18); color: #6EE7B7; }
+    [data-theme="dark"] .adv-badge.descontada { background: rgba(113,113,122,.18); color: var(--muted); }
+
+    .adv-pct { font-size: 11px; color: var(--muted); }
+    .adv-link { color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 600; cursor: pointer; background: none; border: none; font-family: var(--ff-base); padding: 0; }
+    .adv-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+<div class="bo-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html"    class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html"  class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html"    class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html"      class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html"         class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html"       class="bo-sidebar-item is-active"><i data-lucide="clock"></i>Adelantos <span class="badge-count" id="sidebarBadge" style="display:none"></span></a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html"     class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info"><span class="name">Juan Camilo</span><span class="role">Administrador</span></span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop" id="boBackdrop"></div>
+
+  <!-- CONTENT WRAP -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Nómina</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Adelantos</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" aria-label="Notificaciones"><i data-lucide="bell"></i></button>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar">JC</button>
+      </div>
+    </header>
+
+    <main id="main" class="bo-content">
+      <div class="bo-page-header">
+        <div>
+          <div class="bo-page-title">Adelantos</div>
+          <div class="bo-page-subtitle">Gestión de solicitudes de adelanto salarial</div>
+        </div>
+      </div>
+
+      <!-- Tabs por estado -->
+      <div class="adv-tabs" id="advTabs">
+        <button type="button" class="adv-tab is-active" data-estado="pendiente">
+          Pendientes <span class="adv-tab-count" id="cnt-pendiente">0</span>
+        </button>
+        <button type="button" class="adv-tab" data-estado="aprobada">
+          Aprobadas <span class="adv-tab-count" id="cnt-aprobada">0</span>
+        </button>
+        <button type="button" class="adv-tab" data-estado="pagada">
+          Pagadas <span class="adv-tab-count" id="cnt-pagada">0</span>
+        </button>
+        <button type="button" class="adv-tab" data-estado="rechazada">
+          Rechazadas <span class="adv-tab-count" id="cnt-rechazada">0</span>
+        </button>
+        <button type="button" class="adv-tab" data-estado="">
+          Todas <span class="adv-tab-count" id="cnt-todas">0</span>
+        </button>
+      </div>
+
+      <div class="dash-card">
+        <div class="adv-table-wrap">
+          <table class="adv-table">
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>Sucursal</th>
+                <th>Monto</th>
+                <th>% Devengado</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="advTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal Aprobar -->
+<div class="modal-backdrop" id="modalAprobarBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Aprobar adelanto" style="max-width:400px">
+    <div class="modal-header">
+      <div class="modal-title">Aprobar adelanto</div>
+      <button class="modal-close" type="button" id="aprobarClose"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;" id="aprobarInfo">—</div>
+      <div class="form-group">
+        <label class="form-label">Monto a entregar (máx. solicitado)</label>
+        <input type="number" class="form-input" id="aprobarMonto" min="1" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nota (opcional)</label>
+        <input type="text" class="form-input" id="aprobarNota" placeholder="Nota para el empleado…" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" type="button" id="aprobarCancelar">Cancelar</button>
+      <button class="btn btn-primary" type="button" id="aprobarConfirmar">
+        <i data-lucide="check" style="width:13px;height:13px"></i>
+        Aprobar y notificar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Rechazar -->
+<div class="modal-backdrop" id="modalRechazarBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Rechazar adelanto" style="max-width:400px">
+    <div class="modal-header">
+      <div class="modal-title">Rechazar adelanto</div>
+      <button class="modal-close" type="button" id="rechazarClose"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;" id="rechazarInfo">—</div>
+      <div class="form-group">
+        <label class="form-label">Motivo del rechazo <span style="color:var(--error)">*</span></label>
+        <textarea class="form-input" id="rechazarMotivo" rows="3" placeholder="Explica el motivo del rechazo…" style="resize:vertical"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" type="button" id="rechazarCancelar">Cancelar</button>
+      <button class="btn btn-destructive" type="button" id="rechazarConfirmar">
+        <i data-lucide="x-circle" style="width:13px;height:13px"></i>
+        Rechazar solicitud
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/constants.js"></script>
+<script src="../assets/js/data/nomina-mock.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) window.lucide.createIcons();
+
+  var NM = window.NominaMock;
+  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  function fmtDate(str) { if (!str) return '—'; var d = new Date(str); return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear(); }
+
+  var estadoActivo = 'pendiente';
+  var LABELS = NM.ESTADO_LABELS;
+
+  var advActual = null; // adelanto seleccionado para modal
+
+  function render() {
+    var state = NM.loadState();
+    var adv   = state.adelantos.filter(function(a){ return a.estado !== 'borrador'; });
+    var emps  = state.empleados;
+    var suc   = state.sucursales;
+    var per   = state.periodos;
+
+    // Contadores tabs
+    ['pendiente','aprobada','pagada','rechazada'].forEach(function(e){
+      var cnt = adv.filter(function(a){ return a.estado === e; }).length;
+      document.getElementById('cnt-' + e).textContent = cnt;
+    });
+    document.getElementById('cnt-todas').textContent = adv.length;
+
+    // Badge sidebar
+    var pend = adv.filter(function(a){ return a.estado === 'pendiente'; }).length;
+    var badge = document.getElementById('sidebarBadge');
+    if (pend > 0) { badge.textContent = pend; badge.style.display = 'inline-flex'; }
+
+    // Filtrar
+    var filtrados = estadoActivo === ''
+      ? adv
+      : adv.filter(function(a){ return a.estado === estadoActivo; });
+
+    filtrados = filtrados.sort(function(a,b){ return new Date(b.fecha_solicitud) - new Date(a.fecha_solicitud); });
+
+    var tbody = document.getElementById('advTbody');
+    tbody.innerHTML = '';
+
+    if (filtrados.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">Sin solicitudes en este estado</td></tr>';
+      return;
+    }
+
+    filtrados.forEach(function(adv){
+      var emp    = emps.find(function(e){ return e.id === adv.empleado_id; }) || {};
+      var sucNom = (suc.find(function(s){ return s.id === adv.sucursal_id; }) || {}).nombre || adv.sucursal_id;
+      var perEmp = per.find(function(p){ return p.id === adv.periodo_id; });
+      var devengado = perEmp ? NM.calcularDevengado(emp, perEmp) : 0;
+      var pct    = devengado > 0 ? Math.round((adv.monto_solicitado / devengado) * 100) : 0;
+
+      var tr = document.createElement('tr');
+      var accionesHtml = '';
+      if (adv.estado === 'pendiente') {
+        accionesHtml =
+          '<div class="adv-actions">' +
+          '<button type="button" class="btn btn-sm btn-primary" data-action="aprobar" data-id="' + adv.id + '">' +
+            '<i data-lucide="check" style="width:12px;height:12px"></i> Aprobar</button>' +
+          '<button type="button" class="btn btn-sm btn-destructive" data-action="rechazar" data-id="' + adv.id + '">' +
+            '<i data-lucide="x" style="width:12px;height:12px"></i> Rechazar</button>' +
+          '</div>';
+      } else {
+        accionesHtml = '<button type="button" class="adv-link" data-action="ver" data-id="' + adv.id + '">Ver detalle →</button>';
+      }
+
+      tr.innerHTML =
+        '<td><div class="emp-name">' + (emp.nombre || '—') + '</div>' +
+            '<div class="emp-meta">' + (adv.motivo || 'Sin motivo') + '</div></td>' +
+        '<td>' + sucNom + '</td>' +
+        '<td class="num">' + window.formatCOP(adv.monto_solicitado) + '</td>' +
+        '<td><span class="adv-pct">' + pct + '% del devengado</span></td>' +
+        '<td>' + fmtDate(adv.fecha_solicitud) + '</td>' +
+        '<td><span class="adv-badge ' + adv.estado + '">' + (LABELS[adv.estado] || adv.estado) + '</span></td>' +
+        '<td>' + accionesHtml + '</td>';
+
+      tbody.appendChild(tr);
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+
+    // Bind actions
+    tbody.querySelectorAll('[data-action="aprobar"]').forEach(function(btn){
+      btn.addEventListener('click', function(e){ e.stopPropagation(); openAprobar(btn.dataset.id); });
+    });
+    tbody.querySelectorAll('[data-action="rechazar"]').forEach(function(btn){
+      btn.addEventListener('click', function(e){ e.stopPropagation(); openRechazar(btn.dataset.id); });
+    });
+    tbody.querySelectorAll('[data-action="ver"]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        window.location.href = './adelanto-detalle.html?id=' + btn.dataset.id;
+      });
+    });
+  }
+
+  // Tabs
+  document.querySelectorAll('.adv-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.adv-tab').forEach(function(t){ t.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      estadoActivo = tab.dataset.estado;
+      render();
+    });
+  });
+
+  // Modal Aprobar
+  function openAprobar(advId) {
+    var state = NM.loadState();
+    var adv   = state.adelantos.find(function(a){ return a.id === advId; });
+    var emp   = state.empleados.find(function(e){ return e.id === adv.empleado_id; });
+    advActual = advId;
+    document.getElementById('aprobarInfo').textContent =
+      emp.nombre + ' solicitó ' + window.formatCOP(adv.monto_solicitado) + (adv.motivo ? ' · Motivo: ' + adv.motivo : '');
+    document.getElementById('aprobarMonto').value = adv.monto_solicitado;
+    document.getElementById('aprobarMonto').max   = adv.monto_solicitado;
+    document.getElementById('aprobarNota').value  = '';
+    document.getElementById('modalAprobarBackdrop').classList.add('is-open');
+    if (window.lucide) window.lucide.createIcons();
+  }
+  document.getElementById('aprobarClose').addEventListener('click', function(){ document.getElementById('modalAprobarBackdrop').classList.remove('is-open'); });
+  document.getElementById('aprobarCancelar').addEventListener('click', function(){ document.getElementById('modalAprobarBackdrop').classList.remove('is-open'); });
+  document.getElementById('aprobarConfirmar').addEventListener('click', function(){
+    var monto = parseInt(document.getElementById('aprobarMonto').value, 10);
+    var nota  = document.getElementById('aprobarNota').value.trim();
+    if (!monto || monto <= 0) { UI.toast({ type: 'error', title: 'Monto inválido' }); return; }
+    NM.aprobarAdelanto(advActual, monto, nota || null);
+    document.getElementById('modalAprobarBackdrop').classList.remove('is-open');
+    UI.toast({ type: 'success', title: 'Adelanto aprobado', body: window.formatCOP(monto) + ' aprobado correctamente.' });
+    render();
+  });
+
+  // Modal Rechazar
+  function openRechazar(advId) {
+    var state = NM.loadState();
+    var adv   = state.adelantos.find(function(a){ return a.id === advId; });
+    var emp   = state.empleados.find(function(e){ return e.id === adv.empleado_id; });
+    advActual = advId;
+    document.getElementById('rechazarInfo').textContent =
+      'Solicitud de ' + emp.nombre + ' por ' + window.formatCOP(adv.monto_solicitado);
+    document.getElementById('rechazarMotivo').value = '';
+    document.getElementById('modalRechazarBackdrop').classList.add('is-open');
+    if (window.lucide) window.lucide.createIcons();
+  }
+  document.getElementById('rechazarClose').addEventListener('click', function(){ document.getElementById('modalRechazarBackdrop').classList.remove('is-open'); });
+  document.getElementById('rechazarCancelar').addEventListener('click', function(){ document.getElementById('modalRechazarBackdrop').classList.remove('is-open'); });
+  document.getElementById('rechazarConfirmar').addEventListener('click', function(){
+    var motivo = document.getElementById('rechazarMotivo').value.trim();
+    if (!motivo) { UI.toast({ type: 'error', title: 'El motivo es obligatorio' }); return; }
+    NM.rechazarAdelanto(advActual, motivo);
+    document.getElementById('modalRechazarBackdrop').classList.remove('is-open');
+    UI.toast({ type: 'success', title: 'Adelanto rechazado' });
+    render();
+  });
+
+  document.getElementById('modalAprobarBackdrop').addEventListener('click', function(e){ if (e.target === this) this.classList.remove('is-open'); });
+  document.getElementById('modalRechazarBackdrop').addEventListener('click', function(e){ if (e.target === this) this.classList.remove('is-open'); });
+
+  render();
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

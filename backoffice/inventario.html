@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Inventario · ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<div class="bo-shell">
+
+  <!-- ====================== SIDEBAR ====================== -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info">
+          <span class="label">Negocio</span>
+          <span class="name">El Buen Sabor</span>
+        </span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html"    class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html"  class="bo-sidebar-item is-active"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html"    class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html"      class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html"     class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info">
+        <span class="name">Juan Camilo</span>
+        <span class="role">Administrador</span>
+      </span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop" id="boBackdrop"></div>
+
+  <!-- ====================== CONTENT WRAP ====================== -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+        <i data-lucide="menu"></i>
+      </button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Inventario</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button">
+        <i data-lucide="store"></i>
+        <span class="label">Sede Norte</span>
+      </button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="notification-dot"></span>
+        </button>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar" aria-label="Perfil">JC</button>
+      </div>
+    </header>
+
+    <!-- ====================== MAIN CONTENT ====================== -->
+    <main id="main" class="bo-content">
+
+      <!-- Page header -->
+      <div class="bo-page-header">
+        <div>
+          <div class="bo-page-title">Inventario</div>
+          <div class="bo-page-subtitle">Control de ingredientes y bodegas</div>
+        </div>
+        <div class="bo-page-actions">
+          <button class="btn btn-secondary">
+            <i data-lucide="clipboard-check" style="width:14px;height:14px"></i>
+            Iniciar conteo físico
+          </button>
+          <button class="btn btn-primary">
+            <i data-lucide="plus" style="width:14px;height:14px"></i>
+            Nuevo ingrediente
+          </button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <!-- Total ingredientes -->
+        <div class="kpi-card">
+          <div class="kpi-card-head">
+            <span class="kpi-label">Total ingredientes</span>
+            <div class="kpi-icon-wrap"><i data-lucide="boxes" style="width:14px;height:14px"></i></div>
+          </div>
+          <div class="kpi-value">86</div>
+        </div>
+        <!-- Stock bajo -->
+        <div class="kpi-card tone-warning">
+          <div class="kpi-card-head">
+            <span class="kpi-label" style="color:var(--warning)">Stock bajo</span>
+            <div class="kpi-icon-wrap" style="background:rgba(245,158,11,.20)">
+              <i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--warning)"></i>
+            </div>
+          </div>
+          <div class="kpi-value">5</div>
+          <div style="font-size:10px;color:#92400E;font-weight:500;margin-top:-4px">Requieren atención</div>
+        </div>
+        <!-- Sin stock -->
+        <div class="kpi-card tone-error">
+          <div class="kpi-card-head">
+            <span class="kpi-label" style="color:var(--error)">Sin stock</span>
+            <div class="kpi-icon-wrap" style="background:rgba(239,68,68,.20)">
+              <i data-lucide="x-circle" style="width:14px;height:14px;color:var(--error)"></i>
+            </div>
+          </div>
+          <div class="kpi-value">2</div>
+          <div style="font-size:10px;color:#991B1B;font-weight:500;margin-top:-4px">Reabastecer urgente</div>
+        </div>
+        <!-- Valor inventario -->
+        <div class="kpi-card">
+          <div class="kpi-card-head">
+            <span class="kpi-label">Valor inventario</span>
+            <div class="kpi-icon-wrap" style="color:var(--success)"><i data-lucide="dollar-sign" style="width:14px;height:14px"></i></div>
+          </div>
+          <div class="kpi-value">$2.340.000</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="bo-toolbar">
+        <div class="bo-toolbar-search">
+          <i data-lucide="search"></i>
+          <input type="text" placeholder="Buscar ingrediente..." id="invSearch"/>
+        </div>
+        <button class="bo-filter-btn">
+          <span class="lbl">Categoría:</span>
+          <span>Todas</span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+        <button class="bo-filter-btn">
+          <span class="lbl">Estado:</span>
+          <span>Todos</span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+        <button class="bo-filter-btn">
+          <span class="lbl">Bodega:</span>
+          <span>Todas</span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+
+      <!-- Tabla inventario -->
+      <div class="inv-table-wrap">
+        <!-- Header -->
+        <div class="inv-table-head">
+          <div>Nombre</div>
+          <div>Categoría</div>
+          <div style="text-align:right">Stock actual</div>
+          <div>Stock mín.</div>
+          <div>Estado</div>
+          <div>Bodega</div>
+          <div></div>
+        </div>
+
+        <!-- Filas -->
+        <div class="inv-table-row" data-nombre="papa criolla">
+          <div class="inv-cell" data-label="Nombre" style="font-weight:500">Papa criolla</div>
+          <div class="inv-cell" data-label="Categoría" style="color:var(--muted)">Vegetal</div>
+          <div class="inv-cell inv-cell-stock" data-label="Stock actual">12.5 <span style="font-size:10px;color:var(--muted);font-weight:400">kg</span></div>
+          <div class="inv-cell" data-label="Stock mín." style="color:var(--muted);font-variant-numeric:tabular-nums">5 kg</div>
+          <div class="inv-cell" data-label="Estado"><span class="inv-status-badge ok"><i data-lucide="check-circle-2" style="width:11px;height:11px"></i>Disponible</span></div>
+          <div class="inv-cell" data-label="Bodega" style="color:var(--muted)">Principal</div>
+          <div class="inv-cell" data-label="" style="justify-content:flex-end"><button class="inv-row-btn" aria-label="Más opciones"><i data-lucide="more-horizontal"></i></button></div>
+        </div>
+
+        <div class="inv-table-row row-low" data-nombre="pollo entero">
+          <div class="inv-cell" data-label="Nombre" style="font-weight:500">Pollo entero</div>
+          <div class="inv-cell" data-label="Categoría" style="color:var(--muted)">Proteína</div>
+          <div class="inv-cell inv-cell-stock" data-label="Stock actual">8 <span style="font-size:10px;color:var(--muted);font-weight:400">unid</span></div>
+          <div class="inv-cell" data-label="Stock mín." style="color:var(--muted);font-variant-numeric:tabular-nums">10 unid</div>
+          <div class="inv-cell" data-label="Estado"><span class="inv-status-badge low"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i>Stock bajo</span></div>
+          <div class="inv-cell" data-label="Bodega" style="color:var(--muted)">Refrigerador</div>
+          <div class="inv-cell" data-label="" style="justify-content:flex-end"><button class="inv-row-btn" aria-label="Más opciones"><i data-lucide="more-horizontal"></i></button></div>
+        </div>
+
+        <div class="inv-table-row row-out" data-nombre="guascas">
+          <div class="inv-cell" data-label="Nombre" style="font-weight:500">Guascas</div>
+          <div class="inv-cell" data-label="Categoría" style="color:var(--muted)">Especia</div>
+          <div class="inv-cell inv-cell-stock" data-label="Stock actual">0.2 <span style="font-size:10px;color:var(--muted);font-weight:400">kg</span></div>
+          <div class="inv-cell" data-label="Stock mín." style="color:var(--muted);font-variant-numeric:tabular-nums">0.5 kg</div>
+          <div class="inv-cell" data-label="Estado"><span class="inv-status-badge out"><i data-lucide="x-circle" style="width:11px;height:11px"></i>Sin stock</span></div>
+          <div class="inv-cell" data-label="Bodega" style="color:var(--muted)">Seco</div>
+          <div class="inv-cell" data-label="" style="justify-content:flex-end"><button class="inv-row-btn" aria-label="Más opciones"><i data-lucide="more-horizontal"></i></button></div>
+        </div>
+
+        <div class="inv-table-row" data-nombre="crema de leche">
+          <div class="inv-cell" data-label="Nombre" style="font-weight:500">Crema de leche</div>
+          <div class="inv-cell" data-label="Categoría" style="color:var(--muted)">Lácteo</div>
+          <div class="inv-cell inv-cell-stock" data-label="Stock actual">6 <span style="font-size:10px;color:var(--muted);font-weight:400">lt</span></div>
+          <div class="inv-cell" data-label="Stock mín." style="color:var(--muted);font-variant-numeric:tabular-nums">2 lt</div>
+          <div class="inv-cell" data-label="Estado"><span class="inv-status-badge ok"><i data-lucide="check-circle-2" style="width:11px;height:11px"></i>Disponible</span></div>
+          <div class="inv-cell" data-label="Bodega" style="color:var(--muted)">Refrigerador</div>
+          <div class="inv-cell" data-label="" style="justify-content:flex-end"><button class="inv-row-btn" aria-label="Más opciones"><i data-lucide="more-horizontal"></i></button></div>
+        </div>
+
+        <div class="inv-table-row" data-nombre="mazorca">
+          <div class="inv-cell" data-label="Nombre" style="font-weight:500">Mazorca</div>
+          <div class="inv-cell" data-label="Categoría" style="color:var(--muted)">Vegetal</div>
+          <div class="inv-cell inv-cell-stock" data-label="Stock actual">25 <span style="font-size:10px;color:var(--muted);font-weight:400">unid</span></div>
+          <div class="inv-cell" data-label="Stock mín." style="color:var(--muted);font-variant-numeric:tabular-nums">20 unid</div>
+          <div class="inv-cell" data-label="Estado"><span class="inv-status-badge ok"><i data-lucide="check-circle-2" style="width:11px;height:11px"></i>Disponible</span></div>
+          <div class="inv-cell" data-label="Bodega" style="color:var(--muted)">Principal</div>
+          <div class="inv-cell" data-label="" style="justify-content:flex-end"><button class="inv-row-btn" aria-label="Más opciones"><i data-lucide="more-horizontal"></i></button></div>
+        </div>
+
+        <div class="inv-table-row" data-nombre="carne molida">
+          <div class="inv-cell" data-label="Nombre" style="font-weight:500">Carne molida</div>
+          <div class="inv-cell" data-label="Categoría" style="color:var(--muted)">Proteína</div>
+          <div class="inv-cell inv-cell-stock" data-label="Stock actual">14 <span style="font-size:10px;color:var(--muted);font-weight:400">kg</span></div>
+          <div class="inv-cell" data-label="Stock mín." style="color:var(--muted);font-variant-numeric:tabular-nums">8 kg</div>
+          <div class="inv-cell" data-label="Estado"><span class="inv-status-badge ok"><i data-lucide="check-circle-2" style="width:11px;height:11px"></i>Disponible</span></div>
+          <div class="inv-cell" data-label="Bodega" style="color:var(--muted)">Refrigerador</div>
+          <div class="inv-cell" data-label="" style="justify-content:flex-end"><button class="inv-row-btn" aria-label="Más opciones"><i data-lucide="more-horizontal"></i></button></div>
+        </div>
+
+        <div class="inv-table-row row-low" data-nombre="aguacate">
+          <div class="inv-cell" data-label="Nombre" style="font-weight:500">Aguacate</div>
+          <div class="inv-cell" data-label="Categoría" style="color:var(--muted)">Vegetal</div>
+          <div class="inv-cell inv-cell-stock" data-label="Stock actual">3 <span style="font-size:10px;color:var(--muted);font-weight:400">unid</span></div>
+          <div class="inv-cell" data-label="Stock mín." style="color:var(--muted);font-variant-numeric:tabular-nums">12 unid</div>
+          <div class="inv-cell" data-label="Estado"><span class="inv-status-badge low"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i>Stock bajo</span></div>
+          <div class="inv-cell" data-label="Bodega" style="color:var(--muted)">Principal</div>
+          <div class="inv-cell" data-label="" style="justify-content:flex-end"><button class="inv-row-btn" aria-label="Más opciones"><i data-lucide="more-horizontal"></i></button></div>
+        </div>
+
+        <div class="inv-table-row" data-nombre="arroz blanco">
+          <div class="inv-cell" data-label="Nombre" style="font-weight:500">Arroz blanco</div>
+          <div class="inv-cell" data-label="Categoría" style="color:var(--muted)">Grano</div>
+          <div class="inv-cell inv-cell-stock" data-label="Stock actual">38 <span style="font-size:10px;color:var(--muted);font-weight:400">kg</span></div>
+          <div class="inv-cell" data-label="Stock mín." style="color:var(--muted);font-variant-numeric:tabular-nums">15 kg</div>
+          <div class="inv-cell" data-label="Estado"><span class="inv-status-badge ok"><i data-lucide="check-circle-2" style="width:11px;height:11px"></i>Disponible</span></div>
+          <div class="inv-cell" data-label="Bodega" style="color:var(--muted)">Seco</div>
+          <div class="inv-cell" data-label="" style="justify-content:flex-end"><button class="inv-row-btn" aria-label="Más opciones"><i data-lucide="more-horizontal"></i></button></div>
+        </div>
+
+      </div><!-- /inv-table-wrap -->
+
+      <!-- Empty state -->
+      <div class="empty-state" id="invEmpty" hidden>
+        <div class="empty-state-icon"><i data-lucide="boxes"></i></div>
+        <div class="empty-state-title">No encontramos ingredientes</div>
+        <div class="empty-state-text">Probá con otro nombre o limpiá la búsqueda.</div>
+        <button type="button" class="btn btn-secondary empty-state-action" id="invClearSearch">
+          Limpiar búsqueda
+        </button>
+      </div>
+
+      <!-- Paginación -->
+      <div class="bo-pagination">
+        <span class="bo-pagination-info">Mostrando 1–8 de 86 ingredientes</span>
+        <div class="bo-pagination-pages">
+          <button class="bo-page-btn" aria-label="Anterior"><i data-lucide="chevron-left" style="width:13px;height:13px"></i></button>
+          <button class="bo-page-btn is-active">1</button>
+          <button class="bo-page-btn">2</button>
+          <button class="bo-page-btn">3</button>
+          <button class="bo-page-btn">…</button>
+          <button class="bo-page-btn">11</button>
+          <button class="bo-page-btn" aria-label="Siguiente"><i data-lucide="chevron-right" style="width:13px;height:13px"></i></button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) window.lucide.createIcons();
+
+  // Search en vivo
+  const invSearch = document.getElementById('invSearch');
+  const invEmpty = document.getElementById('invEmpty');
+  function invFilter() {
+    const q = (invSearch?.value || '').toLowerCase().trim();
+    let visible = 0;
+    document.querySelectorAll('.inv-table-row').forEach(row => {
+      const nombre = row.dataset.nombre || '';
+      const show = q === '' || nombre.includes(q);
+      row.hidden = !show;
+      if (show) visible++;
+    });
+    if (invEmpty) invEmpty.hidden = visible > 0;
+  }
+  if (invSearch) {
+    invSearch.addEventListener('input', invFilter);
+  }
+  document.getElementById('invClearSearch')?.addEventListener('click', function () {
+    if (invSearch) invSearch.value = '';
+    invFilter();
+  });
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

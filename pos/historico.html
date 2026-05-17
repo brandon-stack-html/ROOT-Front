@@ -2,20 +2,25 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Histórico del turno · POS · Inventario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Histórico del turno · POS · ROOT</title>
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/pos-shell.css" />
 </head>
 <body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
   <div class="pos-shell">
 
     <header class="pos-topbar">
       <div class="pos-topbar-brand">
-        <span class="pos-brand-logo">I</span>
-        <span class="pos-brand-name">Inventario</span>
+        <img src="../ROOT.png" class="pos-brand-logo-img" alt="[ROOT]">
+        
         <span class="pos-brand-badge">POS</span>
       </div>
       <nav class="pos-topbar-zones">
@@ -40,7 +45,7 @@
       </div>
     </header>
 
-    <main class="pos-content">
+    <main id="main" class="pos-content">
       <div class="pos-historico-page">
 
         <!-- Breadcrumb -->
@@ -206,6 +211,16 @@
           </div>
         </div>
 
+        <!-- Empty state -->
+        <div class="empty-state" id="ventasEmpty" hidden>
+          <div class="empty-state-icon"><i data-lucide="history"></i></div>
+          <div class="empty-state-title">No encontramos ventas</div>
+          <div class="empty-state-text">Probá con otro número de mesa o nombre de cliente.</div>
+          <button type="button" class="btn btn-secondary empty-state-action" id="ventasClearSearch">
+            Limpiar búsqueda
+          </button>
+        </div>
+
         <!-- Paginación -->
         <div class="pos-paginacion">
           <div class="pos-paginacion-info">Mostrando 1–5 de 18 ventas</div>
@@ -254,12 +269,23 @@
     });
 
     // Buscador: filtra filas en vivo por mesa o cliente
-    document.getElementById('searchVentas').addEventListener('input', (e) => {
-      const q = e.target.value.toLowerCase().trim();
+    const searchVentas = document.getElementById('searchVentas');
+    const ventasEmpty = document.getElementById('ventasEmpty');
+    function filterVentas() {
+      const q = (searchVentas?.value || '').toLowerCase().trim();
+      let visible = 0;
       document.querySelectorAll('.pos-historico-row').forEach((row) => {
         const text = row.textContent.toLowerCase();
-        row.style.display = (q === '' || text.includes(q)) ? '' : 'none';
+        const show = q === '' || text.includes(q);
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
       });
+      if (ventasEmpty) ventasEmpty.hidden = visible > 0;
+    }
+    searchVentas?.addEventListener('input', filterVentas);
+    document.getElementById('ventasClearSearch')?.addEventListener('click', function () {
+      if (searchVentas) searchVentas.value = '';
+      filterVentas();
     });
 
     // Click en fila: toast con detalle (mock)
@@ -276,5 +302,6 @@
       });
     });
   </script>
+  <script src="../assets/js/nav.js"></script>
 </body>
 </html>

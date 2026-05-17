@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mapa de mesas · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    .e3-saludo-line1 {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.2;
+    }
+    .e3-saludo-line2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .e3-content {
+      padding: 14px 14px 18px;
+    }
+    .e3-kpis {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .e3-kpi {
+      flex: 1;
+      padding: 8px 10px;
+      background: var(--alt);
+      border-radius: 9px;
+      border: 1px solid var(--border);
+    }
+    .e3-kpi-label {
+      font-size: 9px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .e3-kpi-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .e3-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .mesa-card {
+      border-radius: 13px;
+      padding: 14px;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .mesa-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .mesa-num {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .mesa-card-spacer { flex: 1; }
+
+    /* Estados */
+    .mesa-card.estado-libre {
+      background: var(--alt);
+      border: 1px solid var(--border);
+    }
+    .mesa-card.estado-ocupada {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+    }
+    [data-theme="dark"] .mesa-card.estado-ocupada {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: #1E3A8A;
+    }
+    .mesa-card.estado-cocina {
+      background: #FEF3C7;
+      border: 1px solid #FDE68A;
+    }
+    [data-theme="dark"] .mesa-card.estado-cocina {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: #78350F;
+    }
+    .mesa-card.estado-lista {
+      background: #D1FAE5;
+      border: 1.5px solid var(--success);
+    }
+    [data-theme="dark"] .mesa-card.estado-lista {
+      background: rgba(16, 185, 129, 0.18);
+    }
+    .mesa-card.is-warn {
+      border: 1.5px solid var(--error);
+    }
+
+    /* Badge "Ocupada" / "En cocina" */
+    .mesa-state-badge {
+      font-size: 9px;
+      font-weight: 600;
+      padding: 3px 7px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    [data-theme="dark"] .mesa-state-badge {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .mesa-state-badge.tone-info { color: var(--info); }
+    .mesa-state-badge.tone-warning { color: var(--warning); }
+
+    /* Badge "¡LISTO!" pulse */
+    .mesa-listo-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--success);
+      padding: 4px 9px;
+      border-radius: 11px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Badge warn (mesa 5 — 1h 20m rojo) */
+    .mesa-warn-badge {
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--error);
+      padding: 4px 7px;
+      border-radius: 5px;
+      letter-spacing: 0.04em;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .mesa-warn-badge svg { width: 9px; height: 9px; stroke-width: 2.5; }
+
+    /* Body labels */
+    .mesa-libre-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    .mesa-tiempo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .mesa-tiempo svg { width: 11px; height: 11px; }
+    .mesa-total {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- ============= TOPBAR ============= -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side">
+            <div>
+              <div class="e3-saludo-line1">Hola,</div>
+              <div class="e3-saludo-line2">Andrea 👋</div>
+            </div>
+          </div>
+          <div class="mesero-topbar-center">
+            <button class="mesero-zona-btn" type="button">
+              Salón Principal
+              <i data-lucide="chevron-down"></i>
+            </button>
+          </div>
+          <div class="mesero-topbar-side">
+            <button class="mesero-bell-btn" type="button" aria-label="Notificaciones">
+              <i data-lucide="bell"></i>
+              <span class="mesero-bell-badge">2</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- ============= CONTENT ============= -->
+        <main id="main" class="mesero-content">
+          <div class="e3-content">
+
+            <!-- KPIs -->
+            <div class="e3-kpis">
+              <div class="e3-kpi">
+                <div class="e3-kpi-label">Mis mesas</div>
+                <div class="e3-kpi-value">4</div>
+              </div>
+              <div class="e3-kpi">
+                <div class="e3-kpi-label">Activas</div>
+                <div class="e3-kpi-value">3</div>
+              </div>
+              <div class="e3-kpi">
+                <div class="e3-kpi-label">Mis ventas</div>
+                <div class="e3-kpi-value">$313K</div>
+              </div>
+            </div>
+
+            <!-- Grid de mesas -->
+            <div class="e3-grid">
+
+              <!-- Mesa 1 — libre -->
+              <a href="./detalle.html?mesa=1&nuevo=1" class="mesa-card estado-libre">
+                <div class="mesa-card-top">
+                  <span class="mesa-num">1</span>
+                </div>
+                <div class="mesa-card-spacer"></div>
+                <span class="mesa-libre-label">LIBRE</span>
+              </a>
+
+              <!-- Mesa 2 — ocupada -->
+              <a href="./detalle.html?mesa=2" class="mesa-card estado-ocupada">
+                <div class="mesa-card-top">
+                  <span class="mesa-num">2</span>
+                  <span class="mesa-state-badge tone-info">Ocupada</span>
+                </div>
+                <div class="mesa-card-spacer"></div>
+                <div class="mesa-tiempo">
+                  <i data-lucide="clock"></i>
+                  00:34
+                </div>
+                <div class="mesa-total">$45.000</div>
+              </a>
+
+              <!-- Mesa 3 — cocina -->
+              <a href="./detalle.html?mesa=3" class="mesa-card estado-cocina">
+                <div class="mesa-card-top">
+                  <span class="mesa-num">3</span>
+                  <span class="mesa-state-badge tone-warning">En cocina</span>
+                </div>
+                <div class="mesa-card-spacer"></div>
+                <div class="mesa-tiempo">
+                  <i data-lucide="clock"></i>
+                  00:18
+                </div>
+                <div class="mesa-total">$62.000</div>
+              </a>
+
+              <!-- Mesa 4 — lista -->
+              <a href="./detalle.html?mesa=4" class="mesa-card estado-lista">
+                <div class="mesa-card-top">
+                  <span class="mesa-num">4</span>
+                  <span class="mesa-listo-badge mesero-pulse-ring">¡LISTO!</span>
+                </div>
+                <div class="mesa-card-spacer"></div>
+                <div class="mesa-tiempo">
+                  <i data-lucide="clock"></i>
+                  00:14
+                </div>
+                <div class="mesa-total">$78.000</div>
+              </a>
+
+              <!-- Mesa 5 — ocupada con warn -->
+              <a href="./detalle.html?mesa=5" class="mesa-card estado-ocupada is-warn">
+                <div class="mesa-card-top">
+                  <span class="mesa-num">5</span>
+                  <span class="mesa-warn-badge">
+                    <i data-lucide="alert-triangle"></i>
+                    1h 20m
+                  </span>
+                </div>
+                <div class="mesa-card-spacer"></div>
+                <div class="mesa-total">$128.000</div>
+              </a>
+
+              <!-- Mesa 6 — libre -->
+              <a href="./detalle.html?mesa=6&nuevo=1" class="mesa-card estado-libre">
+                <div class="mesa-card-top">
+                  <span class="mesa-num">6</span>
+                </div>
+                <div class="mesa-card-spacer"></div>
+                <span class="mesa-libre-label">LIBRE</span>
+              </a>
+
+              <!-- Mesa 7 — cocina -->
+              <a href="./detalle.html?mesa=7" class="mesa-card estado-cocina">
+                <div class="mesa-card-top">
+                  <span class="mesa-num">7</span>
+                  <span class="mesa-state-badge tone-warning">En cocina</span>
+                </div>
+                <div class="mesa-card-spacer"></div>
+                <div class="mesa-tiempo">
+                  <i data-lucide="clock"></i>
+                  00:08
+                </div>
+                <div class="mesa-total">$24.000</div>
+              </a>
+
+              <!-- Mesa 8 — libre -->
+              <a href="./detalle.html?mesa=8&nuevo=1" class="mesa-card estado-libre">
+                <div class="mesa-card-top">
+                  <span class="mesa-num">8</span>
+                </div>
+                <div class="mesa-card-spacer"></div>
+                <span class="mesa-libre-label">LIBRE</span>
+              </a>
+
+            </div>
+          </div>
+
+          <!-- FAB -->
+          <button class="mb-fab" type="button" aria-label="Nueva comanda">
+            <i data-lucide="plus"></i>
+          </button>
+        </main>
+
+        <!-- ============= BOTTOM NAV ============= -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="layout-grid"></i>
+            </span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="clipboard-list"></i>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Nómina</span>
+          </a>
+                    <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <div class="mesero-home-indicator"></div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mi perfil · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    /* Header con gradient accent suave */
+    .e9-header {
+      padding: 16px 18px 22px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(79, 70, 229, 0.08) 0%, rgba(79, 70, 229, 0) 100%);
+    }
+    [data-theme="dark"] .e9-header {
+      background: linear-gradient(180deg, rgba(79, 70, 229, 0.18) 0%, rgba(79, 70, 229, 0) 100%);
+    }
+    .e9-avatar-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .e9-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .e9-role {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .e9-turno-badge {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 11px;
+      background: #D1FAE5;
+      color: #065F46;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    [data-theme="dark"] .e9-turno-badge {
+      background: rgba(16, 185, 129, 0.18);
+      color: var(--success);
+    }
+    .e9-turno-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--success);
+    }
+
+    /* KPIs */
+    .e9-section {
+      padding: 4px 16px 16px;
+    }
+    .e9-section-title {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .e9-kpis {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .e9-kpi {
+      padding: 12px 10px;
+      background: var(--alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-align: center;
+    }
+    .e9-kpi-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+    .e9-kpi-icon svg { width: 16px; height: 16px; }
+    .e9-kpi.tone-info .e9-kpi-icon svg { color: var(--info); }
+    .e9-kpi.tone-success .e9-kpi-icon svg { color: var(--success); }
+    .e9-kpi.tone-warning .e9-kpi-icon svg { color: var(--warning); }
+    .e9-kpi-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .e9-kpi-label {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 1px;
+    }
+
+    /* Ajustes card */
+    .e9-settings-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 0 14px;
+    }
+    .setting-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      background: transparent;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      width: 100%;
+      text-align: left;
+      font-family: var(--ff-base);
+    }
+    .setting-row.last { border-bottom: none; }
+    .setting-row-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--text);
+    }
+    .setting-row-icon svg { width: 16px; height: 16px; }
+    .setting-row-label {
+      flex: 1;
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .setting-row-right svg { width: 16px; height: 16px; color: var(--muted); }
+
+    .e9-footer-version {
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      padding: 4px 16px 16px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- ============= TOPBAR ============= -->
+        <header class="mesero-topbar no-border">
+          <div class="mesero-topbar-side" style="width:34px;"></div>
+          <div class="mesero-topbar-center">
+            <div class="mesero-topbar-title">Mi perfil</div>
+          </div>
+          <div class="mesero-topbar-side">
+            <button class="mesero-icon-btn no-border" type="button" aria-label="Más">
+              <i data-lucide="more-vertical"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- ============= CONTENT ============= -->
+        <main id="main" class="mesero-content">
+
+          <!-- Header con avatar -->
+          <div class="e9-header">
+            <div class="e9-avatar-wrap">
+              <div class="mb-avatar size-80">AG</div>
+            </div>
+            <div class="e9-name">Andrea García</div>
+            <div class="e9-role">Mesera · Sede Norte</div>
+            <div class="e9-turno-badge">Turno activo desde las 12:00</div>
+          </div>
+
+          <!-- KPIs -->
+          <section class="e9-section">
+            <div class="e9-section-title">Resumen del turno</div>
+            <div class="e9-kpis">
+              <div class="e9-kpi tone-info">
+                <div class="e9-kpi-icon"><i data-lucide="layout-grid"></i></div>
+                <div class="e9-kpi-value">12</div>
+                <div class="e9-kpi-label">Mesas</div>
+              </div>
+              <div class="e9-kpi tone-success">
+                <div class="e9-kpi-icon"><i data-lucide="trending-up"></i></div>
+                <div class="e9-kpi-value">$1.234K</div>
+                <div class="e9-kpi-label">Ventas</div>
+              </div>
+              <div class="e9-kpi tone-warning">
+                <div class="e9-kpi-icon"><i data-lucide="sparkles"></i></div>
+                <div class="e9-kpi-value">$45K</div>
+                <div class="e9-kpi-label">Propinas</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Ajustes -->
+          <section class="e9-section">
+            <div class="e9-section-title">Ajustes</div>
+            <div class="e9-settings-card">
+
+              <button type="button" class="setting-row" id="settingTheme">
+                <div class="setting-row-icon"><i data-lucide="moon"></i></div>
+                <span class="setting-row-label">Tema oscuro</span>
+                <span class="setting-row-right">
+                  <span class="mb-switch" id="themeSwitch" aria-label="Cambiar tema"></span>
+                </span>
+              </button>
+
+              <button type="button" class="setting-row" id="settingNotif">
+                <div class="setting-row-icon"><i data-lucide="bell"></i></div>
+                <span class="setting-row-label">Notificaciones</span>
+                <span class="setting-row-right">
+                  <span class="mb-switch is-on" id="notifSwitch" aria-label="Notificaciones"></span>
+                </span>
+              </button>
+
+              <button type="button" class="setting-row">
+                <div class="setting-row-icon"><i data-lucide="lock"></i></div>
+                <span class="setting-row-label">Cambiar contraseña</span>
+                <span class="setting-row-right"><i data-lucide="chevron-right"></i></span>
+              </button>
+
+              <button type="button" class="setting-row last">
+                <div class="setting-row-icon"><i data-lucide="info"></i></div>
+                <span class="setting-row-label">Sobre la app</span>
+                <span class="setting-row-right"><i data-lucide="chevron-right"></i></span>
+              </button>
+
+            </div>
+          </section>
+
+          <!-- Cerrar sesión -->
+          <section class="e9-section">
+            <button type="button" class="mb-btn mb-btn-danger h-50" id="btnLogout">
+              <i data-lucide="log-out"></i>
+              Cerrar sesión
+            </button>
+          </section>
+
+          <div class="e9-footer-version">
+            ROOT v1.0.0 · Build 2026.05
+          </div>
+
+        </main>
+
+        <!-- ============= BOTTOM NAV ============= -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="layout-grid"></i>
+            </span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="clipboard-list"></i>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Nómina</span>
+          </a>
+                    <a href="./perfil.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <div class="mesero-home-indicator"></div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // Sync theme switch with current theme
+    function syncThemeSwitch() {
+      var theme = document.documentElement.getAttribute('data-theme');
+      var sw = document.getElementById('themeSwitch');
+      if (theme === 'dark') sw.classList.add('is-on');
+      else sw.classList.remove('is-on');
+    }
+    syncThemeSwitch();
+
+    // Toggle theme via switch
+    document.getElementById('settingTheme').addEventListener('click', function () {
+      if (typeof window.toggleTheme === 'function') {
+        window.toggleTheme();
+      } else {
+        var html = document.documentElement;
+        var cur = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', cur);
+        try { localStorage.setItem('theme', cur); } catch (e) {}
+      }
+      syncThemeSwitch();
+    });
+
+    // Toggle notificaciones (mock)
+    document.getElementById('settingNotif').addEventListener('click', function () {
+      document.getElementById('notifSwitch').classList.toggle('is-on');
+    });
+
+    // Cerrar sesión
+    document.getElementById('btnLogout').addEventListener('click', function () {
+      UI.toast({ type: 'info', title: 'Sesión cerrada' });
+      setTimeout(function () {
+        window.location.href = './login.html';
+      }, 600);
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dashboard · ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<div class="bo-shell">
+
+  <!-- ====================== SIDEBAR ====================== -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info">
+          <span class="label">Negocio</span>
+          <span class="name">El Buen Sabor</span>
+        </span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item is-active"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html"   class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html"   class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html"class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html"     class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html"     class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info">
+        <span class="name">Juan Camilo</span>
+        <span class="role">Administrador</span>
+      </span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop" id="boBackdrop"></div>
+
+  <!-- ====================== CONTENT WRAP ====================== -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+        <i data-lucide="menu"></i>
+      </button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Dashboard</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button">
+        <i data-lucide="store"></i>
+        <span class="label">Sede Norte</span>
+      </button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="notification-dot"></span>
+        </button>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar" aria-label="Perfil">JC</button>
+      </div>
+    </header>
+
+    <!-- ====================== MAIN CONTENT ====================== -->
+    <main id="main" class="bo-content">
+
+      <!-- Saludo + controles -->
+      <div class="bo-page-header">
+        <div>
+          <div class="bo-page-title">Buenos días, Juan Camilo</div>
+          <div class="bo-page-subtitle">Lunes, 15 de noviembre · Sede Norte</div>
+        </div>
+        <div class="bo-page-actions">
+          <!-- Toggle vista -->
+          <div class="bo-view-toggle" id="viewToggle">
+            <button data-view="normal" class="is-active">Vista normal</button>
+            <button data-view="alertas">Vista con alertas</button>
+          </div>
+          <!-- Periodo -->
+          <div class="bo-period-toggle" id="periodToggle">
+            <button class="is-active">Hoy</button>
+            <button>Semana</button>
+            <button>Mes</button>
+          </div>
+          <button class="btn btn-secondary" style="font-size:12px;padding:7px 12px">
+            <i data-lucide="calendar" style="width:13px;height:13px"></i>
+            15 nov 2026
+          </button>
+        </div>
+      </div>
+
+      <!-- AlertBanner (oculto por default) -->
+      <div class="alert-banner" id="dashboardAlerts" hidden>
+        <div class="alert-banner-title">
+          <span class="alert-banner-icon-wrap"><i data-lucide="alert-triangle" style="width:14px;height:14px"></i></span>
+          Requiere tu atención
+        </div>
+        <div class="alert-banner-item">
+          <div class="title">1 remisión lleva 32 días sin facturar</div>
+          <div class="detail">REM-00023 · $320.000 · Si no la regularizas hoy puede generarte una multa</div>
+          <div class="alert-banner-actions">
+            <button class="btn btn-destructive btn-sm">Facturarla ahora</button>
+            <button class="btn btn-secondary btn-sm">Registrar devolución</button>
+          </div>
+        </div>
+        <div class="alert-banner-item">
+          <div class="title">1 factura fue rechazada</div>
+          <div class="detail">Factura al cliente · $210.000 · El número de identidad no es válido</div>
+          <div class="alert-banner-actions">
+            <button class="btn btn-destructive btn-sm">Ver cómo corregirlo</button>
+            <button class="btn btn-secondary btn-sm">Cambiar a consumidor final</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Grid: 3 KPIs + EstadoDIAN -->
+      <div class="kpi-grid">
+        <!-- Ventas hoy -->
+        <div class="kpi-card">
+          <div class="kpi-card-head">
+            <span class="kpi-label">Ventas hoy</span>
+            <div class="kpi-icon-wrap" style="color:var(--success)"><i data-lucide="dollar-sign" style="width:15px;height:15px"></i></div>
+          </div>
+          <div class="kpi-value">$1.234.000</div>
+          <div class="kpi-delta up"><i data-lucide="trending-up" style="width:12px;height:12px"></i>↑ 12% vs ayer</div>
+        </div>
+        <!-- Transacciones -->
+        <div class="kpi-card">
+          <div class="kpi-card-head">
+            <span class="kpi-label">Transacciones</span>
+            <div class="kpi-icon-wrap" style="color:var(--info)"><i data-lucide="receipt" style="width:15px;height:15px"></i></div>
+          </div>
+          <div class="kpi-value">47</div>
+          <div class="kpi-delta up"><i data-lucide="trending-up" style="width:12px;height:12px"></i>↑ 8%</div>
+        </div>
+        <!-- Ticket promedio -->
+        <div class="kpi-card">
+          <div class="kpi-card-head">
+            <span class="kpi-label">Ticket promedio</span>
+            <div class="kpi-icon-wrap" style="color:var(--accent)"><i data-lucide="trending-up" style="width:15px;height:15px"></i></div>
+          </div>
+          <div class="kpi-value">$26.255</div>
+          <div class="kpi-delta down"><i data-lucide="trending-down" style="width:12px;height:12px"></i>↓ 3%</div>
+        </div>
+        <!-- Estado DIAN -->
+        <div class="dian-card ok">
+          <div class="dian-card-head">
+            <span class="dian-card-label">Estado DIAN</span>
+            <div class="dian-icon-wrap">
+              <i data-lucide="shield-check" style="width:15px;height:15px;color:var(--success)"></i>
+            </div>
+          </div>
+          <div class="dian-card-value">
+            <i data-lucide="check-circle" style="width:18px;height:18px;color:var(--success)"></i>
+            Todo enviado
+          </div>
+          <div class="dian-card-detail">24 enviadas · 0 con error</div>
+        </div>
+      </div>
+
+      <!-- Fila: chart + top productos -->
+      <div class="dash-row dash-row-2-1">
+        <!-- Area chart -->
+        <div class="dash-card">
+          <div class="dash-card-head">
+            <div>
+              <div class="dash-card-title">Ventas últimos 7 días</div>
+              <div class="dash-card-sub">Total: <strong style="color:var(--text)">$7.901.000</strong> · Promedio diario: $1.128.714</div>
+            </div>
+            <button class="btn btn-secondary btn-sm">
+              <i data-lucide="download" style="width:11px;height:11px"></i>
+              Exportar
+            </button>
+          </div>
+          <!-- SVG inline responsive -->
+          <svg width="100%" viewBox="0 0 600 210" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">
+            <defs>
+              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#4F46E5" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="areaGradDark" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#4F46E5" stop-opacity="0.40"/>
+                <stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <g transform="translate(38,12)">
+              <!-- Grid lines -->
+              <line x1="0" x2="548" y1="0"   y2="0"   stroke="var(--border)" stroke-width="1" stroke-dasharray="3,4" opacity="0.6"/>
+              <line x1="0" x2="548" y1="43.5" y2="43.5" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,4" opacity="0.6"/>
+              <line x1="0" x2="548" y1="87"  y2="87"  stroke="var(--border)" stroke-width="1" stroke-dasharray="3,4" opacity="0.6"/>
+              <line x1="0" x2="548" y1="130.5" y2="130.5" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,4" opacity="0.6"/>
+              <line x1="0" x2="548" y1="174" y2="174" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,4" opacity="0.6"/>
+              <!-- Y labels -->
+              <text x="-8" y="4"   text-anchor="end" font-size="10" fill="var(--muted)" font-family="monospace">$1620K</text>
+              <text x="-8" y="91"  text-anchor="end" font-size="10" fill="var(--muted)" font-family="monospace">$810K</text>
+              <text x="-8" y="178" text-anchor="end" font-size="10" fill="var(--muted)" font-family="monospace">$0K</text>
+              <!-- Área -->
+              <path d="M 0,86 C 45.67,86 45.67,72.6 91.33,72.6 C 137,72.6 137,90.2 182.67,90.2 C 228.33,90.2 228.33,53.8 274,53.8 C 319.67,53.8 319.67,25.9 365.33,25.9 C 411,25.9 411,0 456.67,0 C 502.33,0 502.33,41.5 548,41.5 L 548,174 L 0,174 Z"
+                fill="url(#areaGrad)" class="chart-area"/>
+              <!-- Línea -->
+              <path d="M 0,86 C 45.67,86 45.67,72.6 91.33,72.6 C 137,72.6 137,90.2 182.67,90.2 C 228.33,90.2 228.33,53.8 274,53.8 C 319.67,53.8 319.67,25.9 365.33,25.9 C 411,25.9 411,0 456.67,0 C 502.33,0 502.33,41.5 548,41.5"
+                stroke="#4F46E5" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Puntos -->
+              <circle cx="0"      cy="86"   r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
+              <circle cx="91.33"  cy="72.6" r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
+              <circle cx="182.67" cy="90.2" r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
+              <circle cx="274"    cy="53.8" r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
+              <circle cx="365.33" cy="25.9" r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
+              <circle cx="456.67" cy="0"    r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
+              <circle cx="548"    cy="41.5" r="5"   fill="var(--bg)" stroke="#4F46E5" stroke-width="2.5"/>
+              <!-- Tooltip último punto -->
+              <g transform="translate(548,27.5)">
+                <rect x="-30" y="-22" width="60" height="20" rx="4" fill="#4F46E5"/>
+                <text x="0" y="-8" text-anchor="middle" font-size="11" font-weight="600" fill="#fff" font-family="Inter,sans-serif">$1234K</text>
+              </g>
+              <!-- X labels -->
+              <text x="0"      y="190" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="Inter,sans-serif">Lun</text>
+              <text x="91.33"  y="190" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="Inter,sans-serif">Mar</text>
+              <text x="182.67" y="190" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="Inter,sans-serif">Mié</text>
+              <text x="274"    y="190" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="Inter,sans-serif">Jue</text>
+              <text x="365.33" y="190" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="Inter,sans-serif">Vie</text>
+              <text x="456.67" y="190" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="Inter,sans-serif">Sáb</text>
+              <text x="548"    y="190" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="Inter,sans-serif">Dom</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Top productos -->
+        <div class="dash-card">
+          <div class="dash-card-head">
+            <div class="dash-card-title">Top 5 productos hoy</div>
+            <a href="./reportes.html" style="font-size:11px;color:var(--accent);font-weight:500;text-decoration:none">Ver todos →</a>
+          </div>
+          <div class="top-productos">
+            <div class="top-producto-item">
+              <div class="top-producto-rank rank-1">1</div>
+              <div class="top-producto-info">
+                <div class="top-producto-nombre">Bandeja Paisa</div>
+                <div class="top-producto-unidades">23 unidades</div>
+              </div>
+              <div class="top-producto-total">$736.000</div>
+            </div>
+            <div class="top-producto-item">
+              <div class="top-producto-rank">2</div>
+              <div class="top-producto-info">
+                <div class="top-producto-nombre">Ajiaco Bogotano</div>
+                <div class="top-producto-unidades">18 unidades</div>
+              </div>
+              <div class="top-producto-total">$504.000</div>
+            </div>
+            <div class="top-producto-item">
+              <div class="top-producto-rank">3</div>
+              <div class="top-producto-info">
+                <div class="top-producto-nombre">Limonada Natural</div>
+                <div class="top-producto-unidades">45 unidades</div>
+              </div>
+              <div class="top-producto-total">$270.000</div>
+            </div>
+            <div class="top-producto-item">
+              <div class="top-producto-rank">4</div>
+              <div class="top-producto-info">
+                <div class="top-producto-nombre">Café Americano</div>
+                <div class="top-producto-unidades">31 unidades</div>
+              </div>
+              <div class="top-producto-total">$155.000</div>
+            </div>
+            <div class="top-producto-item">
+              <div class="top-producto-rank">5</div>
+              <div class="top-producto-info">
+                <div class="top-producto-nombre">Agua con gas</div>
+                <div class="top-producto-unidades">28 unidades</div>
+              </div>
+              <div class="top-producto-total">$84.000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fila: donut canales + mesas activas -->
+      <div class="dash-row dash-row-equal">
+        <!-- Ventas por canal -->
+        <div class="dash-card">
+          <div class="dash-card-title" style="margin-bottom:14px">Ventas por canal</div>
+          <div style="display:flex;align-items:center;gap:24px">
+            <!-- Donut SVG -->
+            <svg width="170" height="170" style="overflow:visible;flex-shrink:0">
+              <g transform="rotate(-90 85 85)">
+                <circle cx="85" cy="85" r="73" fill="none" stroke="#4F46E5" stroke-width="22"
+                  stroke-dasharray="311.9 146.77" stroke-dashoffset="0"/>
+                <circle cx="85" cy="85" r="73" fill="none" stroke="#10B981" stroke-width="22"
+                  stroke-dasharray="100.91 357.76" stroke-dashoffset="-311.9"/>
+                <circle cx="85" cy="85" r="73" fill="none" stroke="#F59E0B" stroke-width="22"
+                  stroke-dasharray="36.69 422" stroke-dashoffset="-412.81"/>
+                <circle cx="85" cy="85" r="73" fill="none" stroke="#3B82F6" stroke-width="22"
+                  stroke-dasharray="9.17 449.5" stroke-dashoffset="-449.5"/>
+              </g>
+              <text x="85" y="81" text-anchor="middle" font-size="20" font-weight="700" fill="var(--text)" font-family="Inter,sans-serif">100%</text>
+              <text x="85" y="99" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="Inter,sans-serif">$1.234.000</text>
+            </svg>
+            <!-- Leyenda -->
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:9px;height:9px;border-radius:3px;background:#4F46E5;flex-shrink:0"></span>
+                <span style="flex:1;font-size:12px;color:var(--text);font-weight:500">Mesa</span>
+                <span style="font-size:12px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums">68%</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:9px;height:9px;border-radius:3px;background:#10B981;flex-shrink:0"></span>
+                <span style="flex:1;font-size:12px;color:var(--text);font-weight:500">Mostrador</span>
+                <span style="font-size:12px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums">22%</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:9px;height:9px;border-radius:3px;background:#F59E0B;flex-shrink:0"></span>
+                <span style="flex:1;font-size:12px;color:var(--text);font-weight:500">Delivery</span>
+                <span style="font-size:12px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums">8%</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:9px;height:9px;border-radius:3px;background:#3B82F6;flex-shrink:0"></span>
+                <span style="flex:1;font-size:12px;color:var(--text);font-weight:500">Online</span>
+                <span style="font-size:12px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums">2%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mesas activas -->
+        <div class="dash-card" style="display:flex;flex-direction:column">
+          <div class="dash-card-head">
+            <div class="dash-card-title">Mesas activas ahora</div>
+            <a href="../pos/mapa.html" style="font-size:11px;color:var(--accent);font-weight:500;text-decoration:none">Ir al POS →</a>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:14px">8 de 12 mesas activas</div>
+          <div class="mesas-grid">
+            <div class="mesa-cell ocupada">1</div>
+            <div class="mesa-cell ocupada">2</div>
+            <div class="mesa-cell libre">3</div>
+            <div class="mesa-cell cocina">4</div>
+            <div class="mesa-cell lista">5</div>
+            <div class="mesa-cell ocupada">6</div>
+            <div class="mesa-cell libre">7</div>
+            <div class="mesa-cell cocina">8</div>
+            <div class="mesa-cell libre">9</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) window.lucide.createIcons();
+
+  // Toggle vista normal / alertas
+  document.querySelectorAll('#viewToggle [data-view]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#viewToggle [data-view]').forEach(b => b.classList.toggle('is-active', b === btn));
+      document.getElementById('dashboardAlerts').hidden = btn.dataset.view === 'normal';
+    });
+  });
+
+  // Periodo toggle (decorativo)
+  document.querySelectorAll('#periodToggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#periodToggle button').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+    });
+  });
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

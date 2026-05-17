@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Proveedores · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* ── Page header ── */
+    .bo-ph { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+    .bo-ph-title { font-size:22px; font-weight:700; color:var(--text); letter-spacing:-.01em; }
+    .bo-ph-sub   { font-size:13px; color:var(--muted); margin-top:3px; }
+    .bo-ph-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+    /* ── KPI grid ── */
+    .kpi-grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
+    @media(max-width:768px){ .kpi-grid-3{ grid-template-columns:1fr; } }
+
+    /* ── Toolbar ── */
+    .toolbar { display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+    .toolbar-search { position:relative; }
+    .toolbar-search input {
+      padding:8px 12px 8px 34px; border-radius:8px;
+      border:1px solid var(--border); background:var(--bg); color:var(--text);
+      font-family:var(--ff-base); font-size:13px; width:260px; outline:none;
+    }
+    .toolbar-search input:focus { border-color:var(--accent); }
+    .toolbar-search .s-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--muted); display:flex; pointer-events:none; }
+    .toolbar-select {
+      padding:8px 12px; border-radius:8px; border:1px solid var(--border);
+      background:var(--bg); color:var(--text); font-family:var(--ff-base);
+      font-size:13px; outline:none; cursor:pointer;
+    }
+    .toolbar-spacer { flex:1; min-width:8px; }
+
+    /* ── Proveedores table ── */
+    .prov-table { background:var(--bg); border:1px solid var(--border); border-radius:11px; overflow:hidden; }
+    .prov-header, .prov-row {
+      display:grid;
+      grid-template-columns: 1.8fr 1.3fr 1.4fr 1fr 1fr 90px 44px;
+      padding:11px 18px; align-items:center; gap:8px;
+    }
+    .prov-header {
+      background:var(--alt); border-bottom:1px solid var(--border);
+      font-size:11px; font-weight:600; color:var(--muted);
+      letter-spacing:.04em; text-transform:uppercase;
+    }
+    .prov-row { border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s; }
+    .prov-row:last-child { border-bottom:none; }
+    .prov-row:hover { background:var(--alt); }
+
+    /* ── Provider cell ── */
+    .prov-cell { display:flex; align-items:center; gap:10px; min-width:0; }
+    .prov-av {
+      width:32px; height:32px; border-radius:16px;
+      font-weight:600; font-size:12px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .prov-name { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cell-nit  { font-size:11px; color:var(--muted); font-family:monospace; }
+    .cell-contact { font-size:12px; }
+    .cell-contact-name { color:var(--text); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cell-contact-tel  { color:var(--muted); font-size:11px; }
+    .cell-saldo-cero { font-size:12px; color:var(--muted); }
+    .cell-saldo-pend { font-size:13px; font-weight:700; color:var(--error); font-variant-numeric:tabular-nums; display:flex; align-items:center; gap:5px; }
+    .saldo-dot { width:7px; height:7px; border-radius:50%; background:var(--error); flex-shrink:0; }
+    .more-btn { width:28px; height:28px; border-radius:6px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--muted); }
+    .more-btn:hover { background:var(--alt); }
+
+    /* ── Pagination ── */
+    .pagination { display:flex; align-items:center; justify-content:space-between; padding:10px 18px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); }
+    .pag-btn { padding:5px 10px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--text); cursor:pointer; font-family:var(--ff-base); font-size:12px; font-weight:500; display:flex; align-items:center; gap:4px; }
+    .pag-btn:disabled { opacity:.4; cursor:default; }
+    .pag-pages { display:flex; gap:4px; }
+    .pag-page { width:28px; height:28px; border-radius:6px; border:none; background:transparent; color:var(--muted); cursor:pointer; font-family:var(--ff-base); font-size:12px; }
+    .pag-page.is-active { background:var(--accent); color:#fff; }
+    .pag-page:hover:not(.is-active) { background:var(--alt); }
+
+    /* ── Mobile ── */
+    @media(max-width:768px){
+      .prov-header { display:none; }
+      .prov-row { grid-template-columns:1fr auto; grid-template-rows:auto auto; gap:4px; padding:12px 14px; }
+      .prov-cell { grid-column:1/-1; }
+      .cell-nit,.cell-contact,.cell-saldo-pend,.cell-saldo-cero { font-size:11px; }
+      .toolbar { flex-direction:column; align-items:stretch; }
+      .toolbar-search input { width:100%; }
+      .bo-ph { flex-direction:column; gap:10px; }
+    }
+
+    /* ── Drawer ── */
+    .drawer-wide { width:520px; }
+    @media(max-width:768px){ .drawer-wide{ width:100%; } }
+    [data-tabs] [data-panel]{ display:none; }
+    [data-tabs] [data-panel].is-active{ display:block; }
+    .drawer-tabs{ display:flex; border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
+    .drawer-tabs::-webkit-scrollbar{ display:none; }
+    .drawer-tab{ padding:11px 16px; border:none; border-bottom:2px solid transparent; background:transparent; cursor:pointer; font-family:var(--ff-base); font-size:12px; font-weight:500; color:var(--muted); white-space:nowrap; margin-bottom:-1px; flex-shrink:0; }
+    .drawer-tab.is-active{ font-weight:600; color:var(--text); border-bottom-color:var(--accent); }
+    .prov-card{ padding:14px 16px; border-radius:10px; background:var(--alt); border:1px solid var(--border); display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+    .prov-card-av{ width:52px; height:52px; border-radius:26px; font-weight:700; font-size:18px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .prov-card-nombre{ font-size:15px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .prov-card-badges{ display:flex; gap:8px; flex-wrap:wrap; }
+    .data-row{ display:flex; align-items:center; gap:11px; margin-bottom:10px; }
+    .data-icon{ width:30px; height:30px; border-radius:7px; background:var(--alt); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .data-label{ font-size:10px; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; font-weight:600; }
+    .data-val{ font-size:13px; color:var(--text); font-weight:500; }
+    .info-section{ margin-bottom:18px; }
+    .info-section-title{ font-size:11px; font-weight:600; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; margin-bottom:10px; }
+    .info-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .info-field label{ font-size:10px; color:var(--muted); font-weight:600; display:block; margin-bottom:3px; }
+    .info-field .val{ font-size:13px; color:var(--text); }
+    .mini-kpi-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+    .mini-kpi{ background:var(--alt); border:1px solid var(--border); border-radius:8px; padding:10px 12px; }
+    .mini-kpi-label{ font-size:10px; font-weight:600; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; margin-bottom:4px; }
+    .mini-kpi-val{ font-size:16px; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums; }
+    .compras-table{ background:var(--bg); border:1px solid var(--border); border-radius:9px; overflow:hidden; }
+    .ct2-header,.ct2-row{ display:grid; grid-template-columns:0.8fr 1fr 1fr 1fr 60px; padding:8px 12px; align-items:center; font-size:12px; }
+    .ct2-header{ background:var(--alt); border-bottom:1px solid var(--border); font-size:10px; font-weight:600; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; }
+    .ct2-row{ border-bottom:1px solid var(--border); }
+    .ct2-row:last-child{ border-bottom:none; }
+    .prod-item{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
+    .prod-item:last-child{ border-bottom:none; }
+    .prod-nombre{ color:var(--text); font-weight:500; }
+    .prod-meta{ color:var(--muted); font-size:11px; text-align:right; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+
+    <!-- ====================== SIDEBAR ====================== -->
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info">
+            <span class="label">Negocio</span>
+            <span class="name">El Buen Sabor</span>
+          </span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+
+      <nav class="bo-sidebar-nav">
+
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html"    class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html"  class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html"    class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item is-active"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html"      class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html"     class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+          <a href="./integraciones.html" class="bo-sidebar-item"><i data-lucide="plug"></i>Integraciones</a>
+        </div>
+
+      </nav>
+
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info">
+          <span class="name">Carlos Ramírez</span>
+          <span class="role">Administrador</span>
+        </span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Backdrop del sidebar -->
+    <div class="bo-sidebar-backdrop"></div>
+
+    <!-- ====================== CONTENT WRAP ====================== -->
+    <div class="bo-content-wrap">
+
+      <!-- ====================== TOPBAR ====================== -->
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Gestión</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Proveedores</span>
+        </nav>
+
+        <div class="bo-topbar-spacer"></div>
+
+        <button class="bo-topbar-sucursal" type="button">
+          <i data-lucide="store"></i>
+          <span class="label">Sucursal Centro</span>
+        </button>
+
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones">
+            <i data-lucide="bell"></i>
+            <span class="notification-dot"></span>
+          </button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button" aria-label="Perfil">CR</button>
+        </div>
+      </header>
+
+      <!-- ====================== MAIN CONTENT ====================== -->
+      <main id="main" class="bo-content">
+
+        <!-- ── Page header ── -->
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Proveedores</div>
+            <div class="bo-ph-sub">15 proveedores registrados · 4 con pagos pendientes</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-ghost"><i data-lucide="upload"></i> Importar CSV</button>
+            <button class="btn btn-primary" id="btnNuevoProveedor"><i data-lucide="plus"></i> Nuevo proveedor</button>
+          </div>
+        </div>
+
+        <!-- ── KPIs ── -->
+        <div class="kpi-grid-3">
+          <div class="kpi-card tone-muted">
+            <div class="kpi-header">
+              <span class="kpi-label">Total proveedores</span>
+              <span class="kpi-icon"><i data-lucide="truck"></i></span>
+            </div>
+            <div class="kpi-value">15</div>
+            <div class="kpi-helper">3 nuevos este mes</div>
+          </div>
+          <div class="kpi-card tone-warning">
+            <div class="kpi-header">
+              <span class="kpi-label">Cuentas por pagar</span>
+              <span class="kpi-icon"><i data-lucide="alert-triangle"></i></span>
+            </div>
+            <div class="kpi-value">$3.450.000</div>
+            <div class="kpi-helper">4 facturas pendientes</div>
+          </div>
+          <div class="kpi-card tone-error">
+            <div class="kpi-header">
+              <span class="kpi-label">Pagos vencidos</span>
+              <span class="kpi-icon"><i data-lucide="alert-circle"></i></span>
+            </div>
+            <div class="kpi-value">$780.000</div>
+            <div class="kpi-helper">1 factura vencida</div>
+          </div>
+        </div>
+
+        <!-- ── Toolbar ── -->
+        <div class="toolbar">
+          <div class="toolbar-search">
+            <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+            <input type="text" id="provSearch" placeholder="Buscar por nombre, NIT o contacto...">
+          </div>
+          <select class="toolbar-select" id="provFiltroCategoria">
+            <option value="">Categoría: Todas</option>
+            <option value="Alimentos">Alimentos</option>
+            <option value="Bebidas">Bebidas</option>
+            <option value="Insumos">Insumos</option>
+            <option value="Servicios">Servicios</option>
+            <option value="Empaques">Empaques</option>
+          </select>
+          <select class="toolbar-select" id="provFiltroEstado">
+            <option value="">Estado: Todos</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+            <option value="Suspendido">Suspendido</option>
+          </select>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-ghost"><i data-lucide="download"></i> Exportar</button>
+        </div>
+
+        <!-- ── Tabla ── -->
+        <div class="prov-table">
+          <div class="prov-header">
+            <div>Proveedor</div>
+            <div>NIT</div>
+            <div>Contacto</div>
+            <div>Categoría</div>
+            <div>Saldo pendiente</div>
+            <div>Estado</div>
+            <div></div>
+          </div>
+
+          <div id="provBody"></div>
+
+          <div class="empty-state" id="provEmpty" hidden>
+            <div class="empty-state-icon"><i data-lucide="truck" style="width:36px;height:36px;"></i></div>
+            <div class="empty-state-title">No encontramos proveedores</div>
+            <div class="empty-state-text">Probá con otro nombre, NIT o contacto.</div>
+            <button class="btn btn-secondary empty-state-action" id="provClearSearch">Limpiar búsqueda</button>
+          </div>
+
+          <div class="pagination">
+            <span>Mostrando 1–10 de 15 proveedores</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="pag-btn" disabled><i data-lucide="chevron-left" style="width:13px;height:13px;"></i> Anterior</button>
+              <div class="pag-pages">
+                <button class="pag-page is-active">1</button>
+                <button class="pag-page">2</button>
+              </div>
+              <button class="pag-btn">Siguiente <i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ====================== DRAWER PROVEEDOR ====================== -->
+  <div id="drawerProveedor" class="drawer-backdrop">
+    <div class="drawer drawer-wide">
+      <div class="drawer-header" id="drawerProvHeader">
+        Detalle proveedor
+        <button class="modal-close" data-close aria-label="Cerrar">×</button>
+      </div>
+
+      <div class="drawer-body" style="padding:0;overflow:auto;">
+        <div data-tabs="proveedor">
+          <div class="drawer-tabs">
+            <button class="drawer-tab is-active" data-tab="info">Info</button>
+            <button class="drawer-tab" data-tab="compras">Compras</button>
+            <button class="drawer-tab" data-tab="productos">Productos</button>
+            <button class="drawer-tab" data-tab="documentos">Documentos</button>
+          </div>
+
+          <div style="padding:18px 20px;">
+
+            <!-- Panel Info -->
+            <div data-panel="info" class="is-active">
+              <div class="prov-card" id="drawerProvCard"><!-- JS --></div>
+              <div class="info-section">
+                <div class="info-section-title">Datos de contacto</div>
+                <div id="drawerProvContacto"></div>
+              </div>
+              <div class="info-section">
+                <div class="info-section-title">Datos comerciales</div>
+                <div class="info-grid">
+                  <div class="info-field"><label>Plazo de pago</label><div class="val">30 días</div></div>
+                  <div class="info-field"><label>Día de pedido</label><div class="val">Lunes y miércoles</div></div>
+                  <div class="info-field"><label>Mínimo de compra</label><div class="val">$200.000</div></div>
+                  <div class="info-field"><label>Descuento negociado</label><div class="val">5%</div></div>
+                </div>
+              </div>
+              <div class="info-section">
+                <div class="info-section-title">Datos bancarios</div>
+                <div class="info-grid">
+                  <div class="info-field"><label>Banco</label><div class="val">Bancolombia</div></div>
+                  <div class="info-field"><label>Tipo cuenta</label><div class="val">Ahorros</div></div>
+                  <div class="info-field"><label>Número</label><div class="val">236-xxxxxx-38</div></div>
+                  <div class="info-field"><label>Titular</label><div class="val" id="drawerProvTitular"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel Compras -->
+            <div data-panel="compras">
+              <div class="mini-kpi-grid">
+                <div class="mini-kpi"><div class="mini-kpi-label">Compras (mes)</div><div class="mini-kpi-val">$1.840.000</div></div>
+                <div class="mini-kpi"><div class="mini-kpi-label">Promedio pedido</div><div class="mini-kpi-val">$615.000</div></div>
+                <div class="mini-kpi"><div class="mini-kpi-label">Último pedido</div><div class="mini-kpi-val">12/03</div></div>
+              </div>
+              <div class="compras-table">
+                <div class="ct2-header"><div>Fecha</div><div># Orden</div><div>Total</div><div>Estado</div><div></div></div>
+                <div class="ct2-row"><div>12/03/25</div><div>OC-0089</div><div>$850.000</div><div><span class="badge badge-success"><span class="dot"></span>Entregado</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
+                <div class="ct2-row"><div>05/03/25</div><div>OC-0081</div><div>$620.000</div><div><span class="badge badge-info"><span class="dot"></span>En tránsito</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
+                <div class="ct2-row"><div>26/02/25</div><div>OC-0074</div><div>$370.000</div><div><span class="badge badge-success"><span class="dot"></span>Entregado</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
+                <div class="ct2-row"><div>14/02/25</div><div>OC-0065</div><div>$910.000</div><div><span class="badge badge-success"><span class="dot"></span>Entregado</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
+                <div class="ct2-row"><div>03/02/25</div><div>OC-0058</div><div>$480.000</div><div><span class="badge badge-warning"><span class="dot"></span>Pendiente</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
+              </div>
+            </div>
+
+            <!-- Panel Productos -->
+            <div data-panel="productos">
+              <div class="prod-item"><span class="prod-nombre">Pechuga de pollo</span><span class="prod-meta">$12.500/kg · Bolsa x 5kg</span></div>
+              <div class="prod-item"><span class="prod-nombre">Muslo de pollo</span><span class="prod-meta">$9.800/kg · Bolsa x 5kg</span></div>
+              <div class="prod-item"><span class="prod-nombre">Carne de res molida</span><span class="prod-meta">$18.000/kg · Bolsa x 3kg</span></div>
+              <div class="prod-item"><span class="prod-nombre">Costilla de cerdo</span><span class="prod-meta">$14.500/kg · Bandeja x 2kg</span></div>
+              <div class="prod-item"><span class="prod-nombre">Chorizo santafereño</span><span class="prod-meta">$22.000/kg · Paquete x 1kg</span></div>
+            </div>
+
+            <!-- Panel Documentos -->
+            <div data-panel="documentos">
+              <div class="empty-state" style="padding:36px 0;">
+                <div class="empty-state-icon"><i data-lucide="file" style="width:36px;height:36px;"></i></div>
+                <div style="font-weight:600;margin-bottom:4px;">Sin documentos</div>
+                <div style="font-size:13px;color:var(--muted);">Las órdenes de compra y facturas aparecerán aquí.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <button class="btn btn-destructive" data-close>Desactivar</button>
+        <div style="flex:1;"></div>
+        <button class="btn btn-secondary" data-close>Cerrar</button>
+        <button class="btn btn-primary" onclick="UI.toast({type:'success',title:'Cambios guardados'})">Editar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== MODAL NUEVO PROVEEDOR ====================== -->
+  <div id="modalNuevoProveedor" class="modal-backdrop">
+    <div class="modal modal-md" role="dialog" aria-labelledby="modalNuevoProvTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="modalNuevoProvTitle">Nuevo proveedor</div>
+        <button class="modal-close" data-close aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="field" style="grid-column:1/-1;">
+            <label class="field-label" for="npRazon">Razón social *</label>
+            <input class="field-input" id="npRazon" type="text" placeholder="Ej: Distribuidora El Valle S.A.S">
+          </div>
+          <div class="field">
+            <label class="field-label" for="npNit">NIT *</label>
+            <input class="field-input" id="npNit" type="text" placeholder="900.123.456-7">
+          </div>
+          <div class="field">
+            <label class="field-label" for="npCategoria">Categoría *</label>
+            <select class="field-input" id="npCategoria">
+              <option value="">Seleccionar...</option>
+              <option>Alimentos</option>
+              <option>Bebidas</option>
+              <option>Insumos</option>
+              <option>Servicios</option>
+              <option>Empaques</option>
+              <option>Otros</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label" for="npContacto">Nombre de contacto</label>
+            <input class="field-input" id="npContacto" type="text" placeholder="Ej: Ricardo Méndez">
+          </div>
+          <div class="field">
+            <label class="field-label" for="npTel">Teléfono</label>
+            <input class="field-input" id="npTel" type="tel" placeholder="310 234 5678">
+          </div>
+          <div class="field" style="grid-column:1/-1;">
+            <label class="field-label" for="npEmail">Email</label>
+            <input class="field-input" id="npEmail" type="email" placeholder="contacto@proveedor.com">
+          </div>
+          <div class="field" style="grid-column:1/-1;">
+            <label class="field-label" for="npDireccion">Dirección</label>
+            <input class="field-input" id="npDireccion" type="text" placeholder="Ej: Cra. 30 #45-10, Bogotá">
+          </div>
+          <div class="field">
+            <label class="field-label" for="npCiudad">Ciudad</label>
+            <input class="field-input" id="npCiudad" type="text" placeholder="Bogotá">
+          </div>
+          <div class="field">
+            <label class="field-label" for="npPlazo">Plazo de pago</label>
+            <select class="field-input" id="npPlazo">
+              <option>Contado</option>
+              <option>15 días</option>
+              <option selected>30 días</option>
+              <option>60 días</option>
+            </select>
+          </div>
+          <div class="field" style="grid-column:1/-1;">
+            <label class="field-label" for="npNotas">Notas</label>
+            <textarea class="field-input" id="npNotas" rows="3" placeholder="Condiciones especiales, observaciones..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-primary" id="btnGuardarProveedor">Guardar proveedor</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    var PROVEEDORES = [
+      { iniciales:'DE', avBg:'#BBF7D0', avFg:'#14532D', nombre:'Distribuidora El Valle S.A.S', nit:'900.123.456-7', contactoNombre:'Ricardo Méndez', tel:'310 234 5678', categoria:'Alimentos', saldo:1230000, estado:'Activo',     ultima:'12/03/2025' },
+      { iniciales:'CP', avBg:'#FED7AA', avFg:'#9A3412', nombre:'Carnes Premium del Llano',      nit:'901.234.567-1', contactoNombre:'Carlos Ospina',  tel:'315 345 6789', categoria:'Alimentos', saldo:0,       estado:'Activo',     ultima:'10/03/2025' },
+      { iniciales:'CN', avBg:'#FCA5A5', avFg:'#7F1D1D', nombre:'Cervecería Nacional S.A',       nit:'860.002.964-4', contactoNombre:'María Ángel',    tel:'601 876 5432', categoria:'Bebidas',   saldo:890000,  estado:'Activo',     ultima:'08/03/2025' },
+      { iniciales:'ID', avBg:'#DDD6FE', avFg:'#5B21B6', nombre:'Insumos y Desechables del Caribe', nit:'900.345.678-3', contactoNombre:'Pedro Gómez', tel:'311 456 7890', categoria:'Insumos',   saldo:0,       estado:'Activo',     ultima:'05/03/2025' },
+      { iniciales:'FL', avBg:'#A7F3D0', avFg:'#065F46', nombre:'Fruver La Cosecha',              nit:'900.456.789-9', contactoNombre:'Ana Martínez',  tel:'318 567 8901', categoria:'Alimentos', saldo:550000,  estado:'Activo',     ultima:'14/03/2025' },
+      { iniciales:'GN', avBg:'#BAE6FD', avFg:'#0C4A6E', nombre:'Gas Natural Fenosa',             nit:'860.007.590-5', contactoNombre:'Serv. al cliente',tel:'164',         categoria:'Servicios', saldo:0,       estado:'Activo',     ultima:'01/03/2025' },
+      { iniciales:'EP', avBg:'#FEF08A', avFg:'#713F12', nombre:'Empaques del Pacífico',          nit:'900.567.890-2', contactoNombre:'Luis Herrera',   tel:'316 678 9012', categoria:'Empaques',  saldo:780000,  estado:'Suspendido', ultima:'20/02/2025' },
+      { iniciales:'LA', avBg:'#E9D5FF', avFg:'#6B21A8', nombre:'Lácteos del Altiplano S.A.S',   nit:'900.678.901-5', contactoNombre:'Camilo Duarte',  tel:'312 789 0123', categoria:'Alimentos', saldo:0,       estado:'Activo',     ultima:'11/03/2025' },
+      { iniciales:'VL', avBg:'#FECACA', avFg:'#991B1B', nombre:'Vinos y Licores Importados',     nit:'901.789.012-8', contactoNombre:'Natalia Suárez', tel:'300 890 1234', categoria:'Bebidas',   saldo:0,       estado:'Inactivo',   ultima:'15/01/2025' },
+      { iniciales:'PA', avBg:'#D1FAE5', avFg:'#064E3B', nombre:'Papelería y Aseo Total',         nit:'900.890.123-4', contactoNombre:'Jorge Castillo', tel:'317 901 2345', categoria:'Insumos',   saldo:0,       estado:'Activo',     ultima:'09/03/2025' },
+    ];
+
+    function fmtCOP(n){ return '$' + Number(n).toLocaleString('es-CO'); }
+
+    function estadoBadge(e){
+      if(e==='Activo')     return '<span class="badge badge-success"><span class="dot"></span>Activo</span>';
+      if(e==='Inactivo')   return '<span class="badge badge-muted">Inactivo</span>';
+      if(e==='Suspendido') return '<span class="badge badge-warning"><span class="dot"></span>Suspendido</span>';
+      return e;
+    }
+
+    function renderTabla(){
+      var q   = (document.getElementById('provSearch').value||'').toLowerCase().trim();
+      var cat = document.getElementById('provFiltroCategoria').value;
+      var est = document.getElementById('provFiltroEstado').value;
+      var body = document.getElementById('provBody');
+      body.innerHTML = '';
+      var visible = 0;
+      PROVEEDORES.forEach(function(p,idx){
+        var txt = (p.nombre+p.nit+p.contactoNombre+p.tel).toLowerCase();
+        if(q && !txt.includes(q)) return;
+        if(cat && p.categoria !== cat) return;
+        if(est && p.estado !== est) return;
+        visible++;
+        var saldoHtml = p.saldo > 0
+          ? '<div class="cell-saldo-pend"><span class="saldo-dot"></span>'+fmtCOP(p.saldo)+'</div>'
+          : '<div class="cell-saldo-cero">—</div>';
+        var row = document.createElement('div');
+        row.className = 'prov-row';
+        row.dataset.idx = idx;
+        row.innerHTML =
+          '<div class="prov-cell"><div class="prov-av" style="background:'+p.avBg+';color:'+p.avFg+'">'+p.iniciales+'</div><span class="prov-name">'+p.nombre+'</span></div>'+
+          '<div class="cell-nit">'+p.nit+'</div>'+
+          '<div class="cell-contact"><div class="cell-contact-name">'+p.contactoNombre+'</div><div class="cell-contact-tel">'+p.tel+'</div></div>'+
+          '<div><span class="badge badge-muted">'+p.categoria+'</span></div>'+
+          saldoHtml+
+          '<div>'+estadoBadge(p.estado)+'</div>'+
+          '<div><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:15px;height:15px;"></i></button></div>';
+        row.addEventListener('click', function(){ abrirDrawer(idx); });
+        body.appendChild(row);
+      });
+      document.getElementById('provEmpty').hidden = visible > 0;
+      if(window.lucide) window.lucide.createIcons();
+    }
+
+    function dataRow(icon, label, val){
+      return '<div class="data-row">'+
+        '<div class="data-icon"><i data-lucide="'+icon+'" style="width:14px;height:14px;color:var(--muted);"></i></div>'+
+        '<div style="flex:1;min-width:0;"><div class="data-label">'+label+'</div><div class="data-val">'+val+'</div></div>'+
+      '</div>';
+    }
+
+    function abrirDrawer(idx){
+      var p = PROVEEDORES[idx];
+      // Header
+      document.getElementById('drawerProvHeader').innerHTML =
+        p.nombre+'<button class="modal-close" data-close aria-label="Cerrar">×</button>';
+      // Card
+      document.getElementById('drawerProvCard').innerHTML =
+        '<div class="prov-card-av" style="background:'+p.avBg+';color:'+p.avFg+'">'+p.iniciales+'</div>'+
+        '<div><div class="prov-card-nombre">'+p.nombre+'</div>'+
+        '<div class="prov-card-badges">'+estadoBadge(p.estado)+'<span class="badge badge-muted">'+p.categoria+'</span></div></div>';
+      // Contacto
+      document.getElementById('drawerProvContacto').innerHTML =
+        dataRow('hash','NIT',p.nit)+
+        dataRow('user','Contacto',p.contactoNombre)+
+        dataRow('phone','Teléfono',p.tel)+
+        dataRow('mail','Email',p.contactoNombre.toLowerCase().replace(' ','.')+p.nit.slice(-1)+'@proveedor.co')+
+        dataRow('map-pin','Ciudad','Bogotá, Colombia');
+      // Titular bancario
+      document.getElementById('drawerProvTitular').textContent = p.nombre;
+      // Re-init tabs
+      if(window.lucide) window.lucide.createIcons();
+      UI.tabs('[data-tabs="proveedor"]');
+      UI.openDrawer('drawerProveedor');
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      document.getElementById('provSearch').addEventListener('input', renderTabla);
+      document.getElementById('provFiltroCategoria').addEventListener('change', renderTabla);
+      document.getElementById('provFiltroEstado').addEventListener('change', renderTabla);
+      document.getElementById('provClearSearch').addEventListener('click', function(){
+        document.getElementById('provSearch').value = '';
+        document.getElementById('provFiltroCategoria').value = '';
+        document.getElementById('provFiltroEstado').value = '';
+        renderTabla();
+      });
+      document.getElementById('btnNuevoProveedor').addEventListener('click', function(){
+        UI.openModal('modalNuevoProveedor');
+      });
+      document.getElementById('btnGuardarProveedor').addEventListener('click', function(){
+        var razon = document.getElementById('npRazon').value.trim();
+        if(!razon){ UI.toast({type:'error',title:'Campo requerido',sub:'Ingresá la razón social'}); return; }
+        UI.closeModal('modalNuevoProveedor');
+        UI.toast({type:'success',title:'Proveedor creado',sub:razon});
+        // Reset form
+        ['npRazon','npNit','npContacto','npTel','npEmail','npDireccion','npCiudad','npNotas'].forEach(function(id){
+          var el = document.getElementById(id); if(el) el.value='';
+        });
+      });
+      renderTabla();
+    });
+
+    if(window.lucide) window.lucide.createIcons();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

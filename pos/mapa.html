@@ -2,20 +2,25 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mapa de mesas · POS · Inventario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Mapa de mesas · POS · ROOT</title>
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/pos-shell.css" />
 </head>
 <body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
   <div class="pos-shell">
 
     <header class="pos-topbar">
       <div class="pos-topbar-brand">
-        <span class="pos-brand-logo">I</span>
-        <span class="pos-brand-name">Inventario</span>
+        <img src="../ROOT.png" class="pos-brand-logo-img" alt="[ROOT]">
+        
         <span class="pos-brand-badge">POS</span>
       </div>
       <nav class="pos-topbar-zones">
@@ -40,7 +45,7 @@
       </div>
     </header>
 
-    <main class="pos-content">
+    <main id="main" class="pos-content">
 
       <!-- Área principal del mapa -->
       <div class="pos-mapa-main">
@@ -318,5 +323,6 @@
       setTimeout(() => { location.href = './historico.html'; }, 900);
     });
   </script>
+  <script src="../assets/js/nav.js"></script>
 </body>
 </html>

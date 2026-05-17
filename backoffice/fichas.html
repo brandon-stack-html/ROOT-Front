@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Fichas técnicas · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* Page header */
+    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .bo-ph-actions { display: flex; align-items: center; gap: 8px; }
+
+    /* Toolbar */
+    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .toolbar-search { position: relative; flex: 1; }
+    .toolbar-search input {
+      padding: 8px 12px 8px 34px; border-radius: 8px; width: 100%;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text);
+      font-family: var(--ff-base); font-size: 13px; outline: none;
+    }
+    .toolbar-search input:focus { border-color: var(--accent); }
+    .toolbar-search .s-icon {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); display: flex; pointer-events: none;
+    }
+
+    /* Split layout */
+    .fichas-layout {
+      display: grid; grid-template-columns: 300px 1fr;
+      gap: 18px; align-items: flex-start;
+    }
+
+    /* Lista izq */
+    .fichas-list-wrap {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 11px; padding: 8px;
+    }
+    .ficha-item {
+      width: 100%; padding: 10px 12px; border-radius: 9px;
+      background: transparent; border: 1px solid transparent;
+      cursor: pointer; font-family: var(--ff-base); text-align: left;
+      display: flex; align-items: center; gap: 11px; margin-bottom: 4px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .ficha-item:last-child { margin-bottom: 0; }
+    .ficha-item:hover { background: var(--alt); }
+    .ficha-item.is-active {
+      background: #EEF2FF; border-color: var(--accent);
+    }
+    [data-theme="dark"] .ficha-item.is-active { background: rgba(99,102,241,.18); }
+    .ficha-avatar {
+      width: 32px; height: 32px; border-radius: 7px; color: #fff;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .ficha-info { flex: 1; min-width: 0; }
+    .ficha-nombre {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .ficha-meta { font-size: 11px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .ficha-meta strong { color: var(--text); font-weight: 500; }
+
+    .ficha-add-btn {
+      width: 100%; padding: 12px; background: transparent;
+      border: 1px dashed var(--border); border-radius: 9px; cursor: pointer;
+      font-family: var(--ff-base); color: var(--muted); font-size: 12px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 4px;
+    }
+    .ficha-add-btn:hover { background: var(--alt); }
+
+    /* Detalle derecho */
+    .ficha-detail {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 11px; overflow: hidden;
+    }
+
+    /* Detalle header */
+    .detail-head { padding: 18px 22px; border-bottom: 1px solid var(--border); }
+    .detail-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+    .detail-identity { display: flex; align-items: center; gap: 14px; }
+    .detail-avatar { width: 48px; height: 48px; border-radius: 11px; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .detail-nombre { font-size: 18px; font-weight: 700; color: var(--text); }
+    .detail-cat {
+      padding: 2px 8px; border-radius: 11px;
+      background: #DBEAFE; color: #1E40AF;
+      font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    }
+    [data-theme="dark"] .detail-cat { background: rgba(59,130,246,.18); color: #93C5FD; }
+    .detail-sku { font-size: 11px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
+    .detail-btns { display: flex; gap: 8px; flex-shrink: 0; }
+
+    /* Métricas */
+    .metrics-row { display: flex; gap: 12px; margin-bottom: 14px; }
+    .metric-card {
+      flex: 1; padding: 14px 16px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .metric-label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+    .metric-value { font-size: 22px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+    .metric-value.green { color: var(--success); }
+    .metric-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    /* Barra composición */
+    .comp-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .comp-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+    .comp-pcts { font-size: 11px; color: var(--muted); }
+    .comp-bar { height: 10px; border-radius: 5px; background: var(--alt); overflow: hidden; display: flex; }
+    .comp-cost { height: 100%; background: var(--error); }
+    .comp-margin { height: 100%; flex: 1; background: var(--success); }
+
+    /* Tabla ingredientes */
+    .ing-table { width: 100%; }
+    .ing-head {
+      display: grid;
+      grid-template-columns: 30px 1.6fr 0.8fr 0.7fr 1fr 1fr 30px;
+      padding: 11px 22px; background: var(--alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase;
+    }
+    .ing-row {
+      display: grid;
+      grid-template-columns: 30px 1.6fr 0.8fr 0.7fr 1fr 1fr 30px;
+      padding: 11px 22px; align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .ing-name-cell { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--text); font-weight: 500; }
+    .ing-qty { text-align: right; font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; font-weight: 500; }
+    .ing-unit { font-size: 12px; color: var(--muted); }
+    .ing-cost-unit { text-align: right; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .ing-cost-total { text-align: right; font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; font-weight: 600; }
+    .ing-drag { display: flex; align-items: center; cursor: grab; color: var(--muted); }
+    .ing-del { display: flex; justify-content: center; color: var(--muted); cursor: pointer; }
+    .ing-del:hover { color: var(--error); }
+
+    /* Cat chip inline */
+    .cat-chip {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: 9px; font-size: 11px; font-weight: 600;
+    }
+    .cat-vegetal   { background: #DCFCE7; color: #14532D; }
+    .cat-proteina  { background: #FECACA; color: #7F1D1D; }
+    .cat-especia   { background: #FEF3C7; color: #92400E; }
+    .cat-lacteo    { background: #DBEAFE; color: #1E40AF; }
+    [data-theme="dark"] .cat-vegetal  { background: rgba(16,185,129,.18); color: #86EFAC; }
+    [data-theme="dark"] .cat-proteina { background: rgba(239,68,68,.18);  color: #FCA5A5; }
+    [data-theme="dark"] .cat-especia  { background: rgba(245,158,11,.18); color: #FDE68A; }
+    [data-theme="dark"] .cat-lacteo   { background: rgba(59,130,246,.18); color: #93C5FD; }
+
+    /* Agregar ingrediente row */
+    .ing-add-row {
+      padding: 12px 22px; display: flex; align-items: center; gap: 10px;
+      background: rgba(244,244,245,.4); color: var(--muted); font-size: 12px;
+      cursor: pointer; border-bottom: 1px solid var(--border); font-family: var(--ff-base);
+      border: none; width: 100%; text-align: left;
+    }
+    [data-theme="dark"] .ing-add-row { background: rgba(24,24,27,.4); }
+    .ing-add-row:hover { background: var(--alt); }
+
+    /* Total row */
+    .ing-total {
+      padding: 14px 22px; display: flex; align-items: center; justify-content: space-between;
+      background: var(--alt);
+    }
+    .ing-total-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+    .ing-total-val { font-size: 18px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+
+    /* Drawer ingrediente */
+    [data-tabs] [data-panel] { display: none; }
+    [data-tabs] [data-panel].is-active { display: block; }
+
+    /* Mobile: master-detail */
+    @media (max-width: 1024px) {
+      .fichas-layout { grid-template-columns: 1fr; }
+      .fichas-list-side { display: block; }
+      .fichas-detail-side { display: none; }
+      .fichas-layout.show-detail .fichas-list-side { display: none; }
+      .fichas-layout.show-detail .fichas-detail-side { display: block; }
+      .metrics-row { flex-wrap: wrap; }
+      .metric-card { min-width: 120px; }
+      .ing-head { display: none; }
+      .ing-row {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 6px;
+        padding: 12px 14px;
+      }
+      .ing-name-cell { grid-column: 1 / -1; }
+      .ing-drag { display: none; }
+    }
+    @media (max-width: 768px) {
+      .bo-ph { flex-direction: column; gap: 10px; }
+      .detail-top { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info">
+            <span class="label">Negocio</span>
+            <span class="name">El Buen Sabor</span>
+          </span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html" class="bo-sidebar-item is-active"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+        </div>
+      </nav>
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info">
+          <span class="name">Carlos Ramírez</span>
+          <span class="role">Administrador</span>
+        </span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+    <div class="bo-sidebar-backdrop"></div>
+
+    <div class="bo-content-wrap">
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Gestión</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item">Inventario</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Fichas técnicas</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button">
+          <i data-lucide="store"></i>
+          <span class="label">Sucursal Centro</span>
+        </button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones">
+            <i data-lucide="bell"></i><span class="notification-dot"></span>
+          </button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button" aria-label="Perfil">CR</button>
+        </div>
+      </header>
+
+      <main id="main" class="bo-content">
+
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Fichas técnicas</div>
+            <div class="bo-ph-sub">Recetas que descuentan ingredientes automáticamente al vender</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-primary"><i data-lucide="plus"></i> Nueva ficha</button>
+          </div>
+        </div>
+
+        <div class="fichas-layout" id="fichasLayout">
+
+          <!-- Lista izquierda -->
+          <div class="fichas-list-side">
+            <div class="toolbar">
+              <div class="toolbar-search">
+                <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+                <input type="text" placeholder="Buscar receta...">
+              </div>
+            </div>
+            <div class="fichas-list-wrap">
+              <!-- Items generados por JS -->
+            </div>
+          </div>
+
+          <!-- Detalle derecho -->
+          <div class="fichas-detail-side">
+            <div class="ficha-detail" id="fichaDetail">
+              <!-- Contenido generado por JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Drawer agregar ingrediente -->
+        <div id="drawerIngrediente" class="drawer-backdrop">
+          <div class="drawer">
+            <div class="drawer-header">
+              Agregar ingrediente
+              <button class="modal-close" data-close aria-label="Cerrar">×</button>
+            </div>
+            <div class="drawer-body" style="padding:18px 22px;">
+              <div class="field">
+                <label class="field-label">Buscar ingrediente</label>
+                <input type="text" class="field-input" list="ingredientesList" placeholder="Ej. Pollo, Tomate, Harina...">
+                <datalist id="ingredientesList">
+                  <option value="Pollo entero">
+                  <option value="Papa criolla">
+                  <option value="Mazorca">
+                  <option value="Guascas">
+                  <option value="Crema de leche">
+                  <option value="Cilantro">
+                  <option value="Aguacate Hass">
+                  <option value="Arroz">
+                  <option value="Fríjoles">
+                  <option value="Carne de res">
+                  <option value="Yuca">
+                  <option value="Cebolla larga">
+                  <option value="Ajo">
+                  <option value="Aceite">
+                  <option value="Sal">
+                </datalist>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="field">
+                  <label class="field-label">Cantidad</label>
+                  <input type="number" class="field-input" placeholder="0.00" step="0.01" min="0">
+                </div>
+                <div class="field">
+                  <label class="field-label">Unidad</label>
+                  <select class="field-input">
+                    <option value="kg">kg</option>
+                    <option value="g">g</option>
+                    <option value="lt">lt</option>
+                    <option value="ml">ml</option>
+                    <option value="unid">unid</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label">Costo unitario (por unidad seleccionada)</label>
+                <input type="number" class="field-input" placeholder="$0" min="0">
+              </div>
+            </div>
+            <div class="drawer-footer">
+              <button class="btn btn-secondary" data-close>Cancelar</button>
+              <button class="btn btn-primary" id="btnAgregarIng"><i data-lucide="plus"></i> Agregar</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    function fmtCOP(n) {
+      return '$' + Number(n).toLocaleString('es-CO');
+    }
+
+    var FICHAS = [
+      {
+        id: 'paisa',
+        color: '#F97316',
+        nombre: 'Bandeja Paisa',
+        categoria: 'Platos fuertes',
+        sku: 'BPA-001',
+        costo: 8250,
+        precio: 32000,
+        ingredientes: [
+          { ing: 'Fríjoles rojos',  cat: 'vegetal',  cant: 0.2,  unidad: 'kg',   costoUnit: 6000,  costoTotal: 1200 },
+          { ing: 'Arroz',          cat: 'vegetal',  cant: 0.15, unidad: 'kg',   costoUnit: 3000,  costoTotal: 450  },
+          { ing: 'Carne molida',   cat: 'proteina', cant: 0.12, unidad: 'kg',   costoUnit: 25000, costoTotal: 3000 },
+          { ing: 'Chicharrón',     cat: 'proteina', cant: 0.08, unidad: 'kg',   costoUnit: 20000, costoTotal: 1600 },
+          { ing: 'Chorizo',        cat: 'proteina', cant: 1,    unidad: 'unid', costoUnit: 800,   costoTotal: 800  },
+          { ing: 'Aguacate Hass',  cat: 'vegetal',  cant: 0.5,  unidad: 'unid', costoUnit: 2400,  costoTotal: 1200 },
+        ]
+      },
+      {
+        id: 'ajiaco',
+        color: '#FBBF24',
+        nombre: 'Ajiaco Bogotano',
+        categoria: 'Platos fuertes',
+        sku: 'AJB-001',
+        costo: 5600,
+        precio: 28000,
+        ingredientes: [
+          { ing: 'Pollo entero',   cat: 'proteina', cant: 0.3,  unidad: 'kg',   costoUnit: 12000, costoTotal: 3600 },
+          { ing: 'Papa criolla',   cat: 'vegetal',  cant: 0.2,  unidad: 'kg',   costoUnit: 3000,  costoTotal: 600  },
+          { ing: 'Mazorca',        cat: 'vegetal',  cant: 0.5,  unidad: 'unid', costoUnit: 800,   costoTotal: 400  },
+          { ing: 'Guascas',        cat: 'especia',  cant: 0.01, unidad: 'kg',   costoUnit: 50000, costoTotal: 500  },
+          { ing: 'Crema de leche', cat: 'lacteo',   cant: 0.05, unidad: 'lt',   costoUnit: 8000,  costoTotal: 400  },
+          { ing: 'Cilantro',       cat: 'especia',  cant: 0.02, unidad: 'kg',   costoUnit: 5000,  costoTotal: 100  },
+        ]
+      },
+      {
+        id: 'sancocho',
+        color: '#10B981',
+        nombre: 'Sancocho de Gallina',
+        categoria: 'Platos fuertes',
+        sku: 'SGA-001',
+        costo: 6630,
+        precio: 25000,
+        ingredientes: [
+          { ing: 'Gallina',        cat: 'proteina', cant: 0.4,  unidad: 'kg',   costoUnit: 12000, costoTotal: 4800 },
+          { ing: 'Papa pastusa',   cat: 'vegetal',  cant: 0.3,  unidad: 'kg',   costoUnit: 2000,  costoTotal: 600  },
+          { ing: 'Yuca',           cat: 'vegetal',  cant: 0.2,  unidad: 'kg',   costoUnit: 2500,  costoTotal: 500  },
+          { ing: 'Mazorca',        cat: 'vegetal',  cant: 0.5,  unidad: 'unid', costoUnit: 800,   costoTotal: 400  },
+          { ing: 'Cebolla larga',  cat: 'vegetal',  cant: 0.05, unidad: 'kg',   costoUnit: 3000,  costoTotal: 150  },
+          { ing: 'Cilantro',       cat: 'especia',  cant: 0.02, unidad: 'kg',   costoUnit: 5000,  costoTotal: 100  },
+          { ing: 'Ajo',            cat: 'especia',  cant: 0.01, unidad: 'kg',   costoUnit: 8000,  costoTotal: 80   },
+        ]
+      },
+      {
+        id: 'lomo',
+        color: '#3B82F6',
+        nombre: 'Lomo al Trapo',
+        categoria: 'Platos fuertes',
+        sku: 'LTR-001',
+        costo: 14130,
+        precio: 45000,
+        ingredientes: [
+          { ing: 'Lomo de res',    cat: 'proteina', cant: 0.3,  unidad: 'kg',   costoUnit: 42000, costoTotal: 12600 },
+          { ing: 'Sal gruesa',     cat: 'especia',  cant: 0.5,  unidad: 'kg',   costoUnit: 1500,  costoTotal: 750   },
+          { ing: 'Hierbas finas',  cat: 'especia',  cant: 0.05, unidad: 'kg',   costoUnit: 8000,  costoTotal: 400   },
+          { ing: 'Aceite de oliva',cat: 'vegetal',  cant: 0.05, unidad: 'lt',   costoUnit: 6000,  costoTotal: 300   },
+          { ing: 'Ajo',            cat: 'especia',  cant: 0.01, unidad: 'kg',   costoUnit: 8000,  costoTotal: 80    },
+        ]
+      },
+      {
+        id: 'trucha',
+        color: '#EF4444',
+        nombre: 'Trucha en Salsa',
+        categoria: 'Platos fuertes',
+        sku: 'TRS-001',
+        costo: 9300,
+        precio: 38000,
+        ingredientes: [
+          { ing: 'Trucha',         cat: 'proteina', cant: 0.35, unidad: 'kg',   costoUnit: 22000, costoTotal: 7700 },
+          { ing: 'Crema de leche', cat: 'lacteo',   cant: 0.1,  unidad: 'lt',   costoUnit: 8000,  costoTotal: 800  },
+          { ing: 'Cebolla',        cat: 'vegetal',  cant: 0.08, unidad: 'kg',   costoUnit: 3000,  costoTotal: 240  },
+          { ing: 'Tomate',         cat: 'vegetal',  cant: 0.1,  unidad: 'kg',   costoUnit: 4000,  costoTotal: 400  },
+          { ing: 'Ajo',            cat: 'especia',  cant: 0.02, unidad: 'kg',   costoUnit: 8000,  costoTotal: 160  },
+        ]
+      },
+      {
+        id: 'mojarra',
+        color: '#A855F7',
+        nombre: 'Mojarra Frita',
+        categoria: 'Platos fuertes',
+        sku: 'MJF-001',
+        costo: 11220,
+        precio: 35000,
+        ingredientes: [
+          { ing: 'Mojarra',        cat: 'proteina', cant: 1,    unidad: 'unid', costoUnit: 9500,  costoTotal: 9500 },
+          { ing: 'Aceite',         cat: 'vegetal',  cant: 0.1,  unidad: 'lt',   costoUnit: 6000,  costoTotal: 600  },
+          { ing: 'Limón Tahití',   cat: 'vegetal',  cant: 2,    unidad: 'unid', costoUnit: 500,   costoTotal: 1000 },
+          { ing: 'Sal',            cat: 'especia',  cant: 0.02, unidad: 'kg',   costoUnit: 2000,  costoTotal: 40   },
+          { ing: 'Ajo',            cat: 'especia',  cant: 0.01, unidad: 'kg',   costoUnit: 8000,  costoTotal: 80   },
+        ]
+      },
+    ];
+
+    var currentFicha = 'ajiaco';
+
+    function renderLista() {
+      var wrap = document.querySelector('.fichas-list-wrap');
+      wrap.innerHTML = '';
+      FICHAS.forEach(function (f) {
+        var isActive = f.id === currentFicha;
+        var margen = ((f.precio - f.costo) / f.precio * 100).toFixed(0);
+        var btn = document.createElement('button');
+        btn.className = 'ficha-item' + (isActive ? ' is-active' : '');
+        btn.dataset.id = f.id;
+        btn.innerHTML =
+          '<div class="ficha-avatar" style="background:' + f.color + ';">' +
+            '<i data-lucide="utensils" style="width:15px;height:15px;"></i>' +
+          '</div>' +
+          '<div class="ficha-info">' +
+            '<div class="ficha-nombre">' + f.nombre + (isActive ? ' <i data-lucide="check" style="width:11px;height:11px;color:var(--accent);"></i>' : '') + '</div>' +
+            '<div class="ficha-meta">Costo: <strong>' + fmtCOP(f.costo) + '</strong> · Margen ' + margen + '%</div>' +
+          '</div>';
+        btn.addEventListener('click', function () {
+          currentFicha = f.id;
+          renderLista();
+          renderDetalle(f);
+          // Mobile: show detail
+          document.getElementById('fichasLayout').classList.add('show-detail');
+          window.scrollTo(0, 0);
+          if (window.lucide) window.lucide.createIcons();
+        });
+        wrap.appendChild(btn);
+      });
+
+      // Botón nueva ficha
+      var addBtn = document.createElement('button');
+      addBtn.className = 'ficha-add-btn';
+      addBtn.innerHTML = '<i data-lucide="plus" style="width:12px;height:12px;"></i> Nueva ficha técnica';
+      wrap.appendChild(addBtn);
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function catClass(cat) {
+      var map = { vegetal: 'cat-vegetal', proteina: 'cat-proteina', especia: 'cat-especia', lacteo: 'cat-lacteo' };
+      return map[cat] || 'cat-vegetal';
+    }
+    function catLabel(cat) {
+      var map = { vegetal: 'Vegetal', proteina: 'Proteína', especia: 'Especia', lacteo: 'Lácteo' };
+      return map[cat] || cat;
+    }
+
+    function renderDetalle(f) {
+      var totalCosto = f.ingredientes.reduce(function (a, i) { return a + i.costoTotal; }, 0);
+      var margen = ((f.precio - totalCosto) / f.precio * 100).toFixed(1);
+      var costoPct = Math.round(totalCosto / f.precio * 100);
+
+      var detail = document.getElementById('fichaDetail');
+      var rows = f.ingredientes.map(function (it) {
+        return '<div class="ing-row">' +
+          '<div class="ing-drag"><i data-lucide="grip-vertical" style="width:13px;height:13px;"></i></div>' +
+          '<div class="ing-name-cell"><span>' + it.ing + '</span><span class="cat-chip ' + catClass(it.cat) + '">' + catLabel(it.cat) + '</span></div>' +
+          '<div class="ing-qty" style="text-align:right">' + it.cant + '</div>' +
+          '<div class="ing-unit">' + it.unidad + '</div>' +
+          '<div class="ing-cost-unit">' + fmtCOP(it.costoUnit) + '/' + it.unidad + '</div>' +
+          '<div class="ing-cost-total">' + fmtCOP(it.costoTotal) + '</div>' +
+          '<div class="ing-del"><i data-lucide="x" style="width:13px;height:13px;"></i></div>' +
+        '</div>';
+      }).join('');
+
+      detail.innerHTML =
+        '<div class="detail-head">' +
+          '<div class="detail-top">' +
+            '<div class="detail-identity">' +
+              '<div class="detail-avatar" style="background:' + f.color + ';"><i data-lucide="utensils" style="width:22px;height:22px;"></i></div>' +
+              '<div>' +
+                '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">' +
+                  '<span class="detail-nombre">' + f.nombre + '</span>' +
+                  '<span class="detail-cat">' + f.categoria + '</span>' +
+                '</div>' +
+                '<div class="detail-sku"><i data-lucide="link" style="width:11px;height:11px;vertical-align:middle;margin-right:4px;"></i>Vinculado a producto · SKU ' + f.sku + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="detail-btns">' +
+              '<button class="btn btn-ghost" id="btnVolver" style="display:none;"><i data-lucide="arrow-left"></i> Volver</button>' +
+              '<button class="btn btn-ghost"><i data-lucide="pencil"></i> Editar</button>' +
+              '<button class="btn btn-primary" onclick="UI.toast({type:\'success\',title:\'Ficha guardada\'})"><i data-lucide="save"></i> Guardar ficha</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="metrics-row">' +
+            '<div class="metric-card"><div class="metric-label">Costo total</div><div class="metric-value">' + fmtCOP(totalCosto) + '</div><div class="metric-sub">' + f.ingredientes.length + ' ingredientes</div></div>' +
+            '<div class="metric-card"><div class="metric-label">Precio venta</div><div class="metric-value">' + fmtCOP(f.precio) + '</div><div class="metric-sub">Lista Carta · IVA incluido</div></div>' +
+            '<div class="metric-card"><div class="metric-label">Margen bruto</div><div class="metric-value green">' + margen + '%</div><div class="metric-sub">Ganancia ' + fmtCOP(f.precio - totalCosto) + '</div></div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="comp-row"><span class="comp-label">Composición del precio</span><span class="comp-pcts">Costo ' + costoPct + '% · Margen ' + margen + '%</span></div>' +
+            '<div class="comp-bar"><div class="comp-cost" style="width:' + costoPct + '%;"></div><div class="comp-margin"></div></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ing-head">' +
+          '<div></div><div>Ingrediente</div>' +
+          '<div style="text-align:right">Cantidad</div>' +
+          '<div>Unidad</div>' +
+          '<div style="text-align:right">Costo unit.</div>' +
+          '<div style="text-align:right">Costo total</div>' +
+          '<div></div>' +
+        '</div>' +
+        rows +
+        '<button class="ing-add-row" data-open-drawer="drawerIngrediente">' +
+          '<i data-lucide="plus" style="width:13px;height:13px;"></i> Agregar ingrediente' +
+        '</button>' +
+        '<div class="ing-total">' +
+          '<span class="ing-total-label">Total ficha</span>' +
+          '<span class="ing-total-val">' + fmtCOP(totalCosto) + '</span>' +
+        '</div>';
+
+      // Botón volver en mobile
+      var btnVolver = detail.querySelector('#btnVolver');
+      if (window.innerWidth <= 1024) {
+        btnVolver.style.display = 'inline-flex';
+        btnVolver.addEventListener('click', function () {
+          document.getElementById('fichasLayout').classList.remove('show-detail');
+        });
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+      UI.bindAutoTriggers();
+    }
+
+    // Inicializar
+    renderLista();
+    var fichaInicial = FICHAS.find(function (f) { return f.id === 'ajiaco'; });
+    renderDetalle(fichaInicial);
+
+    // Drawer agregar ingrediente
+    document.getElementById('btnAgregarIng').addEventListener('click', function () {
+      UI.closeDrawer('drawerIngrediente');
+      UI.toast({ type: 'success', title: 'Ingrediente agregado', sub: 'El costo se recalculó automáticamente' });
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

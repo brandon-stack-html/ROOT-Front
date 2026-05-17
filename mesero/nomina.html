@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mi nómina · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    /* Hero card pago próximo */
+    .e10-hero {
+      margin: 16px;
+      padding: 20px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .e10-hero::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+    }
+    .e10-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -50px; left: -20px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.05);
+    }
+    .e10-hero-label { font-size: 11px; font-weight: 600; opacity: .7; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+    .e10-hero-days  { font-size: 42px; font-weight: 700; letter-spacing: -.03em; line-height: 1; }
+    .e10-hero-days span { font-size: 20px; font-weight: 500; opacity: .75; margin-left: 4px; }
+    .e10-hero-date  { font-size: 13px; opacity: .7; margin-top: 4px; margin-bottom: 16px; }
+    .e10-hero-row   { display: flex; gap: 16px; margin-top: 4px; }
+    .e10-hero-stat  { flex: 1; }
+    .e10-hero-stat-label { font-size: 10px; opacity: .65; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+    .e10-hero-stat-value { font-size: 15px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .e10-hero-divider { width: 1px; background: rgba(255,255,255,.2); flex-shrink: 0; }
+
+    /* Progress bar periodo */
+    .e10-progress-wrap { padding: 0 16px 4px; }
+    .e10-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .e10-progress-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+    .e10-progress-pct   { font-size: 12px; color: var(--text); font-weight: 700; }
+    .e10-progress-bar   { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+    .e10-progress-fill  { height: 100%; border-radius: 3px; background: var(--accent); transition: width .4s ease; }
+
+    /* Info cards */
+    .e10-section  { padding: 4px 16px 12px; }
+    .e10-section-title { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; }
+    .e10-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .e10-info-card {
+      padding: 12px;
+      background: var(--alt);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+    }
+    .e10-info-card-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--bg); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; color: var(--accent); }
+    .e10-info-card-icon svg { width: 14px; height: 14px; }
+    .e10-info-card-label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+    .e10-info-card-value { font-size: 14px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+
+    /* Alert no advance pending */
+    .e10-alert {
+      margin: 0 16px 12px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      background: rgba(245, 158, 11, .1);
+      border: 1px solid rgba(245, 158, 11, .25);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .e10-alert svg { width: 14px; height: 14px; color: var(--warning); flex-shrink: 0; margin-top: 1px; }
+
+    /* CTA buttons area */
+    .e10-actions { padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 8px; }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- TOPBAR -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side" style="width:34px;"></div>
+          <div class="mesero-topbar-center">
+            <div class="mesero-topbar-title">Mi nómina</div>
+          </div>
+          <div class="mesero-topbar-side">
+            <button class="mesero-icon-btn no-border" type="button" aria-label="Historial" onclick="window.location.href='./pagos-historial.html'">
+              <i data-lucide="history"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- CONTENT -->
+        <main id="main" class="mesero-content">
+
+          <!-- Hero card -->
+          <div class="e10-hero" id="heroCard">
+            <div class="e10-hero-label">Próximo pago</div>
+            <div class="e10-hero-days"><span id="heroDays">—</span><span>días</span></div>
+            <div class="e10-hero-date" id="heroDate">—</div>
+            <div class="e10-hero-row">
+              <div class="e10-hero-stat">
+                <div class="e10-hero-stat-label">Salario base</div>
+                <div class="e10-hero-stat-value" id="heroSalario">—</div>
+              </div>
+              <div class="e10-hero-divider"></div>
+              <div class="e10-hero-stat">
+                <div class="e10-hero-stat-label">Devengado</div>
+                <div class="e10-hero-stat-value" id="heroDevengado">—</div>
+              </div>
+              <div class="e10-hero-divider"></div>
+              <div class="e10-hero-stat">
+                <div class="e10-hero-stat-label">Periodo</div>
+                <div class="e10-hero-stat-value" id="heroPeriodo">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress bar -->
+          <div class="e10-progress-wrap">
+            <div class="e10-progress-header">
+              <span class="e10-progress-label">Progreso del periodo</span>
+              <span class="e10-progress-pct" id="progressPct">0%</span>
+            </div>
+            <div class="e10-progress-bar">
+              <div class="e10-progress-fill" id="progressFill" style="width:0%"></div>
+            </div>
+          </div>
+
+          <!-- Alert adelanto pendiente -->
+          <div class="e10-alert" id="alertPendiente" style="display:none">
+            <i data-lucide="alert-circle"></i>
+            <span>Ya tienes una solicitud de adelanto <strong>pendiente</strong> para este periodo. Espera la respuesta del administrador.</span>
+          </div>
+
+          <!-- Info cards -->
+          <section class="e10-section">
+            <div class="e10-section-title">Resumen del periodo</div>
+            <div class="e10-info-grid">
+              <div class="e10-info-card">
+                <div class="e10-info-card-icon"><i data-lucide="calendar"></i></div>
+                <div class="e10-info-card-label">Inicio periodo</div>
+                <div class="e10-info-card-value" id="infoPeriodoInicio">—</div>
+              </div>
+              <div class="e10-info-card">
+                <div class="e10-info-card-icon"><i data-lucide="calendar-check"></i></div>
+                <div class="e10-info-card-label">Fin periodo</div>
+                <div class="e10-info-card-value" id="infoPeriodoFin">—</div>
+              </div>
+              <div class="e10-info-card">
+                <div class="e10-info-card-icon"><i data-lucide="refresh-cw"></i></div>
+                <div class="e10-info-card-label">Periodicidad</div>
+                <div class="e10-info-card-value" id="infoPeriiodicidad">—</div>
+              </div>
+              <div class="e10-info-card">
+                <div class="e10-info-card-icon"><i data-lucide="trending-up"></i></div>
+                <div class="e10-info-card-label">Días laborados</div>
+                <div class="e10-info-card-value" id="infoDiasLaborados">—</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- CTAs -->
+          <div class="e10-actions">
+            <a href="./adelanto-solicitar.html" class="mb-btn mb-btn-primary h-56" id="btnSolicitar">
+              <i data-lucide="plus-circle"></i>
+              Solicitar adelanto
+            </a>
+            <a href="./adelantos-historial.html" class="mb-btn mb-btn-secondary h-48">
+              <i data-lucide="list"></i>
+              Ver mis adelantos
+            </a>
+          </div>
+
+        </main>
+
+        <!-- BOTTOM NAV -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="layout-grid"></i></span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="clipboard-list"></i></span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="wallet"></i></span>
+            <span>Nómina</span>
+          </a>
+          <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="user"></i></span>
+            <span>Perfil</span>
+          </a>
+        </nav>
+
+      </div>
+      <div class="mesero-home-indicator"></div>
+    </div>
+  </div>
+
+  <script src="../assets/js/constants.js"></script>
+  <script src="../assets/js/data/nomina-mock.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    var NM = window.NominaMock;
+    var state = NM.loadState();
+    var emp   = state.empleados.find(function(e){ return e.id === NM.MESERO_ACTUAL_ID; });
+    var per   = NM.periodoCurrent(emp, state.periodos);
+
+    if (emp && per) {
+      var devengado  = NM.calcularDevengado(emp, per);
+      var dias       = NM.diasHastaProximoPago(emp);
+      var fechaPago  = NM.fechaProximoPago(emp);
+      var inicio     = new Date(per.inicio);
+      var fin        = new Date(per.fin);
+      var hoy        = new Date();
+      var diasPeriodo = Math.round((fin - inicio) / 86400000) + 1;
+      var diasTransc  = Math.min(Math.round((hoy - inicio) / 86400000) + 1, diasPeriodo);
+      var pct         = Math.round((diasTransc / diasPeriodo) * 100);
+
+      var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      function fmtDate(d) { return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear(); }
+
+      document.getElementById('heroDays').textContent = dias;
+      document.getElementById('heroDate').textContent = fmtDate(fechaPago);
+      document.getElementById('heroSalario').textContent = window.formatCOP(emp.salario_base);
+      document.getElementById('heroDevengado').textContent = window.formatCOP(devengado);
+      document.getElementById('heroPeriodo').textContent = emp.periodicidad === 'quincenal' ? 'Quincenal' : 'Mensual';
+
+      document.getElementById('progressPct').textContent = pct + '%';
+      document.getElementById('progressFill').style.width = pct + '%';
+
+      document.getElementById('infoPeriodoInicio').textContent = fmtDate(inicio);
+      document.getElementById('infoPeriodoFin').textContent = fmtDate(fin);
+      document.getElementById('infoPeriiodicidad').textContent = emp.periodicidad === 'quincenal' ? 'Quincenal' : 'Mensual';
+      document.getElementById('infoDiasLaborados').textContent = diasTransc + ' / ' + diasPeriodo;
+
+      // Revisar si ya hay adelanto pendiente o aprobado en el periodo actual
+      var advPendiente = state.adelantos.find(function(a){
+        return a.empleado_id === emp.id && a.periodo_id === per.id && (a.estado === 'pendiente' || a.estado === 'aprobada');
+      });
+      if (advPendiente) {
+        document.getElementById('alertPendiente').style.display = 'flex';
+        var btnSolicitar = document.getElementById('btnSolicitar');
+        btnSolicitar.style.opacity = '.5';
+        btnSolicitar.style.pointerEvents = 'none';
+      }
+    }
+
+    // Toast de bienvenida si viene redirect desde adelanto-solicitar
+    if (window.location.search.indexOf('toast=enviado') !== -1) {
+      setTimeout(function(){ UI.toast({ type: 'success', title: 'Solicitud enviada', body: 'Tu solicitud está pendiente de aprobación.' }); }, 300);
+    }
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Roles y permisos · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<div class="bo-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info">
+          <span class="label">Negocio</span>
+          <span class="name">El Buen Sabor</span>
+        </span>
+        <i data-lucide="chevron-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html" class="bo-sidebar-item is-active"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info">
+        <span class="name">Juan Camilo R.</span>
+        <span class="role">Administrador</span>
+      </span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop"></div>
+
+  <!-- CONTENT WRAP -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Roles y permisos</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+        <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar" type="button">JC</button>
+      </div>
+    </header>
+
+    <main id="main" class="bo-content">
+      <header class="bo-page-header">
+        <div>
+          <h1>Roles y permisos</h1>
+          <p class="bo-page-subtitle">5 roles definidos · 13 usuarios asignados</p>
+        </div>
+      </header>
+
+      <div class="roles-layout">
+        <!-- Lista de roles (izq) -->
+        <div>
+          <div style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;padding:0 4px;">Roles del sistema</div>
+
+          <button class="role-card-btn" data-role-id="admin" onclick="selectRole('admin', this)">
+            <div class="role-card-icon"><i data-lucide="shield" style="width:17px;height:17px;color:var(--muted);"></i></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:600;color:var(--text);">Administrador</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Acceso total</div>
+            </div>
+            <span class="role-card-count">1</span>
+          </button>
+
+          <button class="role-card-btn" data-role-id="encargado" onclick="selectRole('encargado', this)">
+            <div class="role-card-icon"><i data-lucide="briefcase" style="width:17px;height:17px;color:var(--muted);"></i></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:600;color:var(--text);">Encargado</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Acceso operativo ampliado</div>
+            </div>
+            <span class="role-card-count">2</span>
+          </button>
+
+          <button class="role-card-btn" data-role-id="cajero" onclick="selectRole('cajero', this)">
+            <div class="role-card-icon"><i data-lucide="banknote" style="width:17px;height:17px;color:var(--muted);"></i></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:600;color:var(--text);">Cajero</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Ventas y caja</div>
+            </div>
+            <span class="role-card-count">3</span>
+          </button>
+
+          <button class="role-card-btn is-active" data-role-id="mesero" onclick="selectRole('mesero', this)">
+            <div class="role-card-icon"><i data-lucide="utensils" style="width:17px;height:17px;color:#fff;"></i></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;">
+                Mesero <i data-lucide="check" style="width:11px;height:11px;color:var(--accent);"></i>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Atención de mesas</div>
+            </div>
+            <span class="role-card-count">5</span>
+          </button>
+
+          <button class="role-card-btn" data-role-id="repartidor" onclick="selectRole('repartidor', this)">
+            <div class="role-card-icon"><i data-lucide="bike" style="width:17px;height:17px;color:var(--muted);"></i></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:600;color:var(--text);">Repartidor</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Gestión de entregas</div>
+            </div>
+            <span class="role-card-count">2</span>
+          </button>
+
+          <button class="roles-add-btn" type="button">
+            <i data-lucide="plus" style="width:13px;height:13px;"></i>
+            Crear rol personalizado
+          </button>
+        </div>
+
+        <!-- Panel de permisos (der) -->
+        <div class="perm-table-card">
+          <div class="perm-table-card-header">
+            <div class="perm-detail-icon" id="detailIcon">
+              <i data-lucide="utensils" style="width:18px;height:18px;color:#fff;"></i>
+            </div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:16px;font-weight:700;color:var(--text);">Rol: <span id="detailRoleName">Mesero</span></span>
+                <button class="btn btn-ghost" style="padding:3px 8px;font-size:11px;display:flex;align-items:center;gap:4px;">
+                  <i data-lucide="pencil" style="width:11px;height:11px;"></i> Editar nombre
+                </button>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px;" id="detailRoleCount">5 usuarios activos con este rol</div>
+            </div>
+            <button class="btn btn-primary" style="display:flex;align-items:center;gap:6px;font-size:13px;" onclick="UI.toast({type:'success',title:'Cambios guardados',sub:'Los permisos del rol fueron actualizados.'})">
+              <i data-lucide="save" style="width:13px;height:13px;"></i> Guardar cambios
+            </button>
+          </div>
+
+          <!-- Header columnas -->
+          <div class="perm-header-row">
+            <div>Permiso</div>
+            <div style="text-align:center;">Listar</div>
+            <div style="text-align:center;">Crear</div>
+            <div style="text-align:center;">Actualizar</div>
+            <div style="text-align:center;">Eliminar</div>
+            <div style="text-align:center;">Exportar</div>
+          </div>
+
+          <!-- Filas de permisos -->
+          <div id="permsBody"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) lucide.createIcons();
+
+  const ROLES_META = {
+    admin:      { label: 'Administrador', icon: 'shield',    count: 1, desc: 'Acceso total' },
+    encargado:  { label: 'Encargado',    icon: 'briefcase', count: 2, desc: 'Acceso operativo ampliado' },
+    cajero:     { label: 'Cajero',       icon: 'banknote',  count: 3, desc: 'Ventas y caja' },
+    mesero:     { label: 'Mesero',       icon: 'utensils',  count: 5, desc: 'Atención de mesas' },
+    repartidor: { label: 'Repartidor',   icon: 'bike',      count: 2, desc: 'Gestión de entregas' },
+  };
+
+  const PERMS_DATA = {
+    admin: [
+      { group:'VENTAS', items:[
+        { label:'Ver ventas propias',    perms:[true,  true,  true,  true,  true]  },
+        { label:'Ver todas las ventas',  perms:[true,  true,  true,  true,  true]  },
+        { label:'Aplicar descuento',     perms:[true,  null,  null,  null,  null]  },
+        { label:'Cobrar venta',          perms:[true,  null,  null,  null,  null]  },
+        { label:'Anular venta',          perms:[true,  null,  null,  null,  null]  },
+      ]},
+      { group:'CATÁLOGO', items:[
+        { label:'Ver productos',         perms:[true,  true,  true,  true,  true]  },
+      ]},
+      { group:'INVENTARIO', items:[
+        { label:'Ver stock',             perms:[true,  true,  true,  true,  true]  },
+      ]},
+      { group:'CAJA', items:[
+        { label:'Operar caja propia',    perms:[true,  true,  null,  null,  null]  },
+        { label:'Ver movimientos',       perms:[true,  true,  true,  true,  true]  },
+      ]},
+      { group:'CLIENTES', items:[
+        { label:'Ver clientes',          perms:[true,  true,  true,  true,  true]  },
+      ]},
+      { group:'REPORTES', items:[
+        { label:'Ver reportes',          perms:[true,  null,  null,  null,  true]  },
+      ]},
+      { group:'CONFIG', items:[
+        { label:'Acceso a configuración',perms:[true,  true,  true,  true,  false] },
+      ]},
+    ],
+    encargado: [
+      { group:'VENTAS', items:[
+        { label:'Ver ventas propias',    perms:[true,  true,  true,  false, true]  },
+        { label:'Ver todas las ventas',  perms:[true,  false, false, false, true]  },
+        { label:'Aplicar descuento',     perms:[true,  null,  null,  null,  null]  },
+        { label:'Cobrar venta',          perms:[true,  null,  null,  null,  null]  },
+        { label:'Anular venta',          perms:[true,  null,  null,  null,  null]  },
+      ]},
+      { group:'CATÁLOGO', items:[
+        { label:'Ver productos',         perms:[true,  true,  true,  false, true]  },
+      ]},
+      { group:'INVENTARIO', items:[
+        { label:'Ver stock',             perms:[true,  true,  true,  false, true]  },
+      ]},
+      { group:'CAJA', items:[
+        { label:'Operar caja propia',    perms:[true,  true,  null,  null,  null]  },
+        { label:'Ver movimientos',       perms:[true,  false, false, false, true]  },
+      ]},
+      { group:'CLIENTES', items:[
+        { label:'Ver clientes',          perms:[true,  true,  true,  false, true]  },
+      ]},
+      { group:'REPORTES', items:[
+        { label:'Ver reportes',          perms:[true,  null,  null,  null,  true]  },
+      ]},
+      { group:'CONFIG', items:[
+        { label:'Acceso a configuración',perms:[false, false, false, false, false] },
+      ]},
+    ],
+    cajero: [
+      { group:'VENTAS', items:[
+        { label:'Ver ventas propias',    perms:[true,  true,  false, false, false] },
+        { label:'Ver todas las ventas',  perms:[false, false, false, false, false] },
+        { label:'Aplicar descuento',     perms:[false, null,  null,  null,  null]  },
+        { label:'Cobrar venta',          perms:[true,  null,  null,  null,  null]  },
+        { label:'Anular venta',          perms:[false, null,  null,  null,  null]  },
+      ]},
+      { group:'CATÁLOGO', items:[
+        { label:'Ver productos',         perms:[true,  false, false, false, false] },
+      ]},
+      { group:'INVENTARIO', items:[
+        { label:'Ver stock',             perms:[true,  false, false, false, false] },
+      ]},
+      { group:'CAJA', items:[
+        { label:'Operar caja propia',    perms:[true,  true,  null,  null,  null]  },
+        { label:'Ver movimientos',       perms:[true,  false, false, false, false] },
+      ]},
+      { group:'CLIENTES', items:[
+        { label:'Ver clientes',          perms:[true,  false, false, false, false] },
+      ]},
+      { group:'REPORTES', items:[
+        { label:'Ver reportes',          perms:[false, null,  null,  null,  false] },
+      ]},
+      { group:'CONFIG', items:[
+        { label:'Acceso a configuración',perms:[false, false, false, false, false] },
+      ]},
+    ],
+    mesero: [
+      { group:'VENTAS', items:[
+        { label:'Ver ventas propias',    perms:[true,  true,  true,  false, false] },
+        { label:'Ver todas las ventas',  perms:[false, false, false, false, false] },
+        { label:'Aplicar descuento',     perms:[true,  null,  null,  null,  null]  },
+        { label:'Cobrar venta',          perms:[true,  null,  null,  null,  null]  },
+        { label:'Anular venta',          perms:[false, null,  null,  null,  null]  },
+      ]},
+      { group:'CATÁLOGO', items:[
+        { label:'Ver productos',         perms:[true,  false, false, false, false] },
+      ]},
+      { group:'INVENTARIO', items:[
+        { label:'Ver stock',             perms:[true,  false, false, false, false] },
+      ]},
+      { group:'CAJA', items:[
+        { label:'Operar caja propia',    perms:[true,  true,  null,  null,  null]  },
+        { label:'Ver movimientos',       perms:[true,  false, false, false, false] },
+      ]},
+      { group:'CLIENTES', items:[
+        { label:'Ver clientes',          perms:[true,  true,  false, false, false] },
+      ]},
+      { group:'REPORTES', items:[
+        { label:'Ver reportes',          perms:[false, false, false, false, false] },
+      ]},
+      { group:'CONFIG', items:[
+        { label:'Acceso a configuración',perms:[false, false, false, false, false] },
+      ]},
+    ],
+    repartidor: [
+      { group:'VENTAS', items:[
+        { label:'Ver ventas propias',    perms:[true,  false, false, false, false] },
+        { label:'Ver todas las ventas',  perms:[false, false, false, false, false] },
+        { label:'Aplicar descuento',     perms:[false, null,  null,  null,  null]  },
+        { label:'Cobrar venta',          perms:[true,  null,  null,  null,  null]  },
+        { label:'Anular venta',          perms:[false, null,  null,  null,  null]  },
+      ]},
+      { group:'CATÁLOGO', items:[
+        { label:'Ver productos',         perms:[true,  false, false, false, false] },
+      ]},
+      { group:'INVENTARIO', items:[
+        { label:'Ver stock',             perms:[false, false, false, false, false] },
+      ]},
+      { group:'CAJA', items:[
+        { label:'Operar caja propia',    perms:[false, false, null,  null,  null]  },
+        { label:'Ver movimientos',       perms:[false, false, false, false, false] },
+      ]},
+      { group:'CLIENTES', items:[
+        { label:'Ver clientes',          perms:[true,  false, false, false, false] },
+      ]},
+      { group:'REPORTES', items:[
+        { label:'Ver reportes',          perms:[false, null,  null,  null,  false] },
+      ]},
+      { group:'CONFIG', items:[
+        { label:'Acceso a configuración',perms:[false, false, false, false, false] },
+      ]},
+    ],
+  };
+
+  let activeRole = 'mesero';
+
+  function permCell(v) {
+    if (v === null) return `<div class="perm-cell"><span class="perm-dash">—</span></div>`;
+    if (v === true) return `<div class="perm-cell"><div class="perm-check"><i data-lucide="check" style="width:13px;height:13px;color:#fff;stroke-width:3;"></i></div></div>`;
+    return `<div class="perm-cell"><div class="perm-empty"></div></div>`;
+  }
+
+  function renderPerms(roleId) {
+    const groups = PERMS_DATA[roleId];
+    const meta = ROLES_META[roleId];
+    const body = document.getElementById('permsBody');
+    const detailIcon = document.getElementById('detailIcon');
+    const detailName = document.getElementById('detailRoleName');
+    const detailCount = document.getElementById('detailRoleCount');
+
+    detailName.textContent = meta.label;
+    detailCount.textContent = `${meta.count} usuario${meta.count !== 1 ? 's' : ''} activo${meta.count !== 1 ? 's' : ''} con este rol`;
+    detailIcon.innerHTML = `<i data-lucide="${meta.icon}" style="width:18px;height:18px;color:#fff;"></i>`;
+
+    let html = '';
+    groups.forEach(g => {
+      html += `<div class="perm-group-header">${g.group}</div>`;
+      g.items.forEach(row => {
+        html += `<div class="perm-row">
+          <div style="font-size:13px;color:var(--text);font-weight:500;">${row.label}</div>
+          ${row.perms.map(v => permCell(v)).join('')}
+        </div>`;
+      });
+    });
+    body.innerHTML = html;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function selectRole(roleId, btn) {
+    document.querySelectorAll('.role-card-btn').forEach(b => {
+      b.classList.remove('is-active');
+      const icon = b.querySelector('.role-card-icon i');
+      if (icon) icon.style.color = 'var(--muted)';
+      const nameEl = b.querySelector('div > div:first-child');
+      if (nameEl) {
+        const checkIcon = nameEl.querySelector('i[data-lucide="check"]');
+        if (checkIcon) checkIcon.remove();
+      }
+    });
+    btn.classList.add('is-active');
+    const btnIcon = btn.querySelector('.role-card-icon i');
+    if (btnIcon) btnIcon.style.color = '#fff';
+    const nameDiv = btn.querySelector('div > div:first-child');
+    if (nameDiv && !nameDiv.querySelector('i[data-lucide="check"]')) {
+      const checkEl = document.createElement('i');
+      checkEl.setAttribute('data-lucide', 'check');
+      checkEl.style.cssText = 'width:11px;height:11px;color:var(--accent);';
+      nameDiv.appendChild(checkEl);
+    }
+    activeRole = roleId;
+    renderPerms(roleId);
+  }
+
+  renderPerms('mesero');
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

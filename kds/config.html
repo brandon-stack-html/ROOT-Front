@@ -2,17 +2,22 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Configuración KDS · Inventario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Configuración KDS · ROOT</title>
   <script>document.documentElement.setAttribute('data-theme','dark');</script>
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/kds.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
   <script src="../assets/js/ui.js" defer></script>
 </head>
 <body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
 
 <!-- KDS background (atenuado) -->
 <div class="kds-config-bg">
@@ -52,7 +57,7 @@
         <i data-lucide="settings" style="color:var(--accent)"></i>
         Configuración KDS
       </div>
-      <button class="kds-config-close" onclick="location.href='main.html'" title="Cerrar">
+      <button class="kds-config-close" onclick="location.href='main.html'" title="Cerrar" aria-label="Cerrar">
         <i data-lucide="x" style="width:15px;height:15px"></i>
       </button>
     </div>
@@ -238,5 +243,6 @@
     lucide.createIcons();
   });
 </script>
+  <script src="../assets/js/nav.js"></script>
 </body>
 </html>

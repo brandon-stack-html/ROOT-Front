@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Integraciones · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+
+    /* Intro card */
+    .intro-card {
+      padding: 16px 20px; border-radius: 11px; margin-bottom: 24px;
+      background: linear-gradient(90deg, #EEF2FF, #FAFAFA);
+      border: 1px solid #E0E7FF;
+      display: flex; align-items: center; gap: 14px;
+    }
+    [data-theme="dark"] .intro-card {
+      background: linear-gradient(90deg, rgba(99,102,241,.16), transparent);
+      border-color: rgba(99,102,241,.3);
+    }
+    .intro-card-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .intro-card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .intro-card-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    /* Grupo */
+    .integ-grupo { margin-bottom: 22px; }
+    .integ-grupo-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .integ-grupo-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+    .integ-grupo-sep { flex: 1; height: 1px; background: var(--border); }
+    .integ-grupo-count { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .integ-list { display: flex; flex-direction: column; gap: 10px; }
+
+    /* Servicio card */
+    .servicio-card {
+      padding: 16px 18px; border-radius: 11px;
+      background: var(--bg); border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 14px;
+      transition: border-color .15s;
+    }
+    .servicio-card.is-conectado { border-color: #86EFAC; }
+    [data-theme="dark"] .servicio-card.is-conectado { border-color: rgba(16,185,129,.5); }
+    .servicio-card:hover { box-shadow: var(--shadow-sm); }
+
+    /* Logo placeholder */
+    .servicio-logo {
+      width: 46px; height: 46px; border-radius: 11px; color: #fff;
+      font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 13px;
+    }
+
+    /* Nombre + desc */
+    .servicio-info { flex: 1; min-width: 0; }
+    .servicio-nombre-row { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; }
+    .servicio-nombre { font-size: 14px; font-weight: 600; color: var(--text); }
+    .badge-homologado {
+      padding: 1px 7px; border-radius: 5px;
+      background: #EEF2FF; color: #3730A3;
+      font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    [data-theme="dark"] .badge-homologado { background: rgba(99,102,241,.18); color: #C7D2FE; }
+    .servicio-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+    /* Estado + acción */
+    .servicio-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .badge-conectado { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 11px; background: #DCFCE7; color: #14532D; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    [data-theme="dark"] .badge-conectado { background: rgba(16,185,129,.18); color: #86EFAC; }
+    .badge-desconectado { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 11px; background: var(--alt); color: var(--muted); font-size: 11px; font-weight: 500; white-space: nowrap; }
+    .badge-desconectado-dot { width: 6px; height: 6px; border-radius: 3px; background: var(--muted); }
+
+    /* Drawer styles */
+    [data-tabs] [data-panel] { display: none; }
+    [data-tabs] [data-panel].is-active { display: block; }
+    .drawer-integ-logo { width: 52px; height: 52px; border-radius: 12px; color: #fff; font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-bottom: 14px; }
+    .integ-form-section { margin-bottom: 20px; }
+    .integ-form-section-title { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .password-wrap { position: relative; }
+    .password-wrap .field-input { padding-right: 36px; }
+    .password-toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--muted); display: flex; }
+
+    @media (max-width: 640px) {
+      .servicio-card { flex-wrap: wrap; }
+      .servicio-actions { width: 100%; justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+          <a href="./integraciones.html" class="bo-sidebar-item is-active"><i data-lucide="plug"></i>Integraciones</a>
+        </div>
+      </nav>
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info"><span class="name">Carlos Ramírez</span><span class="role">Administrador</span></span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+      </div>
+    </aside>
+    <div class="bo-sidebar-backdrop"></div>
+
+    <div class="bo-content-wrap">
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Configuración</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Integraciones</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button">CR</button>
+        </div>
+      </header>
+
+      <main id="main" class="bo-content">
+        <!-- PAGE HEADER -->
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Integraciones</div>
+            <div class="bo-ph-sub">4 de 10 servicios conectados</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-secondary btn-sm"><i data-lucide="book-open" style="width:13px;height:13px"></i>Ver documentación</button>
+          </div>
+        </div>
+
+        <!-- INTRO CARD -->
+        <div class="intro-card">
+          <div class="intro-card-icon"><i data-lucide="puzzle" style="width:20px;height:20px;color:#fff"></i></div>
+          <div style="flex:1">
+            <div class="intro-card-title">Conecta ROOT con los servicios que ya usas</div>
+            <div class="intro-card-sub">Recibe pedidos de delivery, factura electrónicamente y procesa pagos sin salir de aquí.</div>
+          </div>
+        </div>
+
+        <!-- GRUPO: Pagos -->
+        <div class="integ-grupo">
+          <div class="integ-grupo-header">
+            <i data-lucide="credit-card" style="width:14px;height:14px;color:var(--muted)"></i>
+            <span class="integ-grupo-title">Pagos</span>
+            <div class="integ-grupo-sep"></div>
+            <span class="integ-grupo-count">2 / 2 conectados</span>
+          </div>
+          <div class="integ-list">
+            <div class="servicio-card is-conectado">
+              <div class="servicio-logo" style="background:#2C2A4A;font-size:16px">W</div>
+              <div class="servicio-info">
+                <div class="servicio-nombre-row"><span class="servicio-nombre">Wompi</span></div>
+                <div class="servicio-desc">Pagos con tarjeta, Nequi y PSE</div>
+              </div>
+              <div class="servicio-actions">
+                <span class="badge-conectado"><i data-lucide="check-circle" style="width:11px;height:11px"></i>Conectado</span>
+                <button class="btn btn-secondary btn-sm" onclick="openIntegDrawer('Wompi','#2C2A4A','W','pagos')">
+                  <i data-lucide="settings" style="width:11px;height:11px"></i>Configurar
+                </button>
+              </div>
+            </div>
+            <div class="servicio-card is-conectado">
+              <div class="servicio-logo" style="background:#1FA3FF;font-size:12px">eP</div>
+              <div class="servicio-info">
+                <div class="servicio-nombre-row"><span class="servicio-nombre">ePayco</span></div>
+                <div class="servicio-desc">Pagos online en tu tienda</div>
+              </div>
+              <div class="servicio-actions">
+                <span class="badge-conectado"><i data-lucide="check-circle" style="width:11px;height:11px"></i>Conectado</span>
+                <button class="btn btn-secondary btn-sm" onclick="openIntegDrawer('ePayco','#1FA3FF','eP','pagos')">
+                  <i data-lucide="settings" style="width:11px;height:11px"></i>Configurar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRUPO: Delivery -->
+        <div class="integ-grupo">
+          <div class="integ-grupo-header">
+            <i data-lucide="bike" style="width:14px;height:14px;color:var(--muted)"></i>
+            <span class="integ-grupo-title">Delivery</span>
+            <div class="integ-grupo-sep"></div>
+            <span class="integ-grupo-count">1 / 4 conectados</span>
+          </div>
+          <div class="integ-list">
+            <div class="servicio-card is-conectado">
+              <div class="servicio-logo" style="background:#FF441F;font-size:16px">R</div>
+              <div class="servicio-info">
+                <div class="servicio-nombre-row"><span class="servicio-nombre">Rappi</span></div>
+                <div class="servicio-desc">Recibe pedidos de Rappi automáticamente</div>
+              </div>
+              <div class="servicio-actions">
+                <span class="badge-conectado"><i data-lucide="check-circle" style="width:11px;height:11px"></i>Conectado</span>
+                <button class="btn btn-secondary btn-sm" onclick="openIntegDrawer('Rappi','#FF441F','R','delivery')">
+                  <i data-lucide="settings" style="width:11px;height:11px"></i>Configurar
+                </button>
+              </div>
+            </div>
+            <div class="servicio-card">
+              <div class="servicio-logo" style="background:#06C167;font-size:12px">UE</div>
+              <div class="servicio-info">
+                <div class="servicio-nombre-row"><span class="servicio-nombre">Uber Eats</span></div>
+                <div class="servicio-desc">Sincroniza tu menú y pedidos</div>
+              </div>
+              <div class="servicio-actions">
+                <span class="badge-desconectado"><span class="badge-desconectado-dot"></span>Desconectado</span>
+                <button class="btn btn-primary btn-sm" onclick="openIntegDrawer('Uber Eats','#06C167','UE','delivery')">
+                  <i data-lucide="plug" style="width:11px;height:11px"></i>Conectar
+                </button>
+              </div>
+            </div>
+            <div class="servicio-card">
+              <div class="servicio-logo" style="background:#FF7E29;font-size:16px">D</div>
+              <div class="servicio-info">
+                <div class="servicio-nombre-row"><span class="servicio-nombre">Didi Food</span></div>
+                <div class="servicio-desc">Gestiona pedidos Didi desde aquí</div>
+              </div>
+              <div class="servicio-actions">
+                <span class="badge-desconectado"><span class="badge-desconectado-dot"></span>Desconectado</span>
+                <button class="btn btn-primary btn-sm" onclick="openIntegDrawer('Didi Food','#FF7E29','D','delivery')">
+                  <i data-lucide="plug" style="width:11px;height:11px"></i>Conectar
+                </button>
+              </div>
+            </div>
+            <div class="servicio-card">
+              <div class="servicio-logo" style="background:#FA0050;font-size:12px">PY</div>
+              <div class="servicio-info">
+                <div class="servicio-nombre-row"><span class="servicio-nombre">PedidosYa</span></div>
+                <div class="servicio-desc">Integración de pedidos y menú</div>
+              </div>
+              <div class="servicio-actions">
+                <span class="badge-desconectado"><span class="badge-desconectado-dot"></span>Desconectado</span>
+                <button class="btn btn-primary btn-sm" onclick="openIntegDrawer('PedidosYa','#FA0050','PY','delivery')">
+                  <i data-lucide="plug" style="width:11px;height:11px"></i>Conectar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRUPO: Fiscal -->
+        <div class="integ-grupo">
+          <div class="integ-grupo-header">
+            <i data-lucide="shield-check" style="width:14px;height:14px;color:var(--muted)"></i>
+            <span class="integ-grupo-title">Fiscal</span>
+            <div class="integ-grupo-sep"></div>
+            <span class="integ-grupo-count">1 / 1 conectados</span>
+          </div>
+          <div class="integ-list">
+            <div class="servicio-card is-conectado">
+              <div class="servicio-logo" style="background:#7C3AED;font-size:16px">M</div>
+              <div class="servicio-info">
+                <div class="servicio-nombre-row">
+                  <span class="servicio-nombre">MATIAS API</span>
+                  <span class="badge-homologado"><i data-lucide="badge-check" style="width:9px;height:9px"></i>Homologado</span>
+                </div>
+                <div class="servicio-desc">Facturación electrónica DIAN</div>
+              </div>
+              <div class="servicio-actions">
+                <span class="badge-conectado"><i data-lucide="check-circle" style="width:11px;height:11px"></i>Conectado</span>
+                <button class="btn btn-secondary btn-sm" onclick="openIntegDrawer('MATIAS API','#7C3AED','M','fiscal')">
+                  <i data-lucide="settings" style="width:11px;height:11px"></i>Configurar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRUPO: Comunicación -->
+        <div class="integ-grupo">
+          <div class="integ-grupo-header">
+            <i data-lucide="message-circle" style="width:14px;height:14px;color:var(--muted)"></i>
+            <span class="integ-grupo-title">Comunicación</span>
+            <div class="integ-grupo-sep"></div>
+            <span class="integ-grupo-count">0 / 2 conectados</span>
+          </div>
+          <div class="integ-list">
+            <div class="servicio-card">
+              <div class="servicio-logo" style="background:#25D366;font-size:16px">W</div>
+              <div class="servicio-info">
+                <div class="servicio-nombre-row"><span class="servicio-nombre">WhatsApp Business</span></div>
+                <div class="servicio-desc">Notificaciones y pedidos por WhatsApp</div>
+              </div>
+              <div class="servicio-actions">
+                <span class="badge-desconectado"><span class="badge-desconectado-dot"></span>Desconectado</span>
+                <button class="btn btn-primary btn-sm" onclick="openIntegDrawer('WhatsApp Business','#25D366','W','comunicacion')">
+                  <i data-lucide="plug" style="width:11px;height:11px"></i>Conectar
+                </button>
+              </div>
+            </div>
+            <div class="servicio-card">
+              <div class="servicio-logo" style="background:#F06B66;font-size:12px">Mg</div>
+              <div class="servicio-info">
+                <div class="servicio-nombre-row"><span class="servicio-nombre">Mailgun</span></div>
+                <div class="servicio-desc">Envío masivo de emails transaccionales</div>
+              </div>
+              <div class="servicio-actions">
+                <span class="badge-desconectado"><span class="badge-desconectado-dot"></span>Desconectado</span>
+                <button class="btn btn-primary btn-sm" onclick="openIntegDrawer('Mailgun','#F06B66','Mg','comunicacion')">
+                  <i data-lucide="plug" style="width:11px;height:11px"></i>Conectar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- DRAWER: Configurar integración -->
+  <div id="drawerIntegracion" class="drawer-backdrop">
+    <div class="drawer">
+      <div class="drawer-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div id="drawerIntegLogo" class="drawer-integ-logo" style="width:36px;height:36px;margin-bottom:0;border-radius:9px;font-size:14px">W</div>
+          <div>
+            <div class="drawer-title" id="drawerIntegNombre">Integración</div>
+            <div class="drawer-subtitle" id="drawerIntegSub">Configuración de la integración</div>
+          </div>
+        </div>
+        <button class="drawer-close" data-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="drawer-body" id="drawerIntegBody">
+        <!-- Contenido dinámico por tipo -->
+      </div>
+      <div class="drawer-footer">
+        <button class="btn btn-destructive btn-sm" id="drawerIntegDesconectar" style="margin-right:auto;display:none">
+          <i data-lucide="unplug" style="width:12px;height:12px"></i>Desconectar
+        </button>
+        <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-primary" id="drawerIntegGuardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    var DRAWER_FORMS = {
+      pagos: '<div class="integ-form-section"><div class="integ-form-section-title">Credenciales</div><div class="field"><label class="field-label">API Key</label><div class="password-wrap"><input class="field-input" type="password" value="pk_test_••••••••••••••••" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div><div class="field"><label class="field-label">Secret Key</label><div class="password-wrap"><input class="field-input" type="password" value="sk_test_••••••••••••••••" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div><div class="field" style="margin-bottom:0"><label class="field-label">Webhook URL</label><input class="field-input" type="text" value="https://api.inventario.co/webhooks/pagos" readonly style="font-size:11px;color:var(--muted)" /></div></div><div class="integ-form-section"><div class="integ-form-section-title">Modo</div><div style="display:flex;gap:8px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center"><input type="radio" name="modo_pago" value="sandbox" style="accent-color:var(--accent)"> Sandbox</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--accent);border-radius:8px;flex:1;justify-content:center;background:rgba(79,70,229,.06)"><input type="radio" name="modo_pago" value="produccion" checked style="accent-color:var(--accent)"> Producción</label></div></div>',
+      delivery: '<div class="integ-form-section"><div class="integ-form-section-title">Credenciales</div><div class="field"><label class="field-label">Token de integración</label><div class="password-wrap"><input class="field-input" type="password" value="" placeholder="Pega tu token aquí" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div></div><div class="integ-form-section"><div class="integ-form-section-title">Modo</div><div style="display:flex;gap:8px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center"><input type="radio" name="modo_del" value="sandbox" checked style="accent-color:var(--accent)"> Pruebas</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center"><input type="radio" name="modo_del" value="prod" style="accent-color:var(--accent)"> Producción</label></div></div>',
+      fiscal: '<div class="integ-form-section"><div class="integ-form-section-title">Resolución DIAN</div><div class="field"><label class="field-label">Número de resolución</label><input class="field-input" type="text" value="18760000123" /></div><div class="field" style="margin-bottom:0"><label class="field-label">Ambiente</label><select class="field-input"><option selected>Producción</option><option>Habilitación</option></select></div></div>',
+      comunicacion: '<div class="integ-form-section"><div class="integ-form-section-title">Credenciales</div><div class="field"><label class="field-label">API Key</label><div class="password-wrap"><input class="field-input" type="password" placeholder="Ingresa tu API Key" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div><div class="field" style="margin-bottom:0"><label class="field-label">Número verificado</label><input class="field-input" type="text" placeholder="+57 310 000 0000" /></div></div>'
+    };
+
+    function openIntegDrawer(nombre, color, initials, tipo) {
+      document.getElementById('drawerIntegNombre').textContent = nombre;
+      document.getElementById('drawerIntegSub').textContent = 'Configuración · ' + tipo.charAt(0).toUpperCase() + tipo.slice(1);
+      var logo = document.getElementById('drawerIntegLogo');
+      logo.textContent = initials;
+      logo.style.background = color;
+      var body = document.getElementById('drawerIntegBody');
+      body.innerHTML = DRAWER_FORMS[tipo] || '<p style="color:var(--muted);font-size:13px">Formulario disponible próximamente.</p>';
+      if (window.lucide) window.lucide.createIcons({ nodes: [body] });
+      UI.openDrawer('drawerIntegracion');
+    }
+
+    function togglePass(btn) {
+      var input = btn.previousElementSibling;
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    document.getElementById('drawerIntegGuardar').addEventListener('click', function () {
+      var nombre = document.getElementById('drawerIntegNombre').textContent;
+      UI.closeDrawer('drawerIntegracion');
+      UI.toast({ type: 'success', title: 'Configuración guardada', sub: nombre + ' actualizado correctamente.' });
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

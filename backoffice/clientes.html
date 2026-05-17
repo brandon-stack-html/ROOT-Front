@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Clientes · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* Page header */
+    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    /* Toolbar */
+    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .toolbar-search { position: relative; }
+    .toolbar-search input {
+      padding: 8px 12px 8px 34px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text);
+      font-family: var(--ff-base); font-size: 13px; width: 240px; outline: none;
+    }
+    .toolbar-search input:focus { border-color: var(--accent); }
+    .toolbar-search .s-icon {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); display: flex; pointer-events: none;
+    }
+    .toolbar-select {
+      padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); font-family: var(--ff-base);
+      font-size: 13px; outline: none; cursor: pointer;
+    }
+    .toolbar-spacer { flex: 1; min-width: 8px; }
+
+    /* Tabla clientes */
+    .clientes-table { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .ct-header, .ct-row {
+      display: grid;
+      grid-template-columns: 1.6fr 1.4fr 1.5fr 1fr 1fr 1fr 50px;
+      padding: 12px 18px; align-items: center;
+    }
+    .ct-header {
+      background: var(--alt); border-bottom: 1px solid var(--border);
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      letter-spacing: .04em; text-transform: uppercase;
+    }
+    .ct-row {
+      border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.12s;
+    }
+    .ct-row:last-child { border-bottom: none; }
+    .ct-row:hover { background: var(--alt); }
+    .ct-row.is-active { background: #EEF2FF; }
+    [data-theme="dark"] .ct-row.is-active { background: rgba(99,102,241,.10); }
+
+    /* Cliente cell */
+    .cliente-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .cliente-avatar {
+      width: 32px; height: 32px; border-radius: 16px;
+      font-weight: 600; font-size: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cliente-nombre { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cell-id { font-size: 12px; color: var(--muted); font-family: monospace; }
+    .cell-email { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cell-tel { font-size: 12px; color: var(--text); font-variant-numeric: tabular-nums; }
+    .cell-saldo-sin { font-size: 12px; color: var(--muted); }
+    .cell-saldo-con { font-size: 13px; font-weight: 700; color: var(--error); font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 6px; }
+    .saldo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--error); }
+    .cell-ultima { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .cell-actions { display: flex; justify-content: flex-end; }
+    .more-btn {
+      width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted);
+    }
+    .more-btn:hover { background: var(--alt); }
+
+    /* Paginación */
+    .pagination {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 18px; border-top: 1px solid var(--border);
+      font-size: 12px; color: var(--muted);
+    }
+    .pag-btn {
+      padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border);
+      background: transparent; color: var(--text); cursor: pointer;
+      font-family: var(--ff-base); font-size: 12px; font-weight: 500;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .pag-btn:disabled { opacity: .4; cursor: default; }
+    .pag-pages { display: flex; gap: 4px; }
+    .pag-page {
+      width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent;
+      color: var(--muted); cursor: pointer; font-family: var(--ff-base); font-size: 12px;
+    }
+    .pag-page.is-active { background: var(--accent); color: #fff; }
+    .pag-page:hover:not(.is-active) { background: var(--alt); }
+
+    /* Drawer wide */
+    .drawer-wide { width: 520px; }
+    @media (max-width: 768px) { .drawer-wide { width: 100%; } }
+
+    /* Drawer tabs */
+    [data-tabs] [data-panel] { display: none; }
+    [data-tabs] [data-panel].is-active { display: block; }
+
+    .drawer-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .drawer-tabs::-webkit-scrollbar { display: none; }
+    .drawer-tab {
+      padding: 11px 16px; border: none; border-bottom: 2px solid transparent;
+      background: transparent; cursor: pointer; font-family: var(--ff-base);
+      font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap;
+      display: flex; align-items: center; gap: 6px; margin-bottom: -1px; flex-shrink: 0;
+    }
+    .drawer-tab.is-active { font-weight: 600; color: var(--text); border-bottom-color: var(--accent); }
+    .drawer-tab-badge {
+      padding: 1px 6px; border-radius: 7px; font-size: 10px; font-weight: 600;
+      background: var(--alt); color: var(--muted);
+    }
+    .drawer-tab.is-active .drawer-tab-badge { background: #EEF2FF; color: var(--accent); }
+    [data-theme="dark"] .drawer-tab.is-active .drawer-tab-badge { background: rgba(99,102,241,.18); }
+
+    /* Drawer cliente card */
+    .cliente-card {
+      padding: 14px 16px; border-radius: 10px;
+      background: var(--alt); border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+    }
+    .cliente-card-av {
+      width: 54px; height: 54px; border-radius: 27px;
+      font-weight: 700; font-size: 18px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cliente-card-nombre { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .cliente-card-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .badge-cc { padding: 2px 8px; border-radius: 11px; background: #DBEAFE; color: #1E40AF; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+    .badge-vip { padding: 2px 8px; border-radius: 11px; background: #FCE7F3; color: #9D174D; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+    [data-theme="dark"] .badge-cc { background: rgba(59,130,246,.18); color: #93C5FD; }
+    [data-theme="dark"] .badge-vip { background: rgba(236,72,153,.18); color: #FBCFE8; }
+
+    /* Saldo destacado */
+    .saldo-box {
+      padding: 16px 18px; border-radius: 11px;
+      background: #FEF2F2; border: 1px solid #FECACA;
+      display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+    }
+    [data-theme="dark"] .saldo-box { background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.4); }
+    .saldo-box-label { font-size: 11px; color: #7F1D1D; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+    [data-theme="dark"] .saldo-box-label { color: #FCA5A5; }
+    .saldo-box-val { font-size: 24px; font-weight: 700; color: var(--error); font-variant-numeric: tabular-nums; letter-spacing: -.01em; margin-top: 2px; }
+    .saldo-cupo { font-size: 11px; color: var(--muted); text-align: right; }
+
+    /* Data rows */
+    .data-row { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; }
+    .data-icon { width: 30px; height: 30px; border-radius: 7px; background: var(--alt); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .data-label { font-size: 10px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
+    .data-val { font-size: 13px; color: var(--text); font-weight: 500; }
+
+    /* Movimientos */
+    .mov-table { background: var(--bg); border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+    .mov-header, .mov-row {
+      display: grid; grid-template-columns: 0.6fr 1.4fr 0.9fr 0.9fr 0.9fr;
+      padding: 9px 14px; align-items: center;
+    }
+    .mov-header {
+      background: var(--alt); border-bottom: 1px solid var(--border);
+      font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase;
+    }
+    .mov-row { border-bottom: 1px solid var(--border); font-size: 12px; }
+    .mov-row:last-child { border-bottom: none; }
+    .mov-fecha { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .mov-concepto { color: var(--text); font-weight: 500; }
+    .mov-cargo { text-align: right; font-variant-numeric: tabular-nums; }
+    .mov-abono { text-align: right; font-variant-numeric: tabular-nums; }
+    .mov-saldo { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+    /* Panel info campos */
+    .info-section { margin-bottom: 18px; }
+    .info-section-title { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 10px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .info-field label { font-size: 10px; color: var(--muted); font-weight: 600; display: block; margin-bottom: 3px; }
+    .info-field .val { font-size: 13px; color: var(--text); }
+
+    /* Toggle switch */
+    .toggle { position: relative; display: inline-flex; width: 34px; height: 18px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; inset: 0; background: var(--border);
+      border-radius: 18px; cursor: pointer; transition: background 0.2s;
+    }
+    .toggle-track::before {
+      content: ''; position: absolute;
+      height: 12px; width: 12px; left: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle input:checked + .toggle-track::before { transform: translateX(16px); }
+
+    /* Panel Documentos vacío */
+    .empty-state {
+      text-align: center; padding: 36px 24px;
+      color: var(--muted); font-size: 13px;
+    }
+    .empty-state-icon { margin-bottom: 10px; opacity: .4; }
+
+    /* Panel Notas */
+    .nota-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .nota-item:last-child { border-bottom: none; }
+    .nota-author { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .nota-text { font-size: 13px; color: var(--text); }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .ct-header { display: none; }
+      .ct-row {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto auto;
+        gap: 4px;
+        padding: 12px 14px;
+      }
+      .cliente-cell { grid-column: 1 / -1; }
+      .cell-id { font-size: 11px; }
+      .cell-email { display: none; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar-search input { width: 100%; }
+      .bo-ph { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info">
+            <span class="label">Negocio</span>
+            <span class="name">El Buen Sabor</span>
+          </span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html" class="bo-sidebar-item is-active"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+        </div>
+      </nav>
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info">
+          <span class="name">Carlos Ramírez</span>
+          <span class="role">Administrador</span>
+        </span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+    <div class="bo-sidebar-backdrop"></div>
+
+    <div class="bo-content-wrap">
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Gestión</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Clientes</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button">
+          <i data-lucide="store"></i>
+          <span class="label">Sucursal Centro</span>
+        </button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones">
+            <i data-lucide="bell"></i><span class="notification-dot"></span>
+          </button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button" aria-label="Perfil">CR</button>
+        </div>
+      </header>
+
+      <main id="main" class="bo-content">
+
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Clientes</div>
+            <div class="bo-ph-sub">38 clientes registrados · 7 con cuenta corriente activa</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-ghost"><i data-lucide="upload"></i> Importar CSV</button>
+            <button class="btn btn-primary"><i data-lucide="plus"></i> Nuevo cliente</button>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="toolbar-search">
+            <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+            <input type="text" id="clientesSearch" placeholder="Buscar por nombre, cédula o teléfono...">
+          </div>
+          <select class="toolbar-select">
+            <option>Cuenta corriente: Todos</option>
+            <option>Con saldo</option>
+            <option>Sin saldo</option>
+          </select>
+          <select class="toolbar-select">
+            <option>Etiqueta: Todas</option>
+            <option>VIP</option>
+            <option>Corporativo</option>
+          </select>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-ghost"><i data-lucide="download"></i> Exportar</button>
+        </div>
+
+        <!-- Tabla clientes -->
+        <div class="clientes-table">
+          <div class="ct-header">
+            <div>Cliente</div>
+            <div>Identificación</div>
+            <div>Email</div>
+            <div>Teléfono</div>
+            <div>Saldo cta.</div>
+            <div>Última compra</div>
+            <div></div>
+          </div>
+
+          <!-- Tabla generada por JS -->
+          <div id="clientesBody"></div>
+
+          <!-- Empty state -->
+          <div class="empty-state" id="clientesEmpty" hidden>
+            <div class="empty-state-icon"><i data-lucide="user-x"></i></div>
+            <div class="empty-state-title">No encontramos clientes</div>
+            <div class="empty-state-text">Probá con otro nombre, cédula o teléfono.</div>
+            <button type="button" class="btn btn-secondary empty-state-action" id="clientesClearSearch">
+              Limpiar búsqueda
+            </button>
+          </div>
+
+          <!-- Paginación -->
+          <div class="pagination">
+            <span>Mostrando 1–4 de 38 clientes</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="pag-btn" disabled><i data-lucide="chevron-left" style="width:13px;height:13px;"></i> Anterior</button>
+              <div class="pag-pages">
+                <button class="pag-page is-active">1</button>
+                <button class="pag-page">2</button>
+                <button class="pag-page">3</button>
+                <span style="color:var(--muted);padding:0 4px;">…</span>
+                <button class="pag-page">10</button>
+              </div>
+              <button class="pag-btn">Siguiente <i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drawer cliente -->
+        <div id="drawerCliente" class="drawer-backdrop">
+          <div class="drawer drawer-wide">
+            <div class="drawer-header" id="drawerClienteHeader">
+              Detalle cliente
+              <button class="modal-close" data-close aria-label="Cerrar">×</button>
+            </div>
+
+            <div class="drawer-body" style="padding:0;overflow:auto;">
+
+              <!-- Tabs -->
+              <div data-tabs="cliente">
+                <div class="drawer-tabs">
+                  <button class="drawer-tab is-active" data-tab="info">
+                    Info
+                  </button>
+                  <button class="drawer-tab" data-tab="movimientos">
+                    Movimientos <span class="drawer-tab-badge" id="movBadge">5</span>
+                  </button>
+                  <button class="drawer-tab" data-tab="documentos">
+                    Documentos
+                  </button>
+                  <button class="drawer-tab" data-tab="notas">
+                    Notas
+                  </button>
+                </div>
+
+                <div style="padding:18px 20px;">
+
+                  <!-- Panel Info -->
+                  <div data-panel="info" class="is-active">
+                    <div class="cliente-card" id="drawerInfoCard">
+                      <!-- generado por JS -->
+                    </div>
+                    <div id="drawerSaldoBox"></div>
+                    <div id="drawerContacto"></div>
+                    <div class="info-section">
+                      <div class="info-section-title">Datos comerciales</div>
+                      <div class="info-grid">
+                        <div class="info-field">
+                          <label>Tipo cliente</label>
+                          <select class="field-input" style="font-size:12px;padding:6px 10px;">
+                            <option>Particular</option>
+                            <option>Empresa</option>
+                          </select>
+                        </div>
+                        <div class="info-field">
+                          <label>Lista de precios</label>
+                          <div class="val">Lista Carta</div>
+                        </div>
+                        <div class="info-field">
+                          <label>Vendedor asignado</label>
+                          <div class="val">— Sin asignar</div>
+                        </div>
+                        <div class="info-field">
+                          <label>Crédito habilitado</label>
+                          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                            <label class="toggle"><input type="checkbox" id="drawerCreditoToggle"><span class="toggle-track"></span></label>
+                            <span class="val" id="drawerCreditoLabel">No</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Panel Movimientos -->
+                  <div data-panel="movimientos">
+                    <div id="drawerMovStats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px;"></div>
+                    <div class="mov-table">
+                      <div class="mov-header">
+                        <div>Fecha</div>
+                        <div>Concepto</div>
+                        <div style="text-align:right">Cargo</div>
+                        <div style="text-align:right">Abono</div>
+                        <div style="text-align:right">Saldo</div>
+                      </div>
+                      <div id="drawerMovRows"></div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+                      <button class="btn btn-secondary" onclick="UI.toast({type:'info',title:'Registrar pago',sub:'Funcionalidad en desarrollo'})">
+                        <i data-lucide="plus"></i> Registrar pago
+                      </button>
+                      <button class="btn btn-ghost" onclick="UI.toast({type:'info',title:'Estado de cuenta generado'})">
+                        <i data-lucide="file-text"></i> Estado de cuenta
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Panel Documentos -->
+                  <div data-panel="documentos">
+                    <div class="empty-state">
+                      <div class="empty-state-icon"><i data-lucide="file" style="width:36px;height:36px;"></i></div>
+                      <div style="font-weight:600;margin-bottom:4px;">Sin documentos</div>
+                      <div>Las facturas y notas crédito aparecerán aquí.</div>
+                    </div>
+                  </div>
+
+                  <!-- Panel Notas -->
+                  <div data-panel="notas">
+                    <div class="field">
+                      <label class="field-label">Agregar nota</label>
+                      <textarea class="field-input" id="notaInput" rows="3" placeholder="Escribe una nota sobre este cliente..."></textarea>
+                    </div>
+                    <button class="btn btn-secondary" style="margin-bottom:20px;" id="btnGuardarNota">
+                      <i data-lucide="save"></i> Guardar nota
+                    </button>
+                    <div id="notasList">
+                      <div class="nota-item">
+                        <div class="nota-author">Carlos Ramírez · 10 nov 2026</div>
+                        <div class="nota-text">Cliente frecuente. Prefiere pago en efectivo. Ha tenido retrasos en pagos anteriores — recordar cupo de crédito.</div>
+                      </div>
+                      <div class="nota-item">
+                        <div class="nota-author">María González · 3 oct 2026</div>
+                        <div class="nota-text">Solicitó factura electrónica a nombre de la empresa. Actualizar datos cuando vengan.</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+            <div class="drawer-footer">
+              <button class="btn btn-secondary" data-close>Cerrar</button>
+              <button class="btn btn-primary" id="btnAbonoDrawer">
+                <i data-lucide="plus"></i> Registrar abono
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    function fmtCOP(n) {
+      if (!n) return '—';
+      return '$' + Number(n).toLocaleString('es-CO');
+    }
+
+    var CLIENTES = [
+      {
+        iniciales: 'JR', avBg: '#BBF7D0', avFg: '#14532D',
+        nombre: 'Juan Restrepo', id: 'CC 1.020.345.678',
+        email: 'juan.r@gmail.com', tel: '315 234 5678',
+        saldo: 0, ultima: 'Hoy 19:34',
+        dir: 'Cra. 15 #72-10, Bogotá', ciudad: 'Bogotá',
+        vip: false, cupo: 0,
+        movimientos: []
+      },
+      {
+        iniciales: 'AL', avBg: '#FCA5A5', avFg: '#7F1D1D',
+        nombre: 'Andrea López', id: 'CC 1.030.456.789',
+        email: 'andrea.l@gmail.com', tel: '311 345 6789',
+        saldo: 45000, ultima: 'Ayer',
+        dir: 'Cl. 72 #11-34, Bogotá', ciudad: 'Bogotá',
+        vip: true, cupo: 200000,
+        movimientos: [
+          { fecha: '14 nov', concepto: 'Venta Mesa 3',          cargo: 45000, abono: 0,     saldo: 45000 },
+          { fecha: '10 nov', concepto: 'Abono efectivo',         cargo: 0,     abono: 30000, saldo: 0     },
+          { fecha: '8 nov',  concepto: 'Venta Mostrador #122',   cargo: 30000, abono: 0,     saldo: 30000 },
+          { fecha: '5 nov',  concepto: 'Abono transferencia',    cargo: 0,     abono: 65000, saldo: 0     },
+          { fecha: '2 nov',  concepto: 'Venta Mesa 7',           cargo: 65000, abono: 0,     saldo: 65000 },
+        ]
+      },
+      {
+        iniciales: 'EP', avBg: '#FED7AA', avFg: '#9A3412',
+        nombre: 'Café El Portal', id: 'NIT 900.234.567',
+        email: 'compras@elportal.co', tel: '601 345 6789',
+        saldo: 0, ultima: 'Hace 3 días',
+        dir: 'Cl. 100 #15-20, Bogotá', ciudad: 'Bogotá',
+        vip: false, cupo: 500000,
+        movimientos: [
+          { fecha: '7 nov', concepto: 'Venta Corporativa #88', cargo: 320000, abono: 0,      saldo: 320000 },
+          { fecha: '5 nov', concepto: 'Abono transferencia',   cargo: 0,      abono: 320000, saldo: 0      },
+        ]
+      },
+      {
+        iniciales: 'MR', avBg: '#DDD6FE', avFg: '#5B21B6',
+        nombre: 'María Rodríguez', id: 'CC 1.040.567.890',
+        email: 'maria.r@hotmail.com', tel: '318 456 7890',
+        saldo: 120000, ultima: 'Hace 1 sem.',
+        dir: 'Av. 19 #118-30, Bogotá', ciudad: 'Bogotá',
+        vip: false, cupo: 150000,
+        movimientos: [
+          { fecha: '3 nov',  concepto: 'Venta Mesa 2',      cargo: 120000, abono: 0,      saldo: 120000 },
+          { fecha: '28 oct', concepto: 'Abono efectivo',    cargo: 0,      abono: 80000,  saldo: 0      },
+          { fecha: '25 oct', concepto: 'Venta Mostrador',   cargo: 80000,  abono: 0,      saldo: 80000  },
+        ]
+      },
+    ];
+
+    function renderTabla() {
+      var body = document.getElementById('clientesBody');
+      body.innerHTML = '';
+      CLIENTES.forEach(function (c, idx) {
+        var row = document.createElement('div');
+        row.className = 'ct-row';
+        row.dataset.idx = idx;
+
+        var saldoHtml = c.saldo > 0
+          ? '<div class="cell-saldo-con"><span class="saldo-dot"></span>' + fmtCOP(c.saldo) + '</div>'
+          : '<div class="cell-saldo-sin">—</div>';
+
+        row.innerHTML =
+          '<div class="cliente-cell">' +
+            '<div class="cliente-avatar" style="background:' + c.avBg + ';color:' + c.avFg + ';">' + c.iniciales + '</div>' +
+            '<span class="cliente-nombre">' + c.nombre + '</span>' +
+          '</div>' +
+          '<div class="cell-id">' + c.id + '</div>' +
+          '<div class="cell-email">' + c.email + '</div>' +
+          '<div class="cell-tel">' + c.tel + '</div>' +
+          saldoHtml +
+          '<div class="cell-ultima">' + c.ultima + '</div>' +
+          '<div class="cell-actions"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:15px;height:15px;"></i></button></div>';
+
+        row.addEventListener('click', function () {
+          abrirDrawer(idx);
+        });
+
+        body.appendChild(row);
+      });
+      if (window.lucide) window.lucide.createIcons();
+      filtrarClientes();
+    }
+
+    function filtrarClientes() {
+      var input = document.getElementById('clientesSearch');
+      var empty = document.getElementById('clientesEmpty');
+      var q = (input && input.value || '').toLowerCase().trim();
+      var visibles = 0;
+      document.querySelectorAll('#clientesBody .ct-row').forEach(function (row) {
+        var txt = row.textContent.toLowerCase();
+        var show = q === '' || txt.includes(q);
+        row.style.display = show ? '' : 'none';
+        if (show) visibles++;
+      });
+      if (empty) empty.hidden = visibles > 0;
+    }
+
+    function abrirDrawer(idx) {
+      var c = CLIENTES[idx];
+
+      // Header drawer
+      document.getElementById('drawerClienteHeader').innerHTML =
+        c.nombre + '<button class="modal-close" data-close aria-label="Cerrar">×</button>';
+
+      // Info card
+      var badgesHtml = '';
+      if (c.saldo > 0) badgesHtml += '<span class="badge-cc">Cuenta corriente</span>';
+      if (c.vip) badgesHtml += '<span class="badge-vip">VIP · 32 visitas</span>';
+
+      document.getElementById('drawerInfoCard').innerHTML =
+        '<div class="cliente-card-av" style="background:' + c.avBg + ';color:' + c.avFg + ';">' + c.iniciales + '</div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div class="cliente-card-nombre">' + c.nombre + '</div>' +
+          '<div class="cliente-card-badges">' + badgesHtml + '</div>' +
+        '</div>';
+
+      // Saldo box
+      var saldoBox = document.getElementById('drawerSaldoBox');
+      if (c.saldo > 0) {
+        saldoBox.innerHTML =
+          '<div class="saldo-box">' +
+            '<i data-lucide="alert-circle" style="width:22px;height:22px;color:var(--error);flex-shrink:0;"></i>' +
+            '<div style="flex:1;">' +
+              '<div class="saldo-box-label">Saldo cuenta corriente</div>' +
+              '<div class="saldo-box-val">' + fmtCOP(c.saldo) + '</div>' +
+            '</div>' +
+            '<div class="saldo-cupo">Cupo total<br><strong style="color:var(--text);font-size:12px;">' + fmtCOP(c.cupo) + '</strong></div>' +
+          '</div>';
+      } else {
+        saldoBox.innerHTML = '';
+      }
+
+      // Contacto
+      document.getElementById('drawerContacto').innerHTML =
+        '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">' +
+          dataRow('mail', 'Email', c.email) +
+          dataRow('phone', 'Teléfono', c.tel) +
+          dataRow('credit-card', 'Identificación', c.id) +
+          dataRow('map-pin', 'Dirección', c.dir) +
+        '</div>';
+
+      // Crédito toggle
+      var creditoToggle = document.getElementById('drawerCreditoToggle');
+      var creditoLabel = document.getElementById('drawerCreditoLabel');
+      creditoToggle.checked = c.cupo > 0;
+      creditoLabel.textContent = c.cupo > 0 ? 'Sí · cupo ' + fmtCOP(c.cupo) : 'No';
+
+      // Movimientos badge
+      document.getElementById('movBadge').textContent = c.movimientos.length;
+
+      // Movimientos stats
+      var totalVentas = c.movimientos.reduce(function (a, m) { return a + m.cargo; }, 0);
+      var statsHtml = [
+        { label: 'Saldo actual', val: c.saldo > 0 ? fmtCOP(c.saldo) : '$0', color: c.saldo > 0 ? 'var(--error)' : 'var(--success)' },
+        { label: 'Total ventas', val: fmtCOP(totalVentas || 0) },
+        { label: 'Movimientos', val: c.movimientos.length + '' },
+      ].map(function (s) {
+        return '<div style="background:var(--alt);border:1px solid var(--border);border-radius:8px;padding:10px 12px;">' +
+          '<div style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;">' + s.label + '</div>' +
+          '<div style="font-size:16px;font-weight:700;color:' + (s.color || 'var(--text)') + ';font-variant-numeric:tabular-nums;">' + s.val + '</div>' +
+        '</div>';
+      }).join('');
+      document.getElementById('drawerMovStats').innerHTML = statsHtml;
+
+      // Movimientos rows
+      var movRows = '';
+      if (c.movimientos.length) {
+        c.movimientos.forEach(function (m) {
+          var cargoHtml = m.cargo ? '<span style="color:var(--error);font-weight:600;">' + fmtCOP(m.cargo) + '</span>' : '<span style="color:var(--muted);">—</span>';
+          var abonoHtml = m.abono ? '<span style="color:var(--success);font-weight:600;">' + fmtCOP(m.abono) + '</span>' : '<span style="color:var(--muted);">—</span>';
+          var saldoColor = m.saldo > 0 ? 'var(--text)' : 'var(--muted)';
+          movRows +=
+            '<div class="mov-row">' +
+              '<div class="mov-fecha">' + m.fecha + '</div>' +
+              '<div class="mov-concepto">' + m.concepto + '</div>' +
+              '<div class="mov-cargo" style="text-align:right;">' + cargoHtml + '</div>' +
+              '<div class="mov-abono" style="text-align:right;">' + abonoHtml + '</div>' +
+              '<div class="mov-saldo" style="text-align:right;color:' + saldoColor + ';">' + fmtCOP(m.saldo) + '</div>' +
+            '</div>';
+        });
+      } else {
+        movRows = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:12px;">Sin movimientos registrados</div>';
+      }
+      document.getElementById('drawerMovRows').innerHTML = movRows;
+
+      // Botón abono
+      document.getElementById('btnAbonoDrawer').onclick = function () {
+        UI.toast({ type: 'success', title: 'Abono registrado', sub: c.nombre });
+      };
+
+      if (window.lucide) window.lucide.createIcons();
+
+      // Re-init tabs dentro del drawer
+      UI.tabs('[data-tabs="cliente"]');
+
+      UI.openDrawer('drawerCliente');
+    }
+
+    function dataRow(icon, label, val) {
+      return '<div class="data-row">' +
+        '<div class="data-icon"><i data-lucide="' + icon + '" style="width:14px;height:14px;color:var(--muted);"></i></div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div class="data-label">' + label + '</div>' +
+          '<div class="data-val">' + val + '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // Notas
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('clientesSearch')?.addEventListener('input', filtrarClientes);
+      document.getElementById('clientesClearSearch')?.addEventListener('click', function () {
+        var input = document.getElementById('clientesSearch');
+        if (input) input.value = '';
+        filtrarClientes();
+      });
+      document.getElementById('btnGuardarNota').addEventListener('click', function () {
+        var input = document.getElementById('notaInput');
+        var texto = input.value.trim();
+        if (!texto) return;
+        var item = document.createElement('div');
+        item.className = 'nota-item';
+        item.innerHTML =
+          '<div class="nota-author">Carlos Ramírez · ahora</div>' +
+          '<div class="nota-text">' + texto.replace(/</g, '&lt;') + '</div>';
+        document.getElementById('notasList').prepend(item);
+        input.value = '';
+        UI.toast({ type: 'success', title: 'Nota guardada' });
+      });
+
+      document.getElementById('drawerCreditoToggle').addEventListener('change', function () {
+        document.getElementById('drawerCreditoLabel').textContent = this.checked ? 'Sí' : 'No';
+      });
+    });
+
+    renderTabla();
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

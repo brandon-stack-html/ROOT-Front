@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Historial de pagos · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    /* Month group */
+    .e13-month-header {
+      padding: 16px 16px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+    }
+    .e13-list { display: flex; flex-direction: column; }
+
+    /* Pago item */
+    .e13-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: var(--ff-base);
+      transition: background .1s;
+    }
+    .e13-item:active { background: var(--alt); }
+    .e13-item-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: rgba(16,185,129,.1);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: var(--success);
+    }
+    .e13-item-icon svg { width: 16px; height: 16px; }
+    .e13-item-body  { flex: 1; min-width: 0; }
+    .e13-item-label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .e13-item-meta  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .e13-item-right { text-align: right; }
+    .e13-item-neto  { font-size: 15px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+    .e13-item-disc  { font-size: 11px; color: var(--error); margin-top: 2px; }
+
+    .e13-empty { padding: 40px 16px; text-align: center; }
+    .e13-empty-icon { width: 56px; height: 56px; border-radius: 14px; background: var(--alt); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: var(--muted); }
+    .e13-empty-icon svg { width: 24px; height: 24px; }
+    .e13-empty-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .e13-empty-sub { font-size: 13px; color: var(--muted); }
+
+    /* Summary at top */
+    .e13-summary {
+      margin: 12px 16px;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--alt);
+      border: 1px solid var(--border);
+      display: flex; gap: 0;
+    }
+    .e13-summary-stat { flex: 1; text-align: center; }
+    .e13-summary-stat:not(:last-child) { border-right: 1px solid var(--border); }
+    .e13-summary-val   { font-size: 15px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+    .e13-summary-label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+
+    /* Bottom sheet */
+    .e13-bs-header { padding: 14px 18px 10px; }
+    .e13-bs-title  { font-size: 16px; font-weight: 700; color: var(--text); }
+    .e13-bs-date   { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .e13-bs-section { padding: 0 18px 16px; }
+    .e13-bs-section-title { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+    .e13-bs-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .e13-bs-row:last-child { border-bottom: none; }
+    .e13-bs-row .label { color: var(--muted); }
+    .e13-bs-row .val   { font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+    .e13-bs-row .val.success { color: var(--success); }
+    .e13-bs-row .val.error   { color: var(--error); }
+    .e13-bs-row.total .label { font-weight: 700; color: var(--text); }
+    .e13-bs-row.total .val   { font-size: 16px; color: var(--accent); }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- TOPBAR -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side">
+            <a href="./nomina.html" class="mesero-icon-btn" aria-label="Volver">
+              <i data-lucide="arrow-left"></i>
+            </a>
+          </div>
+          <div class="mesero-topbar-center">
+            <div class="mesero-topbar-title">Historial de pagos</div>
+          </div>
+          <div class="mesero-topbar-side" style="width:34px;"></div>
+        </header>
+
+        <!-- CONTENT -->
+        <main id="main" class="mesero-content">
+          <!-- Resumen total -->
+          <div class="e13-summary">
+            <div class="e13-summary-stat">
+              <div class="e13-summary-val" id="sumPagos">0</div>
+              <div class="e13-summary-label">Pagos</div>
+            </div>
+            <div class="e13-summary-stat">
+              <div class="e13-summary-val" id="sumBruto">$0</div>
+              <div class="e13-summary-label">Bruto total</div>
+            </div>
+            <div class="e13-summary-stat">
+              <div class="e13-summary-val" id="sumNeto">$0</div>
+              <div class="e13-summary-label">Neto total</div>
+            </div>
+          </div>
+
+          <div class="e13-list" id="listaPagos"></div>
+        </main>
+
+        <!-- Bottom sheet backdrop -->
+        <div class="bottom-sheet-backdrop" id="bsBackdrop"></div>
+        <!-- Bottom sheet -->
+  <div class="bottom-sheet" id="bsPago" role="dialog" aria-modal="true" aria-label="Detalle del pago">
+    <div class="bottom-sheet-handle" id="bsHandle"></div>
+    <div class="bottom-sheet-body">
+      <div class="e13-bs-header">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="e13-bs-title" id="bsTitle">Pago de nómina</div>
+            <div class="e13-bs-date" id="bsDate">—</div>
+          </div>
+          <button type="button" class="mesero-icon-btn no-border" id="bsClose" aria-label="Cerrar">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="e13-bs-section">
+        <div class="e13-bs-section-title">Desglose</div>
+        <div class="e13-bs-row">
+          <span class="label">Salario bruto</span>
+          <span class="val success" id="bsBruto">—</span>
+        </div>
+        <div class="e13-bs-row">
+          <span class="label">Adelantos descontados</span>
+          <span class="val error" id="bsDescuentos">—</span>
+        </div>
+        <div class="e13-bs-row">
+          <span class="label">Método de pago</span>
+          <span class="val" id="bsMetodo">—</span>
+        </div>
+        <div class="e13-bs-row total">
+          <span class="label">Neto recibido</span>
+          <span class="val" id="bsNeto">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+      </div><!-- /mesero-body-inner -->
+      <div class="mesero-home-indicator"></div>
+    </div><!-- /mesero-app -->
+  </div><!-- /mesero-frame -->
+
+  <script src="../assets/js/constants.js"></script>
+  <script src="../assets/js/data/nomina-mock.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    var NM = window.NominaMock;
+    var state = NM.loadState();
+    var emp   = state.empleados.find(function(e){ return e.id === NM.MESERO_ACTUAL_ID; });
+
+    var MESES_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    function fmtDate(str) {
+      if (!str) return '—';
+      var d = new Date(str + 'T12:00:00');
+      return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+    }
+    function monthKey(str) {
+      var d = new Date(str + 'T12:00:00');
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0');
+    }
+    function monthLabel(key) {
+      var parts = key.split('-');
+      return MESES_FULL[parseInt(parts[1],10)-1] + ' ' + parts[0];
+    }
+
+    var myPagos = state.pagos
+      .filter(function(p){ return p.empleado_id === emp.id; })
+      .sort(function(a,b){ return new Date(b.fecha_pago) - new Date(a.fecha_pago); });
+
+    // Resumen
+    var totalBruto = myPagos.reduce(function(s,p){ return s + p.bruto; }, 0);
+    var totalNeto  = myPagos.reduce(function(s,p){ return s + p.neto; }, 0);
+    document.getElementById('sumPagos').textContent = myPagos.length;
+    document.getElementById('sumBruto').textContent = window.formatCOP(totalBruto);
+    document.getElementById('sumNeto').textContent  = window.formatCOP(totalNeto);
+
+    // Agrupar por mes
+    var grupos = {};
+    var orden  = [];
+    myPagos.forEach(function(p){
+      var key = monthKey(p.fecha_pago);
+      if (!grupos[key]) { grupos[key] = []; orden.push(key); }
+      grupos[key].push(p);
+    });
+
+    var lista = document.getElementById('listaPagos');
+    if (myPagos.length === 0) {
+      lista.innerHTML = '<div class="e13-empty">' +
+        '<div class="e13-empty-icon"><i data-lucide="banknote"></i></div>' +
+        '<div class="e13-empty-title">Sin pagos</div>' +
+        '<div class="e13-empty-sub">Aún no tienes pagos registrados.</div>' +
+        '</div>';
+    } else {
+      orden.forEach(function(key){
+        var header = document.createElement('div');
+        header.className = 'e13-month-header';
+        header.textContent = monthLabel(key);
+        lista.appendChild(header);
+
+        grupos[key].forEach(function(pago){
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'e13-item';
+          btn.dataset.id = pago.id;
+
+          var label = pago.metodo === 'adelanto' ? 'Adelanto pagado' : 'Pago de nómina';
+          var discHtml = pago.adelantos_descontados > 0
+            ? '<div class="e13-item-disc">−' + window.formatCOP(pago.adelantos_descontados) + ' adelantos</div>'
+            : '';
+
+          btn.innerHTML =
+            '<div class="e13-item-icon"><i data-lucide="banknote"></i></div>' +
+            '<div class="e13-item-body">' +
+              '<div class="e13-item-label">' + label + '</div>' +
+              '<div class="e13-item-meta">' + fmtDate(pago.fecha_pago) + ' · ' + (pago.metodo || 'transferencia') + '</div>' +
+            '</div>' +
+            '<div class="e13-item-right">' +
+              '<div class="e13-item-neto">' + window.formatCOP(pago.neto) + '</div>' +
+              discHtml +
+            '</div>';
+
+          btn.addEventListener('click', function(){ openSheet(pago.id); });
+          lista.appendChild(btn);
+        });
+      });
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+
+    // Bottom sheet
+    var backdrop = document.getElementById('bsBackdrop');
+    var sheet    = document.getElementById('bsPago');
+
+    function openSheet(pagoId) {
+      var st   = NM.loadState();
+      var pago = st.pagos.find(function(p){ return p.id === pagoId; });
+      if (!pago) return;
+
+      var label = pago.metodo === 'adelanto' ? 'Adelanto pagado' : 'Pago de nómina';
+      document.getElementById('bsTitle').textContent = label;
+      document.getElementById('bsDate').textContent  = fmtDate(pago.fecha_pago);
+      document.getElementById('bsBruto').textContent = window.formatCOP(pago.bruto);
+      document.getElementById('bsDescuentos').textContent = pago.adelantos_descontados > 0
+        ? '−' + window.formatCOP(pago.adelantos_descontados)
+        : '$0';
+      document.getElementById('bsMetodo').textContent = pago.metodo || 'Transferencia';
+      document.getElementById('bsNeto').textContent   = window.formatCOP(pago.neto);
+
+      backdrop.classList.add('is-open');
+      sheet.classList.add('is-open');
+      sheet.focus();
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function closeSheet() {
+      backdrop.classList.remove('is-open');
+      sheet.classList.remove('is-open');
+    }
+
+    backdrop.addEventListener('click', closeSheet);
+    document.getElementById('bsClose').addEventListener('click', closeSheet);
+    document.getElementById('bsHandle').addEventListener('click', closeSheet);
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeSheet(); });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

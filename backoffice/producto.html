@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Editar producto · ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<div class="bo-shell">
+
+  <!-- ====================== SIDEBAR ====================== -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info">
+          <span class="label">Negocio</span>
+          <span class="name">El Buen Sabor</span>
+        </span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html"    class="bo-sidebar-item is-active"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html"  class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html"    class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html"      class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html"     class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info">
+        <span class="name">Juan Camilo</span>
+        <span class="role">Administrador</span>
+      </span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop" id="boBackdrop"></div>
+
+  <!-- ====================== CONTENT WRAP ====================== -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+        <i data-lucide="menu"></i>
+      </button>
+      <nav class="bo-breadcrumb" id="breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item"><a href="./catalogo.html" style="color:inherit;text-decoration:none">Catálogo</a></span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active" id="breadcrumbLast">Editar producto</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button">
+        <i data-lucide="store"></i>
+        <span class="label">Sede Norte</span>
+      </button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="notification-dot"></span>
+        </button>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar" aria-label="Perfil">JC</button>
+      </div>
+    </header>
+
+    <!-- ====================== MAIN CONTENT ====================== -->
+    <main id="main" class="bo-content">
+
+      <!-- Page header -->
+      <div class="bo-page-header">
+        <div>
+          <div class="bo-page-title" id="pageTitle">Editar producto</div>
+          <div class="bo-page-subtitle" id="pageSubtitle">Ajiaco Bogotano · SKU AJB-001</div>
+        </div>
+        <div class="bo-page-actions">
+          <button class="btn btn-secondary">
+            <i data-lucide="external-link" style="width:13px;height:13px"></i>
+            Ver en POS
+          </button>
+        </div>
+      </div>
+
+      <!-- Layout 2 cols -->
+      <div class="producto-layout">
+
+        <!-- ===== COLUMNA IZQUIERDA ===== -->
+        <div class="producto-col-left">
+
+          <!-- Imagen -->
+          <div class="producto-section">
+            <div class="producto-section-title">Imagen del producto</div>
+            <div class="producto-img-area" style="background:linear-gradient(135deg,#FECACA 0%,#FED7AA 100%)">
+              <i data-lucide="utensils" style="width:56px;height:56px"></i>
+              <div class="producto-img-overlay">
+                <button class="producto-img-btn"><i data-lucide="upload"></i>Cambiar</button>
+                <button class="producto-img-btn danger">Eliminar</button>
+              </div>
+              <div class="producto-img-meta">1280 × 1024 · 124 KB</div>
+            </div>
+          </div>
+
+          <!-- Información básica -->
+          <div class="producto-section">
+            <div class="producto-section-title">Información básica</div>
+            <div class="field-grid-2">
+              <div class="field">
+                <label class="field-label">Nombre del producto</label>
+                <input type="text" class="field-input" id="prodNombre" value="Ajiaco Bogotano"/>
+              </div>
+              <div class="field">
+                <label class="field-label">Categoría</label>
+                <select class="field-input">
+                  <option selected>Platos fuertes</option>
+                  <option>Entradas</option>
+                  <option>Bebidas</option>
+                  <option>Postres</option>
+                  <option>Combos</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Descripción</label>
+              <textarea class="field-input" id="prodDesc" rows="3">Sopa tradicional colombiana con papa, mazorca y pollo. Servida con crema, alcaparras y aguacate.</textarea>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label class="field-label">Código de barras (opcional)</label>
+              <div style="position:relative">
+                <input type="text" class="field-input" placeholder="Escanea o ingresa el código" style="padding-right:36px"/>
+                <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted)">
+                  <i data-lucide="scan-line" style="width:13px;height:13px"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Precios -->
+          <div class="producto-section">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div class="producto-section-title" style="margin-bottom:0">Precios</div>
+              <button class="btn btn-secondary btn-sm">
+                <i data-lucide="plus" style="width:11px;height:11px"></i>
+                Agregar lista
+              </button>
+            </div>
+            <div class="precio-table-wrap">
+              <div class="precio-table-head">
+                <div>Lista de precios</div>
+                <div class="precio-right">Precio</div>
+                <div class="precio-center">IVA</div>
+                <div class="precio-right">Precio final</div>
+                <div></div>
+              </div>
+              <div class="precio-table-row">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:13px;color:var(--text);font-weight:500">Carta</span>
+                  <span class="precio-default-chip">DEFAULT</span>
+                </div>
+                <div class="precio-right" style="font-size:13px;color:var(--text);font-weight:500">$25.000</div>
+                <div class="precio-center" style="font-size:12px;color:var(--muted)">8%</div>
+                <div class="precio-right" style="font-size:13px;color:var(--text);font-weight:600">$27.000</div>
+                <div style="display:flex;justify-content:flex-end"><i data-lucide="more-horizontal" style="width:14px;height:14px;color:var(--muted)"></i></div>
+              </div>
+              <div class="precio-table-row">
+                <div style="font-size:13px;color:var(--text);font-weight:500">Happy Hour</div>
+                <div class="precio-right" style="font-size:13px;color:var(--text);font-weight:500">$20.000</div>
+                <div class="precio-center" style="font-size:12px;color:var(--muted)">8%</div>
+                <div class="precio-right" style="font-size:13px;color:var(--text);font-weight:600">$21.600</div>
+                <div style="display:flex;justify-content:flex-end"><i data-lucide="more-horizontal" style="width:14px;height:14px;color:var(--muted)"></i></div>
+              </div>
+              <div class="precio-table-row">
+                <div style="font-size:13px;color:var(--text);font-weight:500">Delivery</div>
+                <div class="precio-right" style="font-size:13px;color:var(--text);font-weight:500">$28.000</div>
+                <div class="precio-center" style="font-size:12px;color:var(--muted)">8%</div>
+                <div class="precio-right" style="font-size:13px;color:var(--text);font-weight:600">$30.240</div>
+                <div style="display:flex;justify-content:flex-end"><i data-lucide="more-horizontal" style="width:14px;height:14px;color:var(--muted)"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modificadores -->
+          <div class="producto-section">
+            <div class="producto-section-title">Modificadores vinculados</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Permiten al cliente personalizar este producto al ordenar.</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span class="chip">Término de cocción</span>
+              <span class="chip">Acompañamiento</span>
+              <button class="chip-add"><i data-lucide="plus"></i>Agregar modificador</button>
+            </div>
+          </div>
+
+          <!-- Ficha técnica / Inventario -->
+          <div class="producto-section">
+            <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
+              <button class="switch is-on" data-switch aria-label="Toggle ficha técnica"></button>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600;color:var(--text)">Vincular ficha técnica</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">Descuenta automáticamente los ingredientes al vender.</div>
+              </div>
+            </div>
+            <div class="ficha-preview ok">
+              <div class="ficha-icon">
+                <i data-lucide="clipboard-list"></i>
+              </div>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:600;color:var(--text)">Ficha: Ajiaco Bogotano</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">
+                  Costo: <strong style="color:var(--text)">$6.200</strong> · Margen: <strong style="color:var(--success)">77%</strong>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm">
+                Editar ficha
+                <i data-lucide="arrow-right" style="width:11px;height:11px"></i>
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /producto-col-left -->
+
+        <!-- ===== COLUMNA DERECHA (sticky) ===== -->
+        <div class="preview-sticky">
+
+          <!-- Estado -->
+          <div class="producto-section">
+            <div class="producto-section-sublabel">Estado</div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <button class="switch is-on" data-switch aria-label="Producto activo"></button>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600;color:var(--text)">Producto activo</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">Visible para vender</div>
+              </div>
+              <span class="status-pill active">EN VENTA</span>
+            </div>
+          </div>
+
+          <!-- Visible en canales -->
+          <div class="producto-section">
+            <div class="producto-section-sublabel">Visible en canales</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Selecciona dónde se muestra este producto.</div>
+
+            <div class="check-row is-on">
+              <i data-lucide="shopping-bag" class="check-row-icon" style="width:14px;height:14px;color:var(--text)"></i>
+              <span>POS (mostrador y mesas)</span>
+              <button class="switch is-on" data-switch aria-label="POS"></button>
+            </div>
+            <div class="check-row is-on">
+              <i data-lucide="qr-code" class="check-row-icon" style="width:14px;height:14px;color:var(--text)"></i>
+              <span>Carta QR</span>
+              <button class="switch is-on" data-switch aria-label="Carta QR"></button>
+            </div>
+            <div class="check-row is-on">
+              <i data-lucide="globe" class="check-row-icon" style="width:14px;height:14px;color:var(--text)"></i>
+              <span>Tienda online</span>
+              <button class="switch is-on" data-switch aria-label="Tienda online"></button>
+            </div>
+            <div class="check-row">
+              <i data-lucide="bike" class="check-row-icon" style="width:14px;height:14px;color:var(--muted)"></i>
+              <span>Delivery (Rappi, UE, etc.)</span>
+              <button class="switch" data-switch aria-label="Delivery"></button>
+            </div>
+          </div>
+
+          <!-- Disponibilidad por sucursal -->
+          <div class="producto-section">
+            <div class="producto-section-sublabel">Disponibilidad</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Por sucursal.</div>
+
+            <div class="check-row is-on">
+              <i data-lucide="store" class="check-row-icon" style="width:14px;height:14px;color:var(--text)"></i>
+              <span>Sede Norte</span>
+              <button class="switch is-on" data-switch aria-label="Sede Norte"></button>
+            </div>
+            <div class="check-row is-on">
+              <i data-lucide="store" class="check-row-icon" style="width:14px;height:14px;color:var(--text)"></i>
+              <span>Sede Centro</span>
+              <button class="switch is-on" data-switch aria-label="Sede Centro"></button>
+            </div>
+            <div class="check-row">
+              <i data-lucide="store" class="check-row-icon" style="width:14px;height:14px;color:var(--muted)"></i>
+              <span>Sede Sur</span>
+              <button class="switch" data-switch aria-label="Sede Sur"></button>
+            </div>
+          </div>
+
+        </div><!-- /preview-sticky -->
+      </div><!-- /producto-layout -->
+
+      <!-- Footer sticky -->
+      <div class="producto-footer">
+        <div class="producto-footer-hint">
+          <i data-lucide="circle" style="width:7px;height:7px;color:var(--warning)"></i>
+          Cambios sin guardar
+        </div>
+        <div style="flex:1"></div>
+        <a href="./catalogo.html" class="btn btn-secondary">Descartar</a>
+        <button class="btn btn-primary" id="btnGuardar">
+          <i data-lucide="save" style="width:14px;height:14px"></i>
+          Guardar producto
+        </button>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) window.lucide.createIcons();
+
+  // Breadcrumb y título dinámico según query params
+  const params = new URLSearchParams(location.search);
+  if (params.has('nuevo')) {
+    document.getElementById('pageTitle').textContent = 'Nuevo producto';
+    document.getElementById('pageSubtitle').textContent = 'Completá la información para agregar un nuevo producto';
+    document.getElementById('breadcrumbLast').textContent = 'Nuevo producto';
+    document.title = 'Nuevo producto · ROOT';
+  }
+
+  // Switch toggles
+  document.querySelectorAll('[data-switch]').forEach(sw => {
+    sw.addEventListener('click', function () {
+      this.classList.toggle('is-on');
+      const row = this.closest('.check-row');
+      if (row) row.classList.toggle('is-on', this.classList.contains('is-on'));
+    });
+  });
+
+  // Guardar → toast + redirect
+  document.getElementById('btnGuardar').addEventListener('click', function () {
+    if (window.UI) {
+      UI.toast({ type: 'success', title: 'Producto guardado', sub: 'Los cambios se aplicaron correctamente.' });
+    }
+    setTimeout(() => { location.href = './catalogo.html'; }, 1400);
+  });
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

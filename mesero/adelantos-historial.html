@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mis adelantos · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    /* List items */
+    .e12-list { padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .e12-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      font-family: var(--ff-base);
+      transition: background .1s;
+    }
+    .e12-item:active { background: var(--alt); }
+    .e12-item-icon-wrap {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: var(--alt);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .e12-item-icon-wrap svg { width: 18px; height: 18px; }
+    .e12-item-body { flex: 1; min-width: 0; }
+    .e12-item-amount { font-size: 16px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+    .e12-item-meta   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .e12-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+      white-space: nowrap;
+    }
+    .e12-badge.pendiente   { background: rgba(245,158,11,.12); color: #92400E; }
+    .e12-badge.aprobada    { background: rgba(59,130,246,.12);  color: #1E40AF; }
+    .e12-badge.rechazada   { background: rgba(239,68,68,.12);   color: #991B1B; }
+    .e12-badge.pagada      { background: rgba(16,185,129,.12);  color: #065F46; }
+    .e12-badge.descontada  { background: rgba(113,113,122,.12); color: var(--muted); }
+    .e12-badge.borrador    { background: rgba(113,113,122,.1);  color: var(--muted); }
+    [data-theme="dark"] .e12-badge.pendiente  { background: rgba(245,158,11,.18); color: #FCD34D; }
+    [data-theme="dark"] .e12-badge.aprobada   { background: rgba(59,130,246,.18); color: #93C5FD; }
+    [data-theme="dark"] .e12-badge.rechazada  { background: rgba(239,68,68,.18); color: #FCA5A5; }
+    [data-theme="dark"] .e12-badge.pagada     { background: rgba(16,185,129,.18); color: #6EE7B7; }
+    [data-theme="dark"] .e12-badge.descontada { background: rgba(113,113,122,.18); color: var(--muted); }
+
+    .e12-empty { padding: 40px 16px; text-align: center; }
+    .e12-empty-icon { width: 56px; height: 56px; border-radius: 14px; background: var(--alt); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: var(--muted); }
+    .e12-empty-icon svg { width: 24px; height: 24px; }
+    .e12-empty-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .e12-empty-sub { font-size: 13px; color: var(--muted); }
+
+    /* Bottom Sheet */
+    .e12-bs-header { padding: 14px 18px 10px; }
+    .e12-bs-amount { font-size: 28px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+    .e12-bs-meta   { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .e12-bs-section { padding: 0 18px 16px; }
+    .e12-bs-section-title { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+    .e12-bs-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .e12-bs-row:last-child { border-bottom: none; }
+    .e12-bs-row .label { color: var(--muted); }
+    .e12-bs-row .val   { font-weight: 600; color: var(--text); }
+    /* Timeline */
+    .e12-timeline { padding: 0 18px 16px; }
+    .e12-timeline-item { display: flex; gap: 12px; padding: 8px 0; }
+    .e12-timeline-line { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .e12-timeline-dot { width: 10px; height: 10px; border-radius: 5px; background: var(--border); border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--border); flex-shrink: 0; }
+    .e12-timeline-dot.active { background: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .e12-timeline-connector { width: 2px; flex: 1; background: var(--border); margin: 2px 0; min-height: 16px; }
+    .e12-timeline-content { flex: 1; padding-bottom: 4px; }
+    .e12-timeline-label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .e12-timeline-date  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .e12-timeline-nota  { font-size: 11px; color: var(--muted); margin-top: 2px; font-style: italic; }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- TOPBAR -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side">
+            <a href="./nomina.html" class="mesero-icon-btn" aria-label="Volver">
+              <i data-lucide="arrow-left"></i>
+            </a>
+          </div>
+          <div class="mesero-topbar-center">
+            <div class="mesero-topbar-title">Mis adelantos</div>
+          </div>
+          <div class="mesero-topbar-side" style="width:34px;"></div>
+        </header>
+
+        <!-- CONTENT -->
+        <main id="main" class="mesero-content">
+          <div id="listaAdelantos" class="e12-list"></div>
+        </main>
+
+        <!-- Bottom Sheet backdrop -->
+        <div class="bottom-sheet-backdrop" id="bsBackdrop"></div>
+        <!-- Bottom Sheet -->
+  <div class="bottom-sheet" id="bsAdelanto" role="dialog" aria-modal="true" aria-label="Detalle del adelanto">
+    <div class="bottom-sheet-handle" id="bsHandle"></div>
+    <div class="bottom-sheet-body">
+      <div class="e12-bs-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span class="e12-badge" id="bsBadge">—</span>
+          <button type="button" class="mesero-icon-btn no-border" id="bsClose" aria-label="Cerrar">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="e12-bs-amount" id="bsAmount">—</div>
+        <div class="e12-bs-meta" id="bsMeta">—</div>
+      </div>
+
+      <div class="e12-bs-section">
+        <div class="e12-bs-section-title">Detalle</div>
+        <div class="e12-bs-row"><span class="label">Motivo</span><span class="val" id="bsMotivo">—</span></div>
+        <div class="e12-bs-row"><span class="label">Aprobado</span><span class="val" id="bsAprobado">—</span></div>
+        <div class="e12-bs-row" id="bsNotaRow"><span class="label">Nota admin</span><span class="val" id="bsNota">—</span></div>
+      </div>
+
+      <div class="e12-timeline" id="bsTimeline">
+        <div class="e12-bs-section-title">Historial</div>
+      </div>
+
+      <div class="bottom-sheet-footer" id="bsFooter"></div>
+    </div>
+  </div>
+
+      </div><!-- /mesero-body-inner -->
+      <div class="mesero-home-indicator"></div>
+    </div><!-- /mesero-app -->
+  </div><!-- /mesero-frame -->
+
+  <script src="../assets/js/constants.js"></script>
+  <script src="../assets/js/data/nomina-mock.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    var NM = window.NominaMock;
+    var state = NM.loadState();
+    var emp   = state.empleados.find(function(e){ return e.id === NM.MESERO_ACTUAL_ID; });
+    var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+    function fmtDate(str) {
+      if (!str) return '—';
+      var d = new Date(str);
+      return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+    }
+    function fmtDateTime(str) {
+      if (!str) return '—';
+      var d = new Date(str);
+      return fmtDate(str) + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    }
+
+    var LABELS = NM.ESTADO_LABELS;
+    var myAdelantos = state.adelantos
+      .filter(function(a){ return a.empleado_id === emp.id && a.estado !== 'borrador'; })
+      .sort(function(a,b){ return new Date(b.fecha_solicitud) - new Date(a.fecha_solicitud); });
+
+    var lista = document.getElementById('listaAdelantos');
+    if (myAdelantos.length === 0) {
+      lista.innerHTML = '<div class="e12-empty">' +
+        '<div class="e12-empty-icon"><i data-lucide="inbox"></i></div>' +
+        '<div class="e12-empty-title">Sin adelantos</div>' +
+        '<div class="e12-empty-sub">No tienes solicitudes de adelanto aún.</div>' +
+        '</div>';
+    } else {
+      myAdelantos.forEach(function(adv){
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'e12-item';
+        btn.dataset.id = adv.id;
+
+        var iconColor = adv.estado === 'pagada' || adv.estado === 'descontada'
+          ? 'var(--success)' : adv.estado === 'rechazada' ? 'var(--error)'
+          : adv.estado === 'aprobada' ? 'var(--info)' : 'var(--warning)';
+
+        btn.innerHTML =
+          '<div class="e12-item-icon-wrap" style="background:rgba(79,70,229,.08);color:var(--accent)">' +
+            '<i data-lucide="wallet"></i>' +
+          '</div>' +
+          '<div class="e12-item-body">' +
+            '<div class="e12-item-amount">' + window.formatCOP(adv.monto_solicitado) + '</div>' +
+            '<div class="e12-item-meta">' + fmtDate(adv.fecha_solicitud) + (adv.motivo ? ' · ' + adv.motivo : '') + '</div>' +
+          '</div>' +
+          '<span class="e12-badge ' + adv.estado + '">' + (LABELS[adv.estado] || adv.estado) + '</span>';
+
+        btn.addEventListener('click', function(){ openSheet(adv.id); });
+        lista.appendChild(btn);
+      });
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+
+    // Bottom sheet
+    var backdrop = document.getElementById('bsBackdrop');
+    var sheet    = document.getElementById('bsAdelanto');
+
+    function openSheet(advId) {
+      var st  = NM.loadState();
+      var adv = st.adelantos.find(function(a){ return a.id === advId; });
+      if (!adv) return;
+
+      document.getElementById('bsBadge').className = 'e12-badge ' + adv.estado;
+      document.getElementById('bsBadge').textContent = LABELS[adv.estado] || adv.estado;
+      document.getElementById('bsAmount').textContent = window.formatCOP(adv.monto_solicitado);
+      document.getElementById('bsMeta').textContent   = fmtDateTime(adv.fecha_solicitud);
+      document.getElementById('bsMotivo').textContent = adv.motivo || 'Sin especificar';
+      document.getElementById('bsAprobado').textContent = adv.monto_aprobado != null ? window.formatCOP(adv.monto_aprobado) : '—';
+
+      var notaRow = document.getElementById('bsNotaRow');
+      if (adv.nota_admin) {
+        notaRow.style.display = 'flex';
+        document.getElementById('bsNota').textContent = adv.nota_admin;
+      } else {
+        notaRow.style.display = 'none';
+      }
+
+      // Timeline
+      var tl = document.getElementById('bsTimeline');
+      tl.innerHTML = '<div class="e12-bs-section-title">Historial</div>';
+      (adv.transiciones || []).forEach(function(t, i){
+        var isLast = i === adv.transiciones.length - 1;
+        var item = document.createElement('div');
+        item.className = 'e12-timeline-item';
+        var label = t.a ? (LABELS[t.a] || t.a) : 'Creado';
+        item.innerHTML =
+          '<div class="e12-timeline-line">' +
+            '<div class="e12-timeline-dot' + (isLast ? ' active' : '') + '"></div>' +
+            (isLast ? '' : '<div class="e12-timeline-connector"></div>') +
+          '</div>' +
+          '<div class="e12-timeline-content">' +
+            '<div class="e12-timeline-label">' + label + '</div>' +
+            '<div class="e12-timeline-date">' + fmtDateTime(t.fecha) + '</div>' +
+            (t.nota ? '<div class="e12-timeline-nota">"' + t.nota + '"</div>' : '') +
+          '</div>';
+        tl.appendChild(item);
+      });
+
+      // Footer: PDF download button if pagada/descontada
+      var footer = document.getElementById('bsFooter');
+      footer.innerHTML = '';
+      if (adv.estado === 'pagada' || adv.estado === 'descontada') {
+        var btnPdf = document.createElement('button');
+        btnPdf.type = 'button';
+        btnPdf.className = 'mb-btn mb-btn-secondary h-48';
+        btnPdf.innerHTML = '<i data-lucide="download"></i> Descargar comprobante';
+        btnPdf.addEventListener('click', function(){
+          if (window.generarComprobante) {
+            window.generarComprobante(adv.id);
+          } else {
+            UI.toast({ type: 'info', title: 'Comprobante', body: 'Generando PDF…' });
+          }
+        });
+        footer.appendChild(btnPdf);
+      }
+
+      backdrop.classList.add('is-open');
+      sheet.classList.add('is-open');
+      sheet.focus();
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function closeSheet() {
+      backdrop.classList.remove('is-open');
+      sheet.classList.remove('is-open');
+    }
+
+    backdrop.addEventListener('click', closeSheet);
+    document.getElementById('bsClose').addEventListener('click', closeSheet);
+    document.getElementById('bsHandle').addEventListener('click', closeSheet);
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeSheet(); });
+  </script>
+  <script src="../assets/js/comprobante.js"></script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

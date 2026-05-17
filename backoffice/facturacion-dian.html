@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Facturación DIAN · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+
+    /* DIAN status banner */
+    .dian-banner {
+      padding: 12px 16px; border-radius: 10px; margin-bottom: 18px;
+      background: #F0FDF4; border: 1px solid #BBF7D0;
+      display: flex; align-items: center; gap: 11px;
+    }
+    [data-theme="dark"] .dian-banner { background: rgba(16,185,129,.10); border-color: rgba(16,185,129,.4); }
+    .dian-banner-icon {
+      width: 34px; height: 34px; border-radius: 9px; background: var(--success);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .dian-banner-text { flex: 1; }
+    .dian-banner-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .dian-banner-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .dian-online-badge {
+      padding: 4px 10px; border-radius: 11px; background: var(--success); color: #fff;
+      font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0;
+    }
+    .dian-online-dot { width: 6px; height: 6px; border-radius: 3px; background: #fff; animation: dianPulse 1.6s infinite; }
+
+    @keyframes dianPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+    }
+    .dian-pulse { animation: dianPulse 1.6s infinite; }
+
+    /* KPI grid 4 cols */
+    .kpi-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+    @media (max-width: 1100px) { .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .kpi-grid-4 { grid-template-columns: 1fr; } }
+
+    /* Remisiones card */
+    .remisiones-card { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; margin-bottom: 18px; overflow: hidden; }
+    .remisiones-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .remisiones-header-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .remisiones-header-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .rem-table-head, .rem-table-row {
+      display: grid; grid-template-columns: 1fr 1.6fr 1fr 0.8fr 1.4fr 1.6fr;
+      padding: 10px 18px; align-items: center; gap: 4px;
+    }
+    .rem-table-head { background: var(--alt); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+    .rem-table-row { border-bottom: 1px solid var(--border); transition: background .12s; }
+    .rem-table-row:last-child { border-bottom: none; }
+    .rem-table-row.is-riesgo { background: rgba(254,226,226,.3); }
+    [data-theme="dark"] .rem-table-row.is-riesgo { background: rgba(239,68,68,.06); }
+
+    /* Progress bar 30d */
+    .prog-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .prog-bar-track { flex: 1; height: 6px; border-radius: 3px; background: var(--alt); overflow: hidden; }
+    .prog-bar-fill { height: 100%; border-radius: 3px; }
+    .prog-dot { width: 8px; height: 8px; border-radius: 4px; flex-shrink: 0; }
+
+    /* Tabs de historial */
+    .dian-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 0; overflow-x: auto; scrollbar-width: none; }
+    .dian-tabs::-webkit-scrollbar { display: none; }
+    .dian-tab {
+      padding: 10px 16px; border: none; background: transparent; cursor: pointer;
+      font-family: var(--ff-base); font-size: 13px; font-weight: 500; color: var(--muted);
+      border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 7px;
+      white-space: nowrap; transition: color .12s, border-color .12s;
+    }
+    .dian-tab:hover { color: var(--text); }
+    .dian-tab.is-active { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
+    .dian-tab-count {
+      padding: 1px 7px; border-radius: 8px; background: var(--alt); color: var(--muted); font-size: 10px; font-weight: 600;
+    }
+    .dian-tab.is-active .dian-tab-count { background: #EEF2FF; color: var(--accent); }
+    [data-theme="dark"] .dian-tab.is-active .dian-tab-count { background: rgba(99,102,241,.18); }
+
+    /* Historial table */
+    .hist-table { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; margin-top: 14px; }
+    .hist-header, .hist-row {
+      display: grid; grid-template-columns: 1.1fr 1.5fr 1.1fr 1fr 1.4fr 0.7fr 44px;
+      padding: 12px 18px; align-items: center; gap: 4px;
+    }
+    .hist-header { background: var(--alt); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+    .hist-row { border-bottom: 1px solid var(--border); transition: background .12s; }
+    .hist-row:last-child { border-bottom: none; }
+    .hist-row:hover { background: var(--alt); }
+
+    /* Estado DIAN chips */
+    .dian-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 11px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .dian-enviada { background: #DCFCE7; color: #14532D; }
+    .dian-enviando { background: #FEF3C7; color: #92400E; }
+    .dian-error-chip { background: #FEE2E2; color: #7F1D1D; }
+    [data-theme="dark"] .dian-enviada { background: rgba(16,185,129,.18); color: #86EFAC; }
+    [data-theme="dark"] .dian-enviando { background: rgba(245,158,11,.18); color: #FDE68A; }
+    [data-theme="dark"] .dian-error-chip { background: rgba(239,68,68,.18); color: #FCA5A5; }
+
+    /* Tipo chips */
+    .tipo-chip { padding: 2px 7px; border-radius: 7px; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+    .tipo-factura { background: #EEF2FF; color: #3730A3; }
+    .tipo-tiquete { background: var(--alt); color: var(--muted); }
+    .tipo-nota { background: #FCE7F3; color: #9D174D; }
+    [data-theme="dark"] .tipo-factura { background: rgba(99,102,241,.18); color: #C7D2FE; }
+    [data-theme="dark"] .tipo-nota { background: rgba(236,72,153,.18); color: #FBCFE8; }
+
+    .more-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+    .more-btn:hover { background: var(--alt); }
+    .pagination { display: flex; align-items: center; justify-content: space-between; padding: 10px 18px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 8px; }
+    .pag-pages { display: flex; gap: 4px; }
+    .pag-page { width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent; color: var(--muted); cursor: pointer; font-family: var(--ff-base); font-size: 12px; }
+    .pag-page.is-active { background: var(--accent); color: #fff; }
+
+    @media (max-width: 768px) {
+      .rem-table-head { display: none; }
+      .rem-table-row { display: block; padding: 14px 16px; }
+      .hist-header { display: none; }
+      .hist-row { display: block; padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item is-active"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+          <a href="./integraciones.html" class="bo-sidebar-item"><i data-lucide="plug"></i>Integraciones</a>
+        </div>
+      </nav>
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info"><span class="name">Carlos Ramírez</span><span class="role">Administrador</span></span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+      </div>
+    </aside>
+    <div class="bo-sidebar-backdrop"></div>
+
+    <div class="bo-content-wrap">
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Finanzas</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Facturación DIAN</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button">CR</button>
+        </div>
+      </header>
+
+      <main id="main" class="bo-content">
+        <!-- PAGE HEADER -->
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Facturación electrónica DIAN</div>
+            <div class="bo-ph-sub">Resolución 18760000123 · Vigente hasta 12 jun 2027</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-secondary btn-sm"><i data-lucide="settings" style="width:13px;height:13px"></i>Configurar resolución</button>
+            <button class="btn btn-secondary btn-sm"><i data-lucide="download" style="width:13px;height:13px"></i>Descargar reporte</button>
+          </div>
+        </div>
+
+        <!-- DIAN STATUS BANNER -->
+        <div class="dian-banner">
+          <div class="dian-banner-icon">
+            <i data-lucide="shield-check" style="width:17px;height:17px;color:#fff"></i>
+          </div>
+          <div class="dian-banner-text">
+            <div class="dian-banner-title">Conexión con DIAN activa</div>
+            <div class="dian-banner-sub">Última sincronización: hace 1 minuto · Cola: 0 documentos</div>
+          </div>
+          <div class="dian-online-badge">
+            <span class="dian-online-dot"></span>
+            En línea
+          </div>
+        </div>
+
+        <!-- KPIs 4 cols -->
+        <div class="kpi-grid-4">
+          <div class="kpi-card tone-success">
+            <div class="kpi-card-head">
+              <span class="kpi-label">Enviadas a la DIAN</span>
+              <div class="kpi-icon-wrap"><i data-lucide="check-circle" style="width:14px;height:14px;color:var(--success)"></i></div>
+            </div>
+            <div class="kpi-value">24</div>
+            <div class="kpi-delta up">hoy</div>
+          </div>
+          <div class="kpi-card tone-warning">
+            <div class="kpi-card-head">
+              <span class="kpi-label">Enviando…</span>
+              <div class="kpi-icon-wrap">
+                <i data-lucide="loader" style="width:14px;height:14px;color:var(--warning)" class="dian-pulse"></i>
+              </div>
+            </div>
+            <div class="kpi-value">3</div>
+            <div class="kpi-delta flat">En cola con la DIAN</div>
+          </div>
+          <div class="kpi-card tone-error">
+            <div class="kpi-card-head">
+              <span class="kpi-label">Con error</span>
+              <div class="kpi-icon-wrap"><i data-lucide="alert-circle" style="width:14px;height:14px;color:var(--error)"></i></div>
+            </div>
+            <div class="kpi-value">1</div>
+            <div class="kpi-delta down">Requieren acción</div>
+          </div>
+          <div class="kpi-card tone-muted">
+            <div class="kpi-card-head">
+              <span class="kpi-label">Sin respuesta +24h</span>
+              <div class="kpi-icon-wrap"><i data-lucide="clock" style="width:14px;height:14px;color:var(--muted)"></i></div>
+            </div>
+            <div class="kpi-value">2</div>
+            <div class="kpi-delta flat">Límite 48h</div>
+          </div>
+        </div>
+
+        <!-- ALERT BANNER -->
+        <div class="alert-banner">
+          <div class="alert-banner-title">
+            <span class="alert-banner-icon-wrap"><i data-lucide="alert-circle" style="width:13px;height:13px"></i></span>
+            Estas facturas necesitan tu atención
+          </div>
+          <div class="alert-banner-item">
+            <div class="meta">Factura al cliente · $210.000 · hace 2 horas</div>
+            <div class="title">El número de identidad del cliente no es válido</div>
+            <div class="detail">¿Qué hago? Tienes dos opciones para resolver esto:</div>
+            <div class="alert-banner-actions">
+              <button class="btn btn-primary btn-sm">Cambiar a consumidor final</button>
+              <button class="btn btn-secondary btn-sm">Corregir los datos del cliente</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- REMISIONES PENDIENTES -->
+        <div class="remisiones-card">
+          <div class="remisiones-header">
+            <div>
+              <div class="remisiones-header-title">Remisiones pendientes de facturar</div>
+              <div class="remisiones-header-sub">La DIAN exige facturar cada remisión antes de los 30 días</div>
+            </div>
+            <a style="font-size:11px;color:var(--accent);cursor:pointer;font-weight:500">Ver todas →</a>
+          </div>
+          <div class="rem-table-head">
+            <div>Remisión</div><div>Cliente</div><div style="text-align:right">Monto</div>
+            <div>Días</div><div>Progreso</div><div style="text-align:right">Acciones</div>
+          </div>
+          <!-- REM-00023: 32 días → rojo -->
+          <div class="rem-table-row is-riesgo">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">REM-00023</div>
+            <div style="font-size:13px;font-weight:500;color:var(--text)">Eventos Bogotá SAS</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$320.000</div>
+            <div style="font-size:12px;font-weight:600;color:var(--error);font-variant-numeric:tabular-nums">32 días</div>
+            <div class="prog-bar-wrap">
+              <div class="prog-bar-track"><div class="prog-bar-fill" style="width:100%;background:var(--error)"></div></div>
+              <div class="prog-dot" style="background:var(--error)"></div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:6px">
+              <button class="btn btn-primary btn-sm">Facturar</button>
+              <button class="btn btn-secondary btn-sm">Devolver</button>
+            </div>
+          </div>
+          <!-- REM-00024: 22 días → amarillo -->
+          <div class="rem-table-row">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">REM-00024</div>
+            <div style="font-size:13px;font-weight:500;color:var(--text)">Café El Portal</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$145.000</div>
+            <div style="font-size:12px;font-weight:600;color:var(--warning);font-variant-numeric:tabular-nums">22 días</div>
+            <div class="prog-bar-wrap">
+              <div class="prog-bar-track"><div class="prog-bar-fill" style="width:73%;background:var(--warning)"></div></div>
+              <div class="prog-dot" style="background:var(--warning)"></div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:6px">
+              <button class="btn btn-primary btn-sm">Facturar</button>
+              <button class="btn btn-secondary btn-sm">Devolver</button>
+            </div>
+          </div>
+          <!-- REM-00025: 8 días → verde -->
+          <div class="rem-table-row">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">REM-00025</div>
+            <div style="font-size:13px;font-weight:500;color:var(--text)">Juan Restrepo</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$67.000</div>
+            <div style="font-size:12px;font-weight:600;color:var(--success);font-variant-numeric:tabular-nums">8 días</div>
+            <div class="prog-bar-wrap">
+              <div class="prog-bar-track"><div class="prog-bar-fill" style="width:27%;background:var(--success)"></div></div>
+              <div class="prog-dot" style="background:var(--success)"></div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:6px">
+              <button class="btn btn-primary btn-sm">Facturar</button>
+              <button class="btn btn-secondary btn-sm">Devolver</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTORIAL: tabs + tabla -->
+        <div class="dian-tabs">
+          <button class="dian-tab is-active" onclick="activarDianTab(this,'todos')">Todas <span class="dian-tab-count">47</span></button>
+          <button class="dian-tab" onclick="activarDianTab(this,'facturas')">Facturas al cliente <span class="dian-tab-count">12</span></button>
+          <button class="dian-tab" onclick="activarDianTab(this,'pos')">Tiquetes de caja <span class="dian-tab-count">33</span></button>
+          <button class="dian-tab" onclick="activarDianTab(this,'notas')">Notas crédito <span class="dian-tab-count">2</span></button>
+        </div>
+
+        <div class="hist-table">
+          <div class="hist-header">
+            <div>Número</div><div>Cliente</div><div>Tipo</div>
+            <div style="text-align:right">Total</div><div>Estado</div><div>Hora</div><div></div>
+          </div>
+
+          <div class="hist-row">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">FEV-00123</div>
+            <div style="font-size:13px;font-weight:500">Juan Restrepo</div>
+            <div><span class="tipo-chip tipo-factura">Factura al cliente</span></div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$134.000</div>
+            <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">19:34</div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+          <div class="hist-row">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">POS-00456</div>
+            <div style="font-size:13px;font-weight:500">Consumidor final</div>
+            <div><span class="tipo-chip tipo-tiquete">Tiquete de caja</span></div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$88.000</div>
+            <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">19:28</div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+          <div class="hist-row">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">POS-00455</div>
+            <div style="font-size:13px;font-weight:500">Consumidor final</div>
+            <div><span class="tipo-chip tipo-tiquete">Tiquete de caja</span></div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$45.000</div>
+            <div><span class="dian-chip dian-enviando"><i data-lucide="loader" style="width:10px;height:10px" class="dian-pulse"></i> Enviando…</span></div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">19:25</div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+          <div class="hist-row">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">FEV-00122</div>
+            <div style="font-size:13px;font-weight:500">Andrea López</div>
+            <div><span class="tipo-chip tipo-factura">Factura al cliente</span></div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$210.000</div>
+            <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">18:55</div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+          <div class="hist-row">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">NC-00018</div>
+            <div style="font-size:13px;font-weight:500">Juan Restrepo</div>
+            <div><span class="tipo-chip tipo-nota">Nota crédito</span></div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--error)">−$30.000</div>
+            <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">18:40</div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+          <div class="hist-row">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">POS-00454</div>
+            <div style="font-size:13px;font-weight:500">Consumidor final</div>
+            <div><span class="tipo-chip tipo-tiquete">Tiquete de caja</span></div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$67.000</div>
+            <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">18:12</div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+          <div class="hist-row">
+            <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">FEV-00121</div>
+            <div style="font-size:13px;font-weight:500">Café El Portal</div>
+            <div><span class="tipo-chip tipo-factura">Factura al cliente</span></div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$485.000</div>
+            <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">17:48</div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+
+          <!-- Empty state -->
+          <div class="empty-state" id="dianEmpty" hidden>
+            <div class="empty-state-icon"><i data-lucide="file-text"></i></div>
+            <div class="empty-state-title">No hay documentos</div>
+            <div class="empty-state-text">En esta categoría no hay documentos para mostrar.</div>
+          </div>
+
+          <div class="pagination">
+            <span>Mostrando 1–7 de 47 documentos del día</span>
+            <div class="pag-pages">
+              <button class="pag-page is-active">1</button>
+              <button class="pag-page">2</button>
+              <button class="pag-page">3</button>
+              <button class="pag-page">7</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    function activarDianTab(btn, id) {
+      document.querySelectorAll('.dian-tab').forEach(function(t) { t.classList.remove('is-active'); });
+      btn.classList.add('is-active');
+      var tipoToClass = {
+        'todos':    null,
+        'facturas': 'tipo-factura',
+        'pos':      'tipo-tiquete',
+        'notas':    'tipo-nota',
+      };
+      var cls = tipoToClass[id];
+      var visibles = 0;
+      document.querySelectorAll('.hist-table .hist-row').forEach(function (row) {
+        var show = !cls || row.querySelector('.' + cls);
+        row.style.display = show ? '' : 'none';
+        if (show) visibles++;
+      });
+      var empty = document.getElementById('dianEmpty');
+      if (empty) empty.hidden = visibles > 0;
+    }
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

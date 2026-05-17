@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Usuarios · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<div class="bo-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info">
+          <span class="label">Negocio</span>
+          <span class="name">El Buen Sabor</span>
+        </span>
+        <i data-lucide="chevron-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html" class="bo-sidebar-item is-active"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info">
+        <span class="name">Juan Camilo R.</span>
+        <span class="role">Administrador</span>
+      </span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop"></div>
+
+  <!-- CONTENT WRAP -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Usuarios</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+        <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar" type="button">JC</button>
+      </div>
+    </header>
+
+    <main id="main" class="bo-content">
+      <!-- Page Header -->
+      <header class="bo-page-header">
+        <div>
+          <h1>Usuarios</h1>
+          <p class="bo-page-subtitle">12 usuarios · 5 roles asignados</p>
+        </div>
+        <div class="bo-page-actions">
+          <button class="btn btn-primary" data-open-drawer="crearUsuario">
+            <i data-lucide="plus"></i> Nuevo usuario
+          </button>
+        </div>
+      </header>
+
+      <!-- Toolbar -->
+      <div class="bo-toolbar" style="margin-bottom:14px;">
+        <div class="bo-toolbar-search">
+          <i data-lucide="search"></i>
+          <input type="text" id="searchInput" placeholder="Buscar usuario..." />
+        </div>
+        <select class="bo-toolbar-filter" id="filterRol">
+          <option value="">Rol: Todos</option>
+          <option value="Admin">Admin</option>
+          <option value="Mesera">Mesera</option>
+          <option value="Mesero">Mesero</option>
+          <option value="Cajero">Cajero</option>
+          <option value="Encargada">Encargada</option>
+        </select>
+        <select class="bo-toolbar-filter" id="filterEstado">
+          <option value="">Estado: Todos</option>
+          <option value="activo">Activos</option>
+          <option value="inactivo">Inactivos</option>
+        </select>
+        <div class="bo-toolbar-spacer"></div>
+        <button class="btn btn-ghost" style="display:flex;align-items:center;gap:6px;">
+          <i data-lucide="download" style="width:14px;height:14px;"></i> Exportar
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="usuarios-table-wrap">
+        <div class="usuarios-header-row">
+          <div>Usuario</div>
+          <div>Email</div>
+          <div>Rol</div>
+          <div>Sucursales</div>
+          <div>Última conexión</div>
+          <div>Estado</div>
+          <div></div>
+        </div>
+        <div id="usuariosBody">
+          <!-- Fila 1 -->
+          <div class="usuarios-data-row" data-rol="Admin" data-estado="activo">
+            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
+              <div class="user-avatar" style="background:#FCA5A5;color:#7F1D1D;">JC</div>
+              <span style="font-size:13px;font-weight:500;">Juan Camilo R.</span>
+            </div>
+            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">jcamilo@buen-sabor.co</div>
+            <div><span class="role-chip admin">Admin</span></div>
+            <div style="font-size:12px;">Todas</div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Hace 2 min</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+              <span class="status-dot" style="background:var(--success);"></span>Activo
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
+                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Fila 2 -->
+          <div class="usuarios-data-row" data-rol="Mesera" data-estado="activo">
+            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
+              <div class="user-avatar" style="background:#FCA5A5;color:#7F1D1D;">AG</div>
+              <span style="font-size:13px;font-weight:500;">Andrea García</span>
+            </div>
+            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">andrea.garcia@buen-sabor.co</div>
+            <div><span class="role-chip mesera">Mesera</span></div>
+            <div style="font-size:12px;">Sede Norte</div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Hace 15 min</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+              <span class="status-dot" style="background:var(--success);"></span>Activo
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
+                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Fila 3 -->
+          <div class="usuarios-data-row" data-rol="Cajero" data-estado="activo">
+            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
+              <div class="user-avatar" style="background:#86EFAC;color:#14532D;">MR</div>
+              <span style="font-size:13px;font-weight:500;">Miguel Rodríguez</span>
+            </div>
+            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">m.rodriguez@buen-sabor.co</div>
+            <div><span class="role-chip cajero">Cajero</span></div>
+            <div style="font-size:12px;">Sede Norte</div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Ayer 20:34</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+              <span class="status-dot" style="background:var(--success);"></span>Activo
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
+                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Fila 4 — Inactiva -->
+          <div class="usuarios-data-row is-inactive" data-rol="Encargada" data-estado="inactivo">
+            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
+              <div class="user-avatar" style="background:#E4E4E7;color:#71717A;">LP</div>
+              <span style="font-size:13px;font-weight:500;">Laura Pérez</span>
+            </div>
+            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">l.perez@buen-sabor.co</div>
+            <div><span class="role-chip encargada">Encargada</span></div>
+            <div style="font-size:12px;">Sede Centro</div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Hace 3 días</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+              <span class="status-dot" style="background:var(--muted);"></span>Inactiva
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
+                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Fila 5 -->
+          <div class="usuarios-data-row" data-rol="Mesero" data-estado="activo">
+            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
+              <div class="user-avatar" style="background:#93C5FD;color:#1E3A8A;">CF</div>
+              <span style="font-size:13px;font-weight:500;">Carlos Forero</span>
+            </div>
+            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">c.forero@buen-sabor.co</div>
+            <div><span class="role-chip mesero">Mesero</span></div>
+            <div style="font-size:12px;">Sede Sur</div>
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Hace 1 hora</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+              <span class="status-dot" style="background:var(--success);"></span>Activo
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
+                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="usuariosEmpty" hidden>
+          <div class="empty-state-icon"><i data-lucide="users"></i></div>
+          <div class="empty-state-title">No encontramos usuarios</div>
+          <div class="empty-state-text">Probá con otro nombre o email, o limpiá los filtros activos.</div>
+          <button type="button" class="btn btn-secondary empty-state-action" id="usuariosClearFilters">
+            Limpiar filtros
+          </button>
+        </div>
+
+        <!-- Paginación -->
+        <div class="bo-pagination">
+          <span class="bo-pagination-info">Mostrando 1–5 de 12 usuarios</span>
+          <div class="bo-pagination-pages">
+            <button class="bo-page-btn" aria-label="Anterior"><i data-lucide="chevron-left" style="width:13px;height:13px;"></i></button>
+            <button class="bo-page-btn is-active">1</button>
+            <button class="bo-page-btn">2</button>
+            <button class="bo-page-btn">3</button>
+            <button class="bo-page-btn" aria-label="Siguiente"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- DRAWER: Nuevo usuario -->
+<div id="crearUsuario" class="drawer-backdrop">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title">Nuevo usuario</div>
+        <div class="drawer-subtitle">Completa los datos para crear el acceso</div>
+      </div>
+      <button class="drawer-close" data-close aria-label="Cerrar">&times;</button>
+    </div>
+    <div class="drawer-body">
+
+      <!-- Datos personales -->
+      <div class="form-section">
+        <div class="form-section-title">Datos personales</div>
+        <div class="form-section-fields">
+          <div class="form-field">
+            <label class="form-label">Nombre completo</label>
+            <div class="form-input-wrap">
+              <input type="text" id="nuevoNombre" value="Sara Vélez Quintero" placeholder="Nombre y apellido" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Email</label>
+            <div class="form-input-wrap">
+              <input type="email" id="nuevoEmail" value="s.velez@buen-sabor.co" placeholder="correo@ejemplo.com" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Contraseña inicial</label>
+            <div class="form-input-wrap">
+              <input type="text" id="nuevoPassword" value="Xk9$mPq2" style="font-family:monospace;letter-spacing:.06em;" />
+              <button class="form-input-action" type="button">
+                <i data-lucide="dices" style="width:12px;height:12px;"></i> Generar
+              </button>
+            </div>
+            <div class="form-input-hint">Le pediremos cambiarla en su primer ingreso.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rol y acceso -->
+      <div class="form-section">
+        <div class="form-section-title">Rol y acceso</div>
+        <div class="form-section-fields">
+          <div class="form-field">
+            <label class="form-label">Rol</label>
+            <div class="form-input-wrap">
+              <select id="nuevoRol">
+                <option>Mesero</option>
+                <option>Cajero</option>
+                <option>Encargado</option>
+                <option>Repartidor</option>
+                <option>Administrador</option>
+              </select>
+              <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Sucursales asignadas</label>
+            <div class="chip-wrap">
+              <span class="chip">Sede Norte <button class="chip-remove" type="button" aria-label="Cerrar"><i data-lucide="x" style="width:11px;height:11px;"></i></button></span>
+              <span class="chip">Sede Sur <button class="chip-remove" type="button" aria-label="Cerrar"><i data-lucide="x" style="width:11px;height:11px;"></i></button></span>
+              <span class="chip-add-label">+ Agregar sucursal</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Caja asignada</label>
+            <div class="form-input-wrap">
+              <input type="text" placeholder="Selecciona una caja" />
+              <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opciones adicionales -->
+      <div class="form-section">
+        <div class="form-section-title">Opciones adicionales</div>
+        <div class="form-section-fields">
+          <div class="switch-row">
+            <button class="switch is-on" type="button" onclick="this.classList.toggle('is-on')"></button>
+            <div class="switch-row-text">
+              <div class="switch-row-label">Es mesero</div>
+              <div class="switch-row-desc">Aparece en el selector de asignación de mesas.</div>
+            </div>
+          </div>
+          <div class="switch-row">
+            <button class="switch" type="button" onclick="this.classList.toggle('is-on')"></button>
+            <div class="switch-row-text">
+              <div class="switch-row-label">Es repartidor</div>
+              <div class="switch-row-desc">Recibe pedidos para entregas a domicilio.</div>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">PIN de autorización de mesa</label>
+            <div class="form-label-helper">Protege sus mesas de intervención de otros usuarios.</div>
+            <div class="pin-inputs" style="margin-top:8px;">
+              <div class="pin-cell">●</div>
+              <div class="pin-cell">●</div>
+              <div class="pin-cell">●</div>
+              <div class="pin-cell">●</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="drawer-footer">
+      <button class="btn btn-secondary" data-close>Cancelar</button>
+      <button class="btn btn-primary" id="btnCrearUsuario" style="display:flex;align-items:center;gap:6px;">
+        <i data-lucide="user-plus" style="width:13px;height:13px;"></i> Crear usuario
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) lucide.createIcons();
+
+  // Filtros de tabla
+  const searchInput = document.getElementById('searchInput');
+  const filterRol = document.getElementById('filterRol');
+  const filterEstado = document.getElementById('filterEstado');
+
+  const usuariosBody = document.getElementById('usuariosBody');
+  const usuariosEmpty = document.getElementById('usuariosEmpty');
+
+  function filterTable() {
+    const q = searchInput.value.toLowerCase();
+    const rol = filterRol.value;
+    const estado = filterEstado.value;
+    let visible = 0;
+    document.querySelectorAll('#usuariosBody .usuarios-data-row').forEach(row => {
+      const nombre = row.querySelector('.user-col-user span').textContent.toLowerCase();
+      const email = row.querySelector('.user-col-email').textContent.toLowerCase();
+      const rowRol = row.dataset.rol || '';
+      const rowEstado = row.dataset.estado || '';
+      const matchQ = !q || nombre.includes(q) || email.includes(q);
+      const matchRol = !rol || rowRol === rol;
+      const matchEstado = !estado || rowEstado === estado;
+      const show = matchQ && matchRol && matchEstado;
+      row.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    if (usuariosEmpty) usuariosEmpty.hidden = visible > 0;
+  }
+  searchInput.addEventListener('input', filterTable);
+  filterRol.addEventListener('change', filterTable);
+  filterEstado.addEventListener('change', filterTable);
+
+  document.getElementById('usuariosClearFilters')?.addEventListener('click', function () {
+    searchInput.value = '';
+    filterRol.value = '';
+    filterEstado.value = '';
+    filterTable();
+  });
+
+  // Crear usuario
+  let nuevoCount = 6;
+  document.getElementById('btnCrearUsuario').addEventListener('click', () => {
+    const nombre = document.getElementById('nuevoNombre').value || 'Nuevo usuario';
+    const email = document.getElementById('nuevoEmail').value || 'usuario@buen-sabor.co';
+    const rol = document.getElementById('nuevoRol').value || 'Mesero';
+    const inicial = nombre.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+
+    UI.closeDrawer('crearUsuario');
+    UI.toast({ type: 'success', title: 'Usuario creado', sub: 'Se enviaron las credenciales por correo' });
+
+    const rolClass = rol.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const newRow = document.createElement('div');
+    newRow.className = 'usuarios-data-row';
+    newRow.dataset.rol = rol;
+    newRow.dataset.estado = 'activo';
+    newRow.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-avatar" style="background:#DDD6FE;color:#4C1D95;">${inicial}</div>
+        <span style="font-size:13px;font-weight:500;">${nombre}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);font-family:monospace;">${email}</div>
+      <div><span class="role-chip ${rolClass}">${rol}</span></div>
+      <div style="font-size:12px;">Sede Norte</div>
+      <div style="font-size:12px;color:var(--muted);">Ahora</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+        <span class="status-dot" style="background:var(--success);"></span>Activo
+      </div>
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
+          <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
+        </button>
+      </div>`;
+    document.getElementById('usuariosBody').appendChild(newRow);
+    if (window.lucide) lucide.createIcons();
+    nuevoCount++;
+  });
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Estado de Caja · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+
+    /* Layout 2 cols */
+    .caja-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 18px; align-items: flex-start; }
+    @media (max-width: 1024px) { .caja-layout { grid-template-columns: 1fr; } }
+
+    /* Estado card (izq) */
+    .caja-estado-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .caja-estado-banner {
+      padding: 18px 20px;
+      background: linear-gradient(135deg, #DCFCE7, #F0FDF4);
+      border-bottom: 1px solid var(--border);
+    }
+    [data-theme="dark"] .caja-estado-banner { background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(16,185,129,.06)); }
+
+    /* Pulse dot CAJA ABIERTA */
+    @keyframes cajaPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,.5); }
+      50% { box-shadow: 0 0 0 6px rgba(16,185,129,.0); }
+    }
+    .caja-pulse-dot {
+      width: 14px; height: 14px; border-radius: 7px;
+      background: var(--success); flex-shrink: 0;
+      animation: cajaPulse 1.8s infinite;
+    }
+    .caja-abierta-badge { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .caja-abierta-text { font-size: 15px; font-weight: 700; color: #14532D; letter-spacing: .01em; }
+    [data-theme="dark"] .caja-abierta-text { color: #86EFAC; }
+    .caja-turno-sub { font-size: 11px; color: #166534; opacity: .85; margin-top: 2px; }
+    [data-theme="dark"] .caja-turno-sub { color: #86EFAC; }
+
+    .caja-info-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .caja-info-icon { width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .caja-info-label { font-size: 11px; color: var(--muted); width: 64px; flex-shrink: 0; }
+    .caja-info-val { font-size: 12px; color: var(--text); font-weight: 600; flex: 1; }
+
+    /* Resumen financiero */
+    .caja-resumen { padding: 18px 20px; }
+    .caja-resumen-title { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 12px; }
+    .caja-fin-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 11px; }
+    .caja-fin-label { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+    .caja-fin-val { font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--text); }
+    .caja-fin-val.ingreso { color: var(--success); font-weight: 600; }
+    .caja-fin-val.egreso { color: var(--error); font-weight: 600; }
+    .caja-fin-sep { height: 1px; background: var(--border); margin: 8px 0; }
+    .caja-fin-total { font-size: 13px; font-weight: 600; color: var(--text); }
+    .caja-fin-total-val { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em; color: var(--text); }
+
+    /* Acciones caja */
+    .caja-actions { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+    .caja-action-btn {
+      width: 100%; padding: 9px 14px; border-radius: 8px; cursor: pointer;
+      font-family: var(--ff-base); font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .caja-action-btn.outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .caja-action-btn.outline:hover { background: var(--alt); }
+    .caja-action-btn.danger { background: var(--error); border: none; color: #fff; font-weight: 600; }
+    .caja-action-btn.danger:hover { background: #DC2626; }
+
+    /* Movimientos card (der) */
+    .movimientos-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .movimientos-head {
+      padding: 12px 18px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .movimientos-title { font-size: 14px; font-weight: 600; color: var(--text); margin-right: 4px; }
+    .mov-tab-group { display: flex; gap: 2px; padding: 3px; background: var(--alt); border-radius: 7px; }
+    .mov-tab-btn {
+      padding: 5px 11px; border-radius: 5px; border: none; cursor: pointer; font-family: var(--ff-base);
+      font-size: 11px; font-weight: 500; color: var(--muted); background: transparent;
+      display: flex; align-items: center; gap: 5px; transition: background .12s, color .12s;
+    }
+    .mov-tab-btn.is-active { background: var(--bg); color: var(--text); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .mov-tab-count { font-size: 10px; color: var(--muted); }
+
+    .mov-search-wrap { position: relative; width: 200px; flex-shrink: 0; margin-left: auto; }
+    .mov-search-wrap .s-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--muted); display: flex; pointer-events: none; }
+    .mov-search-wrap input { width: 100%; padding: 6px 10px 6px 28px; font-size: 11px; font-family: var(--ff-base); background: var(--bg); border: 1px solid var(--border); border-radius: 7px; color: var(--text); outline: none; box-sizing: border-box; }
+    .mov-search-wrap input:focus { border-color: var(--accent); }
+
+    /* Movimientos tabla */
+    .mov-header, .mov-row { display: grid; grid-template-columns: 70px 90px 1.6fr 1fr 1fr; padding: 11px 18px; align-items: center; gap: 4px; }
+    .mov-header { background: var(--alt); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+    .mov-row { border-bottom: 1px solid var(--border); transition: background .12s; }
+    .mov-row:hover { background: var(--alt); }
+    .mov-row.ingreso-row { background: rgba(220,252,231,.4); }
+    .mov-row.egreso-row { background: rgba(254,226,226,.4); }
+    [data-theme="dark"] .mov-row.ingreso-row { background: rgba(16,185,129,.06); }
+    [data-theme="dark"] .mov-row.egreso-row { background: rgba(239,68,68,.06); }
+
+    /* Tipo badge inline */
+    .tipo-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 9px; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #fff; }
+    .tipo-ingreso { background: var(--success); }
+    .tipo-egreso { background: var(--error); }
+
+    /* Medio de pago chips */
+    .medio-chip { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 9px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .medio-efectivo { background: #DCFCE7; color: #14532D; }
+    .medio-debito { background: #DBEAFE; color: #1E40AF; }
+    .medio-credito { background: #EEF2FF; color: #3730A3; }
+    .medio-cta { background: #FEF3C7; color: #92400E; }
+    .medio-nequi { background: #FCE7F3; color: #9D174D; }
+    [data-theme="dark"] .medio-efectivo { background: rgba(16,185,129,.18); color: #86EFAC; }
+    [data-theme="dark"] .medio-debito { background: rgba(59,130,246,.18); color: #93C5FD; }
+    [data-theme="dark"] .medio-credito { background: rgba(99,102,241,.18); color: #C7D2FE; }
+    [data-theme="dark"] .medio-cta { background: rgba(245,158,11,.18); color: #FDE68A; }
+    [data-theme="dark"] .medio-nequi { background: rgba(236,72,153,.18); color: #FBCFE8; }
+
+    /* Totals row */
+    .mov-totals { display: grid; grid-template-columns: 70px 90px 1.6fr 1fr 1fr; padding: 14px 18px; align-items: center; gap: 4px; background: var(--alt); border-top: 2px solid var(--border); }
+
+    @media (max-width: 768px) {
+      .mov-header { display: none; }
+      .mov-row { display: block; padding: 12px 16px; }
+      .mov-totals { display: flex; justify-content: space-between; }
+      .mov-search-wrap { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html" class="bo-sidebar-item is-active"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+          <a href="./integraciones.html" class="bo-sidebar-item"><i data-lucide="plug"></i>Integraciones</a>
+        </div>
+      </nav>
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info"><span class="name">Carlos Ramírez</span><span class="role">Administrador</span></span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+      </div>
+    </aside>
+    <div class="bo-sidebar-backdrop"></div>
+
+    <div class="bo-content-wrap">
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Operación</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item">Caja</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Turno en curso</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button">CR</button>
+        </div>
+      </header>
+
+      <main id="main" class="bo-content">
+        <!-- PAGE HEADER -->
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Estado de caja</div>
+            <div class="bo-ph-sub">Caja 1 - Mostrador · Sede Norte</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-secondary btn-sm"><i data-lucide="printer" style="width:13px;height:13px"></i>Imprimir resumen</button>
+            <button class="btn btn-secondary btn-sm"><i data-lucide="download" style="width:13px;height:13px"></i>Exportar PDF</button>
+          </div>
+        </div>
+
+        <!-- 2-COL LAYOUT -->
+        <div class="caja-layout">
+
+          <!-- IZQ: Estado card -->
+          <div class="caja-estado-card">
+            <div class="caja-estado-banner">
+              <div class="caja-abierta-badge">
+                <span class="caja-pulse-dot"></span>
+                <div>
+                  <div class="caja-abierta-text">CAJA ABIERTA</div>
+                  <div class="caja-turno-sub">Turno en curso · 7h 44min</div>
+                </div>
+              </div>
+              <div class="caja-info-row">
+                <div class="caja-info-icon"><i data-lucide="play-circle" style="width:13px;height:13px;color:var(--muted)"></i></div>
+                <span class="caja-info-label">Apertura</span>
+                <span class="caja-info-val">Hoy 12:03</span>
+              </div>
+              <div class="caja-info-row">
+                <div class="caja-info-icon"><i data-lucide="user" style="width:13px;height:13px;color:var(--muted)"></i></div>
+                <span class="caja-info-label">Cajero</span>
+                <span class="caja-info-val">Juan Camilo Restrepo</span>
+              </div>
+              <div class="caja-info-row" style="margin-bottom:0">
+                <div class="caja-info-icon"><i data-lucide="archive" style="width:13px;height:13px;color:var(--muted)"></i></div>
+                <span class="caja-info-label">Caja</span>
+                <span class="caja-info-val">Caja 1 - Mostrador</span>
+              </div>
+            </div>
+
+            <!-- Resumen financiero -->
+            <div class="caja-resumen">
+              <div class="caja-resumen-title">Resumen financiero</div>
+              <div class="caja-fin-row">
+                <span class="caja-fin-label">Saldo inicial</span>
+                <span class="caja-fin-val">$150.000</span>
+              </div>
+              <div class="caja-fin-row">
+                <span class="caja-fin-label" style="color:var(--success)"><i data-lucide="arrow-down-right" style="width:11px;height:11px"></i>Ingresos</span>
+                <span class="caja-fin-val ingreso">+ $1.234.000</span>
+              </div>
+              <div class="caja-fin-row">
+                <span class="caja-fin-label" style="color:var(--error)"><i data-lucide="arrow-up-right" style="width:11px;height:11px"></i>Egresos</span>
+                <span class="caja-fin-val egreso">− $45.000</span>
+              </div>
+              <div class="caja-fin-sep"></div>
+              <div class="caja-fin-row" style="margin-bottom:0">
+                <span class="caja-fin-total">Saldo teórico</span>
+                <span class="caja-fin-total-val">$1.339.000</span>
+              </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="caja-actions">
+              <button class="caja-action-btn outline" onclick="UI.toast({type:'info',title:'Registrar ingreso',sub:'Función disponible en versión completa.'})">
+                <i data-lucide="plus-circle" style="width:13px;height:13px;color:var(--success)"></i>
+                Registrar ingreso
+              </button>
+              <button class="caja-action-btn outline" onclick="UI.toast({type:'info',title:'Registrar egreso',sub:'Función disponible en versión completa.'})">
+                <i data-lucide="minus-circle" style="width:13px;height:13px;color:var(--error)"></i>
+                Registrar egreso
+              </button>
+              <button class="caja-action-btn danger" data-open-modal="modalCerrarCaja">
+                <i data-lucide="lock" style="width:13px;height:13px;color:#fff"></i>
+                Cerrar caja y arquear
+              </button>
+            </div>
+          </div>
+
+          <!-- DER: Movimientos -->
+          <div class="movimientos-card">
+            <div class="movimientos-head">
+              <div class="movimientos-title">Movimientos del turno</div>
+              <div class="mov-tab-group">
+                <button class="mov-tab-btn is-active" onclick="filterMov(this,'todos')">Todos <span class="mov-tab-count">9</span></button>
+                <button class="mov-tab-btn" onclick="filterMov(this,'ingresos')">Ingresos <span class="mov-tab-count">7</span></button>
+                <button class="mov-tab-btn" onclick="filterMov(this,'egresos')">Egresos <span class="mov-tab-count">2</span></button>
+              </div>
+              <div class="mov-search-wrap">
+                <span class="s-icon"><i data-lucide="search" style="width:12px;height:12px"></i></span>
+                <input type="text" placeholder="Buscar movimiento..." id="movSearch" />
+              </div>
+            </div>
+
+            <div class="mov-header">
+              <div>Hora</div><div>Tipo</div><div>Concepto</div><div>Medio</div><div style="text-align:right">Monto</div>
+            </div>
+
+            <!-- MOVIMIENTOS_CAJA data -->
+            <div class="mov-row ingreso-row" data-tipo="ingresos">
+              <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">19:34</div>
+              <div><span class="tipo-badge tipo-ingreso"><i data-lucide="arrow-down" style="width:9px;height:9px"></i>ingreso</span></div>
+              <div style="font-size:13px;font-weight:500">Venta Mesa 6</div>
+              <div><span class="medio-chip medio-efectivo">Efectivo</span></div>
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--success);font-variant-numeric:tabular-nums">+ $122.040</div>
+            </div>
+            <div class="mov-row ingreso-row" data-tipo="ingresos">
+              <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">19:28</div>
+              <div><span class="tipo-badge tipo-ingreso"><i data-lucide="arrow-down" style="width:9px;height:9px"></i>ingreso</span></div>
+              <div style="font-size:13px;font-weight:500">Venta Mostrador #88</div>
+              <div><span class="medio-chip medio-debito">Débito</span></div>
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--success);font-variant-numeric:tabular-nums">+ $45.000</div>
+            </div>
+            <div class="mov-row ingreso-row" data-tipo="ingresos">
+              <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">18:55</div>
+              <div><span class="tipo-badge tipo-ingreso"><i data-lucide="arrow-down" style="width:9px;height:9px"></i>ingreso</span></div>
+              <div style="font-size:13px;font-weight:500">Venta Mesa 2</div>
+              <div><span class="medio-chip medio-cta">Cta. cte.</span></div>
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--success);font-variant-numeric:tabular-nums">+ $210.000</div>
+            </div>
+            <div class="mov-row egreso-row" data-tipo="egresos">
+              <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">18:30</div>
+              <div><span class="tipo-badge tipo-egreso"><i data-lucide="arrow-up" style="width:9px;height:9px"></i>egreso</span></div>
+              <div style="font-size:13px;font-weight:500">Pago domicilio</div>
+              <div><span class="medio-chip medio-efectivo">Efectivo</span></div>
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--error);font-variant-numeric:tabular-nums">− $15.000</div>
+            </div>
+            <div class="mov-row ingreso-row" data-tipo="ingresos">
+              <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">17:45</div>
+              <div><span class="tipo-badge tipo-ingreso"><i data-lucide="arrow-down" style="width:9px;height:9px"></i>ingreso</span></div>
+              <div style="font-size:13px;font-weight:500">Venta Mesa 8</div>
+              <div><span class="medio-chip medio-efectivo">Efectivo</span></div>
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--success);font-variant-numeric:tabular-nums">+ $88.000</div>
+            </div>
+            <div class="mov-row ingreso-row" data-tipo="ingresos">
+              <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">16:20</div>
+              <div><span class="tipo-badge tipo-ingreso"><i data-lucide="arrow-down" style="width:9px;height:9px"></i>ingreso</span></div>
+              <div style="font-size:13px;font-weight:500">Venta Mostrador #87</div>
+              <div><span class="medio-chip medio-credito">Crédito</span></div>
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--success);font-variant-numeric:tabular-nums">+ $67.000</div>
+            </div>
+            <div class="mov-row egreso-row" data-tipo="egresos">
+              <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">15:50</div>
+              <div><span class="tipo-badge tipo-egreso"><i data-lucide="arrow-up" style="width:9px;height:9px"></i>egreso</span></div>
+              <div style="font-size:13px;font-weight:500">Compra hielo extra</div>
+              <div><span class="medio-chip medio-efectivo">Efectivo</span></div>
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--error);font-variant-numeric:tabular-nums">− $30.000</div>
+            </div>
+            <div class="mov-row ingreso-row" data-tipo="ingresos">
+              <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">14:30</div>
+              <div><span class="tipo-badge tipo-ingreso"><i data-lucide="arrow-down" style="width:9px;height:9px"></i>ingreso</span></div>
+              <div style="font-size:13px;font-weight:500">Venta Mesa 4</div>
+              <div><span class="medio-chip medio-nequi">Nequi</span></div>
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--success);font-variant-numeric:tabular-nums">+ $134.000</div>
+            </div>
+            <div class="mov-row ingreso-row" data-tipo="ingresos" style="border-bottom:none">
+              <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">13:12</div>
+              <div><span class="tipo-badge tipo-ingreso"><i data-lucide="arrow-down" style="width:9px;height:9px"></i>ingreso</span></div>
+              <div style="font-size:13px;font-weight:500">Venta Mostrador #85</div>
+              <div><span class="medio-chip medio-efectivo">Efectivo</span></div>
+              <div style="text-align:right;font-size:13px;font-weight:600;color:var(--success);font-variant-numeric:tabular-nums">+ $88.000</div>
+            </div>
+
+            <!-- Empty state -->
+            <div class="empty-state" id="movEmpty" hidden>
+              <div class="empty-state-icon"><i data-lucide="archive"></i></div>
+              <div class="empty-state-title">No encontramos movimientos</div>
+              <div class="empty-state-text">Probá con otro concepto o cambiá de tab.</div>
+              <button type="button" class="btn btn-secondary empty-state-action" id="movClearSearch">
+                Limpiar búsqueda
+              </button>
+            </div>
+
+            <!-- Totals row -->
+            <div class="mov-totals">
+              <div></div><div></div>
+              <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase">Total del período</div>
+              <div style="font-size:11px;color:var(--muted)">9 movimientos</div>
+              <div style="text-align:right;font-size:15px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums">+ $1.189.000</div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: Cerrar caja -->
+  <div id="modalCerrarCaja" class="modal-backdrop">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        Cerrar caja y arquear
+        <button class="modal-close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom:14px">¿Estás seguro de que deseas cerrar el turno de <strong>Juan Camilo Restrepo</strong>?</p>
+        <div style="background:var(--alt);border:1px solid var(--border);border-radius:9px;padding:14px 16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">
+            <span style="color:var(--muted)">Saldo teórico</span>
+            <span style="font-weight:600">$1.339.000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--muted)">Duración del turno</span>
+            <span style="font-weight:600">7h 44min</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-destructive" id="btnConfirmarCierre">Cerrar turno</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    var currentMovTipo = 'todos';
+    function applyMovFilters() {
+      var q = (document.getElementById('movSearch')?.value || '').toLowerCase().trim();
+      var empty = document.getElementById('movEmpty');
+      var visibles = 0;
+      document.querySelectorAll('.mov-row').forEach(function(row) {
+        var tipoMatch = currentMovTipo === 'todos' || row.dataset.tipo === currentMovTipo;
+        var text = row.textContent.toLowerCase();
+        var qMatch = q === '' || text.includes(q);
+        var show = tipoMatch && qMatch;
+        row.style.display = show ? '' : 'none';
+        if (show) visibles++;
+      });
+      if (empty) empty.hidden = visibles > 0;
+    }
+    function filterMov(btn, tipo) {
+      document.querySelectorAll('.mov-tab-btn').forEach(function(b) { b.classList.remove('is-active'); });
+      btn.classList.add('is-active');
+      currentMovTipo = tipo;
+      applyMovFilters();
+    }
+    document.getElementById('movSearch')?.addEventListener('input', applyMovFilters);
+    document.getElementById('movClearSearch')?.addEventListener('click', function () {
+      var s = document.getElementById('movSearch');
+      if (s) s.value = '';
+      applyMovFilters();
+    });
+
+    document.getElementById('btnConfirmarCierre').addEventListener('click', function () {
+      UI.closeModal('modalCerrarCaja');
+      UI.toast({ type: 'success', title: 'Turno cerrado', sub: 'El cierre de caja fue registrado exitosamente.' });
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

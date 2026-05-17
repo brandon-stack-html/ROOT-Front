@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Comandas · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    .e7-tabs-wrap {
+      padding: 10px 14px 12px;
+      flex-shrink: 0;
+    }
+    .e7-list {
+      padding: 4px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .comanda-card {
+      padding: 14px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .comanda-card.estado-listo {
+      background: #D1FAE5;
+      border: 1.5px solid var(--success);
+    }
+    [data-theme="dark"] .comanda-card.estado-listo {
+      background: rgba(16, 185, 129, 0.15);
+    }
+    .comanda-card.estado-preparando,
+    .comanda-card.estado-enviado {
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .comanda-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .comanda-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .comanda-card-title .ronda {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .comanda-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 11px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .comanda-badge.tone-listo {
+      background: var(--success);
+      color: #fff;
+    }
+    .comanda-badge.tone-listo svg { width: 9px; height: 9px; stroke-width: 3; }
+    .comanda-badge.tone-preparando {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+    [data-theme="dark"] .comanda-badge.tone-preparando {
+      background: rgba(245, 158, 11, 0.20);
+      color: #FDE68A;
+    }
+    .comanda-badge.tone-enviado {
+      background: var(--alt);
+      color: var(--muted);
+    }
+    .comanda-items {
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .comanda-card.estado-listo .comanda-items {
+      color: #065F46;
+    }
+    [data-theme="dark"] .comanda-card.estado-listo .comanda-items {
+      color: var(--text);
+    }
+    .comanda-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .comanda-card-time {
+      font-size: 11px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .comanda-card-time svg { width: 11px; height: 11px; }
+    .comanda-card-action {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: var(--success);
+      color: #fff;
+      font-family: var(--ff-base);
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .comanda-card-action svg { width: 13px; height: 13px; stroke-width: 2.4; }
+
+    .e7-divider {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 14px 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .e7-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- ============= TOPBAR ============= -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side" style="width:34px;"></div>
+          <div class="mesero-topbar-center">
+            <div class="mesero-topbar-title">Comandas</div>
+          </div>
+          <div class="mesero-topbar-side">
+            <button class="mesero-icon-btn" type="button" aria-label="Filtrar">
+              <i data-lucide="filter"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- ============= PILL TABS ============= -->
+        <div class="e7-tabs-wrap">
+          <div class="mesero-pill-tabs">
+            <button class="mesero-pill-tab" data-filter="activas">
+              Activas <span class="count">(5)</span>
+            </button>
+            <button class="mesero-pill-tab is-active" data-filter="listas">
+              Listas <span class="count">(2)</span>
+            </button>
+            <button class="mesero-pill-tab" data-filter="entregadas">
+              Entregadas <span class="count">(8)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ============= LIST ============= -->
+        <main id="main" class="mesero-content">
+          <div class="e7-list">
+
+            <!-- Listas -->
+            <a href="./detalle.html?mesa=4" class="comanda-card estado-listo" style="text-decoration:none;">
+              <div class="comanda-card-header">
+                <div class="comanda-card-title">
+                  Mesa 4 <span class="ronda">· Ronda 2</span>
+                </div>
+                <span class="comanda-badge tone-listo mesero-pulse-ring">
+                  <i data-lucide="check"></i>
+                  ¡Listo para entregar!
+                </span>
+              </div>
+              <div class="comanda-items">Ajiaco Bogotano × 1 · Agua con gas × 1</div>
+              <div class="comanda-card-footer">
+                <span class="comanda-card-time">
+                  <i data-lucide="clock"></i>
+                  Hace 3 minutos
+                </span>
+                <button type="button" class="comanda-card-action" data-action="entregar" data-mesa="4">
+                  <i data-lucide="check-check"></i>
+                  Marcar entregado
+                </button>
+              </div>
+            </a>
+
+            <a href="./detalle.html?mesa=7" class="comanda-card estado-listo" style="text-decoration:none;">
+              <div class="comanda-card-header">
+                <div class="comanda-card-title">
+                  Mesa 7 <span class="ronda">· Ronda 1</span>
+                </div>
+                <span class="comanda-badge tone-listo mesero-pulse-ring">
+                  <i data-lucide="check"></i>
+                  ¡Listo para entregar!
+                </span>
+              </div>
+              <div class="comanda-items">Bandeja Paisa × 1 · Limonada × 1</div>
+              <div class="comanda-card-footer">
+                <span class="comanda-card-time">
+                  <i data-lucide="clock"></i>
+                  Hace 6 minutos
+                </span>
+                <button type="button" class="comanda-card-action" data-action="entregar" data-mesa="7">
+                  <i data-lucide="check-check"></i>
+                  Marcar entregado
+                </button>
+              </div>
+            </a>
+
+            <!-- Divider -->
+            <div class="e7-divider">
+              <span class="e7-divider-line"></span>
+              <span>Comandas activas</span>
+              <span class="e7-divider-line"></span>
+            </div>
+
+            <!-- Activas -->
+            <a href="./detalle.html?mesa=2" class="comanda-card estado-preparando" style="text-decoration:none;">
+              <div class="comanda-card-header">
+                <div class="comanda-card-title">
+                  Mesa 2 <span class="ronda">· Ronda 1</span>
+                </div>
+                <span class="comanda-badge tone-preparando">En preparación</span>
+              </div>
+              <div class="comanda-items">Bandeja Paisa × 2 · Limonada × 3</div>
+              <div class="comanda-card-footer">
+                <span class="comanda-card-time">
+                  <i data-lucide="clock"></i>
+                  Hace 8 minutos
+                </span>
+              </div>
+            </a>
+
+            <a href="./detalle.html?mesa=5" class="comanda-card estado-enviado" style="text-decoration:none;">
+              <div class="comanda-card-header">
+                <div class="comanda-card-title">
+                  Mesa 5 <span class="ronda">· Ronda 1</span>
+                </div>
+                <span class="comanda-badge tone-enviado">Enviada a cocina</span>
+              </div>
+              <div class="comanda-items">Lomo al Trapo × 1 · Trucha × 1</div>
+              <div class="comanda-card-footer">
+                <span class="comanda-card-time">
+                  <i data-lucide="clock"></i>
+                  Hace 2 minutos
+                </span>
+              </div>
+            </a>
+
+            <!-- Empty state -->
+            <div class="empty-state" id="comandasEmpty" hidden>
+              <div class="empty-state-icon"><i data-lucide="clipboard"></i></div>
+              <div class="empty-state-title">No hay comandas</div>
+              <div class="empty-state-text">No quedan comandas en esta categoría.</div>
+            </div>
+          </div>
+        </main>
+
+        <!-- ============= BOTTOM NAV ============= -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="layout-grid"></i>
+            </span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="clipboard-list"></i>
+              <span class="mesero-bottom-nav-tab-badge">2</span>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Nómina</span>
+          </a>
+                    <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <div class="mesero-home-indicator"></div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // "Marcar entregado" — toast + ocultar card
+    document.querySelectorAll('[data-action="entregar"]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var mesa = btn.dataset.mesa;
+        UI.toast({ type: 'success', title: 'Comanda Mesa ' + mesa + ' entregada' });
+        var card = btn.closest('.comanda-card');
+        if (card) {
+          card.style.transition = 'opacity .25s, transform .25s';
+          card.style.opacity = '0';
+          card.style.transform = 'translateX(20px)';
+          setTimeout(function () { card.remove(); }, 250);
+        }
+      });
+    });
+
+    // Pill tabs: filtran comandas por estado y muestran empty state si vacío
+    var FILTER_TO_CLASS = {
+      activas:    'estado-preparando',
+      listas:     'estado-listo',
+      entregadas: 'estado-entregada',
+    };
+    function applyComandasFilter(filter) {
+      var cls = FILTER_TO_CLASS[filter];
+      var visibles = 0;
+      document.querySelectorAll('.e7-list .comanda-card').forEach(function (card) {
+        var show = !cls || card.classList.contains(cls);
+        card.style.display = show ? '' : 'none';
+        if (show) visibles++;
+      });
+      var empty = document.getElementById('comandasEmpty');
+      if (empty) empty.hidden = visibles > 0;
+    }
+    document.querySelectorAll('.mesero-pill-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.mesero-pill-tab').forEach(function (t) {
+          t.classList.remove('is-active');
+        });
+        tab.classList.add('is-active');
+        applyComandasFilter(tab.dataset.filter);
+      });
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Conteo de inventario · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* Page header */
+    .conteo-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 20px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .conteo-status {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+    }
+    .badge-en-curso {
+      padding: 3px 9px; border-radius: 5px; background: var(--warning); color: #fff;
+      font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    }
+    .conteo-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+    .conteo-meta { font-size: 12px; color: var(--muted); }
+
+    /* Modo ciego badge */
+    .modo-ciego-wrap {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; border-radius: 9px;
+      background: #FEF3C7; border: 1px solid #FDE68A;
+    }
+    [data-theme="dark"] .modo-ciego-wrap {
+      background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.4);
+    }
+    .modo-ciego-label { font-size: 12px; font-weight: 600; color: #92400E; }
+    .modo-ciego-sub { font-size: 10px; color: #92400E; opacity: .85; }
+    [data-theme="dark"] .modo-ciego-label, [data-theme="dark"] .modo-ciego-sub { color: #FDE68A; }
+
+    .header-btns { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    /* Progress card */
+    .progress-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 11px;
+      padding: 14px 18px; margin-bottom: 16px;
+    }
+    .progress-card-top {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+    }
+    .progress-label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .progress-pct { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .progress-pct strong { color: var(--text); font-weight: 600; }
+    .progress-bar-track {
+      height: 8px; border-radius: 4px; background: var(--alt); overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; background: linear-gradient(90deg, var(--success), var(--accent));
+      border-radius: 4px; transition: width .3s;
+    }
+
+    /* Toolbar */
+    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .toolbar-search { position: relative; }
+    .toolbar-search input {
+      padding: 8px 12px 8px 34px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text);
+      font-family: var(--ff-base); font-size: 13px; width: 220px; outline: none;
+    }
+    .toolbar-search input:focus { border-color: var(--accent); }
+    .toolbar-search .s-icon {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); display: flex; pointer-events: none;
+    }
+    .toolbar-select {
+      padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); font-family: var(--ff-base);
+      font-size: 13px; outline: none; cursor: pointer;
+    }
+    .toolbar-spacer { flex: 1; min-width: 8px; }
+
+    /* Toggle switch */
+    .toggle { position: relative; display: inline-flex; width: 34px; height: 18px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; inset: 0; background: var(--border);
+      border-radius: 18px; cursor: pointer; transition: background 0.2s;
+    }
+    .toggle-track::before {
+      content: ''; position: absolute;
+      height: 12px; width: 12px; left: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--warning, #F59E0B); }
+    .toggle input:checked + .toggle-track::before { transform: translateX(16px); }
+
+    /* Conteo table */
+    .conteo-table { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .ct-header, .ct-row {
+      display: grid;
+      grid-template-columns: 1.6fr 0.9fr 1fr 1.3fr 0.9fr 1.2fr;
+      padding: 12px 18px; align-items: center;
+    }
+    .ct-header {
+      background: var(--alt); border-bottom: 1px solid var(--border);
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      letter-spacing: .04em; text-transform: uppercase;
+    }
+    .ct-row { border-bottom: 1px solid var(--border); }
+    .ct-row:last-child { border-bottom: none; }
+
+    /* Modo ciego: toggle col teórico */
+    .conteo-table.modo-ciego .col-teorico { visibility: hidden; }
+
+    /* Ingrediente cell */
+    .ing-cell { display: flex; align-items: center; gap: 10px; }
+    .ing-name { font-size: 13px; font-weight: 500; color: var(--text); }
+
+    /* Cat chip */
+    .cat-chip {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: 9px; font-size: 11px; font-weight: 600;
+    }
+    .cat-vegetal   { background: #DCFCE7; color: #14532D; }
+    .cat-proteina  { background: #FECACA; color: #7F1D1D; }
+    .cat-especia   { background: #FEF3C7; color: #92400E; }
+    .cat-lacteo    { background: #DBEAFE; color: #1E40AF; }
+    .cat-fruta     { background: #FCE7F3; color: #9D174D; }
+    [data-theme="dark"] .cat-vegetal  { background: rgba(16,185,129,.18); color: #86EFAC; }
+    [data-theme="dark"] .cat-proteina { background: rgba(239,68,68,.18);  color: #FCA5A5; }
+    [data-theme="dark"] .cat-especia  { background: rgba(245,158,11,.18); color: #FDE68A; }
+    [data-theme="dark"] .cat-lacteo   { background: rgba(59,130,246,.18); color: #93C5FD; }
+    [data-theme="dark"] .cat-fruta    { background: rgba(236,72,153,.18); color: #FBCFE8; }
+
+    /* Stock teórico cell */
+    .teorico-cell { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); font-style: italic; }
+
+    /* Input contado */
+    .contado-input-wrap {
+      display: flex; align-items: center;
+      border: 1px solid var(--border); border-radius: 7px;
+      padding: 0 10px; height: 32px; gap: 6px; max-width: 160px;
+      background: var(--bg); transition: border-color 0.15s;
+    }
+    .contado-input-wrap.pendiente { background: #FFFBEB; border-color: #FCD34D; }
+    [data-theme="dark"] .contado-input-wrap.pendiente { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.5); }
+    .contado-input-wrap:focus-within { border-color: var(--accent); }
+    .contado-input {
+      flex: 1; border: none; outline: none; background: transparent;
+      font-size: 13px; font-family: var(--ff-base); color: var(--text);
+      font-weight: 500; font-variant-numeric: tabular-nums; min-width: 0;
+    }
+    .contado-input::placeholder { color: var(--muted); }
+
+    /* Estado badges */
+    .badge-contado {
+      padding: 3px 9px; border-radius: 11px;
+      background: #DCFCE7; color: #14532D;
+      font-size: 11px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .badge-pendiente {
+      padding: 3px 9px; border-radius: 11px;
+      background: #FEF3C7; color: #92400E;
+      font-size: 11px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    [data-theme="dark"] .badge-contado  { background: rgba(16,185,129,.18); color: #86EFAC; }
+    [data-theme="dark"] .badge-pendiente { background: rgba(245,158,11,.18); color: #FDE68A; }
+
+    /* Nota btn */
+    .nota-btn {
+      padding: 5px 9px; border-radius: 6px; background: transparent;
+      border: 1px dashed var(--border); color: var(--muted); cursor: pointer;
+      font-family: var(--ff-base); font-size: 11px; font-weight: 500;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .nota-btn:hover { background: var(--alt); }
+
+    /* Footnote ciego */
+    .ciego-note {
+      margin-top: 14px; padding: 10px 14px; border-radius: 8px;
+      background: #FEF3C7; border: 1px solid #FDE68A;
+      display: flex; align-items: center; gap: 10px; font-size: 12px; color: #92400E;
+    }
+    [data-theme="dark"] .ciego-note { background: rgba(245,158,11,.10); border-color: rgba(245,158,11,.4); color: #FDE68A; }
+
+    /* Footer sticky */
+    .conteo-footer {
+      position: sticky; bottom: 0;
+      background: var(--bg); border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      margin: 16px -24px -28px; flex-wrap: wrap;
+    }
+    .footer-stats { font-size: 12px; color: var(--muted); }
+    .footer-stats strong { color: var(--text); }
+    .footer-btns { display: flex; align-items: center; gap: 8px; }
+
+    /* Mobile: cards */
+    @media (max-width: 768px) {
+      .ct-header { display: none; }
+      .ct-row {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 8px;
+        padding: 14px;
+      }
+      .ing-cell { grid-column: 1 / -1; }
+      .cat-chip { font-size: 10px; }
+      .contado-input-wrap { max-width: 100%; }
+      .conteo-header { flex-direction: column; gap: 12px; }
+      .header-btns { justify-content: flex-start; }
+      .modo-ciego-wrap { align-self: flex-start; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar-search input { width: 100%; }
+      .conteo-footer { margin: 16px -14px -24px; padding: 12px 14px; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info">
+            <span class="label">Negocio</span>
+            <span class="name">El Buen Sabor</span>
+          </span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html" class="bo-sidebar-item is-active"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+        </div>
+      </nav>
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info">
+          <span class="name">Carlos Ramírez</span>
+          <span class="role">Administrador</span>
+        </span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+    <div class="bo-sidebar-backdrop"></div>
+
+    <div class="bo-content-wrap">
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Gestión</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item">Inventario</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Conteo #003</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button">
+          <i data-lucide="store"></i>
+          <span class="label">Sede Norte</span>
+        </button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones">
+            <i data-lucide="bell"></i><span class="notification-dot"></span>
+          </button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button" aria-label="Perfil">CR</button>
+        </div>
+      </header>
+
+      <main id="main" class="bo-content">
+
+        <!-- Header -->
+        <div class="conteo-header">
+          <div>
+            <div class="conteo-status">
+              <span class="badge-en-curso">EN CURSO</span>
+              <span class="conteo-title">Conteo #003</span>
+            </div>
+            <div class="conteo-meta">Iniciado el 15 nov 2026 a las 08:00 · por Juan Camilo Restrepo · Sede Norte</div>
+          </div>
+          <div class="header-btns">
+            <div class="modo-ciego-wrap">
+              <i data-lucide="eye-off" style="width:14px;height:14px;color:#F59E0B;flex-shrink:0;"></i>
+              <div>
+                <div class="modo-ciego-label">Modo ciego</div>
+                <div class="modo-ciego-sub">Stock teórico oculto</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="switchModoCiego" checked>
+                <span class="toggle-track"></span>
+              </label>
+            </div>
+            <button class="btn btn-ghost" onclick="UI.toast({type:'info',title:'Conteo pausado',sub:'Podés retomarlo cuando quieras'})">
+              <i data-lucide="pause"></i> Pausar
+            </button>
+            <button class="btn btn-primary" data-open-modal="modalFinalizar">
+              <i data-lucide="check"></i> Finalizar conteo
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="progress-card">
+          <div class="progress-card-top">
+            <div class="progress-label"><span id="txtContados">52</span> de <span id="txtTotal">86</span> ingredientes contados</div>
+            <div class="progress-pct"><strong id="txtPct">60%</strong> · faltan <span id="txtFaltan">34</span></div>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressFill" style="width:60%;"></div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="toolbar-search">
+            <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+            <input type="text" placeholder="Buscar ingrediente...">
+          </div>
+          <select class="toolbar-select">
+            <option>Categoría: Todos</option>
+            <option>Vegetal</option>
+            <option>Proteína</option>
+            <option>Especia</option>
+            <option>Lácteo</option>
+            <option>Fruta</option>
+          </select>
+          <select class="toolbar-select">
+            <option>Estado: Todos</option>
+            <option>Contados</option>
+            <option>Pendientes</option>
+          </select>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-ghost">
+            <i data-lucide="download"></i> Exportar plantilla
+          </button>
+        </div>
+
+        <!-- Tabla -->
+        <div class="conteo-table" id="conteoTable">
+          <div class="ct-header">
+            <div>Ingrediente</div>
+            <div>Categoría</div>
+            <div class="col-teorico">Stock teórico</div>
+            <div>Stock contado</div>
+            <div style="text-align:center">Estado</div>
+            <div>Notas</div>
+          </div>
+
+          <!-- Papa criolla — contado -->
+          <div class="ct-row">
+            <div class="ing-cell"><i data-lucide="package" style="width:14px;height:14px;color:var(--muted);flex-shrink:0;"></i><span class="ing-name">Papa criolla</span></div>
+            <div><span class="cat-chip cat-vegetal">Vegetal</span></div>
+            <div class="col-teorico"><span class="teorico-cell"><i data-lucide="eye-off" style="width:12px;height:12px;"></i>Oculto</span></div>
+            <div><div class="contado-input-wrap"><input class="contado-input" type="text" value="12.5 kg" data-item="papa-criolla"></div></div>
+            <div style="display:flex;justify-content:center;"><span class="badge-contado" id="est-papa-criolla"><i data-lucide="check" style="width:10px;height:10px;"></i>Contado</span></div>
+            <div><button class="nota-btn"><i data-lucide="message-square" style="width:11px;height:11px;"></i>Agregar nota</button></div>
+          </div>
+
+          <!-- Pollo entero — contado -->
+          <div class="ct-row">
+            <div class="ing-cell"><i data-lucide="package" style="width:14px;height:14px;color:var(--muted);flex-shrink:0;"></i><span class="ing-name">Pollo entero</span></div>
+            <div><span class="cat-chip cat-proteina">Proteína</span></div>
+            <div class="col-teorico"><span class="teorico-cell"><i data-lucide="eye-off" style="width:12px;height:12px;"></i>Oculto</span></div>
+            <div><div class="contado-input-wrap"><input class="contado-input" type="text" value="8 unid" data-item="pollo"></div></div>
+            <div style="display:flex;justify-content:center;"><span class="badge-contado"><i data-lucide="check" style="width:10px;height:10px;"></i>Contado</span></div>
+            <div><button class="nota-btn"><i data-lucide="message-square" style="width:11px;height:11px;"></i>Agregar nota</button></div>
+          </div>
+
+          <!-- Guascas — contado -->
+          <div class="ct-row">
+            <div class="ing-cell"><i data-lucide="package" style="width:14px;height:14px;color:var(--muted);flex-shrink:0;"></i><span class="ing-name">Guascas</span></div>
+            <div><span class="cat-chip cat-especia">Especia</span></div>
+            <div class="col-teorico"><span class="teorico-cell"><i data-lucide="eye-off" style="width:12px;height:12px;"></i>Oculto</span></div>
+            <div><div class="contado-input-wrap"><input class="contado-input" type="text" value="0.2 kg" data-item="guascas"></div></div>
+            <div style="display:flex;justify-content:center;"><span class="badge-contado"><i data-lucide="check" style="width:10px;height:10px;"></i>Contado</span></div>
+            <div><button class="nota-btn"><i data-lucide="message-square" style="width:11px;height:11px;"></i>Agregar nota</button></div>
+          </div>
+
+          <!-- Crema de leche — contado -->
+          <div class="ct-row">
+            <div class="ing-cell"><i data-lucide="package" style="width:14px;height:14px;color:var(--muted);flex-shrink:0;"></i><span class="ing-name">Crema de leche</span></div>
+            <div><span class="cat-chip cat-lacteo">Lácteo</span></div>
+            <div class="col-teorico"><span class="teorico-cell"><i data-lucide="eye-off" style="width:12px;height:12px;"></i>Oculto</span></div>
+            <div><div class="contado-input-wrap"><input class="contado-input" type="text" value="6 lt" data-item="crema"></div></div>
+            <div style="display:flex;justify-content:center;"><span class="badge-contado"><i data-lucide="check" style="width:10px;height:10px;"></i>Contado</span></div>
+            <div><button class="nota-btn"><i data-lucide="message-square" style="width:11px;height:11px;"></i>Agregar nota</button></div>
+          </div>
+
+          <!-- Mazorca — pendiente -->
+          <div class="ct-row">
+            <div class="ing-cell"><i data-lucide="package" style="width:14px;height:14px;color:var(--muted);flex-shrink:0;"></i><span class="ing-name">Mazorca</span></div>
+            <div><span class="cat-chip cat-vegetal">Vegetal</span></div>
+            <div class="col-teorico"><span class="teorico-cell"><i data-lucide="eye-off" style="width:12px;height:12px;"></i>Oculto</span></div>
+            <div><div class="contado-input-wrap pendiente"><input class="contado-input" type="text" placeholder="Ingresa unid" data-item="mazorca"></div></div>
+            <div style="display:flex;justify-content:center;" id="est-mazorca"><span class="badge-pendiente"><i data-lucide="clock" style="width:10px;height:10px;"></i>Pendiente</span></div>
+            <div><button class="nota-btn"><i data-lucide="message-square" style="width:11px;height:11px;"></i>Agregar nota</button></div>
+          </div>
+
+          <!-- Cilantro — pendiente -->
+          <div class="ct-row">
+            <div class="ing-cell"><i data-lucide="package" style="width:14px;height:14px;color:var(--muted);flex-shrink:0;"></i><span class="ing-name">Cilantro</span></div>
+            <div><span class="cat-chip cat-especia">Especia</span></div>
+            <div class="col-teorico"><span class="teorico-cell"><i data-lucide="eye-off" style="width:12px;height:12px;"></i>Oculto</span></div>
+            <div><div class="contado-input-wrap pendiente"><input class="contado-input" type="text" placeholder="Ingresa kg" data-item="cilantro"></div></div>
+            <div style="display:flex;justify-content:center;" id="est-cilantro"><span class="badge-pendiente"><i data-lucide="clock" style="width:10px;height:10px;"></i>Pendiente</span></div>
+            <div><button class="nota-btn"><i data-lucide="message-square" style="width:11px;height:11px;"></i>Agregar nota</button></div>
+          </div>
+
+          <!-- Aguacate Hass — contado -->
+          <div class="ct-row">
+            <div class="ing-cell"><i data-lucide="package" style="width:14px;height:14px;color:var(--muted);flex-shrink:0;"></i><span class="ing-name">Aguacate Hass</span></div>
+            <div><span class="cat-chip cat-vegetal">Vegetal</span></div>
+            <div class="col-teorico"><span class="teorico-cell"><i data-lucide="eye-off" style="width:12px;height:12px;"></i>Oculto</span></div>
+            <div><div class="contado-input-wrap"><input class="contado-input" type="text" value="14 unid" data-item="aguacate"></div></div>
+            <div style="display:flex;justify-content:center;"><span class="badge-contado"><i data-lucide="check" style="width:10px;height:10px;"></i>Contado</span></div>
+            <div><button class="nota-btn"><i data-lucide="message-square" style="width:11px;height:11px;"></i>Agregar nota</button></div>
+          </div>
+
+          <!-- Limón Tahití — contado -->
+          <div class="ct-row">
+            <div class="ing-cell"><i data-lucide="package" style="width:14px;height:14px;color:var(--muted);flex-shrink:0;"></i><span class="ing-name">Limón Tahití</span></div>
+            <div><span class="cat-chip cat-fruta">Fruta</span></div>
+            <div class="col-teorico"><span class="teorico-cell"><i data-lucide="eye-off" style="width:12px;height:12px;"></i>Oculto</span></div>
+            <div><div class="contado-input-wrap"><input class="contado-input" type="text" value="3.2 kg" data-item="limon"></div></div>
+            <div style="display:flex;justify-content:center;"><span class="badge-contado"><i data-lucide="check" style="width:10px;height:10px;"></i>Contado</span></div>
+            <div><button class="nota-btn"><i data-lucide="message-square" style="width:11px;height:11px;"></i>Agregar nota</button></div>
+          </div>
+        </div>
+
+        <!-- Nota modo ciego -->
+        <div class="ciego-note" id="ciegoNote">
+          <i data-lucide="eye-off" style="width:14px;height:14px;flex-shrink:0;"></i>
+          Modo ciego activo: el stock teórico se ocultará hasta finalizar el conteo. Las diferencias se calcularán al cerrar.
+        </div>
+
+        <!-- Footer sticky -->
+        <div class="conteo-footer">
+          <div class="footer-stats">
+            <strong id="footContados">52</strong> contados · <strong id="footPend">34</strong> pendientes — mostrando 8 de 86 ingredientes
+          </div>
+          <div class="footer-btns">
+            <button class="btn btn-secondary" onclick="UI.toast({type:'success',title:'Borrador guardado',sub:'Tu progreso está guardado'})">
+              Guardar borrador
+            </button>
+            <button class="btn btn-primary" data-open-modal="modalFinalizar">
+              <i data-lucide="check"></i> Finalizar conteo
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal confirmar finalizar -->
+        <div id="modalFinalizar" class="modal-backdrop">
+          <div class="modal modal-md">
+            <div class="modal-header">
+              Finalizar conteo
+              <button class="modal-close" data-close>×</button>
+            </div>
+            <div class="modal-body">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+                <div style="width:44px;height:44px;border-radius:11px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i data-lucide="alert-triangle" style="width:20px;height:20px;color:#F59E0B;"></i>
+                </div>
+                <div>
+                  <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;">¿Aplicar ajustes al inventario?</div>
+                  <div style="font-size:13px;color:var(--muted);">Vas a cerrar el Conteo #003 y aplicar todos los ajustes. Esta acción no se puede deshacer.</div>
+                </div>
+              </div>
+              <div style="background:var(--alt);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--muted);">
+                <div><strong style="color:var(--text);">52</strong> ingredientes contados · <strong style="color:var(--text);">34</strong> pendientes quedarán sin ajuste</div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" data-close>Cancelar</button>
+              <button class="btn btn-primary" id="btnConfirmarConteo">
+                <i data-lucide="check"></i> Confirmar y aplicar
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    var totalItems = 86;
+    var contadosBase = 52;
+    var pendientes = 2; // los inputs vacíos visibles
+
+    // Switch modo ciego
+    document.getElementById('switchModoCiego').addEventListener('change', function () {
+      var table = document.getElementById('conteoTable');
+      table.classList.toggle('modo-ciego', this.checked);
+      document.getElementById('ciegoNote').style.display = this.checked ? 'flex' : 'none';
+    });
+
+    // Inputs contado: actualizar badge estado cuando se llena un campo pendiente
+    document.querySelectorAll('.contado-input').forEach(function (input) {
+      input.addEventListener('input', function () {
+        var wrap = this.closest('.contado-input-wrap');
+        var row = this.closest('.ct-row');
+        var estadoCell = row.querySelector('[id^="est-"]') || row.querySelector('[style*="justify-content:center"]');
+
+        if (this.value.trim()) {
+          wrap.classList.remove('pendiente');
+        } else {
+          wrap.classList.add('pendiente');
+        }
+      });
+    });
+
+    // Confirmar finalizar
+    document.getElementById('btnConfirmarConteo').addEventListener('click', function () {
+      UI.closeModal('modalFinalizar');
+      UI.toast({ type: 'success', title: 'Conteo finalizado', sub: 'Los ajustes se aplicaron al inventario' });
+      setTimeout(function () {
+        window.location.href = './inventario.html';
+      }, 1500);
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

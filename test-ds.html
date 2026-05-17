@@ -2,11 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Test · Design System (Sprint 0)</title>
   <script src="./assets/js/theme.js"></script>
   <link rel="stylesheet" href="./assets/css/tokens.css" />
   <link rel="stylesheet" href="./assets/css/components.css" />
+  <link rel="stylesheet" href="./assets/css/utilities.css">
   <style>
     body { padding: var(--space-6); }
     .row { display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: flex-start; margin-bottom: var(--space-6); }
@@ -30,6 +33,8 @@
   </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
   <header class="row" style="justify-content: space-between; align-items: center;">
     <h1 class="t-h1">Test · Design System (Sprint 0)</h1>
     <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
@@ -59,7 +64,7 @@
 
   <h2 class="t-h3" style="margin-bottom: var(--space-3);">Escala tipográfica</h2>
   <div class="typo"><span class="t-overline">Display</span><div class="t-display">El Buen Sabor · Restaurante</div></div>
-  <div class="typo"><span class="t-overline">H1</span><div class="t-h1">Dashboard · Inventario POS</div></div>
+  <div class="typo"><span class="t-overline">H1</span><div class="t-h1">Dashboard · ROOT</div></div>
   <div class="typo"><span class="t-overline">H2</span><div class="t-h2">Ventas del día</div></div>
   <div class="typo"><span class="t-overline">H3</span><div class="t-h3">Productos top</div></div>
   <div class="typo"><span class="t-overline">Body L</span><div class="t-body-l">Texto de cuerpo grande para destacar contenido importante.</div></div>
@@ -461,5 +466,6 @@
     paintHex();
     document.addEventListener('themechange', paintHex);
   </script>
+  <script src="./assets/js/nav.js"></script>
 </body>
 </html>

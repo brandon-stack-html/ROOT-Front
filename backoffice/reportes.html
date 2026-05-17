@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Reportes · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+
+    /* Hint card */
+    .hint-card {
+      padding: 14px 18px; border-radius: 11px; margin-bottom: 22px;
+      background: linear-gradient(90deg, #EEF2FF, #FAFAFA);
+      border: 1px solid #E0E7FF;
+      display: flex; align-items: center; gap: 14px;
+    }
+    [data-theme="dark"] .hint-card {
+      background: linear-gradient(90deg, rgba(99,102,241,.16), transparent);
+      border-color: rgba(99,102,241,.3);
+    }
+    .hint-card-icon {
+      width: 42px; height: 42px; border-radius: 10px; background: var(--accent);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .hint-card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .hint-card-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* Grupo de reportes */
+    .reporte-grupo { margin-bottom: 24px; }
+    .reporte-grupo-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .reporte-grupo-icon-wrap { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .reporte-grupo-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+    .reporte-grupo-sep { flex: 1; height: 1px; background: var(--border); }
+    .reporte-grupo-count { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    .reporte-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 1200px) { .reporte-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 900px) { .reporte-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .reporte-grid { grid-template-columns: 1fr; } }
+
+    /* Reporte card */
+    .reporte-card {
+      width: 100%; padding: 16px 18px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 11px;
+      cursor: pointer; font-family: var(--ff-base); text-align: left;
+      display: flex; align-items: flex-start; gap: 14px;
+      transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+    .reporte-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--accent);
+    }
+    .reporte-card-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .reporte-card-body { flex: 1; min-width: 0; }
+    .reporte-card-title-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .reporte-card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .badge-popular {
+      padding: 1px 6px; border-radius: 5px;
+      background: #FEF3C7; color: #92400E;
+      font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    }
+    [data-theme="dark"] .badge-popular { background: rgba(245,158,11,.18); color: #FDE68A; }
+    .reporte-card-desc { font-size: 11px; color: var(--muted); line-height: 1.4; margin-bottom: 8px; }
+    .reporte-card-link { font-size: 11px; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+    /* Modal generar reporte */
+    [data-tabs] [data-panel] { display: none; }
+    [data-tabs] [data-panel].is-active { display: block; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html" class="bo-sidebar-item is-active"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+          <a href="./integraciones.html" class="bo-sidebar-item"><i data-lucide="plug"></i>Integraciones</a>
+        </div>
+      </nav>
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info"><span class="name">Carlos Ramírez</span><span class="role">Administrador</span></span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+      </div>
+    </aside>
+    <div class="bo-sidebar-backdrop"></div>
+
+    <div class="bo-content-wrap">
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Finanzas</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Reportes</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button">CR</button>
+        </div>
+      </header>
+
+      <main id="main" class="bo-content">
+        <!-- PAGE HEADER -->
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Reportes</div>
+            <div class="bo-ph-sub">Selecciona el reporte que necesitas analizar</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-secondary btn-sm"><i data-lucide="bookmark" style="width:13px;height:13px"></i>Mis reportes</button>
+            <button class="btn btn-secondary btn-sm"><i data-lucide="clock" style="width:13px;height:13px"></i>Programados</button>
+          </div>
+        </div>
+
+        <!-- HINT CARD -->
+        <div class="hint-card">
+          <div class="hint-card-icon"><i data-lucide="zap" style="width:20px;height:20px;color:#fff"></i></div>
+          <div style="flex:1">
+            <div class="hint-card-title">¿Necesitas algo personalizado?</div>
+            <div class="hint-card-sub">Crea reportes a medida combinando filtros, agrupaciones y métricas.</div>
+          </div>
+          <button class="btn btn-primary btn-sm"><i data-lucide="sparkles" style="width:13px;height:13px"></i>Reporte personalizado</button>
+        </div>
+
+        <!-- GRUPO: Ventas -->
+        <div class="reporte-grupo">
+          <div class="reporte-grupo-header">
+            <div class="reporte-grupo-icon-wrap" style="background:rgba(79,70,229,.1)">
+              <i data-lucide="trending-up" style="width:13px;height:13px;color:#4F46E5"></i>
+            </div>
+            <span class="reporte-grupo-title">Ventas</span>
+            <div class="reporte-grupo-sep"></div>
+            <span class="reporte-grupo-count">4 reportes</span>
+          </div>
+          <div class="reporte-grid">
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Ventas por período')">
+              <div class="reporte-card-icon" style="background:rgba(79,70,229,.1)">
+                <i data-lucide="calendar" style="width:19px;height:19px;color:#4F46E5"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row">
+                  <span class="reporte-card-title">Ventas por período</span>
+                  <span class="badge-popular">Popular</span>
+                </div>
+                <div class="reporte-card-desc">Ingresos diarios, semanales o mensuales</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Ventas por mesero')">
+              <div class="reporte-card-icon" style="background:rgba(79,70,229,.1)">
+                <i data-lucide="user" style="width:19px;height:19px;color:#4F46E5"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Ventas por mesero</span></div>
+                <div class="reporte-card-desc">Performance individual de tu equipo</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Ventas por canal')">
+              <div class="reporte-card-icon" style="background:rgba(79,70,229,.1)">
+                <i data-lucide="radio" style="width:19px;height:19px;color:#4F46E5"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Ventas por canal</span></div>
+                <div class="reporte-card-desc">Mesa, mostrador, delivery y tienda online</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Productos más vendidos')">
+              <div class="reporte-card-icon" style="background:rgba(79,70,229,.1)">
+                <i data-lucide="flame" style="width:19px;height:19px;color:#4F46E5"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row">
+                  <span class="reporte-card-title">Productos más vendidos</span>
+                  <span class="badge-popular">Popular</span>
+                </div>
+                <div class="reporte-card-desc">Ranking por cantidad e ingresos</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- GRUPO: Financiero -->
+        <div class="reporte-grupo">
+          <div class="reporte-grupo-header">
+            <div class="reporte-grupo-icon-wrap" style="background:rgba(16,185,129,.1)">
+              <i data-lucide="banknote" style="width:13px;height:13px;color:#10B981"></i>
+            </div>
+            <span class="reporte-grupo-title">Financiero</span>
+            <div class="reporte-grupo-sep"></div>
+            <span class="reporte-grupo-count">4 reportes</span>
+          </div>
+          <div class="reporte-grid">
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Balance')">
+              <div class="reporte-card-icon" style="background:rgba(16,185,129,.1)">
+                <i data-lucide="scale" style="width:19px;height:19px;color:#10B981"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Balance</span></div>
+                <div class="reporte-card-desc">Ingresos vs gastos por período</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Estado de resultados')">
+              <div class="reporte-card-icon" style="background:rgba(16,185,129,.1)">
+                <i data-lucide="clipboard-list" style="width:19px;height:19px;color:#10B981"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Estado de resultados</span></div>
+                <div class="reporte-card-desc">Rentabilidad neta del negocio</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Cuentas por cobrar')">
+              <div class="reporte-card-icon" style="background:rgba(16,185,129,.1)">
+                <i data-lucide="users" style="width:19px;height:19px;color:#10B981"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Cuentas por cobrar</span></div>
+                <div class="reporte-card-desc">Saldos pendientes de clientes</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Impuestos y retenciones')">
+              <div class="reporte-card-icon" style="background:rgba(16,185,129,.1)">
+                <i data-lucide="percent" style="width:19px;height:19px;color:#10B981"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Impuestos y retenciones</span></div>
+                <div class="reporte-card-desc">IVA, retefuente, ICA</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- GRUPO: Inventario -->
+        <div class="reporte-grupo">
+          <div class="reporte-grupo-header">
+            <div class="reporte-grupo-icon-wrap" style="background:rgba(245,158,11,.1)">
+              <i data-lucide="package" style="width:13px;height:13px;color:#F59E0B"></i>
+            </div>
+            <span class="reporte-grupo-title">Inventario</span>
+            <div class="reporte-grupo-sep"></div>
+            <span class="reporte-grupo-count">3 reportes</span>
+          </div>
+          <div class="reporte-grid">
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Movimientos de inventario')">
+              <div class="reporte-card-icon" style="background:rgba(245,158,11,.1)">
+                <i data-lucide="arrow-left-right" style="width:19px;height:19px;color:#F59E0B"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Movimientos</span></div>
+                <div class="reporte-card-desc">Entradas y salidas de ingredientes</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Mermas y pérdidas')">
+              <div class="reporte-card-icon" style="background:rgba(245,158,11,.1)">
+                <i data-lucide="trending-down" style="width:19px;height:19px;color:#F59E0B"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Mermas y pérdidas</span></div>
+                <div class="reporte-card-desc">Diferencias en conteos físicos</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Historial de costos')">
+              <div class="reporte-card-icon" style="background:rgba(245,158,11,.1)">
+                <i data-lucide="history" style="width:19px;height:19px;color:#F59E0B"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Historial de costos</span></div>
+                <div class="reporte-card-desc">Variación de precios de proveedores</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- GRUPO: Operación -->
+        <div class="reporte-grupo">
+          <div class="reporte-grupo-header">
+            <div class="reporte-grupo-icon-wrap" style="background:rgba(236,72,153,.1)">
+              <i data-lucide="activity" style="width:13px;height:13px;color:#EC4899"></i>
+            </div>
+            <span class="reporte-grupo-title">Operación</span>
+            <div class="reporte-grupo-sep"></div>
+            <span class="reporte-grupo-count">4 reportes</span>
+          </div>
+          <div class="reporte-grid">
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Cuadre de cajas')">
+              <div class="reporte-card-icon" style="background:rgba(236,72,153,.1)">
+                <i data-lucide="archive" style="width:19px;height:19px;color:#EC4899"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Cuadre de cajas</span></div>
+                <div class="reporte-card-desc">Arqueos y cierres por turno</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Mapa de calor de mesas')">
+              <div class="reporte-card-icon" style="background:rgba(236,72,153,.1)">
+                <i data-lucide="map" style="width:19px;height:19px;color:#EC4899"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Mapa de calor de mesas</span></div>
+                <div class="reporte-card-desc">Qué mesas generan más ingresos</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Propinas')">
+              <div class="reporte-card-icon" style="background:rgba(236,72,153,.1)">
+                <i data-lucide="sparkles" style="width:19px;height:19px;color:#EC4899"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Propinas</span></div>
+                <div class="reporte-card-desc">Total de propinas por período y mesero</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+            <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Tiempos de servicio')">
+              <div class="reporte-card-icon" style="background:rgba(236,72,153,.1)">
+                <i data-lucide="timer" style="width:19px;height:19px;color:#EC4899"></i>
+              </div>
+              <div class="reporte-card-body">
+                <div class="reporte-card-title-row"><span class="reporte-card-title">Tiempos de servicio</span></div>
+                <div class="reporte-card-desc">Tiempo desde orden hasta entrega</div>
+                <div class="reporte-card-link">Ver reporte <i data-lucide="arrow-right" style="width:11px;height:11px"></i></div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: Generar reporte -->
+  <div id="modalGenerar" class="modal-backdrop">
+    <div class="modal modal-md">
+      <div class="modal-header">
+        <span id="modalReporteTitulo">Generar reporte</span>
+        <button class="modal-close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label class="field-label">Rango de fechas</label>
+          <select class="field-input">
+            <option>Esta semana</option>
+            <option>Este mes</option>
+            <option>Mes anterior</option>
+            <option>Últimos 3 meses</option>
+            <option>Este año</option>
+            <option>Rango personalizado</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Desde</label>
+            <input class="field-input" type="date" value="2026-11-01" />
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Hasta</label>
+            <input class="field-input" type="date" value="2026-11-30" />
+          </div>
+        </div>
+        <div class="field" style="margin-top:12px;margin-bottom:0">
+          <label class="field-label">Formato de descarga</label>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center">
+              <input type="radio" name="formato" value="pdf" checked style="accent-color:var(--accent)"> PDF
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center">
+              <input type="radio" name="formato" value="excel" style="accent-color:var(--accent)"> Excel
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center">
+              <input type="radio" name="formato" value="csv" style="accent-color:var(--accent)"> CSV
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-primary" id="btnDescargarReporte"><i data-lucide="download" style="width:13px;height:13px"></i>Descargar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    var reporteActual = '';
+    function setReporte(nombre) {
+      reporteActual = nombre;
+      var el = document.getElementById('modalReporteTitulo');
+      if (el) el.textContent = nombre;
+    }
+
+    document.getElementById('btnDescargarReporte').addEventListener('click', function () {
+      UI.closeModal('modalGenerar');
+      UI.toast({ type: 'success', title: 'Reporte generado', sub: reporteActual + ' · Descargando...' });
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

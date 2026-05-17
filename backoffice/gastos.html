@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Gastos · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+    @media (max-width: 767px) { .kpi-grid { grid-template-columns: 1fr; } }
+
+    .kpi-tone { padding: 16px 18px; border-radius: 11px; display: flex; flex-direction: column; gap: 8px; }
+    .kpi-tone-head { display: flex; align-items: center; justify-content: space-between; }
+    .kpi-tone-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .kpi-tone-label { font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+    .kpi-tone-value { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1.1; }
+    .kpi-tone-helper { font-size: 11px; font-weight: 500; }
+
+    .kpi-warning { background: #FEF3C7; border: 1px solid #FDE68A; }
+    .kpi-warning .kpi-tone-label { color: #92400E; }
+    .kpi-warning .kpi-tone-value { color: #78350F; }
+    .kpi-warning .kpi-tone-helper { color: #92400E; }
+    .kpi-warning .kpi-tone-icon { background: rgba(245,158,11,.2); }
+    [data-theme="dark"] .kpi-warning { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.4); }
+    [data-theme="dark"] .kpi-warning .kpi-tone-label,
+    [data-theme="dark"] .kpi-warning .kpi-tone-value { color: #FDE68A; }
+    [data-theme="dark"] .kpi-warning .kpi-tone-helper { color: #FCD34D; }
+
+    .kpi-error-tone { background: #FEE2E2; border: 1px solid #FECACA; }
+    .kpi-error-tone .kpi-tone-label,
+    .kpi-error-tone .kpi-tone-value { color: #7F1D1D; }
+    .kpi-error-tone .kpi-tone-helper { color: var(--error); }
+    .kpi-error-tone .kpi-tone-icon { background: rgba(239,68,68,.2); }
+    [data-theme="dark"] .kpi-error-tone { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.4); }
+    [data-theme="dark"] .kpi-error-tone .kpi-tone-label,
+    [data-theme="dark"] .kpi-error-tone .kpi-tone-value { color: #FCA5A5; }
+
+    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .toolbar-search { position: relative; }
+    .toolbar-search input { padding: 8px 12px 8px 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: var(--ff-base); font-size: 13px; width: 220px; outline: none; }
+    .toolbar-search input:focus { border-color: var(--accent); }
+    .toolbar-search .s-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); display: flex; pointer-events: none; }
+    .toolbar-select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: var(--ff-base); font-size: 13px; outline: none; cursor: pointer; }
+    .toolbar-spacer { flex: 1; min-width: 8px; }
+
+    .gastos-table { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .gt-header, .gt-row { display: grid; grid-template-columns: 70px 1.3fr 1fr 1.4fr 0.9fr 0.9fr 1fr 44px; padding: 12px 18px; align-items: center; gap: 4px; }
+    .gt-header { background: var(--alt); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+    .gt-row { border-bottom: 1px solid var(--border); transition: background .12s; }
+    .gt-row:last-of-type { border-bottom: none; }
+    .gt-row:hover { background: var(--alt); }
+    .gt-row.is-vencido { background: rgba(254,226,226,.4); }
+    [data-theme="dark"] .gt-row.is-vencido { background: rgba(239,68,68,.06); }
+
+    .estado-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 11px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .estado-pagado { background: #DCFCE7; color: #14532D; }
+    .estado-pendiente { background: #FEF3C7; color: #92400E; }
+    .estado-vencido { background: #FEE2E2; color: #7F1D1D; }
+    [data-theme="dark"] .estado-pagado { background: rgba(16,185,129,.18); color: #86EFAC; }
+    [data-theme="dark"] .estado-pendiente { background: rgba(245,158,11,.18); color: #FDE68A; }
+    [data-theme="dark"] .estado-vencido { background: rgba(239,68,68,.18); color: #FCA5A5; }
+
+    .venc-vencido { color: var(--error); font-weight: 600; }
+
+    .pagination { display: flex; align-items: center; justify-content: space-between; padding: 10px 18px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 8px; }
+    .pag-pages { display: flex; gap: 4px; }
+    .pag-page { width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent; color: var(--muted); cursor: pointer; font-family: var(--ff-base); font-size: 12px; }
+    .pag-page.is-active { background: var(--accent); color: #fff; }
+    .pag-page:hover:not(.is-active) { background: var(--alt); }
+
+    .more-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+    .more-btn:hover { background: var(--alt); }
+
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-prefix-wrap { position: relative; }
+    .field-prefix { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--muted); pointer-events: none; }
+    .field-prefix-wrap .field-input { padding-left: 22px; }
+
+    @media (max-width: 1100px) { .gt-header, .gt-row { grid-template-columns: 70px 1.2fr 1fr 0.9fr 0.9fr 1fr 44px; } .gt-header > *:nth-child(4), .gt-row > *:nth-child(4) { display: none; } }
+    @media (max-width: 768px) {
+      .gt-header { display: none; }
+      .gt-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px; }
+      .gt-row > * { font-size: 13px; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="bo-shell">
+    <aside class="bo-sidebar" id="boSidebar">
+      <div class="bo-sidebar-header">
+        <div class="bo-sidebar-brand">
+          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        </div>
+        <button class="bo-business-selector" type="button">
+          <span class="bo-business-avatar">EB</span>
+          <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+      <nav class="bo-sidebar-nav">
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Operación</div>
+          <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+          <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+          <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+          <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Gestión</div>
+          <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+          <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+          <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+          <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+          <a href="./gastos.html" class="bo-sidebar-item is-active"><i data-lucide="receipt"></i>Gastos</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Nómina</div>
+          <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+          <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+          <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Finanzas</div>
+          <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+          <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+          <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+        </div>
+        <div class="bo-sidebar-group">
+          <div class="bo-sidebar-group-title">Config</div>
+          <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+          <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+          <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+          <a href="./integraciones.html" class="bo-sidebar-item"><i data-lucide="plug"></i>Integraciones</a>
+        </div>
+      </nav>
+      <div class="bo-sidebar-footer">
+        <span class="bo-user-avatar">CR</span>
+        <span class="bo-user-info"><span class="name">Carlos Ramírez</span><span class="role">Administrador</span></span>
+        <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+      </div>
+    </aside>
+    <div class="bo-sidebar-backdrop"></div>
+
+    <div class="bo-content-wrap">
+      <header class="bo-topbar">
+        <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+        <nav class="bo-breadcrumb" aria-label="Breadcrumb">
+          <span class="bo-breadcrumb-item">Gestión</span>
+          <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+          <span class="bo-breadcrumb-item is-active">Gastos</span>
+        </nav>
+        <div class="bo-topbar-spacer"></div>
+        <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+        <div class="bo-topbar-actions">
+          <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+          <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+          <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+          <button class="bo-topbar-avatar" type="button">CR</button>
+        </div>
+      </header>
+
+      <main id="main" class="bo-content">
+        <!-- PAGE HEADER -->
+        <div class="bo-ph">
+          <div>
+            <div class="bo-ph-title">Gastos</div>
+            <div class="bo-ph-sub">Noviembre 2026 · Sede Norte</div>
+          </div>
+          <div class="bo-ph-actions">
+            <button class="btn btn-secondary btn-sm"><i data-lucide="download" style="width:13px;height:13px"></i>Exportar</button>
+            <button class="btn btn-primary btn-sm" data-open-modal="modalGasto"><i data-lucide="plus" style="width:13px;height:13px"></i>Registrar gasto</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card tone-muted">
+            <div class="kpi-card-head">
+              <span class="kpi-label">Total del mes</span>
+              <div class="kpi-icon-wrap"><i data-lucide="receipt" style="width:14px;height:14px;color:var(--accent)"></i></div>
+            </div>
+            <div class="kpi-value">$3.420.000</div>
+            <div class="kpi-delta up"><i data-lucide="trending-up" style="width:11px;height:11px"></i>8% vs octubre</div>
+          </div>
+          <div class="kpi-tone kpi-warning">
+            <div class="kpi-tone-head">
+              <span class="kpi-tone-label">Pendiente de pago</span>
+              <div class="kpi-tone-icon"><i data-lucide="clock" style="width:14px;height:14px;color:#D97706"></i></div>
+            </div>
+            <div class="kpi-tone-value">$890.000</div>
+            <div class="kpi-tone-helper">5 facturas · próximo vencimiento 18 nov</div>
+          </div>
+          <div class="kpi-tone kpi-error-tone">
+            <div class="kpi-tone-head">
+              <span class="kpi-tone-label">Vencidos</span>
+              <div class="kpi-tone-icon"><i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--error)"></i></div>
+            </div>
+            <div class="kpi-tone-value">$120.000</div>
+            <div class="kpi-tone-helper">1 factura · acción inmediata</div>
+          </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+          <div class="toolbar-search">
+            <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px"></i></span>
+            <input type="text" placeholder="Buscar proveedor o concepto..." id="gastosSearch" />
+          </div>
+          <select class="toolbar-select">
+            <option value="">Categoría: Todas</option>
+            <option>Insumos cocina</option>
+            <option>Servicios</option>
+            <option>Aseo</option>
+            <option>Renta</option>
+            <option>Nómina</option>
+            <option>Otros</option>
+          </select>
+          <select class="toolbar-select">
+            <option value="">Estado: Todos</option>
+            <option>Pagado</option>
+            <option>Pendiente</option>
+            <option>Vencido</option>
+          </select>
+          <div class="toolbar-spacer"></div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="gastos-table">
+          <div class="gt-header">
+            <div>Fecha</div><div>Proveedor</div><div>Categoría</div><div>Descripción</div>
+            <div style="text-align:right">Monto</div><div>Vencimiento</div><div>Estado</div><div></div>
+          </div>
+
+          <div class="gt-row">
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">15 nov</div>
+            <div style="font-size:13px;color:var(--text);font-weight:500">Dist. La Cosecha</div>
+            <div style="font-size:12px;color:var(--muted)">Insumos cocina</div>
+            <div style="font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Papa, mazorca, yuca</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$340.000</div>
+            <div style="font-size:12px;font-variant-numeric:tabular-nums">22 nov</div>
+            <div><span class="estado-chip estado-pendiente">⏱ Pendiente</span></div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+
+          <div class="gt-row">
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">14 nov</div>
+            <div style="font-size:13px;color:var(--text);font-weight:500">Gas Natural SA</div>
+            <div style="font-size:12px;color:var(--muted)">Servicios</div>
+            <div style="font-size:12px;color:var(--muted)">Gas noviembre</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$180.000</div>
+            <div style="font-size:12px;font-variant-numeric:tabular-nums">20 nov</div>
+            <div><span class="estado-chip estado-pagado">✓ Pagado</span></div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+
+          <div class="gt-row is-vencido">
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">13 nov</div>
+            <div style="font-size:13px;color:var(--text);font-weight:500">Lácteos del Valle</div>
+            <div style="font-size:12px;color:var(--muted)">Insumos cocina</div>
+            <div style="font-size:12px;color:var(--muted)">Crema, queso, leche</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$220.000</div>
+            <div style="font-size:12px;font-variant-numeric:tabular-nums;color:var(--error);font-weight:600">13 nov</div>
+            <div><span class="estado-chip estado-vencido">⚠ Vencido</span></div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+
+          <div class="gt-row">
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">12 nov</div>
+            <div style="font-size:13px;color:var(--text);font-weight:500">Dist. La Cosecha</div>
+            <div style="font-size:12px;color:var(--muted)">Insumos cocina</div>
+            <div style="font-size:12px;color:var(--muted)">Pollo x10kg</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$150.000</div>
+            <div style="font-size:12px">Contado</div>
+            <div><span class="estado-chip estado-pagado">✓ Pagado</span></div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+
+          <div class="gt-row">
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">10 nov</div>
+            <div style="font-size:13px;color:var(--text);font-weight:500">Acueducto Bogotá</div>
+            <div style="font-size:12px;color:var(--muted)">Servicios</div>
+            <div style="font-size:12px;color:var(--muted)">Agua octubre</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$95.000</div>
+            <div style="font-size:12px;font-variant-numeric:tabular-nums">25 nov</div>
+            <div><span class="estado-chip estado-pendiente">⏱ Pendiente</span></div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+
+          <div class="gt-row">
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">8 nov</div>
+            <div style="font-size:13px;color:var(--text);font-weight:500">Codensa</div>
+            <div style="font-size:12px;color:var(--muted)">Servicios</div>
+            <div style="font-size:12px;color:var(--muted)">Energía octubre</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$285.000</div>
+            <div style="font-size:12px;font-variant-numeric:tabular-nums">18 nov</div>
+            <div><span class="estado-chip estado-pagado">✓ Pagado</span></div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+
+          <div class="gt-row">
+            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">5 nov</div>
+            <div style="font-size:13px;color:var(--text);font-weight:500">Distrihogar</div>
+            <div style="font-size:12px;color:var(--muted)">Aseo</div>
+            <div style="font-size:12px;color:var(--muted)">Productos de limpieza</div>
+            <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$78.000</div>
+            <div style="font-size:12px">Contado</div>
+            <div><span class="estado-chip estado-pagado">✓ Pagado</span></div>
+            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+          </div>
+
+          <!-- Empty state -->
+          <div class="empty-state" id="gastosEmpty" hidden>
+            <div class="empty-state-icon"><i data-lucide="receipt"></i></div>
+            <div class="empty-state-title">No encontramos gastos</div>
+            <div class="empty-state-text">Probá con otro proveedor o concepto.</div>
+            <button type="button" class="btn btn-secondary empty-state-action" id="gastosClearSearch">
+              Limpiar búsqueda
+            </button>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination">
+            <span>Mostrando 1–7 de 28 gastos · Total $3.420.000</span>
+            <div class="pag-pages">
+              <button class="pag-page is-active">1</button>
+              <button class="pag-page">2</button>
+              <button class="pag-page">3</button>
+              <button class="pag-page">4</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: Registrar gasto -->
+  <div id="modalGasto" class="modal-backdrop">
+    <div class="modal modal-md">
+      <div class="modal-header">
+        Registrar gasto
+        <button class="modal-close" data-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid-2" style="margin-bottom:0">
+          <div class="field">
+            <label class="field-label">Proveedor</label>
+            <input class="field-input" type="text" placeholder="Nombre del proveedor" id="gastoProveedor" />
+          </div>
+          <div class="field">
+            <label class="field-label">Concepto</label>
+            <input class="field-input" type="text" placeholder="Descripción del gasto" />
+          </div>
+          <div class="field">
+            <label class="field-label">Categoría</label>
+            <select class="field-input">
+              <option>Insumos cocina</option><option>Servicios</option><option>Aseo</option>
+              <option>Renta</option><option>Nómina</option><option>Otros</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Monto</label>
+            <div class="field-prefix-wrap">
+              <span class="field-prefix">$</span>
+              <input class="field-input" type="number" placeholder="0" id="gastoMonto" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Fecha del gasto</label>
+            <input class="field-input" type="date" />
+          </div>
+          <div class="field">
+            <label class="field-label">Vencimiento</label>
+            <input class="field-input" type="date" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Método de pago</label>
+          <select class="field-input">
+            <option>Efectivo</option><option>Transferencia</option>
+            <option>Tarjeta débito</option><option>Tarjeta crédito</option><option>Nequi</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="field-label">Notas</label>
+          <textarea class="field-input" rows="2" placeholder="Observaciones adicionales..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-primary" id="btnGuardarGasto">Guardar gasto</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    document.getElementById('btnGuardarGasto').addEventListener('click', function () {
+      var proveedor = document.getElementById('gastoProveedor').value || 'Nuevo proveedor';
+      var monto = document.getElementById('gastoMonto').value || '0';
+      UI.closeModal('modalGasto');
+      UI.toast({ type: 'success', title: 'Gasto registrado', sub: proveedor + ' · $' + parseInt(monto).toLocaleString('es-CO') });
+    });
+
+    // Búsqueda en vivo + empty state
+    var gastosSearch = document.getElementById('gastosSearch');
+    var gastosEmpty = document.getElementById('gastosEmpty');
+    function filterGastos() {
+      var q = (gastosSearch && gastosSearch.value || '').toLowerCase().trim();
+      var visibles = 0;
+      document.querySelectorAll('.gastos-table .gt-row').forEach(function (row) {
+        var text = row.textContent.toLowerCase();
+        var show = q === '' || text.includes(q);
+        row.style.display = show ? '' : 'none';
+        if (show) visibles++;
+      });
+      if (gastosEmpty) gastosEmpty.hidden = visibles > 0;
+    }
+    gastosSearch && gastosSearch.addEventListener('input', filterGastos);
+    document.getElementById('gastosClearSearch')?.addEventListener('click', function () {
+      if (gastosSearch) gastosSearch.value = '';
+      filterGastos();
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

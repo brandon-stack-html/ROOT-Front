@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Configuración · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<div class="bo-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info">
+          <span class="label">Negocio</span>
+          <span class="name">El Buen Sabor</span>
+        </span>
+        <i data-lucide="chevron-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item is-active"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info">
+        <span class="name">Juan Camilo R.</span>
+        <span class="role">Administrador</span>
+      </span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop"></div>
+
+  <!-- CONTENT WRAP -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Configuración</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+        <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar" type="button">JC</button>
+      </div>
+    </header>
+
+    <main id="main" class="bo-content">
+      <div>
+        <h1 style="font-size:22px;font-weight:700;letter-spacing:-.01em;">Configuración</h1>
+        <p style="font-size:12px;color:var(--muted);margin-top:3px;margin-bottom:18px;">Ajustes generales del negocio y preferencias regionales</p>
+      </div>
+
+      <!-- Config Tabs -->
+      <nav class="config-tabs">
+        <button class="config-tab is-active">General</button>
+        <button class="config-tab" onclick="location.href='./configuracion.html'">Datos fiscales</button>
+        <button class="config-tab" onclick="location.href='./sucursales.html'">Sucursales</button>
+        <button class="config-tab" onclick="location.href='./mesas.html'">Salas y mesas</button>
+        <button class="config-tab" onclick="UI.toast({type:'info',title:'Próximamente',sub:'Módulo de cajas en desarrollo.'})">Cajas</button>
+        <button class="config-tab" onclick="UI.toast({type:'info',title:'Próximamente',sub:'Módulo de turnos en desarrollo.'})">Turnos</button>
+        <button class="config-tab" onclick="UI.toast({type:'info',title:'Próximamente',sub:'Módulo de impresoras en desarrollo.'})">Impresoras</button>
+      </nav>
+
+      <!-- Layout 2/1 -->
+      <div class="config-layout">
+        <!-- Columna izquierda: formulario -->
+        <div style="display:flex;flex-direction:column;gap:22px;">
+
+          <!-- Card: Identidad del negocio -->
+          <div class="config-card">
+            <div class="config-card-title">Identidad del negocio</div>
+            <div class="config-card-sub">Información que aparece en facturas, recibos y la app del cliente.</div>
+
+            <div class="logo-uploader">
+              <div class="logo-preview">BS</div>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Logo del negocio</div>
+                <div style="font-size:11px;color:var(--muted);">PNG o JPG · cuadrado · mínimo 256×256px</div>
+                <div class="logo-actions">
+                  <button class="btn btn-secondary" style="font-size:12px;padding:7px 14px;display:flex;align-items:center;gap:6px;">
+                    <i data-lucide="upload" style="width:12px;height:12px;"></i> Cambiar logo
+                  </button>
+                  <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px;color:var(--error);">Eliminar</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="config-field-grid cols-2">
+              <div class="config-field">
+                <label>Nombre comercial</label>
+                <div class="config-input-wrap"><input id="fNombre" type="text" value="El Buen Sabor" /></div>
+              </div>
+              <div class="config-field">
+                <label>Razón social</label>
+                <div class="config-input-wrap"><input type="text" value="Restaurante El Buen Sabor SAS" /></div>
+              </div>
+            </div>
+            <div class="config-field-grid cols-2">
+              <div class="config-field">
+                <label>NIT</label>
+                <div class="config-input-wrap"><input id="fNit" type="text" value="900.123.456-7" /></div>
+              </div>
+              <div class="config-field">
+                <label>Teléfono</label>
+                <div class="config-input-wrap">
+                  <span class="config-input-prefix">+57</span>
+                  <input type="text" value="601 234 5678" />
+                </div>
+              </div>
+            </div>
+            <div class="config-field-grid cols-1">
+              <div class="config-field">
+                <label>Email de contacto</label>
+                <div class="config-input-wrap"><input id="fEmail" type="text" value="contacto@buen-sabor.co" /></div>
+              </div>
+            </div>
+            <div class="config-field-grid cols-1" style="margin-bottom:0;">
+              <div class="config-field">
+                <label>Dirección principal</label>
+                <div class="config-input-wrap">
+                  <input id="fDir" type="text" value="Cra. 15 #80-32, Bogotá" />
+                  <i data-lucide="map-pin" style="width:13px;height:13px;color:var(--muted);flex-shrink:0;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Regional -->
+          <div class="config-card">
+            <div class="config-card-title">Regional</div>
+            <div class="config-card-sub">Formato de fechas, moneda y zona horaria.</div>
+
+            <div class="config-field-grid cols-2">
+              <div class="config-field">
+                <label>Zona horaria</label>
+                <div class="config-input-wrap">
+                  <select><option>América/Bogotá (UTC-5)</option><option>América/Cali (UTC-5)</option></select>
+                  <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+                </div>
+              </div>
+              <div class="config-field">
+                <label>Moneda</label>
+                <div class="config-input-wrap">
+                  <select><option>COP — Peso colombiano ($)</option><option>USD — Dólar</option></select>
+                  <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+                </div>
+              </div>
+            </div>
+            <div class="config-field-grid cols-2" style="margin-bottom:0;">
+              <div class="config-field">
+                <label>Formato de fecha</label>
+                <div class="config-input-wrap">
+                  <select><option>DD/MM/YYYY</option><option>MM/DD/YYYY</option></select>
+                  <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+                </div>
+              </div>
+              <div class="config-field">
+                <label>Separador decimal</label>
+                <div class="config-input-wrap">
+                  <select><option>Punto (1.000,00)</option><option>Coma (1,000.00)</option></select>
+                  <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna derecha: preview sticky -->
+        <div style="position:sticky;top:24px;" class="preview-sticky">
+          <div class="config-card">
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Vista previa en facturas</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:14px;">Así se verá el encabezado de tus documentos.</div>
+
+            <!-- Preview de factura -->
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:18px 16px;font-family:var(--ff-base);">
+              <div style="display:flex;align-items:center;gap:11px;margin-bottom:12px;">
+                <div style="width:42px;height:42px;border-radius:21px;background:#FED7AA;color:#9A3412;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">BS</div>
+                <div style="flex:1;min-width:0;">
+                  <div id="previewNombre" style="font-size:14px;font-weight:700;color:var(--text);line-height:1.2;">El Buen Sabor</div>
+                  <div style="font-size:10px;color:var(--muted);margin-top:2px;">Restaurante El Buen Sabor SAS</div>
+                </div>
+              </div>
+              <div style="font-size:10px;color:var(--muted);line-height:1.6;padding-top:10px;border-top:1px dashed var(--border);">
+                <div>NIT: <span id="previewNit">900.123.456-7</span></div>
+                <div id="previewEmail">contacto@buen-sabor.co</div>
+                <div id="previewDir">Cra. 15 #80-32, Bogotá</div>
+              </div>
+              <div style="margin-top:14px;padding-top:10px;border-top:1px dashed var(--border);font-size:10px;color:var(--muted);font-family:monospace;">
+                <div style="display:flex;justify-content:space-between;">
+                  <span>FACTURA ELECTRÓNICA</span><span>FE-001234</span>
+                </div>
+                <div style="margin-top:3px;">15 noviembre 2026 · 13:42</div>
+              </div>
+            </div>
+
+            <a style="display:flex;align-items:center;gap:6px;margin-top:14px;font-size:12px;color:var(--accent);cursor:pointer;font-weight:600;text-decoration:none;" href="./facturacion-dian.html">
+              Configurar datos DIAN y resolución
+              <i data-lucide="arrow-right" style="width:12px;height:12px;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer guardar -->
+      <div class="page-save-footer">
+        <button class="btn btn-secondary">Descartar</button>
+        <button class="btn btn-primary" style="display:flex;align-items:center;gap:6px;"
+          onclick="UI.toast({type:'success',title:'Cambios guardados',sub:'La configuración fue actualizada correctamente.'})">
+          <i data-lucide="save" style="width:13px;height:13px;"></i> Guardar cambios
+        </button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) lucide.createIcons();
+
+  // Live preview
+  function liveUpdate() {
+    const nombre = document.getElementById('fNombre').value;
+    const nit    = document.getElementById('fNit').value;
+    const email  = document.getElementById('fEmail').value;
+    const dir    = document.getElementById('fDir').value;
+    document.getElementById('previewNombre').textContent = nombre || '—';
+    document.getElementById('previewNit').textContent    = nit    || '—';
+    document.getElementById('previewEmail').textContent  = email  || '—';
+    document.getElementById('previewDir').textContent    = dir    || '—';
+  }
+  ['fNombre','fNit','fEmail','fDir'].forEach(id => {
+    document.getElementById(id).addEventListener('input', liveUpdate);
+  });
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

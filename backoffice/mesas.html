@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Salas y mesas · Backoffice</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* Hace que el main no tenga overflow auto para que el editor llene el alto */
+    @media (min-width: 1025px) {
+      .mesas-main { overflow: hidden; display: flex; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<div class="bo-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand">
+        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+      </div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info">
+          <span class="label">Negocio</span>
+          <span class="name">El Buen Sabor</span>
+        </span>
+        <i data-lucide="chevron-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html" class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html" class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html" class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html" class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html" class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html" class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html" class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html" class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html" class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item is-active"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html" class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info">
+        <span class="name">Juan Camilo R.</span>
+        <span class="role">Administrador</span>
+      </span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop"></div>
+
+  <!-- CONTENT WRAP -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item">Configuración</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Salas y mesas</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+        <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar" type="button">JC</button>
+      </div>
+    </header>
+
+    <main id="main" class="bo-content mesas-main" style="padding-bottom:0;">
+      <div class="mesas-page-wrap">
+
+        <!-- Header y tabs -->
+        <div>
+          <h1 style="font-size:22px;font-weight:700;letter-spacing:-.01em;">Configuración</h1>
+          <p style="font-size:12px;color:var(--muted);margin-top:3px;margin-bottom:18px;">Diseña la disposición de las mesas en cada sala.</p>
+        </div>
+
+        <!-- Config Tabs -->
+        <nav class="config-tabs">
+          <button class="config-tab" onclick="location.href='./configuracion.html'">General</button>
+          <button class="config-tab" onclick="UI.toast({type:'info',title:'Próximamente',sub:'Módulo de datos fiscales en desarrollo.'})">Datos fiscales</button>
+          <button class="config-tab" onclick="location.href='./sucursales.html'">Sucursales</button>
+          <button class="config-tab is-active">Salas y mesas</button>
+          <button class="config-tab" onclick="UI.toast({type:'info',title:'Próximamente',sub:'Módulo de cajas en desarrollo.'})">Cajas</button>
+          <button class="config-tab" onclick="UI.toast({type:'info',title:'Próximamente',sub:'Módulo de turnos en desarrollo.'})">Turnos</button>
+          <button class="config-tab" onclick="UI.toast({type:'info',title:'Próximamente',sub:'Módulo de impresoras en desarrollo.'})">Impresoras</button>
+        </nav>
+
+        <!-- 3-panel editor -->
+        <div class="mesas-editor-area">
+
+          <!-- Panel izquierdo: Salas -->
+          <div class="mesas-salas-panel">
+            <div class="salas-panel-title">Salas</div>
+            <div class="salas-list" id="salasList">
+              <button class="sala-btn is-active" data-sala="salon" onclick="selectSala('salon', this)">
+                <i data-lucide="home" style="width:15px;height:15px;color:var(--accent);flex-shrink:0;"></i>
+                <div class="sala-btn-info">
+                  <div class="sala-btn-label">Salón Principal</div>
+                  <div class="sala-btn-count">12 mesas</div>
+                </div>
+                <i data-lucide="check" style="width:11px;height:11px;color:var(--accent);flex-shrink:0;"></i>
+              </button>
+              <button class="sala-btn" data-sala="terraza" onclick="selectSala('terraza', this)">
+                <i data-lucide="leaf" style="width:15px;height:15px;flex-shrink:0;"></i>
+                <div class="sala-btn-info">
+                  <div class="sala-btn-label">Terraza</div>
+                  <div class="sala-btn-count">8 mesas</div>
+                </div>
+              </button>
+              <button class="sala-btn" data-sala="barra" onclick="selectSala('barra', this)">
+                <i data-lucide="beer" style="width:15px;height:15px;flex-shrink:0;"></i>
+                <div class="sala-btn-info">
+                  <div class="sala-btn-label">Barra</div>
+                  <div class="sala-btn-count">6 puestos</div>
+                </div>
+              </button>
+            </div>
+            <button class="salas-add-btn" type="button" onclick="UI.toast({type:'info',title:'Próximamente',sub:'La creación de salas estará disponible pronto.'})">
+              <i data-lucide="plus" style="width:12px;height:12px;"></i> Nueva sala
+            </button>
+          </div>
+
+          <!-- Panel central: Canvas SVG -->
+          <div class="mesas-canvas-panel">
+            <div class="canvas-toolbar">
+              <div class="canvas-zoom">
+                <button class="canvas-zoom-btn" type="button" title="Alejar" aria-label="Alejar">
+                  <i data-lucide="minus" style="width:13px;height:13px;"></i>
+                </button>
+                <span class="canvas-zoom-label">100%</span>
+                <button class="canvas-zoom-btn" type="button" title="Acercar" aria-label="Acercar">
+                  <i data-lucide="plus" style="width:13px;height:13px;"></i>
+                </button>
+              </div>
+              <div class="canvas-sep"></div>
+              <button class="canvas-tool-btn" type="button" title="Deshacer" aria-label="Deshacer">
+                <i data-lucide="undo-2" style="width:13px;height:13px;color:var(--muted);"></i>
+              </button>
+              <button class="canvas-tool-btn" type="button" title="Rehacer" aria-label="Rehacer">
+                <i data-lucide="redo-2" style="width:13px;height:13px;color:var(--muted);"></i>
+              </button>
+              <div class="canvas-sep"></div>
+              <button class="canvas-tool-btn has-label" type="button">
+                <i data-lucide="grid-3x3" style="width:13px;height:13px;color:var(--muted);"></i>
+                <span class="canvas-tool-label">Cuadrícula</span>
+              </button>
+              <button class="canvas-tool-btn has-label" type="button">
+                <i data-lucide="ruler" style="width:13px;height:13px;color:var(--muted);"></i>
+                <span class="canvas-tool-label">Guías</span>
+              </button>
+              <div class="canvas-unsaved">
+                <svg width="7" height="7" viewBox="0 0 7 7"><circle cx="3.5" cy="3.5" r="3.5" fill="var(--warning)"/></svg>
+                Cambios sin guardar
+              </div>
+              <button class="canvas-tool-btn has-label is-primary" type="button"
+                onclick="UI.toast({type:'success',title:'Disposición guardada',sub:'Los cambios del salón fueron guardados.'})">
+                <i data-lucide="save" style="width:13px;height:13px;color:#fff;"></i>
+                <span class="canvas-tool-label">Guardar disposición</span>
+              </button>
+              <button class="canvas-tool-btn has-label is-primary" type="button" id="btnAddMesa" style="background:var(--text);border-color:var(--text);">
+                <i data-lucide="plus" style="width:13px;height:13px;color:var(--bg);"></i>
+                <span class="canvas-tool-label" style="color:var(--bg);">+ Mesa</span>
+              </button>
+            </div>
+
+            <div class="canvas-svg-area">
+              <svg id="mesasSVG" viewBox="0 0 600 540" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <pattern id="grid-minor" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke-width="0.5" opacity="0.6" class="grid-stroke-minor"/>
+                  </pattern>
+                  <pattern id="grid-major" width="100" height="100" patternUnits="userSpaceOnUse">
+                    <rect width="100" height="100" fill="url(#grid-minor)"/>
+                    <path d="M 100 0 L 0 0 0 100" fill="none" stroke-width="0.7" opacity="0.7" class="grid-stroke-major"/>
+                  </pattern>
+                </defs>
+                <rect x="0" y="0" width="600" height="540" fill="url(#grid-major)"/>
+                <text x="20" y="525" font-size="10" font-weight="600"
+                  font-family="Inter, sans-serif" letter-spacing="0.08em" class="canvas-area-label">
+                  SALÓN PRINCIPAL · ZONA INTERIOR
+                </text>
+                <!-- Mesas se renderizan por JS -->
+              </svg>
+
+              <div class="canvas-legend">
+                <div class="legend-item"><span class="legend-swatch"></span> Mesas (<span id="mesaCount">12</span>)</div>
+                <div class="legend-item"><span class="legend-swatch-sel"></span> Seleccionada</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel derecho: Propiedades -->
+          <div class="mesas-props-panel">
+            <div class="props-header" id="propsHeader">
+              <div class="props-header-icon">
+                <i data-lucide="square" style="width:15px;height:15px;color:#fff;stroke-width:2.2;"></i>
+              </div>
+              <div>
+                <div class="props-header-title" id="propsTitle">Mesa 5</div>
+                <div class="props-header-sub" id="propsSub">Salón Principal · Cuadrada</div>
+              </div>
+            </div>
+            <div class="props-body" id="propsBody">
+              <!-- Poblado por JS -->
+            </div>
+            <div class="props-footer" id="propsFooter">
+              <button class="btn btn-destructive" id="btnDeleteMesa" style="width:100%;justify-content:center;gap:6px;display:flex;align-items:center;" onclick="deleteMesa()">
+                <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Eliminar mesa
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) lucide.createIcons();
+
+  const MESAS_DATA = [
+    { id:1,  shape:'square', x:50,  y:50,  w:70,  h:70,  cap:4 },
+    { id:2,  shape:'square', x:160, y:50,  w:70,  h:70,  cap:4 },
+    { id:3,  shape:'square', x:280, y:80,  w:70,  h:70,  cap:4 },
+    { id:4,  shape:'square', x:50,  y:170, w:70,  h:70,  cap:4 },
+    { id:5,  shape:'square', x:170, y:185, w:70,  h:70,  cap:4 },
+    { id:6,  shape:'square', x:300, y:200, w:70,  h:70,  cap:4 },
+    { id:7,  shape:'rect',   x:430, y:60,  w:130, h:60,  cap:8 },
+    { id:8,  shape:'rect',   x:430, y:180, w:130, h:60,  cap:6 },
+    { id:9,  shape:'circle', x:90,  y:340, r:34,         cap:2 },
+    { id:10, shape:'circle', x:230, y:380, r:34,         cap:3 },
+    { id:11, shape:'circle', x:380, y:380, r:38,         cap:3 },
+    { id:12, shape:'square', x:480, y:330, w:80,  h:80,  cap:4 },
+  ];
+
+  let selectedId = 5;
+  let nextId = 13;
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('mesasSVG');
+
+  function makeSVGEl(tag, attrs) {
+    const el = document.createElementNS(NS, tag);
+    Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
+    return el;
+  }
+
+  function renderAllMesas() {
+    svg.querySelectorAll('.mesa-el').forEach(e => e.remove());
+    MESAS_DATA.forEach(renderMesa);
+    document.getElementById('mesaCount').textContent = MESAS_DATA.length;
+  }
+
+  function renderMesa(m) {
+    const g = makeSVGEl('g', {
+      'data-mesa-id': m.id,
+      'class': 'mesa-el' + (m.id === selectedId ? ' is-selected' : ''),
+      'tabindex': '0',
+    });
+
+    if (m.shape === 'circle') {
+      g.appendChild(makeSVGEl('circle', { cx:m.x, cy:m.y, r:m.r, class:'mesa-shape' }));
+      const t = makeSVGEl('text', { x:m.x, y:m.y+5, 'text-anchor':'middle', 'font-size':'14', 'font-weight':'700', 'font-family':'Inter, sans-serif', class:'mesa-label' });
+      t.textContent = m.id;
+      g.appendChild(t);
+    } else {
+      const rx = m.shape === 'rect' ? 8 : 7;
+      g.appendChild(makeSVGEl('rect', { x:m.x, y:m.y, width:m.w, height:m.h, rx, class:'mesa-shape' }));
+      const t = makeSVGEl('text', { x:m.x + m.w/2, y:m.y + m.h/2 + 5, 'text-anchor':'middle', 'font-size':'14', 'font-weight':'700', 'font-family':'Inter, sans-serif', class:'mesa-label' });
+      t.textContent = m.id;
+      g.appendChild(t);
+
+      if (m.id === selectedId) {
+        const cx = m.x + m.w/2, cy = m.y + m.h/2;
+        const hx = m.w/2 + 2, hy = m.h/2 + 2;
+        [[cx-hx,cy-hy],[cx+hx,cy-hy],[cx-hx,cy+hy],[cx+hx,cy+hy]].forEach(([hcx,hcy]) => {
+          g.appendChild(makeSVGEl('rect', { x:hcx-5, y:hcy-5, width:10, height:10, rx:2, class:'mesa-handle', stroke:'var(--accent)', 'stroke-width':'1.8' }));
+        });
+      }
+    }
+
+    g.addEventListener('click', () => selectMesa(m.id));
+    svg.appendChild(g);
+  }
+
+  function selectMesa(id) {
+    selectedId = id;
+    renderAllMesas();
+    updatePropsPanel();
+  }
+
+  function updatePropsPanel() {
+    const m = MESAS_DATA.find(m => m.id === selectedId);
+    if (!m) { showEmptyProps(); return; }
+
+    const shapeLabel = m.shape === 'circle' ? 'Redonda' : m.shape === 'rect' ? 'Rectangular' : 'Cuadrada';
+    const iconName = m.shape === 'circle' ? 'circle' : m.shape === 'rect' ? 'rectangle-horizontal' : 'square';
+
+    document.getElementById('propsTitle').textContent = `Mesa ${m.id}`;
+    document.getElementById('propsSub').textContent = `Salón Principal · ${shapeLabel}`;
+    const headerIcon = document.querySelector('.props-header-icon');
+    headerIcon.innerHTML = `<i data-lucide="${iconName}" style="width:15px;height:15px;color:#fff;stroke-width:2.2;"></i>`;
+    document.getElementById('propsFooter').style.display = '';
+    document.getElementById('btnDeleteMesa').textContent = '';
+    document.getElementById('btnDeleteMesa').innerHTML = `<i data-lucide="trash-2" style="width:13px;height:13px;"></i> Eliminar Mesa ${m.id}`;
+
+    const capLabel = m.cap + (m.cap === 1 ? ' persona' : ' personas');
+
+    document.getElementById('propsBody').innerHTML = `
+      <div class="prop-field">
+        <label class="prop-label">Número / nombre</label>
+        <div class="prop-value"><input type="text" value="${m.id}" /></div>
+      </div>
+      <div class="prop-field">
+        <label class="prop-label">Capacidad</label>
+        <div class="prop-value">
+          <span>${capLabel}</span>
+          <i data-lucide="users" style="width:13px;height:13px;color:var(--muted);"></i>
+        </div>
+      </div>
+      <div class="prop-field">
+        <label class="prop-label">Forma</label>
+        <div class="shape-radios">
+          <button class="shape-radio ${m.shape === 'square' ? 'is-active' : ''}" type="button">
+            <i data-lucide="square" style="width:18px;height:18px;"></i> Cuadrada
+          </button>
+          <button class="shape-radio ${m.shape === 'rect' ? 'is-active' : ''}" type="button">
+            <i data-lucide="rectangle-horizontal" style="width:18px;height:18px;"></i> Rectangular
+          </button>
+          <button class="shape-radio ${m.shape === 'circle' ? 'is-active' : ''}" type="button">
+            <i data-lucide="circle" style="width:18px;height:18px;"></i> Redonda
+          </button>
+        </div>
+      </div>
+      <div class="prop-field">
+        <label class="prop-label">Sala</label>
+        <div class="prop-locked">
+          <i data-lucide="lock" style="width:11px;height:11px;"></i> Salón Principal
+        </div>
+      </div>
+      <div class="props-section-title">Agregar mesa al plano</div>
+      <div class="shape-radios">
+        <button class="shape-radio" type="button" onclick="addMesa('square')">
+          <i data-lucide="square" style="width:18px;height:18px;"></i> Cuadrada
+        </button>
+        <button class="shape-radio" type="button" onclick="addMesa('rect')">
+          <i data-lucide="rectangle-horizontal" style="width:18px;height:18px;"></i> Rectangular
+        </button>
+        <button class="shape-radio" type="button" onclick="addMesa('circle')">
+          <i data-lucide="circle" style="width:18px;height:18px;"></i> Redonda
+        </button>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function showEmptyProps() {
+    document.getElementById('propsTitle').textContent = 'Propiedades';
+    document.getElementById('propsSub').textContent = 'Sin selección';
+    document.getElementById('propsFooter').style.display = 'none';
+    document.getElementById('propsBody').innerHTML = `
+      <div class="props-empty">
+        <i data-lucide="mouse-pointer-2" style="width:32px;height:32px;color:var(--muted);"></i>
+        <span>Seleccioná una mesa o agregá una nueva.</span>
+      </div>
+      <div class="props-section-title">Agregar mesa al plano</div>
+      <div class="shape-radios">
+        <button class="shape-radio" type="button" onclick="addMesa('square')">
+          <i data-lucide="square" style="width:18px;height:18px;"></i> Cuadrada
+        </button>
+        <button class="shape-radio" type="button" onclick="addMesa('rect')">
+          <i data-lucide="rectangle-horizontal" style="width:18px;height:18px;"></i> Rectangular
+        </button>
+        <button class="shape-radio" type="button" onclick="addMesa('circle')">
+          <i data-lucide="circle" style="width:18px;height:18px;"></i> Redonda
+        </button>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function addMesa(shape) {
+    const id = nextId++;
+    const x = 40 + Math.floor(Math.random() * 300);
+    const y = 40 + Math.floor(Math.random() * 320);
+    const newMesa = shape === 'circle'
+      ? { id, shape, x: x+34, y: y+34, r: 34, cap: 2 }
+      : shape === 'rect'
+        ? { id, shape, x, y, w: 110, h: 55, cap: 6 }
+        : { id, shape, x, y, w: 70, h: 70, cap: 4 };
+    MESAS_DATA.push(newMesa);
+    selectedId = id;
+    renderAllMesas();
+    updatePropsPanel();
+  }
+
+  function deleteMesa() {
+    const idx = MESAS_DATA.findIndex(m => m.id === selectedId);
+    if (idx === -1) return;
+    MESAS_DATA.splice(idx, 1);
+    selectedId = MESAS_DATA.length > 0 ? MESAS_DATA[MESAS_DATA.length - 1].id : null;
+    renderAllMesas();
+    if (selectedId) updatePropsPanel();
+    else showEmptyProps();
+    UI.toast({ type: 'success', title: 'Mesa eliminada', sub: 'La mesa fue removida del plano.' });
+  }
+
+  function selectSala(salaId, btn) {
+    document.querySelectorAll('.sala-btn').forEach(b => {
+      b.classList.remove('is-active');
+      const check = b.querySelector('[data-lucide="check"]');
+      if (check) check.style.display = 'none';
+      const icon = b.querySelector('[data-lucide]');
+      if (icon && icon !== check) icon.style.color = '';
+    });
+    btn.classList.add('is-active');
+    const check = btn.querySelector('[data-lucide="check"]');
+    if (check) check.style.display = '';
+    const mainIcon = btn.querySelectorAll('[data-lucide]')[0];
+    if (mainIcon) mainIcon.style.color = 'var(--accent)';
+    if (window.lucide) lucide.createIcons();
+  }
+
+  document.getElementById('btnAddMesa').addEventListener('click', () => addMesa('square'));
+
+  renderAllMesas();
+  updatePropsPanel();
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

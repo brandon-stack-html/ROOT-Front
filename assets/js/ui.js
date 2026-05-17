@@ -40,6 +40,7 @@
     const top = overlayStack[overlayStack.length - 1];
     if (top.kind === 'modal') UI.closeModal(top.el.id);
     else if (top.kind === 'drawer') UI.closeDrawer(top.el.id);
+    else if (top.kind === 'sheet') UI.closeBottomSheet(top.el.id);
   });
 
   // ----------------------------------------------------------------------------
@@ -86,6 +87,57 @@
     if (!el) return;
     el.classList.remove('is-open');
     el.removeEventListener('click', onBackdropClick);
+    popOverlay(el);
+  };
+
+  // ----------------------------------------------------------------------------
+  // Bottom Sheet (App Mesero — slide-up desde abajo dentro del frame)
+  //   El elemento sheet tiene id="...". Su backdrop hermano debe tener
+  //   la clase .bottom-sheet-backdrop con atributo data-sheet="<id>".
+  //   Se abren ambos sincronizados.
+  // ----------------------------------------------------------------------------
+  function getSheetBackdrop(sheet) {
+    if (!sheet) return null;
+    const id = sheet.id;
+    return document.querySelector('.bottom-sheet-backdrop[data-sheet="' + id + '"]');
+  }
+
+  function onSheetBackdropClick(e) {
+    if (e.target === e.currentTarget) {
+      const id = e.currentTarget.getAttribute('data-sheet');
+      UI.closeBottomSheet(id);
+    }
+  }
+
+  function cancelVoiceInputs() {
+    if (global.VoiceInput && typeof global.VoiceInput.cancelAll === 'function') {
+      global.VoiceInput.cancelAll();
+    }
+  }
+
+  UI.openBottomSheet = function (id) {
+    const el = getBackdropById(id);
+    if (!el) return;
+    cancelVoiceInputs();
+    el.classList.add('is-open');
+    const bd = getSheetBackdrop(el);
+    if (bd) {
+      bd.classList.add('is-open');
+      bd.addEventListener('click', onSheetBackdropClick);
+    }
+    pushOverlay(el, 'sheet');
+  };
+
+  UI.closeBottomSheet = function (id) {
+    const el = typeof id === 'string' ? getBackdropById(id) : id;
+    if (!el) return;
+    cancelVoiceInputs();
+    el.classList.remove('is-open');
+    const bd = getSheetBackdrop(el);
+    if (bd) {
+      bd.classList.remove('is-open');
+      bd.removeEventListener('click', onSheetBackdropClick);
+    }
     popOverlay(el);
   };
 
@@ -167,6 +219,22 @@
   };
 
   // ----------------------------------------------------------------------------
+  // Empty state helper — Sprint 10.2
+  //   UI.toggleEmpty(targetSelector, hasResults)
+  //   Oculta/muestra una tabla/lista y su .empty-state hermano dentro del
+  //   mismo contenedor padre.
+  // ----------------------------------------------------------------------------
+  UI.toggleEmpty = function (targetSelector, hasResults) {
+    const target = typeof targetSelector === 'string' ? $(targetSelector) : targetSelector;
+    if (!target) return;
+    const empty = target.parentElement
+      ? target.parentElement.querySelector('.empty-state')
+      : null;
+    target.hidden = !hasResults;
+    if (empty) empty.hidden = hasResults;
+  };
+
+  // ----------------------------------------------------------------------------
   // Auto-triggers via data-attributes
   //   [data-open-modal="id"]  → click abre modal
   //   [data-open-drawer="id"] → click abre drawer
@@ -184,8 +252,15 @@
         UI.openDrawer(openDrawerTrigger.getAttribute('data-open-drawer'));
         return;
       }
+      const openSheetTrigger = e.target.closest('[data-open-sheet]');
+      if (openSheetTrigger) {
+        UI.openBottomSheet(openSheetTrigger.getAttribute('data-open-sheet'));
+        return;
+      }
       const closeTrigger = e.target.closest('[data-close]');
       if (closeTrigger) {
+        const sheet = closeTrigger.closest('.bottom-sheet');
+        if (sheet) { UI.closeBottomSheet(sheet.id); return; }
         const backdrop = closeTrigger.closest('.modal-backdrop, .drawer-backdrop');
         if (!backdrop) return;
         if (backdrop.classList.contains('drawer-backdrop')) UI.closeDrawer(backdrop.id);
