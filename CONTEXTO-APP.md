@@ -9,7 +9,7 @@
 
 ## Nombre de la app
 
-- **Nombre comercial:** {ROOT} *(el logo se renderiza como una imagen `ROOT.png` con `alt="[ROOT]"`. En texto puro: **ROOT**)*
+- **Nombre comercial:** {ROOT} *(el logo se renderiza como texto puro `[ROOT]` con la clase CSS `.root-wordmark`: Inter 800, color `#4F46E5` (var(--accent)), letter-spacing 0.10em. No hay imagen — es un wordmark tipográfico en morado.)*
 - **Nombre técnico / interno (en docs):** Inventario POS
 - **Tagline corto (hero del landing actual):** "ROOT — Demo del sistema · 7 módulos · ~62 pantallas · navegación completa"
 - **Tagline largo (docs):** "SaaS multi-tenant para restaurantes en Colombia"
@@ -435,7 +435,7 @@ Carta QR (mobile) + tienda online (mobile y desktop). Marca demo "El Buen Sabor"
 - **Cara al cliente sin app:** Storefront público + Carta QR para la mesa.
 - **Nómina y adelantos salariales:** módulo completo para gestionar pagos quincenal/mensual, solicitar y aprobar adelantos con flujo de estados (`borrador → pendiente → aprobada → pagada → descontada`), comprobante PDF descargable. Salario mínimo Colombia 2026 (`$1.623.500`) como tope inferior siempre validado.
 - **Diseño:** dark/light con toggle persistente (`localStorage`), mobile-first 360 → 1920px, accesibilidad (skip link, focus visibles, atajos de teclado).
-- **Stack de la demo:** HTML + CSS + JS vanilla, sin build, sin frameworks. Íconos `lucide` por CDN, fuente `Inter`. PDF via `jsPDF` por CDN.
+- **Stack de la demo:** HTML + CSS + JS vanilla, sin build, sin frameworks. Íconos `lucide` por CDN, fuente `Inter`. PDF via `jsPDF` por CDN. Wordmark `[ROOT]` renderizado como texto CSS (`.root-wordmark` en `utilities.css`), sin imagen.
 
 ---
 
@@ -462,3 +462,44 @@ Para mantener consistencia si la landing muestra screenshots, el restaurante dem
 - Estados de adelanto posibles: `borrador → pendiente → aprobada → pagada → descontada` (+ rama `rechazada` desde `pendiente`)
 
 > Estos datos NO son del SaaS ROOT — son del negocio ficticio que vive dentro de la demo.
+
+---
+
+## Sprint 14 — Refactor visual + capa de roles (2026-05-17)
+
+### Cambios visuales (Vercel aesthetic)
+- **Tokens nuevos** en `tokens.css`: escala de superficies (`--bg-base/surface/elevated/overlay`), bordes Vercel (`--border-subtle/default/strong`), alias semánticos de estado (`--state-success/warning/danger/info`), fondos y bordes de badge translúcidos.
+- **Radius actualizado**: `--radius-md: 10px`, `--radius-lg: 14px`, `--radius-xl: 20px`.
+- **Dark mode**: colores de estado con menor saturación (`--success: #22C55E`, `--error: #F43F5E`, `--warning: #EAB308`, `--info: #60A5FA`).
+- **KDS** (`kds.css`): bordes de tickets urgentes/nuevos/warn cambiados a `rgba` translúcidos (1px). Badge "NUEVO" con fondo translúcido.
+- **Mesas** (`mesas.css`): fondos de cards de estado (ocupada, por cobrar, reservada) pasados a `rgba` translúcidos en ambos modos.
+- **Auth** (`auth.css`): inputs usan `--radius-md`, focus state con glow morado, stepper con `padding-block` consistente.
+- **Mesero mapa**: header sticky, tabs sticky en `top: 54px`, action sheet muestra "Mesa #N · Mesero".
+- **POS mapa**: toggle Mapa/Lista movido al topbar, FAB reposicionado a bottom-right con ícono `table-2`.
+
+### Sistema de autenticación y roles (`assets/js/auth.js`)
+- **API**: `Auth.current()`, `Auth.can(perm)`, `Auth.login(user)`, `Auth.logout()`, `Auth.requireRole(role)`, `Auth.switchRole(role)`.
+- **5 roles**: `admin`, `gerente`, `cajero`, `mesero`, `cocina` con permisos granulares.
+- **Auto-inicialización**: si no existe `root:auth:v1` en localStorage, se inicia con usuario admin demo.
+- **Switcher de rol** (DEMO_MODE): aparece en el dropdown del avatar de la topbar en todas las páginas (inyectado por `nav.js`).
+- **Filtrado de sidebar**: rutas restringidas por rol se ocultan automáticamente. Rol `mesero` y `cocina` redirigen fuera del backoffice.
+- **`data-requires`**: elementos con este atributo se ocultan si el rol no tiene el permiso.
+
+### CRUD de usuarios (`backoffice/usuarios.html`)
+- Persistencia en `root:users:v1` con seed de 12 usuarios.
+- Drawer de editar (pre-cargado con datos del usuario seleccionado).
+- Modal de confirmación para eliminar.
+- Botón "Eliminar" solo visible si `Auth.can("users:delete")`.
+
+### Matriz de roles (`backoffice/roles.html`)
+- Celdas de permiso ahora tienen 3 estados: `check` (permitido), `eye` (solo lectura), `x` (bloqueado).
+- Click en celda cicla entre estados y persiste en `root:roles:v1`.
+- Drawer "Nuevo rol personalizado".
+
+### Páginas de smoke test
+- `test-tokens.html`: página de referencia que muestra todos los tokens (superficies, bordes, radius, sombras, badges, tipografía, botones y cards) en una sola pantalla.
+
+### Persistencia usada en Sprint 14
+- `root:auth:v1` — usuario logueado y rol activo
+- `root:users:v1` — lista de usuarios del negocio
+- `root:roles:v1` — matriz de permisos por rol (overrides del default)

@@ -11,27 +11,809 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/pos-shell.css" />
+  <style>
+    /* ============================================================================
+       Mapa de mesas — Diseño Vercel/Linear usando tokens del DS
+       Sprint 14 — Tables Redesign
+       ============================================================================ */
+    body { overflow: hidden; background: var(--bg); }
+
+    /* RGBA del accent (#4F46E5) para glows — sin color-mix por compat */
+    :root {
+      --accent-rgb: 79, 70, 229;
+      --error-rgb:  239, 68, 68;
+      --warning-rgb: 245, 158, 11;
+      --info-rgb:   59, 130, 246;
+      --success-rgb: 16, 185, 129;
+      --muted-rgb:  161, 161, 170;
+    }
+
+    /* ════════════════════════ TOPBAR ════════════════════════ */
+    .pos-topbar {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      box-shadow: none;
+      padding: 0 16px;
+      height: 56px;
+    }
+
+    /* Pill turno abierto */
+    .pm-turno-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(var(--success-rgb), .12);
+      border: 1px solid rgba(var(--success-rgb), .28);
+      border-radius: 999px;
+      padding: 4px 11px 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--success);
+      letter-spacing: -.005em;
+      box-shadow: 0 0 0 4px rgba(var(--success-rgb), .04);
+    }
+    .pm-turno-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 0 rgba(var(--success-rgb), .6);
+      animation: dotPulse 2.5s ease-out infinite;
+    }
+    @keyframes dotPulse {
+      0%   { box-shadow: 0 0 0 0   rgba(var(--success-rgb), .6); }
+      80%  { box-shadow: 0 0 0 6px rgba(var(--success-rgb), 0); }
+      100% { box-shadow: 0 0 0 0   rgba(var(--success-rgb), 0); }
+    }
+
+    .pm-topbar-meta-group {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .pm-topbar-divider {
+      width: 1px; height: 14px;
+      background: var(--border);
+    }
+    .pm-topbar-clock {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -.005em;
+    }
+
+    /* Chip ventas (accent) */
+    .pm-ventas-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(var(--accent-rgb), .10);
+      border: 1px solid rgba(var(--accent-rgb), .25);
+      border-radius: 999px;
+      padding: 5px 12px 5px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -.01em;
+      font-variant-numeric: tabular-nums;
+      transition: all 150ms ease;
+    }
+    .pm-ventas-chip:hover {
+      background: rgba(var(--accent-rgb), .14);
+      box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .06);
+    }
+    .pm-ventas-chip svg { width: 13px; height: 13px; }
+
+    /* ════════════════════════ LAYOUT ════════════════════════ */
+    .pm-layout {
+      display: flex;
+      height: calc(100vh - 56px);
+      overflow: hidden;
+    }
+
+    /* ════════════════════════ SIDEBAR ════════════════════════ */
+    .pm-sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--alt);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .pm-sidebar-inner {
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      flex: 1;
+    }
+    .pm-section { padding: 12px 0; }
+    .pm-section + .pm-section { border-top: 1px solid var(--border); }
+    .pm-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pm-section-title svg { width: 11px; height: 11px; }
+
+    /* Chips de resumen */
+    .pm-summary-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+    .pm-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px 3px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: -.005em;
+    }
+    .pm-chip::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+    }
+    .pm-chip.libre    { background: rgba(var(--muted-rgb), .08);  color: var(--muted); border: 1px solid rgba(var(--muted-rgb), .20); }
+    .pm-chip.libre::before    { background: var(--muted); }
+    .pm-chip.ocupada  { background: rgba(var(--error-rgb), .10);  color: var(--error); border: 1px solid rgba(var(--error-rgb), .25); }
+    .pm-chip.ocupada::before  { background: var(--error); }
+    .pm-chip.cobrar   { background: rgba(var(--warning-rgb), .12); color: var(--warning); border: 1px solid rgba(var(--warning-rgb), .28); }
+    .pm-chip.cobrar::before   { background: var(--warning); }
+
+    /* KPI cards estilo Vercel */
+    .pm-kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .pm-kpi {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      transition: border-color 150ms ease;
+    }
+    .pm-kpi:hover { border-color: rgba(var(--accent-rgb), .35); }
+    .pm-kpi-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .pm-kpi-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.02em;
+      line-height: 1.1;
+    }
+
+    /* Filtros tipo Vercel — fila con check + dot + label */
+    .pm-filtros { display: flex; flex-direction: column; gap: 1px; }
+    .pm-filtro-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 120ms ease;
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+      letter-spacing: -.005em;
+    }
+    .pm-filtro-pill:hover { background: var(--bg); }
+    .pm-filtro-pill input { display: none; }
+    .pm-filtro-check {
+      width: 16px; height: 16px; flex-shrink: 0;
+      border-radius: 5px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 130ms ease;
+    }
+    .pm-filtro-pill input:checked ~ .pm-filtro-check {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .12);
+    }
+    .pm-filtro-check::after {
+      content: '';
+      width: 4px; height: 7px;
+      border: 1.8px solid transparent;
+      border-top: none; border-left: none;
+      transform: rotate(45deg) translate(0, -1px);
+      transition: border-color 130ms ease;
+    }
+    .pm-filtro-pill input:checked ~ .pm-filtro-check::after { border-color: white; }
+    .pm-filtro-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .pm-filtro-label { flex: 1; }
+    .pm-filtro-count {
+      font-size: 11px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+
+    /* Panel mesa seleccionada */
+    .pm-sel-empty {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      padding: 22px 8px;
+      line-height: 1.5;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+    }
+    .pm-sel-empty svg {
+      width: 24px; height: 24px;
+      color: var(--border);
+      margin-bottom: 8px;
+      display: block;
+      margin-inline: auto;
+    }
+
+    .pm-sel-card {
+      background: var(--bg);
+      border: 1px solid rgba(var(--accent-rgb), .28);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow:
+        0 0 0 4px rgba(var(--accent-rgb), .04),
+        0 4px 16px rgba(var(--accent-rgb), .06);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .pm-sel-card-top {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+    }
+    .pm-sel-num {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.03em;
+      line-height: 1;
+    }
+    .pm-sel-sala {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    .pm-sel-estado-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px 3px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .pm-sel-estado-chip::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+    }
+    .estchip-libre      { background: rgba(var(--muted-rgb), .10);   color: var(--muted);   border: 1px solid rgba(var(--muted-rgb), .25); }
+    .estchip-libre::before      { background: var(--muted); }
+    .estchip-ocupada    { background: rgba(var(--error-rgb), .12);   color: var(--error);   border: 1px solid rgba(var(--error-rgb), .30); }
+    .estchip-ocupada::before    { background: var(--error); }
+    .estchip-por-cobrar { background: rgba(var(--warning-rgb), .14); color: var(--warning); border: 1px solid rgba(var(--warning-rgb), .32); }
+    .estchip-por-cobrar::before { background: var(--warning); }
+    .estchip-reservada  { background: rgba(var(--info-rgb), .12);    color: var(--info);    border: 1px solid rgba(var(--info-rgb), .30); }
+    .estchip-reservada::before  { background: var(--info); }
+    .estchip-limpieza   { background: rgba(var(--muted-rgb), .10);   color: var(--muted);   border: 1px solid rgba(var(--muted-rgb), .25); }
+    .estchip-limpieza::before   { background: var(--muted); }
+
+    .pm-sel-meta-row { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted); }
+    .pm-sel-meta-item { display: flex; align-items: center; gap: 7px; }
+    .pm-sel-meta-item svg { width: 13px; height: 13px; color: var(--muted); opacity: .7; }
+    .pm-sel-meta-item strong { color: var(--text); font-weight: 600; }
+    .pm-sel-total-block {
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+    }
+    .pm-sel-total-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .pm-sel-total {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+    }
+    .pm-sel-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .pm-sel-actions .pm-sel-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      text-decoration: none;
+      transition: all 130ms ease;
+      letter-spacing: -.01em;
+    }
+    .pm-sel-actions .pm-sel-btn:hover {
+      border-color: rgba(var(--accent-rgb), .4);
+      background: rgba(var(--accent-rgb), .04);
+    }
+    .pm-sel-actions .pm-sel-btn.is-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 0 0 rgba(var(--accent-rgb), .25);
+    }
+    .pm-sel-actions .pm-sel-btn.is-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .18);
+    }
+    .pm-sel-actions .pm-sel-btn svg { width: 13px; height: 13px; }
+    .pm-sel-actions-row2 { margin-top: 4px; }
+    .pm-sel-actions-row2 .pm-sel-btn {
+      width: 100%;
+      color: var(--error);
+    }
+    .pm-sel-actions-row2 .pm-sel-btn:hover {
+      border-color: rgba(var(--error-rgb), .4);
+      background: rgba(var(--error-rgb), .06);
+    }
+
+    /* Footer sidebar */
+    .pm-sidebar-footer {
+      padding: 12px 16px 16px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .pm-sidebar-footer .pos-cerrar-caja {
+      width: 100%;
+      transition: all 150ms ease;
+    }
+
+    /* ════════════════════════ CANVAS ════════════════════════ */
+    .pm-canvas-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .pm-canvas {
+      flex: 1;
+      overflow-y: auto;
+      padding: 22px 28px;
+    }
+    .pm-canvas::-webkit-scrollbar { width: 8px; }
+    .pm-canvas::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    /* Sala group */
+    .sala-group { margin-bottom: 26px; }
+    .sala-group-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .sala-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .sala-group-header-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+    .sala-group-count {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      background: var(--alt);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+    .sala-group-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .pm-canvas.density-compact .sala-group-grid {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    /* ════════════════════════ MESA CARD ════════════════════════ */
+    .mesa-card {
+      background: var(--alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      position: relative;
+      transition:
+        border-color 180ms cubic-bezier(.4,0,.2,1),
+        background 180ms cubic-bezier(.4,0,.2,1),
+        box-shadow 180ms cubic-bezier(.4,0,.2,1),
+        transform 180ms cubic-bezier(.4,0,.2,1);
+      min-height: 170px;
+      -webkit-user-select: none;
+      user-select: none;
+      overflow: hidden;
+    }
+    .pm-canvas.density-compact .mesa-card {
+      min-height: 120px;
+      padding: 10px;
+      gap: 5px;
+    }
+
+    /* Hover: glow del accent estilo Vercel */
+    .mesa-card:hover {
+      border-color: rgba(var(--accent-rgb), .45);
+      background: var(--bg);
+      box-shadow:
+        0 0 0 1px rgba(var(--accent-rgb), .15),
+        0 8px 30px rgba(var(--accent-rgb), .08);
+      transform: translateY(-1px);
+    }
+    .mesa-card.is-selected {
+      border-color: rgba(var(--accent-rgb), .80);
+      background: var(--bg);
+      box-shadow:
+        0 0 0 3px rgba(var(--accent-rgb), .20),
+        0 8px 30px rgba(var(--accent-rgb), .15);
+    }
+
+    /* Header card: número + capacidad */
+    .mesa-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mesa-card-num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.04em;
+      line-height: 1;
+      font-feature-settings: 'tnum';
+    }
+    .pm-canvas.density-compact .mesa-card-num { font-size: 18px; }
+    .mesa-card-cap {
+      font-size: 10px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 500;
+      background: rgba(var(--muted-rgb), .10);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(var(--muted-rgb), .15);
+    }
+    .mesa-card-cap svg { width: 10px; height: 10px; opacity: .7; }
+
+    /* Chip de estado dentro de la card */
+    .mesa-card-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+    .mesa-card-state::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+    }
+    .pm-canvas.density-compact .mesa-card-state { font-size: 9px; padding: 1px 6px 1px 5px; }
+    .pm-canvas.density-compact .mesa-card-state-label { display: none; }
+    .pm-canvas.density-compact .mesa-card-state { padding: 3px; }
+    .pm-canvas.density-compact .mesa-card-state::before { width: 6px; height: 6px; margin: 0; }
+
+    /* Dots comensales */
+    .mesa-dots { display: flex; gap: 3px; flex-wrap: wrap; }
+    .mesa-dot  { width: 7px; height: 7px; border-radius: 50%; }
+    .mesa-dot.filled { background: var(--text); opacity: .65; }
+    .mesa-dot.empty  { background: var(--border); }
+
+    .mesa-card-mesero {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mesa-card-libre {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      opacity: .6;
+    }
+
+    /* Footer card: total + tiempo */
+    .mesa-card-footer {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .mesa-card-total {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.02em;
+    }
+    .mesa-card-tiempo {
+      font-size: 10px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-variant-numeric: tabular-nums;
+    }
+    .mesa-card-tiempo svg { width: 10px; height: 10px; }
+    .mesa-card-tiempo.t-ok     { color: var(--success); }
+    .mesa-card-tiempo.t-warn   { color: var(--warning); }
+    .mesa-card-tiempo.t-danger { color: var(--error); }
+
+    /* ════════════════════════ VISTA LISTA ════════════════════════ */
+    .pm-table-wrap {
+      background: var(--alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .mesas-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .mesas-table th {
+      text-align: left;
+      font-size: 10px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .mesas-table td {
+      padding: 12px 14px; border-bottom: 1px solid var(--border);
+      color: var(--text); vertical-align: middle;
+    }
+    .mesas-table tr:last-child td { border-bottom: none; }
+    .mesas-table tbody tr { transition: background 130ms ease; cursor: pointer; }
+    .mesas-table tbody tr:hover td { background: var(--bg); }
+
+    .mesas-estado-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px 3px 6px;
+      border-radius: 999px;
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .03em;
+    }
+    .mesas-estado-badge::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+    }
+    .mesas-estado-badge.libre      { background: rgba(var(--muted-rgb), .10);  color: var(--muted);  border: 1px solid rgba(var(--muted-rgb), .25); }
+    .mesas-estado-badge.libre::before { background: var(--muted); }
+    .mesas-estado-badge.ocupada    { background: rgba(var(--error-rgb), .12);  color: var(--error);  border: 1px solid rgba(var(--error-rgb), .30); }
+    .mesas-estado-badge.ocupada::before { background: var(--error); }
+    .mesas-estado-badge.por-cobrar { background: rgba(var(--warning-rgb), .14); color: var(--warning); border: 1px solid rgba(var(--warning-rgb), .32); }
+    .mesas-estado-badge.por-cobrar::before { background: var(--warning); }
+    .mesas-estado-badge.reservada  { background: rgba(var(--info-rgb), .12);   color: var(--info);   border: 1px solid rgba(var(--info-rgb), .30); }
+    .mesas-estado-badge.reservada::before { background: var(--info); }
+    .mesas-estado-badge.limpieza   { background: rgba(var(--muted-rgb), .10);  color: var(--muted);  border: 1px solid rgba(var(--muted-rgb), .25); }
+    .mesas-estado-badge.limpieza::before { background: var(--muted); }
+
+    .mesas-table-action {
+      font-size: 11px;
+      padding: 5px 10px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      transition: all 130ms ease;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .mesas-table-action:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .18);
+    }
+
+    /* ════════════════════════ CONTROLES (footer) ════════════════════════ */
+    .pm-controls {
+      flex-shrink: 0;
+      border-top: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg);
+    }
+    .pm-ctrl-group {
+      display: flex;
+      align-items: center;
+      background: var(--alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 1px;
+    }
+    .pm-ctrl-btn {
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 12px; font-weight: 500;
+      color: var(--muted);
+      background: transparent; border: none;
+      cursor: pointer;
+      transition: all 130ms ease;
+      font-family: var(--ff-base);
+      display: flex; align-items: center; gap: 5px;
+      letter-spacing: -.005em;
+    }
+    .pm-ctrl-btn:hover:not(.is-active) { color: var(--text); }
+    .pm-ctrl-btn.is-active {
+      background: var(--bg);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow:
+        0 0 0 1px var(--border),
+        0 1px 2px rgba(0,0,0,.04);
+    }
+    .pm-ctrl-btn svg { width: 13px; height: 13px; }
+
+    .pm-controls-spacer { flex: 1; }
+    .pm-refresh-btn {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--alt);
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .pm-refresh-btn:hover {
+      color: var(--accent);
+      border-color: rgba(var(--accent-rgb), .4);
+      background: rgba(var(--accent-rgb), .06);
+    }
+    .pm-refresh-btn:active svg { transform: rotate(180deg); }
+    .pm-refresh-btn svg { width: 14px; height: 14px; transition: transform 400ms ease; }
+
+    /* ════════════════════════ MOBILE ════════════════════════ */
+    .pm-sidebar-fab {
+      display: none;
+      position: fixed;
+      bottom: 16px; left: 16px;
+      z-index: 50;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 999px;
+      padding: 11px 18px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .14), 0 8px 24px rgba(var(--accent-rgb), .35);
+      align-items: center; gap: 6px;
+      font-family: var(--ff-base);
+    }
+    .pm-sidebar-fab svg { width: 14px; height: 14px; }
+    .pm-sidebar-close-btn {
+      display: none;
+      position: absolute; top: 10px; right: 10px;
+      background: transparent; border: none; cursor: pointer;
+      color: var(--muted); padding: 4px;
+      z-index: 5;
+    }
+
+    @media (max-width: 1439px) { .pm-sidebar { width: 250px; } .pm-canvas { padding: 20px 22px; } }
+    @media (max-width: 1023px) {
+      .pm-sidebar { display: none; width: 100%; }
+      .pm-sidebar-fab { display: flex; }
+      .pm-sidebar-close-btn { display: block; }
+      .pm-sidebar.is-mobile-open {
+        position: fixed; inset: 56px 0 0 0;
+        width: 100%; z-index: 40; display: flex;
+      }
+    }
+
+    /* ════════════════════════ EMPTY STATE ════════════════════════ */
+    .pm-empty {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .pm-empty svg {
+      width: 40px; height: 40px;
+      color: var(--border);
+      margin-bottom: 12px;
+    }
+  </style>
 </head>
 <body>
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
 
   <div class="pos-shell">
 
+    <!-- ══════════════════════ TOPBAR ══════════════════════ -->
     <header class="pos-topbar">
       <div class="pos-topbar-brand">
-        <img src="../ROOT.png" class="pos-brand-logo-img" alt="[ROOT]">
-        
+        <span class="root-wordmark" style="font-size:15px">[ROOT]</span>
         <span class="pos-brand-badge">POS</span>
       </div>
-      <nav class="pos-topbar-zones">
-        <button class="pos-zone-tab is-active" type="button">Salón Principal</button>
-        <button class="pos-zone-tab" type="button">Terraza</button>
-        <button class="pos-zone-tab" type="button">Barra</button>
-      </nav>
+
+      <div class="pm-topbar-meta-group">
+        <div class="pm-turno-pill">
+          <div class="pm-turno-dot"></div>
+          Turno abierto
+        </div>
+        <div class="pm-topbar-divider"></div>
+        <span>Cajero <strong style="color:var(--text);font-weight:600;">Juan C.</strong></span>
+        <div class="pm-topbar-divider"></div>
+        <span class="pm-topbar-clock" id="topbarClock">13:47</span>
+      </div>
+
       <div class="pos-topbar-meta">
-        <div class="pos-monto-chip">
-          <i data-lucide="banknote"></i>
-          <span>$1.234.000</span>
+        <!-- Toggle mapa/lista en topbar (Sprint 14) -->
+        <div class="pm-ctrl-group" id="ctrlVistaTopbar" style="margin-right:4px;">
+          <button class="pm-ctrl-btn is-active" data-vista="mapa" title="Vista mapa">
+            <i data-lucide="layout-grid"></i>
+          </button>
+          <button class="pm-ctrl-btn" data-vista="lista" title="Vista lista">
+            <i data-lucide="list"></i>
+          </button>
+        </div>
+        <div class="pm-ventas-chip" title="Ventas del turno">
+          <i data-lucide="trending-up"></i>
+          <span id="topbarVentas">$0</span>
         </div>
         <button class="pos-topbar-iconbtn" type="button" aria-label="Notificaciones">
           <i data-lucide="bell"></i>
@@ -41,247 +823,166 @@
           <i data-lucide="sun" class="theme-icon-light"></i>
           <i data-lucide="moon" class="theme-icon-dark"></i>
         </button>
-        <button class="pos-topbar-avatar" type="button" aria-label="Perfil">AG</button>
+        <button class="pos-topbar-avatar" type="button" aria-label="Perfil">JC</button>
       </div>
     </header>
 
-    <main id="main" class="pos-content">
+    <!-- ══════════════════════ CUERPO ══════════════════════ -->
+    <main id="main">
+      <div class="pm-layout">
 
-      <!-- Área principal del mapa -->
-      <div class="pos-mapa-main">
+        <!-- ──── SIDEBAR ──── -->
+        <aside class="pm-sidebar" id="pmSidebar">
+          <button class="pm-sidebar-close-btn" id="pmSidebarClose" aria-label="Cerrar">
+            <i data-lucide="x"></i>
+          </button>
 
-        <div class="pos-mapa-header">
-          <div>
-            <div class="sala">Salón Principal</div>
-            <div class="title">Mapa de mesas <span class="meta">· 12 mesas · 5 ocupadas</span></div>
+          <div class="pm-sidebar-inner">
+
+            <!-- Resumen turno -->
+            <div class="pm-section">
+              <div class="pm-section-title">
+                <i data-lucide="activity"></i>
+                Resumen del turno
+              </div>
+              <div class="pm-summary-chips" id="pmSummaryChips"></div>
+              <div class="pm-kpi-row">
+                <div class="pm-kpi">
+                  <div class="pm-kpi-label">Ventas</div>
+                  <div class="pm-kpi-val" id="pmKpiVentas">—</div>
+                </div>
+                <div class="pm-kpi">
+                  <div class="pm-kpi-label">Ticket prom.</div>
+                  <div class="pm-kpi-val" id="pmKpiTicket">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="pm-section">
+              <div class="pm-section-title">
+                <i data-lucide="filter"></i>
+                Filtros
+              </div>
+              <div class="pm-filtros">
+                <label class="pm-filtro-pill">
+                  <input type="checkbox" id="filtroLibre" checked>
+                  <div class="pm-filtro-check"></div>
+                  <span class="pm-filtro-dot" style="background:var(--muted);opacity:.6;"></span>
+                  <span class="pm-filtro-label">Libres</span>
+                  <span class="pm-filtro-count" id="cntLibres">0</span>
+                </label>
+                <label class="pm-filtro-pill">
+                  <input type="checkbox" id="filtroOcupada" checked>
+                  <div class="pm-filtro-check"></div>
+                  <span class="pm-filtro-dot" style="background:var(--error);"></span>
+                  <span class="pm-filtro-label">Ocupadas</span>
+                  <span class="pm-filtro-count" id="cntOcupadas">0</span>
+                </label>
+                <label class="pm-filtro-pill">
+                  <input type="checkbox" id="filtroCobrar" checked>
+                  <div class="pm-filtro-check"></div>
+                  <span class="pm-filtro-dot" style="background:var(--warning);"></span>
+                  <span class="pm-filtro-label">Por cobrar</span>
+                  <span class="pm-filtro-count" id="cntCobrar">0</span>
+                </label>
+                <label class="pm-filtro-pill">
+                  <input type="checkbox" id="filtroReserv">
+                  <div class="pm-filtro-check"></div>
+                  <span class="pm-filtro-dot" style="background:var(--info);"></span>
+                  <span class="pm-filtro-label">Reservadas</span>
+                  <span class="pm-filtro-count" id="cntReserv">0</span>
+                </label>
+                <label class="pm-filtro-pill">
+                  <input type="checkbox" id="filtroLimpieza">
+                  <div class="pm-filtro-check"></div>
+                  <span class="pm-filtro-dot" style="background:var(--muted);opacity:.4;"></span>
+                  <span class="pm-filtro-label">En limpieza</span>
+                  <span class="pm-filtro-count" id="cntLimp">0</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Mesa seleccionada -->
+            <div class="pm-section" style="flex:1;">
+              <div class="pm-section-title">
+                <i data-lucide="mouse-pointer-click"></i>
+                Mesa seleccionada
+              </div>
+              <div class="pm-sel-empty" id="pmSelEmpty">
+                <i data-lucide="hand"></i>
+                Hacé click en una mesa<br>para ver el detalle
+              </div>
+              <div id="pmSelPanel" style="display:none;">
+                <div class="pm-sel-card">
+                  <div class="pm-sel-card-top">
+                    <div>
+                      <div class="pm-sel-num" id="pmSelNum">—</div>
+                      <div class="pm-sel-sala" id="pmSelSala">—</div>
+                    </div>
+                    <div class="pm-sel-estado-chip" id="pmSelEstadoChip"></div>
+                  </div>
+                  <div class="pm-sel-meta-row" id="pmSelMeta"></div>
+                  <div class="pm-sel-total-block">
+                    <div class="pm-sel-total-label">Total</div>
+                    <div class="pm-sel-total" id="pmSelTotal">—</div>
+                  </div>
+                </div>
+                <div class="pm-sel-actions">
+                  <a class="pm-sel-btn" id="pmSelVerPedido" href="#">
+                    <i data-lucide="clipboard-list"></i> Pedido
+                  </a>
+                  <a class="pm-sel-btn is-primary" id="pmSelCobrar" href="#">
+                    <i data-lucide="credit-card"></i> Cobrar
+                  </a>
+                </div>
+                <div class="pm-sel-actions-row2">
+                  <button class="pm-sel-btn" id="pmSelLiberar" type="button">
+                    <i data-lucide="unlock"></i> Liberar mesa
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
-          <div class="pos-mapa-header-actions">
-            <button class="btn btn-secondary btn-sm" type="button">
-              <i data-lucide="filter"></i> Filtrar
+
+          <div class="pm-sidebar-footer">
+            <button class="pos-cerrar-caja" type="button" data-open-modal="modalCerrarCaja">
+              <i data-lucide="lock"></i> Cerrar caja
             </button>
-            <button class="btn btn-secondary btn-sm" type="button">
-              <i data-lucide="layout-grid"></i> Vista lista
+          </div>
+        </aside>
+
+        <!-- ──── CANVAS ──── -->
+        <div class="pm-canvas-wrap">
+          <div class="pm-canvas density-normal" id="pmCanvas"></div>
+
+          <div class="pm-controls">
+            <div class="pm-ctrl-group" id="ctrlVista" style="display:none;"><!-- oculto: movido al topbar --></div>
+            <div class="pm-ctrl-group" id="ctrlDensidad">
+              <button class="pm-ctrl-btn is-active" data-density="normal">
+                <i data-lucide="rows-3"></i> Normal
+              </button>
+              <button class="pm-ctrl-btn" data-density="compact">
+                <i data-lucide="grid-3x3"></i> Compact
+              </button>
+            </div>
+
+            <div class="pm-controls-spacer"></div>
+
+            <button class="pm-refresh-btn" id="pmRefresh" title="Actualizar mapa" type="button">
+              <i data-lucide="refresh-cw"></i>
             </button>
           </div>
         </div>
 
-        <div class="pos-mapa-canvas">
-          <!-- Líneas decorativas del salón -->
-          <svg class="deco" viewBox="0 0 640 450" preserveAspectRatio="none">
-            <line x1="40" y1="155" x2="600" y2="155" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
-            <line x1="40" y1="285" x2="600" y2="285" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
-            <line x1="160" y1="20" x2="160" y2="430" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
-            <line x1="300" y1="20" x2="300" y2="430" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
-            <line x1="440" y1="20" x2="440" y2="430" stroke="currentColor" stroke-width="1" stroke-dasharray="3,4" style="color: var(--border)"/>
-          </svg>
-
-          <!-- Mesa 1 — libre -->
-          <a href="./pedido.html?mesa=1&nuevo=1" class="mesa-pos is-libre" style="left: 60px; top: 50px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">1</span>
-            </div>
-            <div class="mesa-pos-libre-label">LIBRE</div>
-          </a>
-
-          <!-- Mesa 2 — ocupada -->
-          <a href="./pedido.html?mesa=2" class="mesa-pos is-ocupada" style="left: 200px; top: 50px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">2</span>
-              <span class="mesa-pos-badge">OCUPADA</span>
-            </div>
-            <div class="mesa-pos-spacer"></div>
-            <div class="mesa-pos-mesero-row">
-              <span class="mesa-pos-mesero-avatar">JC</span>
-              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:23</span>
-            </div>
-            <div class="mesa-pos-total">$45.000</div>
-          </a>
-
-          <!-- Mesa 3 — ocupada -->
-          <a href="./pedido.html?mesa=3" class="mesa-pos is-ocupada" style="left: 340px; top: 50px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">3</span>
-              <span class="mesa-pos-badge">OCUPADA</span>
-            </div>
-            <div class="mesa-pos-spacer"></div>
-            <div class="mesa-pos-mesero-row">
-              <span class="mesa-pos-mesero-avatar">AG</span>
-              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:18</span>
-            </div>
-            <div class="mesa-pos-total">$38.000</div>
-          </a>
-
-          <!-- Mesa 7 — libre -->
-          <a href="./pedido.html?mesa=7&nuevo=1" class="mesa-pos is-libre" style="left: 480px; top: 50px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">7</span>
-            </div>
-            <div class="mesa-pos-libre-label">LIBRE</div>
-          </a>
-
-          <!-- Mesa 4 — en cocina -->
-          <a href="./pedido.html?mesa=4" class="mesa-pos is-cocina" style="left: 60px; top: 180px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">4</span>
-              <span class="mesa-pos-badge">EN COCINA</span>
-            </div>
-            <div class="mesa-pos-spacer"></div>
-            <div class="mesa-pos-mesero-row">
-              <span class="mesa-pos-mesero-avatar">JC</span>
-              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:42</span>
-            </div>
-            <div class="mesa-pos-total">$92.000</div>
-          </a>
-
-          <!-- Mesa 5 — en cocina -->
-          <a href="./pedido.html?mesa=5" class="mesa-pos is-cocina" style="left: 200px; top: 180px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">5</span>
-              <span class="mesa-pos-badge">EN COCINA</span>
-            </div>
-            <div class="mesa-pos-spacer"></div>
-            <div class="mesa-pos-mesero-row">
-              <span class="mesa-pos-mesero-avatar">SR</span>
-              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:35</span>
-            </div>
-            <div class="mesa-pos-total">$67.000</div>
-          </a>
-
-          <!-- Mesa 6 — lista -->
-          <a href="./pedido.html?mesa=6" class="mesa-pos is-lista" style="left: 340px; top: 180px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">6</span>
-              <span class="mesa-pos-badge">¡LISTO!</span>
-            </div>
-            <div class="mesa-pos-spacer"></div>
-            <div class="mesa-pos-mesero-row">
-              <span class="mesa-pos-mesero-avatar">AG</span>
-              <span class="mesa-pos-tiempo"><i data-lucide="clock"></i> 00:14</span>
-            </div>
-            <div class="mesa-pos-total">$78.000</div>
-          </a>
-
-          <!-- Mesa 8 — libre -->
-          <a href="./pedido.html?mesa=8&nuevo=1" class="mesa-pos is-libre" style="left: 480px; top: 180px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">8</span>
-            </div>
-            <div class="mesa-pos-libre-label">LIBRE</div>
-          </a>
-
-          <!-- Mesa 9 — libre -->
-          <a href="./pedido.html?mesa=9&nuevo=1" class="mesa-pos is-libre" style="left: 60px; top: 310px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">9</span>
-            </div>
-            <div class="mesa-pos-libre-label">LIBRE</div>
-          </a>
-
-          <!-- Mesa 10 — libre -->
-          <a href="./pedido.html?mesa=10&nuevo=1" class="mesa-pos is-libre" style="left: 200px; top: 310px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">10</span>
-            </div>
-            <div class="mesa-pos-libre-label">LIBRE</div>
-          </a>
-
-          <!-- Mesa 11 — ocupada con warn (1h 20m) -->
-          <a href="./pedido.html?mesa=11" class="mesa-pos is-ocupada is-warn" style="left: 340px; top: 310px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">11</span>
-              <span class="mesa-pos-badge">OCUPADA</span>
-            </div>
-            <div class="mesa-pos-spacer"></div>
-            <div class="mesa-pos-warn-row">
-              <i data-lucide="alert-triangle"></i>
-              <span class="lbl">1h 20m</span>
-            </div>
-            <div class="mesa-pos-mesero-row">
-              <span class="mesa-pos-mesero-avatar">SR</span>
-            </div>
-            <div class="mesa-pos-total">$128.000</div>
-          </a>
-
-          <!-- Mesa 12 — libre -->
-          <a href="./pedido.html?mesa=12&nuevo=1" class="mesa-pos is-libre" style="left: 480px; top: 310px;">
-            <div class="mesa-pos-top">
-              <span class="mesa-pos-number">12</span>
-            </div>
-            <div class="mesa-pos-libre-label">LIBRE</div>
-          </a>
-        </div>
-
-        <!-- FAB venta mostrador -->
-        <a href="./pedido.html?mesa=mostrador&nuevo=1" class="pos-mapa-fab">
-          <i data-lucide="plus"></i> Venta mostrador
-        </a>
       </div>
-
-      <!-- Sidebar del turno -->
-      <aside class="pos-turno-sidebar">
-        <div class="pos-turno-overline">Turno actual</div>
-
-        <div class="pos-turno-kpi">
-          <div class="lbl">Ventas</div>
-          <div class="val">$1.234.000</div>
-        </div>
-
-        <div class="pos-turno-sep"></div>
-
-        <div class="pos-turno-row-2">
-          <div class="pos-turno-kpi">
-            <div class="lbl">Mesas atendidas</div>
-            <div class="val">8</div>
-          </div>
-          <div class="pos-turno-kpi">
-            <div class="lbl">Ticket prom.</div>
-            <div class="val">$68.555</div>
-          </div>
-        </div>
-
-        <div class="pos-turno-sep" style="margin: 8px 0;"></div>
-
-        <div class="pos-turno-section-title">Mesas activas</div>
-
-        <div class="pos-mesa-active">
-          <div class="num">6</div>
-          <div class="info">
-            <div class="mesero">Andrea G.</div>
-            <div class="tiempo">14m</div>
-          </div>
-          <div class="total">$78.000</div>
-        </div>
-
-        <div class="pos-mesa-active">
-          <div class="num">2</div>
-          <div class="info">
-            <div class="mesero">Juan C.</div>
-            <div class="tiempo">23m</div>
-          </div>
-          <div class="total">$45.000</div>
-        </div>
-
-        <div class="pos-mesa-active is-warn">
-          <div class="num">11</div>
-          <div class="info">
-            <div class="mesero">Sofía R.</div>
-            <div class="tiempo">1h 20m</div>
-          </div>
-          <div class="total">$128.000</div>
-        </div>
-
-        <button class="pos-turno-link" type="button" onclick="location.href='./historico.html'">
-          Ver todas las ventas →
-        </button>
-
-        <div class="pos-turno-spacer"></div>
-
-        <button class="pos-cerrar-caja" type="button" data-open-modal="modalCerrarCaja">
-          <i data-lucide="lock"></i> Cerrar caja
-        </button>
-      </aside>
-
     </main>
+
+    <button class="pm-sidebar-fab" id="pmSidebarFab" type="button" style="left:auto;right:16px;">
+      <i data-lucide="table-2"></i> Mesas
+    </button>
+
   </div>
 
   <!-- Modal cerrar caja -->
@@ -292,7 +993,7 @@
         <button class="modal-close" type="button" data-close aria-label="Cerrar">×</button>
       </div>
       <div class="modal-body">
-        ¿Seguro que querés cerrar el turno actual? Vas a poder consultar el resumen en el histórico de ventas.
+        ¿Seguro que querés cerrar el turno actual? Podés consultar el resumen en el histórico.
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" type="button" data-close>Cancelar</button>
@@ -303,25 +1004,381 @@
     </div>
   </div>
 
+  <script src="../assets/js/store-mesas.js"></script>
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
     if (window.lucide) window.lucide.createIcons();
 
-    // Zone tabs: alternar activo (mock)
-    document.querySelectorAll('.pos-zone-tab').forEach((tab) => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.pos-zone-tab').forEach((t) => t.classList.remove('is-active'));
-        tab.classList.add('is-active');
+    // ─────────────────────────────────────────────────────────────────────
+    // Estado UI
+    // ─────────────────────────────────────────────────────────────────────
+    let vista     = localStorage.getItem('pos:mapa:vista')   || 'mapa';
+    let density   = localStorage.getItem('pos:mapa:density') || 'normal';
+    let selectedId = null;
+
+    const filtros = {
+      libre: true, ocupada: true, 'por-cobrar': true, reservada: false, limpieza: false,
+    };
+
+    const SALA_LABEL = { principal: 'Salón Principal', terraza: 'Terraza', vip: 'VIP · Reservados' };
+    const EST_LABEL  = {
+      libre: 'Libre', ocupada: 'Ocupada', 'por-cobrar': 'Por cobrar',
+      reservada: 'Reservada', limpieza: 'Limpieza',
+    };
+    const EST_CHIP_CLASS = {
+      libre: 'estchip-libre', ocupada: 'estchip-ocupada',
+      'por-cobrar': 'estchip-por-cobrar', reservada: 'estchip-reservada',
+      limpieza: 'estchip-limpieza',
+    };
+
+    function fmtCOP(n) { return '$' + Number(n || 0).toLocaleString('es-CO'); }
+    function calcMin(iso) {
+      if (!iso) return null;
+      return Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+    }
+    function tiempoInfo(min) {
+      if (min === null) return { text: '', cls: '' };
+      if (min < 60) return { text: min + ' min', cls: min < 30 ? 't-ok' : 't-warn' };
+      const h = Math.floor(min / 60), m = min % 60;
+      return { text: h + 'h' + (m ? ' ' + m + 'm' : ''), cls: 't-danger' };
+    }
+    function buildDots(comensales, capacidad) {
+      let html = '<div class="mesa-dots">';
+      const cap = Math.min(capacidad, 6);
+      for (let i = 0; i < cap; i++) {
+        html += `<div class="mesa-dot ${i < comensales ? 'filled' : 'empty'}"></div>`;
+      }
+      return html + '</div>';
+    }
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, c =>
+        ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
+    function shortName(nombre) {
+      if (!nombre) return '';
+      const parts = nombre.split(' ');
+      return parts[0] + (parts[1] ? ' ' + parts[1][0] + '.' : '');
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // SVG inline (lucide-style)
+    // ─────────────────────────────────────────────────────────────────────
+    const ICON_USERS  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
+    const ICON_USER   = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    const ICON_CLOCK  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    const ICON_TIMER  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="2" x2="14" y2="2"/><line x1="12" y1="14" x2="15" y2="11"/><circle cx="12" cy="14" r="8"/></svg>';
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Build card
+    // ─────────────────────────────────────────────────────────────────────
+    function buildCard(mesa) {
+      const min = calcMin(mesa.abiertaEn);
+      const ti  = tiempoInfo(min);
+      const sel = selectedId === mesa.id;
+      const isInactive = ['libre','reservada','limpieza'].includes(mesa.estado);
+
+      let html = `<div class="mesa-card${sel ? ' is-selected' : ''}"
+        data-id="${mesa.id}" data-estado="${mesa.estado}"
+        tabindex="0" role="button"
+        aria-label="Mesa ${mesa.numero}, ${EST_LABEL[mesa.estado]}">`;
+
+      // Header
+      html += `<div class="mesa-card-header">
+        <span class="mesa-card-num">#${mesa.numero}</span>
+        <span class="mesa-card-cap">${ICON_USERS}${mesa.capacidad}</span>
+      </div>`;
+
+      // Chip estado
+      html += `<span class="mesa-card-state ${EST_CHIP_CLASS[mesa.estado]}">
+        <span class="mesa-card-state-label">${EST_LABEL[mesa.estado]}</span>
+      </span>`;
+
+      if (isInactive) {
+        html += `<div class="mesa-card-libre">${EST_LABEL[mesa.estado]}</div>`;
+      } else {
+        // Dots
+        html += buildDots(mesa.comensales, mesa.capacidad);
+        // Mesero
+        if (mesa.meseroNombre) {
+          html += `<div class="mesa-card-mesero">${esc(shortName(mesa.meseroNombre))}</div>`;
+        }
+        // Footer: total + tiempo
+        html += `<div class="mesa-card-footer">
+          <span class="mesa-card-total">${fmtCOP(mesa.total)}</span>
+          ${ti.text ? `<span class="mesa-card-tiempo ${ti.cls}">${ICON_CLOCK}${ti.text}</span>` : ''}
+        </div>`;
+      }
+
+      return html + '</div>';
+    }
+
+    function buildTableRow(mesa) {
+      const min = calcMin(mesa.abiertaEn);
+      const ti  = tiempoInfo(min);
+      const tiCell = ti.text
+        ? `<span class="mesa-card-tiempo ${ti.cls}" style="display:inline-flex;">${ICON_CLOCK}${ti.text}</span>`
+        : '<span style="color:var(--muted);opacity:.4">—</span>';
+      return `<tr data-id="${mesa.id}">
+        <td><strong style="font-size:14px;letter-spacing:-.02em;">#${mesa.numero}</strong></td>
+        <td style="color:var(--muted);">${esc(SALA_LABEL[mesa.sala] || mesa.sala)}</td>
+        <td><span class="mesas-estado-badge ${mesa.estado}">${esc(EST_LABEL[mesa.estado])}</span></td>
+        <td>${esc(mesa.meseroNombre || '—')}</td>
+        <td style="font-variant-numeric:tabular-nums;">${mesa.comensales || '—'}/${mesa.capacidad}</td>
+        <td style="font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em;">${mesa.total ? fmtCOP(mesa.total) : '<span style="color:var(--muted);opacity:.4;">—</span>'}</td>
+        <td>${tiCell}</td>
+        <td><a href="./pedido.html?mesa=${mesa.numero}" class="mesas-table-action">Abrir →</a></td>
+      </tr>`;
+    }
+
+    function getMesasFiltradas() {
+      return StoreMesas.listMesas().filter(m => filtros[m.estado] !== false);
+    }
+
+    function render() {
+      const canvas = document.getElementById('pmCanvas');
+      canvas.className = `pm-canvas ${density === 'compact' ? 'density-compact' : 'density-normal'}`;
+
+      const mesas = getMesasFiltradas();
+
+      if (vista === 'lista') {
+        canvas.innerHTML = `<div class="pm-table-wrap"><table class="mesas-table">
+          <thead><tr>
+            <th>#</th><th>Sala</th><th>Estado</th><th>Mesero</th>
+            <th>Comensales</th><th>Total</th><th>Tiempo</th><th>Acción</th>
+          </tr></thead>
+          <tbody>${mesas.map(buildTableRow).join('')}</tbody>
+        </table></div>`;
+      } else {
+        let html = '';
+        ['principal','terraza','vip'].forEach(sala => {
+          const grupo = mesas.filter(m => m.sala === sala);
+          if (!grupo.length) return;
+          html += `<div class="sala-group">
+            <div class="sala-group-header">
+              <span class="sala-group-label">${SALA_LABEL[sala] || sala}</span>
+              <span class="sala-group-header-line"></span>
+              <span class="sala-group-count">${grupo.length} mesas</span>
+            </div>
+            <div class="sala-group-grid">${grupo.map(buildCard).join('')}</div>
+          </div>`;
+        });
+        if (!html) {
+          html = `<div class="pm-empty">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <div>Sin mesas para mostrar con los filtros actuales</div>
+          </div>`;
+        }
+        canvas.innerHTML = html;
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+      attachCardListeners();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Sidebar resumen + counts en filtros
+    // ─────────────────────────────────────────────────────────────────────
+    function renderSummary() {
+      const todas = StoreMesas.listMesas();
+      const cnt = { libre: 0, ocupada: 0, 'por-cobrar': 0, reservada: 0, limpieza: 0 };
+      let totalVentas = 0, activas = 0;
+      todas.forEach(m => {
+        cnt[m.estado] = (cnt[m.estado] || 0) + 1;
+        totalVentas += m.total || 0;
+        if (m.total > 0) activas++;
+      });
+
+      document.getElementById('pmSummaryChips').innerHTML =
+        `<span class="pm-chip libre">${cnt.libre} libres</span>
+         <span class="pm-chip ocupada">${cnt.ocupada} ocupadas</span>
+         ${cnt['por-cobrar'] ? `<span class="pm-chip cobrar">${cnt['por-cobrar']} por cobrar</span>` : ''}`;
+
+      document.getElementById('pmKpiVentas').textContent = fmtCOP(totalVentas);
+      document.getElementById('pmKpiTicket').textContent = activas ? fmtCOP(Math.round(totalVentas / activas)) : '—';
+      document.getElementById('topbarVentas').textContent = fmtCOP(totalVentas);
+
+      // Counts en filtros
+      document.getElementById('cntLibres').textContent   = cnt.libre;
+      document.getElementById('cntOcupadas').textContent = cnt.ocupada;
+      document.getElementById('cntCobrar').textContent   = cnt['por-cobrar'];
+      document.getElementById('cntReserv').textContent   = cnt.reservada;
+      document.getElementById('cntLimp').textContent     = cnt.limpieza;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Panel mesa seleccionada
+    // ─────────────────────────────────────────────────────────────────────
+    function renderSelected() {
+      const empty = document.getElementById('pmSelEmpty');
+      const panel = document.getElementById('pmSelPanel');
+      if (!selectedId) {
+        empty.style.display = ''; panel.style.display = 'none'; return;
+      }
+      const mesa = StoreMesas.getMesa(selectedId);
+      if (!mesa) { selectedId = null; renderSelected(); return; }
+      empty.style.display = 'none'; panel.style.display = '';
+
+      document.getElementById('pmSelNum').textContent  = 'Mesa ' + mesa.numero;
+      document.getElementById('pmSelSala').textContent = SALA_LABEL[mesa.sala] || mesa.sala;
+
+      const chip = document.getElementById('pmSelEstadoChip');
+      chip.textContent = EST_LABEL[mesa.estado];
+      chip.className = 'pm-sel-estado-chip ' + EST_CHIP_CLASS[mesa.estado];
+
+      const min = calcMin(mesa.abiertaEn);
+      const ti  = tiempoInfo(min);
+      let meta = '';
+      if (mesa.comensales) meta += `<div class="pm-sel-meta-item">${ICON_USERS}<span><strong>${mesa.comensales}/${mesa.capacidad}</strong> comensales</span></div>`;
+      if (mesa.meseroNombre) meta += `<div class="pm-sel-meta-item">${ICON_USER}<span>Mesero <strong>${esc(mesa.meseroNombre)}</strong></span></div>`;
+      if (ti.text) meta += `<div class="pm-sel-meta-item">${ICON_CLOCK}<span>Abierta hace <strong class="${ti.cls}">${ti.text}</strong></span></div>`;
+      document.getElementById('pmSelMeta').innerHTML = meta || '<div style="font-size:11px;color:var(--muted);opacity:.6;font-style:italic;">Mesa sin actividad</div>';
+
+      document.getElementById('pmSelTotal').textContent = mesa.total ? fmtCOP(mesa.total) : '—';
+
+      const esLibre = mesa.estado === 'libre';
+      document.getElementById('pmSelVerPedido').href = `./pedido.html?mesa=${mesa.numero}`;
+      document.getElementById('pmSelCobrar').href    = `./pedido.html?mesa=${mesa.numero}${esLibre ? '&nuevo=1' : ''}`;
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Card listeners
+    // ─────────────────────────────────────────────────────────────────────
+    function attachCardListeners() {
+      document.querySelectorAll('#pmCanvas .mesa-card').forEach(card => {
+        const id = card.dataset.id;
+        card.addEventListener('click', () => {
+          selectedId = selectedId === id ? null : id;
+          document.querySelectorAll('#pmCanvas .mesa-card').forEach(c =>
+            c.classList.toggle('is-selected', c.dataset.id === selectedId));
+          renderSelected();
+        });
+        card.addEventListener('dblclick', () => {
+          const m = StoreMesas.getMesa(id);
+          if (m) location.href = `./pedido.html?mesa=${m.numero}`;
+        });
+        card.addEventListener('keydown', e => {
+          if (e.key === 'Enter') card.dispatchEvent(new MouseEvent('dblclick'));
+          if (e.key === ' ') { e.preventDefault(); card.click(); }
+        });
+      });
+      document.querySelectorAll('#pmCanvas tbody tr').forEach(row => {
+        row.addEventListener('click', e => {
+          if (e.target.closest('a')) return;
+          selectedId = row.dataset.id;
+          renderSelected();
+        });
+      });
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Toggles vista / densidad
+    // ─────────────────────────────────────────────────────────────────────
+    // Toggle vista en topbar
+    function setVista(newVista) {
+      vista = newVista;
+      localStorage.setItem('pos:mapa:vista', vista);
+      document.querySelectorAll('[data-vista]').forEach(b =>
+        b.classList.toggle('is-active', b.dataset.vista === vista));
+      render();
+    }
+    document.querySelectorAll('[data-vista]').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.vista === vista);
+      btn.addEventListener('click', () => setVista(btn.dataset.vista));
+    });
+    document.querySelectorAll('#ctrlDensidad .pm-ctrl-btn').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.density === density);
+      btn.addEventListener('click', () => {
+        density = btn.dataset.density;
+        localStorage.setItem('pos:mapa:density', density);
+        document.querySelectorAll('#ctrlDensidad .pm-ctrl-btn').forEach(b =>
+          b.classList.toggle('is-active', b.dataset.density === density));
+        const canvas = document.getElementById('pmCanvas');
+        canvas.classList.toggle('density-compact', density === 'compact');
+        canvas.classList.toggle('density-normal',  density !== 'compact');
       });
     });
 
-    // Confirmar cierre de caja
+    document.getElementById('pmRefresh').addEventListener('click', () => {
+      render(); renderSummary();
+      UI.toast({ type: 'info', title: 'Mapa actualizado', duration: 1200 });
+    });
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Filtros
+    // ─────────────────────────────────────────────────────────────────────
+    [
+      ['filtroLibre',    'libre'],
+      ['filtroOcupada',  'ocupada'],
+      ['filtroCobrar',   'por-cobrar'],
+      ['filtroReserv',   'reservada'],
+      ['filtroLimpieza', 'limpieza'],
+    ].forEach(([id, key]) => {
+      const cb = document.getElementById(id);
+      if (!cb) return;
+      cb.checked = filtros[key];
+      cb.addEventListener('change', () => { filtros[key] = cb.checked; render(); });
+    });
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Liberar mesa
+    // ─────────────────────────────────────────────────────────────────────
+    document.getElementById('pmSelLiberar').addEventListener('click', () => {
+      if (!selectedId) return;
+      const mesa = StoreMesas.getMesa(selectedId);
+      if (!mesa || mesa.estado === 'libre') {
+        UI.toast({ type: 'info', title: 'La mesa ya está libre' }); return;
+      }
+      StoreMesas.liberar(selectedId);
+      UI.toast({ type: 'success', title: `Mesa ${mesa.numero} liberada` });
+      selectedId = null;
+      render(); renderSummary(); renderSelected();
+    });
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Mobile sidebar
+    // ─────────────────────────────────────────────────────────────────────
+    document.getElementById('pmSidebarFab').addEventListener('click', () => {
+      const s = document.getElementById('pmSidebar');
+      s.classList.add('is-mobile-open'); s.style.display = 'flex';
+    });
+    document.getElementById('pmSidebarClose').addEventListener('click', () => {
+      const s = document.getElementById('pmSidebar');
+      s.classList.remove('is-mobile-open'); s.style.display = '';
+    });
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Reloj
+    // ─────────────────────────────────────────────────────────────────────
+    function updateClock() {
+      const el = document.getElementById('topbarClock');
+      if (el) el.textContent = new Date().toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Store events
+    // ─────────────────────────────────────────────────────────────────────
+    window.addEventListener('mesa-actualizada', () => { render(); renderSummary(); renderSelected(); });
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Cerrar caja
+    // ─────────────────────────────────────────────────────────────────────
     document.getElementById('confirmCerrarCaja').addEventListener('click', () => {
       UI.closeModal('modalCerrarCaja');
       UI.toast({ type: 'success', title: 'Caja cerrada', sub: 'Redirigiendo al histórico…' });
       setTimeout(() => { location.href = './historico.html'; }, 900);
     });
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Init
+    // ─────────────────────────────────────────────────────────────────────
+    render();
+    renderSummary();
+    if (window.lucide) window.lucide.createIcons();
   </script>
   <script src="../assets/js/nav.js"></script>
 </body>

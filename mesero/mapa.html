@@ -11,175 +11,147 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <link rel="stylesheet" href="../assets/css/mesas.css" />
   <style>
-    .e3-saludo-line1 {
+    /* ── Fix: header sticky dentro del frame ── */
+    .mesero-body-inner { overflow-y: auto; }
+    .mesero-content { overflow: visible; }
+    .mesero-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 11;
+      background: var(--bg);
+    }
+
+    /* ── Saludo topbar ── */
+    .e3-saludo-line1 { font-size: 11px; color: var(--muted); line-height: 1.2; }
+    .e3-saludo-line2 { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.2; }
+
+    /* ── Tabs de sala (sticky) ── */
+    .mm-tabs-wrap {
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 54px;
+      z-index: 10;
+    }
+    .mm-tabs {
+      display: flex;
+      padding: 0 10px;
+      gap: 2px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .mm-tabs::-webkit-scrollbar { display: none; }
+    .mm-tab {
+      flex-shrink: 0;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 120ms ease, border-color 120ms ease;
+      font-family: var(--ff-base);
+    }
+    .mm-tab.is-active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── Chip de resumen ── */
+    .mm-resumen {
+      padding: 8px 14px 4px;
       font-size: 11px;
       color: var(--muted);
-      line-height: 1.2;
-    }
-    .e3-saludo-line2 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.2;
-    }
-    .e3-content {
-      padding: 14px 14px 18px;
-    }
-    .e3-kpis {
       display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
-    .e3-kpi {
-      flex: 1;
-      padding: 8px 10px;
-      background: var(--alt);
-      border-radius: 9px;
-      border: 1px solid var(--border);
+    .mm-resumen-chip {
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
     }
-    .e3-kpi-label {
-      font-size: 9px;
-      color: var(--muted);
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-    .e3-kpi-value {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
-    }
-    .e3-grid {
+    .mm-resumen-chip.libre    { background: var(--mesa-libre-bg);      color: var(--mesa-libre-text);      border: 1px solid var(--mesa-libre-border); }
+    .mm-resumen-chip.ocupada  { background: var(--mesa-ocupada-bg);    color: var(--mesa-ocupada-text);    border: 1px solid var(--mesa-ocupada-border); }
+    .mm-resumen-chip.cobrar   { background: var(--mesa-por-cobrar-bg); color: var(--mesa-por-cobrar-text); border: 1px solid var(--mesa-por-cobrar-border); }
+
+    /* ── Grid de mesas ── */
+    .mm-grid-wrap { padding: 10px 12px 16px; }
+    .mm-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
-    .mesa-card {
-      border-radius: 13px;
-      padding: 14px;
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+
+    /* Card mobile (hereda de mesas.css pero ajusta min-height y fuente) */
+    .mm-grid .mesa-card {
+      min-height: 130px;
+      padding: 12px;
+      border-radius: 14px;
       cursor: pointer;
-      text-decoration: none;
+      /* Evitar selección accidental en long-press */
+      -webkit-user-select: none;
+      user-select: none;
     }
-    .mesa-card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-    }
-    .mesa-num {
-      font-size: 30px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-    }
-    .mesa-card-spacer { flex: 1; }
+    .mm-grid .mesa-card-num { font-size: 22px; }
+    .mm-grid .mesa-card-cap { font-size: 10px; }
+    .mm-grid .mesa-card-total { font-size: 13px; }
+    .mm-grid .mesa-card-mesero { font-size: 10px; }
 
-    /* Estados */
-    .mesa-card.estado-libre {
-      background: var(--alt);
-      border: 1px solid var(--border);
-    }
-    .mesa-card.estado-ocupada {
-      background: #EFF6FF;
-      border: 1px solid #BFDBFE;
-    }
-    [data-theme="dark"] .mesa-card.estado-ocupada {
-      background: rgba(59, 130, 246, 0.15);
-      border-color: #1E3A8A;
-    }
-    .mesa-card.estado-cocina {
-      background: #FEF3C7;
-      border: 1px solid #FDE68A;
-    }
-    [data-theme="dark"] .mesa-card.estado-cocina {
-      background: rgba(245, 158, 11, 0.18);
-      border-color: #78350F;
-    }
-    .mesa-card.estado-lista {
-      background: #D1FAE5;
-      border: 1.5px solid var(--success);
-    }
-    [data-theme="dark"] .mesa-card.estado-lista {
-      background: rgba(16, 185, 129, 0.18);
-    }
-    .mesa-card.is-warn {
-      border: 1.5px solid var(--error);
-    }
-
-    /* Badge "Ocupada" / "En cocina" */
-    .mesa-state-badge {
-      font-size: 9px;
-      font-weight: 600;
-      padding: 3px 7px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.7);
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-    [data-theme="dark"] .mesa-state-badge {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    .mesa-state-badge.tone-info { color: var(--info); }
-    .mesa-state-badge.tone-warning { color: var(--warning); }
-
-    /* Badge "¡LISTO!" pulse */
-    .mesa-listo-badge {
-      font-size: 10px;
-      font-weight: 700;
-      color: #fff;
-      background: var(--success);
-      padding: 4px 9px;
-      border-radius: 11px;
-      letter-spacing: 0.04em;
-    }
-
-    /* Badge warn (mesa 5 — 1h 20m rojo) */
-    .mesa-warn-badge {
-      font-size: 9px;
-      font-weight: 700;
-      color: #fff;
-      background: var(--error);
-      padding: 4px 7px;
-      border-radius: 5px;
-      letter-spacing: 0.04em;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-    }
-    .mesa-warn-badge svg { width: 9px; height: 9px; stroke-width: 2.5; }
-
-    /* Body labels */
-    .mesa-libre-label {
-      font-size: 11px;
+    /* Estado vacío de sala */
+    .mm-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 30px 0;
+      font-size: 13px;
       color: var(--muted);
+    }
+
+    /* ── Bottom sheet de acciones long-press ── */
+    #sheetAcciones .bottom-sheet-body { padding: 0; }
+    .mm-accion-list { list-style: none; padding: 0; margin: 0; }
+    .mm-accion-list li {
+      border-bottom: 1px solid var(--border-subtle, var(--border));
+    }
+    .mm-accion-list li:last-child { border-bottom: none; }
+    .mm-accion-btn {
+      width: 100%;
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 14px;
       font-weight: 500;
-      letter-spacing: 0.04em;
-    }
-    .mesa-tiempo {
+      color: var(--text);
+      background: transparent;
+      border: none;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: var(--muted);
+      gap: 12px;
+      font-family: var(--ff-base);
     }
-    .mesa-tiempo svg { width: 11px; height: 11px; }
-    .mesa-total {
-      font-size: 15px;
-      font-weight: 700;
+    .mm-accion-btn:hover { background: var(--bg-overlay, var(--alt)); }
+    .mm-accion-btn svg { width: 18px; height: 18px; color: var(--muted); }
+    .mm-accion-btn.is-destructive { color: var(--error); }
+    .mm-accion-btn.is-destructive svg { color: var(--error); }
+    .mm-accion-title {
+      padding: 14px 20px 6px;
+      font-size: 13px;
+      font-weight: 600;
       color: var(--text);
-      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
     }
   </style>
 </head>
 <body class="mesero-body">
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
-
 
   <div class="mesero-frame">
     <div class="mesero-app">
@@ -195,157 +167,87 @@
 
       <div class="mesero-body-inner">
 
-        <!-- ============= TOPBAR ============= -->
+        <!-- TOPBAR -->
         <header class="mesero-topbar">
           <div class="mesero-topbar-side">
             <div>
               <div class="e3-saludo-line1">Hola,</div>
-              <div class="e3-saludo-line2">Andrea 👋</div>
+              <div class="e3-saludo-line2">Camila</div>
             </div>
           </div>
           <div class="mesero-topbar-center">
-            <button class="mesero-zona-btn" type="button">
-              Salón Principal
+            <button class="mesero-zona-btn" type="button" id="sedeBtn">
+              Sede Norte
               <i data-lucide="chevron-down"></i>
             </button>
           </div>
           <div class="mesero-topbar-side">
-            <button class="mesero-bell-btn" type="button" aria-label="Notificaciones">
-              <i data-lucide="bell"></i>
-              <span class="mesero-bell-badge">2</span>
+            <button class="mesero-icon-btn" type="button" id="refreshBtn" aria-label="Actualizar">
+              <i data-lucide="refresh-cw"></i>
             </button>
           </div>
         </header>
 
-        <!-- ============= CONTENT ============= -->
+        <!-- TABS DE SALA (sticky) -->
+        <div class="mm-tabs-wrap">
+          <div class="mm-tabs" id="mmTabs">
+            <button class="mm-tab is-active" data-sala="principal">Principal</button>
+            <button class="mm-tab" data-sala="terraza">Terraza</button>
+            <button class="mm-tab" data-sala="vip">VIP</button>
+          </div>
+        </div>
+
+        <!-- CONTENT -->
         <main id="main" class="mesero-content">
-          <div class="e3-content">
 
-            <!-- KPIs -->
-            <div class="e3-kpis">
-              <div class="e3-kpi">
-                <div class="e3-kpi-label">Mis mesas</div>
-                <div class="e3-kpi-value">4</div>
-              </div>
-              <div class="e3-kpi">
-                <div class="e3-kpi-label">Activas</div>
-                <div class="e3-kpi-value">3</div>
-              </div>
-              <div class="e3-kpi">
-                <div class="e3-kpi-label">Mis ventas</div>
-                <div class="e3-kpi-value">$313K</div>
-              </div>
-            </div>
+          <!-- Chip resumen -->
+          <div class="mm-resumen" id="mmResumen"></div>
 
-            <!-- Grid de mesas -->
-            <div class="e3-grid">
-
-              <!-- Mesa 1 — libre -->
-              <a href="./detalle.html?mesa=1&nuevo=1" class="mesa-card estado-libre">
-                <div class="mesa-card-top">
-                  <span class="mesa-num">1</span>
-                </div>
-                <div class="mesa-card-spacer"></div>
-                <span class="mesa-libre-label">LIBRE</span>
-              </a>
-
-              <!-- Mesa 2 — ocupada -->
-              <a href="./detalle.html?mesa=2" class="mesa-card estado-ocupada">
-                <div class="mesa-card-top">
-                  <span class="mesa-num">2</span>
-                  <span class="mesa-state-badge tone-info">Ocupada</span>
-                </div>
-                <div class="mesa-card-spacer"></div>
-                <div class="mesa-tiempo">
-                  <i data-lucide="clock"></i>
-                  00:34
-                </div>
-                <div class="mesa-total">$45.000</div>
-              </a>
-
-              <!-- Mesa 3 — cocina -->
-              <a href="./detalle.html?mesa=3" class="mesa-card estado-cocina">
-                <div class="mesa-card-top">
-                  <span class="mesa-num">3</span>
-                  <span class="mesa-state-badge tone-warning">En cocina</span>
-                </div>
-                <div class="mesa-card-spacer"></div>
-                <div class="mesa-tiempo">
-                  <i data-lucide="clock"></i>
-                  00:18
-                </div>
-                <div class="mesa-total">$62.000</div>
-              </a>
-
-              <!-- Mesa 4 — lista -->
-              <a href="./detalle.html?mesa=4" class="mesa-card estado-lista">
-                <div class="mesa-card-top">
-                  <span class="mesa-num">4</span>
-                  <span class="mesa-listo-badge mesero-pulse-ring">¡LISTO!</span>
-                </div>
-                <div class="mesa-card-spacer"></div>
-                <div class="mesa-tiempo">
-                  <i data-lucide="clock"></i>
-                  00:14
-                </div>
-                <div class="mesa-total">$78.000</div>
-              </a>
-
-              <!-- Mesa 5 — ocupada con warn -->
-              <a href="./detalle.html?mesa=5" class="mesa-card estado-ocupada is-warn">
-                <div class="mesa-card-top">
-                  <span class="mesa-num">5</span>
-                  <span class="mesa-warn-badge">
-                    <i data-lucide="alert-triangle"></i>
-                    1h 20m
-                  </span>
-                </div>
-                <div class="mesa-card-spacer"></div>
-                <div class="mesa-total">$128.000</div>
-              </a>
-
-              <!-- Mesa 6 — libre -->
-              <a href="./detalle.html?mesa=6&nuevo=1" class="mesa-card estado-libre">
-                <div class="mesa-card-top">
-                  <span class="mesa-num">6</span>
-                </div>
-                <div class="mesa-card-spacer"></div>
-                <span class="mesa-libre-label">LIBRE</span>
-              </a>
-
-              <!-- Mesa 7 — cocina -->
-              <a href="./detalle.html?mesa=7" class="mesa-card estado-cocina">
-                <div class="mesa-card-top">
-                  <span class="mesa-num">7</span>
-                  <span class="mesa-state-badge tone-warning">En cocina</span>
-                </div>
-                <div class="mesa-card-spacer"></div>
-                <div class="mesa-tiempo">
-                  <i data-lucide="clock"></i>
-                  00:08
-                </div>
-                <div class="mesa-total">$24.000</div>
-              </a>
-
-              <!-- Mesa 8 — libre -->
-              <a href="./detalle.html?mesa=8&nuevo=1" class="mesa-card estado-libre">
-                <div class="mesa-card-top">
-                  <span class="mesa-num">8</span>
-                </div>
-                <div class="mesa-card-spacer"></div>
-                <span class="mesa-libre-label">LIBRE</span>
-              </a>
-
+          <!-- Grid de mesas -->
+          <div class="mm-grid-wrap">
+            <div class="mm-grid" id="mmGrid">
+              <!-- Renderizado por JS -->
             </div>
           </div>
 
-          <!-- FAB -->
-          <button class="mb-fab" type="button" aria-label="Nueva comanda">
-            <i data-lucide="plus"></i>
-          </button>
+          <!-- Bottom sheet acciones (long-press) -->
+          <div class="bottom-sheet-backdrop" data-sheet="sheetAcciones"></div>
+          <div id="sheetAcciones" class="bottom-sheet">
+            <div class="bottom-sheet-handle" data-close></div>
+            <div class="mm-accion-title" id="sheetAccionesTitle">Mesa —</div>
+            <div class="bottom-sheet-body">
+              <ul class="mm-accion-list">
+                <li>
+                  <button class="mm-accion-btn" id="accionVerPedido" type="button">
+                    <i data-lucide="clipboard-list"></i>
+                    Ver pedido
+                  </button>
+                </li>
+                <li>
+                  <button class="mm-accion-btn" id="accionCambiarMesero" type="button">
+                    <i data-lucide="user"></i>
+                    Cambiar mesero
+                  </button>
+                </li>
+                <li>
+                  <button class="mm-accion-btn" id="accionLimpieza" type="button">
+                    <i data-lucide="sparkles"></i>
+                    Marcar limpieza
+                  </button>
+                </li>
+                <li>
+                  <button class="mm-accion-btn is-destructive" data-close type="button">
+                    <i data-lucide="x"></i>
+                    Cancelar
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
         </main>
 
-        <!-- ============= BOTTOM NAV ============= -->
+        <!-- BOTTOM NAV -->
         <nav class="mesero-bottom-nav">
           <a href="./mapa.html" class="mesero-bottom-nav-tab is-active">
             <span class="mesero-bottom-nav-tab-icon-wrap">
@@ -365,7 +267,7 @@
             </span>
             <span>Nómina</span>
           </a>
-                    <a href="./perfil.html" class="mesero-bottom-nav-tab">
+          <a href="./perfil.html" class="mesero-bottom-nav-tab">
             <span class="mesero-bottom-nav-tab-icon-wrap">
               <i data-lucide="user"></i>
             </span>
@@ -373,16 +275,236 @@
           </a>
         </nav>
 
-      </div>
+      </div><!-- /.mesero-body-inner -->
 
       <div class="mesero-home-indicator"></div>
-
     </div>
   </div>
 
+  <script src="../assets/js/store-mesas.js"></script>
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // ─── Estado ──────────────────────────────────────────────────────────────
+    var salaActiva = 'principal';
+    var longPressId = null;  // mesa ID en curso de long-press
+    var LONG_PRESS_MS = 600;
+    var _pressTimer = null;
+    var _pressStartEl = null;
+
+    // ─── Helpers ─────────────────────────────────────────────────────────────
+    function fmtCOP(n) { return '$' + Number(n).toLocaleString('es-CO'); }
+
+    function calcMin(isoDate) {
+      if (!isoDate) return null;
+      return Math.floor((Date.now() - new Date(isoDate).getTime()) / 60000);
+    }
+
+    function tiempoInfo(min) {
+      if (min === null || min === undefined) return { text: '', cls: '' };
+      if (min < 60)  return { text: min + ' min', cls: min < 30 ? 't-ok' : 't-warn' };
+      var h = Math.floor(min / 60), m = min % 60;
+      return { text: h + 'h ' + (m > 0 ? m + 'm' : ''), cls: 't-danger' };
+    }
+
+    function buildDots(comensales, capacidad) {
+      var html = '<div class="mesa-dots">';
+      var cap = Math.min(capacidad, 6);
+      for (var i = 0; i < cap; i++) {
+        html += '<div class="mesa-dot ' + (i < comensales ? 'filled' : 'empty') + '"></div>';
+      }
+      return html + '</div>';
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, function(c) {
+        return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+      });
+    }
+
+    // ─── Build card mobile ────────────────────────────────────────────────────
+    function buildCard(mesa) {
+      var min = calcMin(mesa.abiertaEn);
+      var ti  = tiempoInfo(min);
+      var html = '<div class="mesa-card" data-estado="' + mesa.estado + '" data-id="' + mesa.id + '" tabindex="0">';
+
+      // Header: número + capacidad
+      html += '<div class="mesa-card-header">'
+            + '<span class="mesa-card-num">#' + mesa.numero + '</span>'
+            + '<span class="mesa-card-cap" style="display:flex;align-items:center;gap:2px;">'
+            + '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>'
+            + mesa.capacidad + '</span>'
+            + '</div>';
+
+      if (mesa.estado === 'libre') {
+        html += '<div class="mesa-card-libre-label">Libre</div>';
+      } else if (mesa.estado === 'reservada') {
+        html += '<div class="mesa-card-libre-label" style="color:var(--mesa-reservada-text)">Reservada</div>';
+      } else if (mesa.estado === 'limpieza') {
+        html += '<div class="mesa-card-libre-label">Limpieza</div>';
+      } else {
+        // Dots, mesero, total, tiempo
+        html += buildDots(mesa.comensales, mesa.capacidad);
+        if (mesa.meseroNombre) {
+          var parts = mesa.meseroNombre.split(' ');
+          var short = parts[0] + (parts[1] ? ' ' + parts[1][0] + '.' : '');
+          html += '<div class="mesa-card-mesero">' + escapeHtml(short) + '</div>';
+        }
+        if (mesa.total > 0) {
+          html += '<div class="mesa-card-total">' + fmtCOP(mesa.total) + '</div>';
+        }
+        if (ti.text) {
+          html += '<div class="mesa-card-tiempo ' + ti.cls + '">'
+                + '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+                + ti.text + '</div>';
+        }
+      }
+
+      html += '</div>';
+      return html;
+    }
+
+    // ─── Render grid ─────────────────────────────────────────────────────────
+    function render() {
+      var mesas = StoreMesas.listMesas({ sala: salaActiva });
+      var grid = document.getElementById('mmGrid');
+      if (!grid) return;
+
+      if (mesas.length === 0) {
+        grid.innerHTML = '<div class="mm-empty">No hay mesas en esta sala.</div>';
+      } else {
+        grid.innerHTML = mesas.map(buildCard).join('');
+      }
+
+      attachCardListeners();
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // ─── Render resumen chips ─────────────────────────────────────────────────
+    function renderResumen() {
+      var todas = StoreMesas.listMesas({ sala: salaActiva });
+      var libres  = todas.filter(function(m) { return m.estado === 'libre'; }).length;
+      var ocup    = todas.filter(function(m) { return m.estado === 'ocupada'; }).length;
+      var cobrar  = todas.filter(function(m) { return m.estado === 'por-cobrar'; }).length;
+
+      var el = document.getElementById('mmResumen');
+      if (!el) return;
+      el.innerHTML =
+          '<span class="mm-resumen-chip libre">' + libres + ' libres</span>'
+        + '<span class="mm-resumen-chip ocupada">' + ocup + ' ocupadas</span>'
+        + (cobrar ? '<span class="mm-resumen-chip cobrar">' + cobrar + ' por cobrar</span>' : '');
+    }
+
+    // ─── Long-press + tap ─────────────────────────────────────────────────────
+    function startPress(el, mesaId) {
+      _pressStartEl = el;
+      longPressId = mesaId;
+      _pressTimer = setTimeout(function() {
+        // Long-press confirmado → abrir sheet de acciones
+        _pressTimer = null;
+        openAcciones(mesaId);
+      }, LONG_PRESS_MS);
+    }
+
+    function cancelPress() {
+      if (_pressTimer) { clearTimeout(_pressTimer); _pressTimer = null; }
+    }
+
+    function attachCardListeners() {
+      document.querySelectorAll('#mmGrid .mesa-card').forEach(function(card) {
+        var mesaId = card.dataset.id;
+
+        // Pointer events (touch + mouse)
+        card.addEventListener('pointerdown', function(e) {
+          startPress(card, mesaId);
+        });
+        card.addEventListener('pointerup', function(e) {
+          if (_pressTimer) {
+            // Fue tap (timer aún pendiente) → navegar
+            cancelPress();
+            var mesa = StoreMesas.getMesa(mesaId);
+            if (mesa) location.href = './detalle.html?mesa=' + mesa.numero;
+          }
+          // Si _pressTimer es null, el long-press ya disparó → no navegar
+        });
+        card.addEventListener('pointercancel', cancelPress);
+        card.addEventListener('pointerleave', cancelPress);
+
+        // Teclado
+        card.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            var mesa = StoreMesas.getMesa(mesaId);
+            if (mesa) location.href = './detalle.html?mesa=' + mesa.numero;
+          }
+        });
+      });
+    }
+
+    // ─── Sheet de acciones ────────────────────────────────────────────────────
+    var _accionMesaId = null;
+
+    function openAcciones(mesaId) {
+      _accionMesaId = mesaId;
+      var mesa = StoreMesas.getMesa(mesaId);
+      if (!mesa) return;
+      var titleEl = document.getElementById('sheetAccionesTitle');
+      if (titleEl) {
+        var mesero = mesa.meseroNombre ? ' · ' + mesa.meseroNombre.split(' ')[0] + ' ' + (mesa.meseroNombre.split(' ')[1] ? mesa.meseroNombre.split(' ')[1][0] + '.' : '') : '';
+        titleEl.textContent = 'Mesa #' + mesa.numero + mesero;
+      }
+      UI.openBottomSheet('sheetAcciones');
+    }
+
+    document.getElementById('accionVerPedido').addEventListener('click', function() {
+      if (!_accionMesaId) return;
+      var mesa = StoreMesas.getMesa(_accionMesaId);
+      UI.closeBottomSheet('sheetAcciones');
+      if (mesa) location.href = './detalle.html?mesa=' + mesa.numero;
+    });
+
+    document.getElementById('accionCambiarMesero').addEventListener('click', function() {
+      UI.closeBottomSheet('sheetAcciones');
+      UI.toast({ type: 'info', title: 'Función disponible próximamente' });
+    });
+
+    document.getElementById('accionLimpieza').addEventListener('click', function() {
+      if (!_accionMesaId) return;
+      var mesa = StoreMesas.getMesa(_accionMesaId);
+      StoreMesas.cambiarEstado(_accionMesaId, 'limpieza');
+      UI.closeBottomSheet('sheetAcciones');
+      UI.toast({ type: 'success', title: 'Mesa ' + (mesa ? mesa.numero : '') + ' marcada para limpieza' });
+    });
+
+    // ─── Tabs de sala ─────────────────────────────────────────────────────────
+    document.querySelectorAll('.mm-tab').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.mm-tab').forEach(function(b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        salaActiva = btn.dataset.sala;
+        render();
+        renderResumen();
+      });
+    });
+
+    // ─── Refresh ─────────────────────────────────────────────────────────────
+    document.getElementById('refreshBtn').addEventListener('click', function() {
+      render();
+      renderResumen();
+      UI.toast({ type: 'info', title: 'Mesas actualizadas', duration: 1200 });
+    });
+
+    // ─── Escuchar store ───────────────────────────────────────────────────────
+    window.addEventListener('mesa-actualizada', function() {
+      render();
+      renderResumen();
+    });
+
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    render();
+    renderResumen();
     if (window.lucide) window.lucide.createIcons();
   </script>
   <script src="../assets/js/nav.js"></script>

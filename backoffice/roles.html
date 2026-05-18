@@ -21,7 +21,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -106,6 +106,11 @@
           <h1>Roles y permisos</h1>
           <p class="bo-page-subtitle">5 roles definidos · 13 usuarios asignados</p>
         </div>
+        <div class="bo-page-actions">
+          <button class="btn btn-primary" data-requires="roles:write" data-open-drawer="crearRol">
+            <i data-lucide="plus"></i> Nuevo rol
+          </button>
+        </div>
       </header>
 
       <div class="roles-layout">
@@ -181,7 +186,7 @@
               </div>
               <div style="font-size:11px;color:var(--muted);margin-top:3px;" id="detailRoleCount">5 usuarios activos con este rol</div>
             </div>
-            <button class="btn btn-primary" style="display:flex;align-items:center;gap:6px;font-size:13px;" onclick="UI.toast({type:'success',title:'Cambios guardados',sub:'Los permisos del rol fueron actualizados.'})">
+            <button class="btn btn-primary" id="btnGuardarPerms" style="display:flex;align-items:center;gap:6px;font-size:13px;">
               <i data-lucide="save" style="width:13px;height:13px;"></i> Guardar cambios
             </button>
           </div>
@@ -362,14 +367,44 @@
 
   let activeRole = 'mesero';
 
-  function permCell(v) {
+  // 0 = bloqueado, 1 = solo lectura (eye), 2 = permitido (check), null = N/A
+  function permCellVal(v) {
     if (v === null) return `<div class="perm-cell"><span class="perm-dash">—</span></div>`;
-    if (v === true) return `<div class="perm-cell"><div class="perm-check"><i data-lucide="check" style="width:13px;height:13px;color:#fff;stroke-width:3;"></i></div></div>`;
-    return `<div class="perm-cell"><div class="perm-empty"></div></div>`;
+    if (v === 2 || v === true)
+      return `<div class="perm-cell" data-perm="2" style="cursor:pointer;" title="Permitido — clic para cambiar">
+        <div class="perm-check"><i data-lucide="check" style="width:13px;height:13px;color:#fff;stroke-width:3;"></i></div>
+      </div>`;
+    if (v === 1)
+      return `<div class="perm-cell" data-perm="1" style="cursor:pointer;" title="Solo lectura — clic para cambiar">
+        <div class="perm-eye"><i data-lucide="eye" style="width:13px;height:13px;color:var(--muted);"></i></div>
+      </div>`;
+    return `<div class="perm-cell" data-perm="0" style="cursor:pointer;" title="Bloqueado — clic para cambiar">
+      <div class="perm-block"><i data-lucide="x" style="width:13px;height:13px;color:var(--error);opacity:.6;"></i></div>
+    </div>`;
+  }
+  function permCell(v) { return permCellVal(v); }
+
+  const ROLES_STORAGE_KEY = 'root:roles:v1';
+
+  function getStoredPerms() {
+    try {
+      const raw = localStorage.getItem(ROLES_STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return null;
+  }
+
+  function savePerms(data) {
+    localStorage.setItem(ROLES_STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function getPermsData() {
+    return getStoredPerms() || PERMS_DATA;
   }
 
   function renderPerms(roleId) {
-    const groups = PERMS_DATA[roleId];
+    const permsData = getPermsData();
+    const groups = permsData[roleId];
     const meta = ROLES_META[roleId];
     const body = document.getElementById('permsBody');
     const detailIcon = document.getElementById('detailIcon');
@@ -381,17 +416,33 @@
     detailIcon.innerHTML = `<i data-lucide="${meta.icon}" style="width:18px;height:18px;color:#fff;"></i>`;
 
     let html = '';
-    groups.forEach(g => {
+    groups.forEach((g, gi) => {
       html += `<div class="perm-group-header">${g.group}</div>`;
-      g.items.forEach(row => {
+      g.items.forEach((row, ri) => {
         html += `<div class="perm-row">
           <div style="font-size:13px;color:var(--text);font-weight:500;">${row.label}</div>
-          ${row.perms.map(v => permCell(v)).join('')}
+          ${row.perms.map((v, ci) => {
+            const cellHtml = permCell(v);
+            return cellHtml.replace('<div class="perm-cell"', `<div class="perm-cell" data-gi="${gi}" data-ri="${ri}" data-ci="${ci}"`);
+          }).join('')}
         </div>`;
       });
     });
     body.innerHTML = html;
     if (window.lucide) lucide.createIcons();
+
+    // Click en celda → ciclar valor
+    body.querySelectorAll('.perm-cell[data-perm]').forEach(cell => {
+      cell.addEventListener('click', () => {
+        const gi = +cell.dataset.gi, ri = +cell.dataset.ri, ci = +cell.dataset.ci;
+        const cur = +cell.dataset.perm;
+        const next = cur === 2 ? 0 : cur + 1; // 0→1→2→0
+        const data = getPermsData();
+        data[roleId][gi].items[ri].perms[ci] = next;
+        savePerms(data);
+        renderPerms(roleId);
+      });
+    });
   }
 
   function selectRole(roleId, btn) {
@@ -420,7 +471,65 @@
   }
 
   renderPerms('mesero');
+
+  document.getElementById('btnGuardarPerms').addEventListener('click', () => {
+    UI.toast({ type: 'success', title: 'Cambios guardados', sub: 'Los permisos del rol fueron actualizados.' });
+  });
 </script>
+
+<!-- DRAWER: Nuevo rol -->
+<div id="crearRol" class="drawer-backdrop">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title">Nuevo rol personalizado</div>
+        <div class="drawer-subtitle">Define el acceso para este rol</div>
+      </div>
+      <button class="drawer-close" data-close aria-label="Cerrar">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <div class="form-section">
+        <div class="form-section-title">Información del rol</div>
+        <div class="form-section-fields">
+          <div class="form-field">
+            <label class="form-label">Nombre del rol</label>
+            <div class="form-input-wrap">
+              <input type="text" id="nuevoRolNombre" placeholder="Ej: Supervisor de turno" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Descripción</label>
+            <div class="form-input-wrap">
+              <input type="text" id="nuevoRolDesc" placeholder="Breve descripción de sus responsabilidades" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Permisos base</div>
+        <div class="form-section-fields">
+          <p style="font-size:12px;color:var(--muted);">El nuevo rol se inicializa con los mismos permisos del rol Cajero. Puedes ajustar los permisos individuales desde la matriz.</p>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-footer">
+      <button class="btn btn-secondary" data-close>Cancelar</button>
+      <button class="btn btn-primary" id="btnCrearRol" style="display:flex;align-items:center;gap:6px;">
+        <i data-lucide="shield-plus" style="width:13px;height:13px;"></i> Crear rol
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('btnCrearRol')?.addEventListener('click', () => {
+    const nombre = document.getElementById('nuevoRolNombre').value.trim();
+    if (!nombre) { UI.toast({ type: 'error', title: 'Ingresa un nombre para el rol' }); return; }
+    UI.closeDrawer('crearRol');
+    UI.toast({ type: 'success', title: 'Rol "' + nombre + '" creado', sub: 'Ajusta los permisos desde la matriz.' });
+  });
+</script>
+<script src="../assets/js/auth.js"></script>
   <script src="../assets/js/nav.js"></script>
 </body>
 </html>

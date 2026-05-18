@@ -1,0 +1,272 @@
+/* ============================================================================
+   mesas.css — Estilos compartidos del rediseño de mesas (Sprint 14)
+   Usado por pos/mapa.html y mesero/mapa.html
+   ============================================================================ */
+
+/* --------------------------------------------------------------------------
+   Tokens de estado de mesa
+   -------------------------------------------------------------------------- */
+/* Sprint 14: translúcidos Vercel — bajar saturación en ambos modos */
+:root {
+  --mesa-libre-bg:      var(--bg-surface, #FFFFFF);
+  --mesa-libre-border:  var(--border-default, rgba(0,0,0,0.08));
+  --mesa-libre-text:    var(--muted, #71717A);
+
+  --mesa-ocupada-bg:    rgba(239,68,68,0.06);
+  --mesa-ocupada-border:rgba(239,68,68,0.20);
+  --mesa-ocupada-text:  #B91C1C;
+
+  --mesa-por-cobrar-bg:    rgba(245,158,11,0.07);
+  --mesa-por-cobrar-border:rgba(245,158,11,0.22);
+  --mesa-por-cobrar-text:  #92400E;
+
+  --mesa-reservada-bg:    rgba(59,130,246,0.06);
+  --mesa-reservada-border:rgba(59,130,246,0.20);
+  --mesa-reservada-text:  #1E40AF;
+
+  --mesa-limpieza-bg:    rgba(113,113,122,0.06);
+  --mesa-limpieza-border:rgba(113,113,122,0.18);
+  --mesa-limpieza-text:  var(--muted, #71717A);
+}
+
+[data-theme="dark"] {
+  --mesa-libre-bg:      var(--bg-surface, #111111);
+  --mesa-libre-border:  var(--border-default, rgba(255,255,255,0.10));
+  --mesa-libre-text:    var(--muted, #A1A1AA);
+
+  --mesa-ocupada-bg:    rgba(244,63,94,0.08);
+  --mesa-ocupada-border:rgba(244,63,94,0.22);
+  --mesa-ocupada-text:  #FDA4AF;
+
+  --mesa-por-cobrar-bg:    rgba(234,179,8,0.08);
+  --mesa-por-cobrar-border:rgba(234,179,8,0.22);
+  --mesa-por-cobrar-text:  #FDE047;
+
+  --mesa-reservada-bg:    rgba(96,165,250,0.08);
+  --mesa-reservada-border:rgba(96,165,250,0.22);
+  --mesa-reservada-text:  #93C5FD;
+
+  --mesa-limpieza-bg:    rgba(161,161,170,0.06);
+  --mesa-limpieza-border:rgba(161,161,170,0.18);
+  --mesa-limpieza-text:  var(--muted, #A1A1AA);
+}
+
+/* --------------------------------------------------------------------------
+   Card de mesa — base compartida (tamaños se sobreescriben por contexto)
+   -------------------------------------------------------------------------- */
+.mesa-card {
+  border-radius: 12px;
+  border: 1.5px solid var(--mesa-libre-border);
+  background: var(--mesa-libre-bg);
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: box-shadow 150ms ease, transform 150ms ease, border-color 150ms ease;
+  position: relative;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mesa-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+  transform: translateY(-1px);
+}
+
+.mesa-card.is-selected {
+  box-shadow: 0 0 0 2px var(--primary, #4F46E5);
+}
+
+/* Estados */
+.mesa-card[data-estado="ocupada"] {
+  background: var(--mesa-ocupada-bg);
+  border-color: var(--mesa-ocupada-border);
+}
+.mesa-card[data-estado="por-cobrar"] {
+  background: var(--mesa-por-cobrar-bg);
+  border-color: var(--mesa-por-cobrar-border);
+}
+.mesa-card[data-estado="reservada"] {
+  background: var(--mesa-reservada-bg);
+  border-color: var(--mesa-reservada-border);
+}
+.mesa-card[data-estado="limpieza"] {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--mesa-limpieza-bg),
+    var(--mesa-limpieza-bg) 6px,
+    var(--mesa-limpieza-border) 6px,
+    var(--mesa-limpieza-border) 8px
+  );
+  border-color: var(--mesa-limpieza-border);
+}
+
+/* --------------------------------------------------------------------------
+   Card header: número + capacidad
+   -------------------------------------------------------------------------- */
+.mesa-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.mesa-card-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.mesa-card[data-estado="ocupada"]    .mesa-card-num { color: var(--mesa-ocupada-text); }
+.mesa-card[data-estado="por-cobrar"] .mesa-card-num { color: var(--mesa-por-cobrar-text); }
+.mesa-card[data-estado="reservada"]  .mesa-card-num { color: var(--mesa-reservada-text); }
+
+.mesa-card-cap {
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.mesa-card-cap svg { width: 11px; height: 11px; }
+
+/* --------------------------------------------------------------------------
+   Dots de comensales
+   -------------------------------------------------------------------------- */
+.mesa-dots {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+.mesa-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.mesa-dot.filled  { background: var(--mesa-ocupada-text, #991B1B); opacity: 0.75; }
+.mesa-dot.empty   { background: var(--border); }
+
+/* --------------------------------------------------------------------------
+   Chip de mesero
+   -------------------------------------------------------------------------- */
+.mesa-card-mesero {
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Total
+   -------------------------------------------------------------------------- */
+.mesa-card-total {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Tiempo ocupada (color dinámico por clase JS)
+   -------------------------------------------------------------------------- */
+.mesa-card-tiempo {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.mesa-card-tiempo svg { width: 10px; height: 10px; }
+.mesa-card-tiempo.t-ok     { color: #059669; }
+.mesa-card-tiempo.t-warn   { color: #D97706; }
+.mesa-card-tiempo.t-danger { color: #DC2626; }
+
+/* --------------------------------------------------------------------------
+   Estado "libre" — texto centrado
+   -------------------------------------------------------------------------- */
+.mesa-card-libre-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  padding: 10px 0;
+  flex: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Grupo por sala (encabezado)
+   -------------------------------------------------------------------------- */
+.sala-group {
+  margin-bottom: 20px;
+}
+.sala-group-header {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sala-group-header-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.sala-group-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   Tamaños: normal (140×140) y compacta (100×100)
+   Solo aplica en POS desktop.
+   -------------------------------------------------------------------------- */
+.mesas-canvas.density-normal  .mesa-card { width: 140px; height: 140px; }
+.mesas-canvas.density-compact .mesa-card { width: 100px; height: 100px; }
+.mesas-canvas.density-compact .mesa-card-mesero { display: none; }
+
+/* --------------------------------------------------------------------------
+   Vista lista
+   -------------------------------------------------------------------------- */
+.mesas-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.mesas-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.mesas-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+.mesas-table tr:last-child td { border-bottom: none; }
+.mesas-table tr:hover td { background: var(--alt, #F9FAFB); }
+
+.mesas-estado-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.mesas-estado-badge.libre      { background: var(--mesa-libre-bg);      color: var(--mesa-libre-text);      border: 1px solid var(--mesa-libre-border); }
+.mesas-estado-badge.ocupada    { background: var(--mesa-ocupada-bg);    color: var(--mesa-ocupada-text);    border: 1px solid var(--mesa-ocupada-border); }
+.mesas-estado-badge.por-cobrar { background: var(--mesa-por-cobrar-bg); color: var(--mesa-por-cobrar-text); border: 1px solid var(--mesa-por-cobrar-border); }
+.mesas-estado-badge.reservada  { background: var(--mesa-reservada-bg);  color: var(--mesa-reservada-text);  border: 1px solid var(--mesa-reservada-border); }
+.mesas-estado-badge.limpieza   { background: var(--mesa-limpieza-bg);   color: var(--mesa-limpieza-text);   border: 1px solid var(--mesa-limpieza-border); }

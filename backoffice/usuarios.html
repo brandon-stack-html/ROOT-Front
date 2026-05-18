@@ -21,7 +21,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -274,6 +274,95 @@
   </div>
 </div>
 
+<!-- DRAWER: Editar usuario -->
+<div id="editarUsuario" class="drawer-backdrop">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title" id="editDrawerTitle">Editar usuario</div>
+        <div class="drawer-subtitle">Actualiza los datos de acceso</div>
+      </div>
+      <button class="drawer-close" data-close aria-label="Cerrar">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <div class="form-section">
+        <div class="form-section-title">Datos personales</div>
+        <div class="form-section-fields">
+          <div class="form-field">
+            <label class="form-label">Nombre completo</label>
+            <div class="form-input-wrap"><input type="text" id="editNombre" placeholder="Nombre y apellido" /></div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Email</label>
+            <div class="form-input-wrap"><input type="email" id="editEmail" placeholder="correo@ejemplo.com" /></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Rol y estado</div>
+        <div class="form-section-fields">
+          <div class="form-field">
+            <label class="form-label">Rol</label>
+            <div class="form-input-wrap">
+              <select id="editRol">
+                <option>Mesero</option>
+                <option>Mesera</option>
+                <option>Cajero</option>
+                <option>Encargado</option>
+                <option>Encargada</option>
+                <option>Admin</option>
+              </select>
+              <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Estado</label>
+            <div class="form-input-wrap">
+              <select id="editEstado">
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+              <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-footer" style="flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:8px;width:100%;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Descartar</button>
+        <button class="btn btn-primary" id="btnGuardarUsuario" style="flex:2;display:flex;align-items:center;gap:6px;">
+          <i data-lucide="save" style="width:13px;height:13px;"></i> Guardar cambios
+        </button>
+      </div>
+      <button class="btn" id="btnEliminarUsuario" data-requires="users:delete"
+        style="width:100%;background:transparent;border:1px solid rgba(244,63,94,.22);color:var(--error);display:flex;align-items:center;justify-content:center;gap:6px;">
+        <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Eliminar usuario
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Confirmar eliminación -->
+<div id="modalEliminarUsuario" class="modal-backdrop">
+  <div class="modal modal-sm" role="dialog">
+    <div class="modal-header">
+      <span>Eliminar usuario</span>
+      <button class="modal-close" data-close aria-label="Cerrar">×</button>
+    </div>
+    <div class="modal-body">
+      ¿Eliminar a <strong id="modalEliminarNombre">—</strong>? Esta acción no se puede deshacer.
+      Sus comandas históricas se conservan.
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close>Cancelar</button>
+      <button class="btn btn-destructive" id="confirmEliminarUsuario">
+        <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- DRAWER: Nuevo usuario -->
 <div id="crearUsuario" class="drawer-backdrop">
   <div class="drawer">
@@ -393,15 +482,91 @@
 
 <script src="../assets/js/ui.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="../assets/js/auth.js"></script>
 <script>
   if (window.lucide) lucide.createIcons();
 
-  // Filtros de tabla
+  // ── Seed de datos ─────────────────────────────────────────────────────────
+  const SEED_USUARIOS = [
+    { id:'u1',  nombre:'Juan Camilo R.',      email:'jcamilo@buen-sabor.co',          rol:'Admin',       sucursal:'Todas',       estado:'activo',   iniciales:'JC', avatarBg:'#FCA5A5', avatarColor:'#7F1D1D', lastSeen:'Hace 2 min' },
+    { id:'u2',  nombre:'Andrea García',       email:'andrea.garcia@buen-sabor.co',    rol:'Mesera',      sucursal:'Sede Norte',  estado:'activo',   iniciales:'AG', avatarBg:'#FCA5A5', avatarColor:'#7F1D1D', lastSeen:'Hace 15 min' },
+    { id:'u3',  nombre:'Miguel Rodríguez',    email:'m.rodriguez@buen-sabor.co',      rol:'Cajero',      sucursal:'Sede Norte',  estado:'activo',   iniciales:'MR', avatarBg:'#86EFAC', avatarColor:'#14532D', lastSeen:'Ayer 20:34' },
+    { id:'u4',  nombre:'Laura Pérez',         email:'l.perez@buen-sabor.co',          rol:'Encargada',   sucursal:'Sede Centro', estado:'inactivo', iniciales:'LP', avatarBg:'#E4E4E7', avatarColor:'#71717A', lastSeen:'Hace 3 días' },
+    { id:'u5',  nombre:'Carlos Forero',       email:'c.forero@buen-sabor.co',         rol:'Mesero',      sucursal:'Sede Sur',    estado:'activo',   iniciales:'CF', avatarBg:'#93C5FD', avatarColor:'#1E3A8A', lastSeen:'Hace 1 hora' },
+    { id:'u6',  nombre:'Sara Vélez Quintero', email:'s.velez@buen-sabor.co',          rol:'Mesera',      sucursal:'Sede Norte',  estado:'activo',   iniciales:'SV', avatarBg:'#DDD6FE', avatarColor:'#4C1D95', lastSeen:'Hace 30 min' },
+    { id:'u7',  nombre:'Andrés Morales',      email:'a.morales@buen-sabor.co',        rol:'Cajero',      sucursal:'Sede Centro', estado:'activo',   iniciales:'AM', avatarBg:'#FDE68A', avatarColor:'#78350F', lastSeen:'Hace 2 horas' },
+    { id:'u8',  nombre:'Valentina Ramos',     email:'v.ramos@buen-sabor.co',          rol:'Mesera',      sucursal:'Sede Sur',    estado:'activo',   iniciales:'VR', avatarBg:'#FCA5A5', avatarColor:'#7F1D1D', lastSeen:'Hace 5 min' },
+    { id:'u9',  nombre:'Diego Castillo',      email:'d.castillo@buen-sabor.co',       rol:'Mesero',      sucursal:'Sede Norte',  estado:'activo',   iniciales:'DC', avatarBg:'#6EE7B7', avatarColor:'#064E3B', lastSeen:'Hace 45 min' },
+    { id:'u10', nombre:'Luisa Herrera',       email:'l.herrera@buen-sabor.co',        rol:'Encargada',   sucursal:'Sede Sur',    estado:'activo',   iniciales:'LH', avatarBg:'#C4B5FD', avatarColor:'#4C1D95', lastSeen:'Hace 10 min' },
+    { id:'u11', nombre:'Felipe Ospina',       email:'f.ospina@buen-sabor.co',         rol:'Admin',       sucursal:'Todas',       estado:'activo',   iniciales:'FO', avatarBg:'#93C5FD', avatarColor:'#1E3A8A', lastSeen:'Hace 1 día' },
+    { id:'u12', nombre:'María Gómez',         email:'m.gomez@buen-sabor.co',          rol:'Cajero',      sucursal:'Sede Norte',  estado:'inactivo', iniciales:'MG', avatarBg:'#E4E4E7', avatarColor:'#71717A', lastSeen:'Hace 1 semana' },
+  ];
+
+  const USERS_KEY = 'root:users:v1';
+
+  function getUsers() {
+    try {
+      const raw = localStorage.getItem(USERS_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    localStorage.setItem(USERS_KEY, JSON.stringify(SEED_USUARIOS));
+    return SEED_USUARIOS;
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }
+
+  // ── Render de tabla ───────────────────────────────────────────────────────
+  function buildRow(u) {
+    const rolClass = (u.rol || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const esActivo = u.estado === 'activo';
+    return `<div class="usuarios-data-row${esActivo ? '' : ' is-inactive'}" data-id="${u.id}" data-rol="${u.rol}" data-estado="${u.estado}">
+      <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
+        <div class="user-avatar" style="background:${u.avatarBg};color:${u.avatarColor};">${u.iniciales}</div>
+        <span style="font-size:13px;font-weight:500;">${u.nombre}</span>
+      </div>
+      <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.email}</div>
+      <div><span class="role-chip ${rolClass}">${u.rol}</span></div>
+      <div style="font-size:12px;">${u.sucursal}</div>
+      <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">${u.lastSeen}</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+        <span class="status-dot" style="background:${esActivo ? 'var(--success)' : 'var(--muted)'};"></span>
+        ${esActivo ? 'Activo' : 'Inactivo'}
+      </div>
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Editar" data-edit-id="${u.id}">
+          <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
+        </button>
+      </div>
+    </div>`;
+  }
+
+  function renderTable() {
+    const users = getUsers();
+    const body = document.getElementById('usuariosBody');
+    body.innerHTML = users.map(buildRow).join('');
+    document.querySelector('.bo-page-subtitle').textContent = `${users.length} usuarios · 5 roles asignados`;
+    document.querySelector('.bo-pagination-info').textContent = `Mostrando 1–${Math.min(users.length, 10)} de ${users.length} usuarios`;
+    if (window.lucide) lucide.createIcons();
+    attachRowListeners();
+    filterTable();
+  }
+
+  function attachRowListeners() {
+    document.querySelectorAll('[data-edit-id]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const id = btn.dataset.editId;
+        openEditDrawer(id);
+      });
+    });
+  }
+
+  // ── Filtros ───────────────────────────────────────────────────────────────
   const searchInput = document.getElementById('searchInput');
   const filterRol = document.getElementById('filterRol');
   const filterEstado = document.getElementById('filterEstado');
-
-  const usuariosBody = document.getElementById('usuariosBody');
   const usuariosEmpty = document.getElementById('usuariosEmpty');
 
   function filterTable() {
@@ -426,51 +591,91 @@
   searchInput.addEventListener('input', filterTable);
   filterRol.addEventListener('change', filterTable);
   filterEstado.addEventListener('change', filterTable);
-
-  document.getElementById('usuariosClearFilters')?.addEventListener('click', function () {
-    searchInput.value = '';
-    filterRol.value = '';
-    filterEstado.value = '';
+  document.getElementById('usuariosClearFilters')?.addEventListener('click', () => {
+    searchInput.value = ''; filterRol.value = ''; filterEstado.value = '';
     filterTable();
   });
 
-  // Crear usuario
-  let nuevoCount = 6;
+  // ── Crear usuario ─────────────────────────────────────────────────────────
   document.getElementById('btnCrearUsuario').addEventListener('click', () => {
     const nombre = document.getElementById('nuevoNombre').value || 'Nuevo usuario';
-    const email = document.getElementById('nuevoEmail').value || 'usuario@buen-sabor.co';
-    const rol = document.getElementById('nuevoRol').value || 'Mesero';
-    const inicial = nombre.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+    const email  = document.getElementById('nuevoEmail').value  || 'usuario@buen-sabor.co';
+    const rol    = document.getElementById('nuevoRol').value    || 'Mesero';
+    const iniciales = nombre.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+
+    const users = getUsers();
+    const newUser = {
+      id: 'u' + Date.now(), nombre, email, rol,
+      sucursal: 'Sede Norte', estado: 'activo',
+      iniciales, avatarBg: '#DDD6FE', avatarColor: '#4C1D95',
+      lastSeen: 'Ahora'
+    };
+    users.push(newUser);
+    saveUsers(users);
 
     UI.closeDrawer('crearUsuario');
     UI.toast({ type: 'success', title: 'Usuario creado', sub: 'Se enviaron las credenciales por correo' });
-
-    const rolClass = rol.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-    const newRow = document.createElement('div');
-    newRow.className = 'usuarios-data-row';
-    newRow.dataset.rol = rol;
-    newRow.dataset.estado = 'activo';
-    newRow.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div class="user-avatar" style="background:#DDD6FE;color:#4C1D95;">${inicial}</div>
-        <span style="font-size:13px;font-weight:500;">${nombre}</span>
-      </div>
-      <div style="font-size:12px;color:var(--muted);font-family:monospace;">${email}</div>
-      <div><span class="role-chip ${rolClass}">${rol}</span></div>
-      <div style="font-size:12px;">Sede Norte</div>
-      <div style="font-size:12px;color:var(--muted);">Ahora</div>
-      <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-        <span class="status-dot" style="background:var(--success);"></span>Activo
-      </div>
-      <div style="display:flex;justify-content:flex-end;">
-        <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
-          <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
-        </button>
-      </div>`;
-    document.getElementById('usuariosBody').appendChild(newRow);
-    if (window.lucide) lucide.createIcons();
-    nuevoCount++;
+    renderTable();
   });
+
+  // ── Editar usuario ────────────────────────────────────────────────────────
+  let editingUserId = null;
+
+  function openEditDrawer(id) {
+    const users = getUsers();
+    const u = users.find(x => x.id === id);
+    if (!u) return;
+    editingUserId = id;
+
+    document.getElementById('editNombre').value = u.nombre;
+    document.getElementById('editEmail').value  = u.email;
+    document.getElementById('editRol').value    = u.rol;
+    document.getElementById('editEstado').value = u.estado;
+    document.getElementById('editDrawerTitle').textContent = 'Editar: ' + u.nombre;
+    UI.openDrawer('editarUsuario');
+  }
+
+  document.getElementById('btnGuardarUsuario').addEventListener('click', () => {
+    if (!editingUserId) return;
+    const users = getUsers();
+    const idx = users.findIndex(x => x.id === editingUserId);
+    if (idx === -1) return;
+
+    users[idx].nombre  = document.getElementById('editNombre').value || users[idx].nombre;
+    users[idx].email   = document.getElementById('editEmail').value  || users[idx].email;
+    users[idx].rol     = document.getElementById('editRol').value    || users[idx].rol;
+    users[idx].estado  = document.getElementById('editEstado').value || users[idx].estado;
+    users[idx].iniciales = users[idx].nombre.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+
+    saveUsers(users);
+    UI.closeDrawer('editarUsuario');
+    UI.toast({ type: 'success', title: 'Cambios guardados' });
+    renderTable();
+    editingUserId = null;
+  });
+
+  document.getElementById('btnEliminarUsuario').addEventListener('click', () => {
+    if (!editingUserId) return;
+    const users = getUsers();
+    const u = users.find(x => x.id === editingUserId);
+    if (!u) return;
+    document.getElementById('modalEliminarNombre').textContent = u.nombre;
+    UI.closeDrawer('editarUsuario');
+    UI.openModal('modalEliminarUsuario');
+  });
+
+  document.getElementById('confirmEliminarUsuario').addEventListener('click', () => {
+    if (!editingUserId) return;
+    const users = getUsers().filter(x => x.id !== editingUserId);
+    saveUsers(users);
+    UI.closeModal('modalEliminarUsuario');
+    UI.toast({ type: 'success', title: 'Usuario eliminado' });
+    renderTable();
+    editingUserId = null;
+  });
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+  renderTable();
 </script>
   <script src="../assets/js/nav.js"></script>
 </body>
