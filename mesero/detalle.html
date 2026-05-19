@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mesa 4 · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    /* Banner verde ¡Listo! */
+    .e4-banner {
+      margin: 12px 14px 0;
+      padding: 12px 14px;
+      border-radius: 11px;
+      background: #D1FAE5;
+      border: 1px solid rgba(16, 185, 129, 0.33);
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+    [data-theme="dark"] .e4-banner {
+      background: rgba(16, 185, 129, 0.18);
+    }
+    .e4-banner-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 18px;
+      background: var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+    }
+    .e4-banner-icon svg { width: 18px; height: 18px; }
+    .e4-banner-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #065F46;
+    }
+    [data-theme="dark"] .e4-banner-title { color: #A7F3D0; }
+    .e4-banner-meta {
+      font-size: 11px;
+      color: #047857;
+      margin-top: 1px;
+    }
+    [data-theme="dark"] .e4-banner-meta { color: #6EE7B7; }
+
+    /* Info compacta */
+    .e4-info {
+      padding: 12px 18px 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+    .e4-info-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .e4-info-item svg { width: 11px; height: 11px; }
+
+    /* Items por rondas */
+    .e4-items {
+      padding: 4px 18px 12px;
+    }
+    .ronda-section { margin-bottom: 14px; }
+    .ronda-header {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ronda-header-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .ronda-hora {
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    .item-row {
+      padding: 10px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .item-row:last-child { border-bottom: none; }
+    .item-state-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .item-state-icon svg { width: 14px; height: 14px; stroke-width: 2; }
+    .item-state-icon.tone-listo {
+      background: rgba(16, 185, 129, 0.13);
+      color: var(--success);
+    }
+    [data-theme="dark"] .item-state-icon.tone-listo {
+      background: rgba(16, 185, 129, 0.30);
+    }
+    .item-state-icon.tone-preparando {
+      background: rgba(245, 158, 11, 0.13);
+      color: var(--warning);
+    }
+    [data-theme="dark"] .item-state-icon.tone-preparando {
+      background: rgba(245, 158, 11, 0.30);
+    }
+    .item-state-icon.tone-enviado {
+      background: rgba(59, 130, 246, 0.13);
+      color: var(--info);
+    }
+    [data-theme="dark"] .item-state-icon.tone-enviado {
+      background: rgba(59, 130, 246, 0.30);
+    }
+    .item-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .item-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .item-name {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .item-qty {
+      color: var(--muted);
+      font-weight: 600;
+      margin-right: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .item-price {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+    .item-obs {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      font-style: italic;
+    }
+
+    /* Subtotal / IVA */
+    .e4-subtotals {
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .e4-subtotal-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      padding-bottom: 6px;
+    }
+    .e4-subtotal-row span:last-child { font-variant-numeric: tabular-nums; }
+
+    /* Footer sticky */
+    .e4-footer {
+      padding: 12px 16px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .e4-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .e4-total-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .e4-total-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .e4-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.3fr;
+      gap: 8px;
+    }
+    .e4-actions .mb-btn {
+      font-size: 12px;
+      padding: 0 8px;
+    }
+    .e4-actions .mb-btn.mb-btn-success {
+      font-size: 13px;
+    }
+
+    /* Botón "editar observación" en cada item-row */
+    .item-row-edit-obs {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0;
+      align-self: center;
+      transition: background-color 150ms ease, color 150ms ease;
+    }
+    .item-row-edit-obs:hover {
+      background: var(--alt);
+      color: var(--text);
+    }
+    .item-row-edit-obs svg { width: 14px; height: 14px; stroke-width: 2; }
+
+    /* Botón eliminar item */
+    .item-row-delete {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0;
+      align-self: center;
+      transition: background-color 150ms ease, color 150ms ease;
+      margin-left: 4px;
+    }
+    .item-row-delete:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #EF4444;
+    }
+    .item-row-delete svg { width: 14px; height: 14px; stroke-width: 2; }
+
+    /* Bottom sheet de editar observación: usar el padding propio */
+    #sheetEditObs .bottom-sheet-body { padding: 14px 18px 18px; }
+    #sheetEditObs textarea.field-input { min-height: 96px; resize: vertical; }
+    #sheetEditObs .bottom-sheet-footer {
+      display: flex;
+      gap: 10px;
+    }
+    #sheetEditObs .bottom-sheet-footer .btn { flex: 1; justify-content: center; padding: 12px; font-size: 13px; }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- ============= TOPBAR ============= -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side">
+            <a href="./mapa.html" class="mesero-icon-btn" aria-label="Atrás">
+              <i data-lucide="arrow-left"></i>
+            </a>
+          </div>
+          <div class="mesero-topbar-center is-stacked">
+            <div class="mesero-topbar-title">Mesa 4</div>
+            <div class="mesero-topbar-subtitle">Salón Principal</div>
+          </div>
+          <div class="mesero-topbar-side">
+            <button class="mesero-icon-btn" type="button" aria-label="Agregar comensales">
+              <i data-lucide="user-plus"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- ============= CONTENT ============= -->
+        <main id="main" class="mesero-content">
+
+          <!-- Banner ¡Pedido listo! -->
+          <div class="e4-banner">
+            <div class="e4-banner-icon mesero-pulse-ring">
+              <i data-lucide="bell-ring"></i>
+            </div>
+            <div style="flex:1;">
+              <div class="e4-banner-title">¡Pedido listo para entregar!</div>
+              <div class="e4-banner-meta">Ronda 1 · Hace 3 min</div>
+            </div>
+          </div>
+
+          <!-- Info compacta -->
+          <div class="e4-info">
+            <span class="e4-info-item">
+              <i data-lucide="clock"></i>
+              Abierta hace 00:45
+            </span>
+            <span>·</span>
+            <span class="e4-info-item">
+              <i data-lucide="user"></i>
+              Mesero: Tú
+            </span>
+          </div>
+
+          <!-- Items (renderizados por JS desde window.comanda) -->
+          <div class="e4-items" id="comandaItems"></div>
+        </main>
+
+        <!-- ============= BOTTOM SHEET — Editar observación ============= -->
+        <div class="bottom-sheet-backdrop" data-sheet="sheetEditObs"></div>
+        <div id="sheetEditObs" class="bottom-sheet">
+          <div class="bottom-sheet-handle" data-close></div>
+          <div class="bottom-sheet-header">
+            <h3 class="bottom-sheet-title">Editar observación</h3>
+            <p class="bottom-sheet-subtitle" id="editObsItemName">—</p>
+          </div>
+          <div class="bottom-sheet-body">
+            <div class="voice-input-row">
+              <button type="button" class="voice-input-btn" data-voice-input="editObsTextarea"
+                      aria-label="Dictar observación por voz" aria-pressed="false">
+                <span class="voice-input-icon-mic"><i data-lucide="mic"></i></span>
+                <span class="voice-input-icon-stop"><i data-lucide="square"></i></span>
+                <span class="voice-spinner" aria-hidden="true"></span>
+              </button>
+              <span class="voice-input-timer" role="timer" aria-live="off">0:00</span>
+              <span class="voice-input-label">Tocá o mantené para dictar</span>
+            </div>
+            <span class="voice-input-hint">Soltá o tocá de nuevo para terminar</span>
+            <textarea id="editObsTextarea" class="field-input" rows="4"
+                      placeholder="Ej: sin sal, sin gluten, alergia al maní..."></textarea>
+            <p class="field-hint">Podés escribir, dictar, o combinar ambos.</p>
+          </div>
+          <div class="bottom-sheet-footer">
+            <button type="button" class="btn btn-secondary" data-close>Cancelar</button>
+            <button type="button" class="btn btn-primary" id="btnSaveEditObs">Guardar</button>
+          </div>
+        </div>
+
+        <!-- ============= FOOTER STICKY ============= -->
+        <div class="e4-footer">
+          <div class="e4-total-row">
+            <span class="e4-total-label">Total</span>
+            <span class="e4-total-value">$116.000</span>
+          </div>
+          <div class="e4-actions" style="grid-template-columns: 1fr auto 1.3fr;">
+            <a id="linkAgregar" href="./catalogo.html?mesa=4" class="mb-btn mb-btn-secondary h-48">
+              <i data-lucide="plus"></i>
+              Agregar
+            </a>
+            <a id="linkVoz" href="./catalogo.html?mesa=4&mode=voice" class="mb-btn mb-btn-secondary h-48" title="Grabar por voz">
+              <i data-lucide="mic"></i>
+              Grabar
+            </a>
+            <button type="button" class="mb-btn mb-btn-success h-48" id="btnComanda">
+              <i data-lucide="send"></i>
+              Comanda
+            </button>
+          </div>
+        </div>
+
+        <!-- ============= BOTTOM NAV ============= -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="layout-grid"></i>
+            </span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="clipboard-list"></i>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Nómina</span>
+          </a>
+          <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <div class="mesero-home-indicator"></div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/store-mesas.js"></script>
+  <script src="../assets/js/store-comandas.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    // ============= Leer mesa del store (o fallback mock) =============
+    var params = new URLSearchParams(location.search);
+    var mesaNumParam = params.get('mesa') || '4';
+    var mesaId = 'mesa-' + mesaNumParam;
+
+    var COMANDA_ESTADO_MAP = {
+      'enviada':  { tone: 'tone-enviado',    icon: 'send',            estado: 'enviado'    },
+      'lista':    { tone: 'tone-listo',      icon: 'check-circle-2',  estado: 'listo'      },
+      'pendiente':{ tone: 'tone-preparando', icon: 'flame',           estado: 'preparando' }
+    };
+
+    function loadFromStore() {
+      if (!window.StoreMesas) return null;
+      var mesa = StoreMesas.getMesa(mesaId);
+      if (!mesa) return null;
+
+      // Actualizar título y subtítulo del topbar
+      var titleEl = document.querySelector('.mesero-topbar-title');
+      var subEl   = document.querySelector('.mesero-topbar-subtitle');
+      if (titleEl) titleEl.textContent = 'Mesa ' + mesa.numero;
+      if (subEl)   subEl.textContent = ({ principal: 'Salón Principal', terraza: 'Terraza', vip: 'VIP' }[mesa.sala] || mesa.sala);
+
+      // Actualizar links del footer con el número real
+      var linkAgregar = document.querySelector('a[href*="catalogo.html"]');
+      var linkCobro   = document.querySelector('a[href*="cobro.html"]');
+      if (linkAgregar) linkAgregar.href = './catalogo.html?mesa=' + mesa.numero;
+      if (linkCobro)   linkCobro.href   = './cobro.html?mesa=' + mesa.numero;
+
+      // Mapear items del store al formato del renderizador
+      var items = (mesa.items || []).map(function (it, i) {
+        var meta = COMANDA_ESTADO_MAP[it.comanda] || COMANDA_ESTADO_MAP.pendiente;
+        var modsObs = (it.mods || []).map(function (m) {
+          return (m.tipo === 'remover' ? 'Sin ' : m.tipo === 'extra' ? 'Extra ' : '') + m.valor;
+        }).join(', ');
+        return {
+          id: i + 1,
+          ronda: 1,
+          hora: mesa.ultimaComanda ? new Date(mesa.ultimaComanda).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '--:--',
+          estado: meta.estado,
+          qty: it.cantidad,
+          name: it.nombre,
+          price: it.precio,
+          obs: modsObs
+        };
+      });
+      return { items: items, total: mesa.total };
+    }
+
+    var _storeData = loadFromStore();
+
+    window.comanda = {
+      items: _storeData ? _storeData.items : [
+        { id: 1, ronda: 1, hora: '18:23', estado: 'listo',      qty: 2, name: 'Bandeja Paisa',    price: 32000, obs: 'Sin chicharrón' },
+        { id: 2, ronda: 1, hora: '18:23', estado: 'listo',      qty: 2, name: 'Limonada Natural', price: 9000,  obs: '' },
+        { id: 3, ronda: 2, hora: '18:41', estado: 'preparando', qty: 1, name: 'Ajiaco Bogotano',  price: 28000, obs: '' },
+        { id: 4, ronda: 2, hora: '18:41', estado: 'preparando', qty: 1, name: 'Agua con gas',     price: 6000,  obs: '' }
+      ]
+    };
+
+    var ESTADO_META = {
+      listo:      { tone: 'tone-listo',      icon: 'check-circle-2' },
+      preparando: { tone: 'tone-preparando', icon: 'flame' },
+      enviado:    { tone: 'tone-enviado',    icon: 'send' }
+    };
+
+    function fmtCOP(n) { return '$' + Number(n).toLocaleString('es-CO'); }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function renderComanda() {
+      var container = document.getElementById('comandaItems');
+      if (!container) return;
+
+      // Agrupar por ronda
+      var rondas = {};
+      window.comanda.items.forEach(function (it) {
+        if (!rondas[it.ronda]) rondas[it.ronda] = { hora: it.hora, items: [] };
+        rondas[it.ronda].items.push(it);
+      });
+
+      // Los precios del menú incluyen IVA (8%). Calcular subtotal sin IVA y el IVA desglosado.
+      // Redondear subtotal al mil más cercano para visual limpio (estilo Colombia).
+      var total = window.comanda.items.reduce(function (acc, it) { return acc + it.qty * it.price; }, 0);
+      var subtotal = Math.round(total / 1.08 / 1000) * 1000;
+      var iva = total - subtotal;
+
+      var html = '';
+      Object.keys(rondas).sort().forEach(function (numStr) {
+        var r = rondas[numStr];
+        html += '<div class="ronda-section">';
+        html +=   '<div class="ronda-header">';
+        html +=     '<span>Ronda ' + numStr + '</span>';
+        html +=     '<span class="ronda-header-line"></span>';
+        html +=     '<span class="ronda-hora">' + escapeHtml(r.hora) + '</span>';
+        html +=   '</div>';
+        html +=   '<div>';
+        r.items.forEach(function (it) {
+          var meta = ESTADO_META[it.estado] || ESTADO_META.preparando;
+          html += '<div class="item-row" data-item-id="' + it.id + '">';
+          html +=   '<div class="item-state-icon ' + meta.tone + '">';
+          html +=     '<i data-lucide="' + meta.icon + '"></i>';
+          html +=   '</div>';
+          html +=   '<div class="item-body">';
+          html +=     '<div class="item-line">';
+          html +=       '<div class="item-name">';
+          html +=         '<span class="item-qty">×' + it.qty + '</span>' + escapeHtml(it.name);
+          html +=       '</div>';
+          html +=       '<div class="item-price">' + fmtCOP(it.qty * it.price) + '</div>';
+          html +=     '</div>';
+          if (it.obs) {
+            html +=   '<div class="item-obs">↳ ' + escapeHtml(it.obs) + '</div>';
+          }
+          html +=   '</div>';
+          html +=   '<button type="button" class="item-row-edit-obs" data-item-id="' + it.id + '" aria-label="Editar observación">';
+          html +=     '<i data-lucide="pencil"></i>';
+          html +=   '</button>';
+          html +=   '<button type="button" class="item-row-delete" data-item-id="' + it.id + '" aria-label="Eliminar ítem">';
+          html +=     '<i data-lucide="trash-2"></i>';
+          html +=   '</button>';
+          html += '</div>';
+        });
+        html +=   '</div>';
+        html += '</div>';
+      });
+
+      // Subtotal / IVA
+      html += '<div class="e4-subtotals">';
+      html +=   '<div class="e4-subtotal-row"><span>Subtotal</span><span>' + fmtCOP(subtotal) + '</span></div>';
+      html +=   '<div class="e4-subtotal-row"><span>IVA (8%)</span><span>' + fmtCOP(iva) + '</span></div>';
+      html += '</div>';
+
+      container.innerHTML = html;
+
+      // Re-render iconos lucide para los nuevos elementos
+      if (window.lucide) window.lucide.createIcons();
+
+      // Total en footer
+      var totalEl = document.querySelector('.e4-total-value');
+      if (totalEl) totalEl.textContent = fmtCOP(total);
+
+    }
+
+    // ============= Editar observación (delegación en el contenedor) =============
+    var editingItemId = null;
+
+    document.getElementById('comandaItems').addEventListener('click', function (e) {
+      // Eliminar ítem
+      var delBtn = e.target.closest('.item-row-delete');
+      if (delBtn) {
+        var delId = parseInt(delBtn.dataset.itemId, 10);
+        var delItem = window.comanda.items.find(function (i) { return i.id === delId; });
+        window.comanda.items = window.comanda.items.filter(function (i) { return i.id !== delId; });
+        renderComanda();
+        if (window.lucide) window.lucide.createIcons();
+        UI.toast({ type: 'info', title: 'Ítem eliminado', sub: delItem ? delItem.name : '' });
+        return;
+      }
+
+      var btn = e.target.closest('.item-row-edit-obs');
+      if (!btn) return;
+      editingItemId = parseInt(btn.dataset.itemId, 10);
+      var item = window.comanda.items.find(function (i) { return i.id === editingItemId; });
+      if (!item) return;
+      document.getElementById('editObsItemName').textContent = '×' + item.qty + ' ' + item.name;
+      document.getElementById('editObsTextarea').value = item.obs || '';
+      UI.openBottomSheet('sheetEditObs');
+    });
+
+    document.getElementById('btnSaveEditObs').addEventListener('click', function () {
+      var newObs    = (document.getElementById('editObsTextarea').value || '').trim();
+      var savedId   = editingItemId;
+      var item      = window.comanda.items.find(function (i) { return i.id === savedId; });
+      if (item) {
+        item.obs = newObs;
+        renderComanda();
+      }
+      UI.closeBottomSheet('sheetEditObs');
+      UI.toast({
+        type: 'success',
+        title: 'Observación actualizada',
+        sub: newObs
+          ? '"' + (newObs.length > 40 ? newObs.slice(0, 40) + '…' : newObs) + '"'
+          : 'Observación eliminada'
+      });
+      editingItemId = null;
+
+      // Scroll al ítem editado
+      setTimeout(function () {
+        var el = document.querySelector('.item-row[data-item-id="' + savedId + '"]');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 200);
+    });
+
+    // ============= Inicialización =============
+    renderComanda();
+    if (window.lucide) window.lucide.createIcons();
+
+    // Actualizar links y total del footer con datos del store si están disponibles
+    if (_storeData) {
+      var totalEl = document.querySelector('.e4-total-value');
+      if (totalEl) totalEl.textContent = fmtCOP(_storeData.total);
+    }
+    // Actualizar links con el número de mesa correcto
+    var la = document.getElementById('linkAgregar');
+    var lv = document.getElementById('linkVoz');
+    if (la) la.href = './catalogo.html?mesa=' + mesaNumParam;
+    if (lv) lv.href = './catalogo.html?mesa=' + mesaNumParam + '&mode=voice';
+
+    document.getElementById('btnComanda').addEventListener('click', function () {
+      UI.toast({ type: 'success', title: 'Comanda enviada a cocina' });
+    });
+
+    // Re-renderizar cuando el store notifique cambios en esta mesa
+    window.addEventListener('mesa-actualizada', function (e) {
+      if (e.detail && e.detail.mesaId === mesaId) {
+        var fresh = loadFromStore();
+        if (fresh) {
+          window.comanda.items = fresh.items;
+          renderComanda();
+          var te = document.querySelector('.e4-total-value');
+          if (te) te.textContent = fmtCOP(fresh.total);
+        }
+      }
+    });
+  </script>
+  <script src="../assets/js/voice-input.js"></script>
+  <script src="../assets/js/mesero-tabbar-badge.js"></script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

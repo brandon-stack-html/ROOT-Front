@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/kds.css" />
+  <script src="../assets/js/store-mesas.js"></script>
+  <script src="../assets/js/store-comandas.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
   <script src="../assets/js/ui.js" defer></script>
 </head>
@@ -25,7 +27,7 @@
   <!-- TOPBAR -->
   <header class="kds-topbar">
     <div class="kds-topbar-brand">
-      <i data-lucide="chef-hat" style="color:var(--accent)"></i>
+      <span class="root-wordmark">[ROOT]</span>
       <button id="stationBtn" onclick="toggleStationMenu()">
         <span id="stationLabel">Cocina Caliente</span>
         <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--muted)"></i>
@@ -500,6 +502,27 @@
   }
   .kds-station-opt:hover { background: var(--border); }
   .kds-station-opt.is-active { color: var(--accent); font-weight: 600; }
+
+  /* Badge "voz" en ticket (S16) */
+  .kds-voz-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(139, 92, 246, 0.12);
+    color: #7C3AED;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+  }
+  [data-theme="dark"] .kds-voz-chip {
+    background: rgba(139, 92, 246, 0.22);
+    color: #C4B5FD;
+    border-color: rgba(139, 92, 246, 0.4);
+  }
 </style>
 
 <script>
@@ -603,10 +626,13 @@
 
   function servirTicket(btn) {
     const ticket = btn.closest('.kds-ticket');
-    const num = ticket.dataset.ticket;
+    const num    = ticket.dataset.ticket;
+    const mesaId = ticket.dataset.mesaId || '';
+    const mesaNum = ticket.dataset.mesa  || mesaNumFromId(mesaId);
     ticket.classList.add('is-serving');
     listoCount.count++;
-    UI.toast({ type: 'success', title: `Ticket #${num} servido`, sub: 'Comanda completada' });
+    UI.toast({ type: 'success', title: `Ticket #${num} servido`, sub: `Mesa ${mesaNum} · Comanda completada` });
+    if (window.StoreComandas) StoreComandas.marcarLista(num, mesaId || ('mesa-' + mesaNum), mesaNum);
     setTimeout(() => { ticket.remove(); updateCounts(); }, 320);
   }
 
@@ -662,6 +688,77 @@
       document.exitFullscreen();
     }
   }
+
+  // ── Comanda desde store (Sprint 14) ───────────────────────────
+  let _ticketSeq = 900; // base para números de ticket de demo
+
+  function mesaNumFromId(mesaId) {
+    return (mesaId || '').replace('mesa-', '') || '?';
+  }
+
+  function injectComanda(mesaId, items, origen) {
+    _ticketSeq++;
+    const num   = String(_ticketSeq);
+    const mesa  = mesaNumFromId(mesaId);
+    const now   = Date.now();
+
+    const ticket = document.createElement('div');
+    ticket.className = 'kds-ticket';
+    ticket.dataset.ticket  = num;
+    ticket.dataset.station = 'caliente';
+    ticket.dataset.elapsed = '0';
+    ticket.dataset.status  = 'pendiente';
+    ticket.dataset.start   = String(now);
+    ticket.dataset.mesa    = mesa;
+    ticket.dataset.mesaId  = mesaId || '';
+
+    const itemRows = (items || []).map(it =>
+      `<div class="kds-item">
+        <span class="kds-item-qty">${it.cantidad || it.qty || 1}×</span>
+        <span class="kds-item-name">${it.nombre || it.name || '—'}</span>
+        ${(it.mods && it.mods.length) ? `<span class="kds-item-mod">${it.mods.map(m => (m.tipo === 'remover' ? 'sin ' : 'con ') + m.valor).join(', ')}</span>` : ''}
+      </div>`
+    ).join('');
+
+    const voiceChip = origen === 'voz'
+      ? `<span class="kds-voz-chip" title="Pedido por voz — verificar transcripción"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>Voz</span>`
+      : '';
+
+    ticket.innerHTML = `
+      <div class="kds-ticket-header">
+        <div class="kds-ticket-header-left">
+          <div class="kds-ticket-mesa">Mesa ${mesa}</div>
+          <div class="kds-ticket-num">#${num}</div>
+        </div>
+        <div class="kds-ticket-header-right" style="display:flex;align-items:center;gap:8px;">
+          ${voiceChip}
+          <div class="kds-ticket-timer">
+            <i data-lucide="timer" style="width:16px;height:16px"></i>
+            <span class="kds-timer-display">0:00</span>
+          </div>
+        </div>
+      </div>
+      <div class="kds-ticket-items">${itemRows || '<div class="kds-item"><span class="kds-item-name">Sin ítems detallados</span></div>'}</div>
+      <div class="kds-ticket-footer">
+        <button class="kds-btn-prep" onclick="togglePrep(this)" type="button">En preparación</button>
+        <button class="kds-btn-servir" onclick="servirTicket(this)" type="button">
+          <i data-lucide="check"></i> Servir
+        </button>
+      </div>`;
+
+    const grid = document.getElementById('kdsGrid');
+    if (grid) grid.insertBefore(ticket, grid.firstChild);
+    if (window.lucide) lucide.createIcons();
+    updateCounts();
+    applyTabFilter();
+  }
+
+  window.addEventListener('comanda-creada', (e) => {
+    const { mesaId, items, origen, ticketId } = e.detail || {};
+    injectComanda(mesaId, items, origen);
+    const label = origen === 'voz' ? '🎙 Por voz' : 'Nueva comanda';
+    if (window.UI) UI.toast({ type: 'info', title: `${label} · Mesa ${mesaNumFromId(mesaId)}`, duration: 3000 });
+  });
 
   // ── Start ──────────────────────────────────────────────────────
   setInterval(updateClock, 1000);

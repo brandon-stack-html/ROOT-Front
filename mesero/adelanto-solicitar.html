@@ -316,7 +316,7 @@
       st.adelantos.push(nuevoAdv);
       NM.saveState(st);
 
-      window.location.href = './nomina.html?toast=enviado';
+      window.location.href = './adelantos-historial.html?highlight=' + encodeURIComponent(nuevoAdv.id) + '&toast=enviado';
     });
   </script>
   <script src="../assets/js/nav.js"></script>

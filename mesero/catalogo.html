@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Catálogo · Mesa 4 · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    /* Tabs categorías */
+    .e5-cat-wrap {
+      padding: 12px 12px 10px;
+      flex-shrink: 0;
+    }
+
+    /* Grid productos */
+    .e5-grid-wrap {
+      padding: 4px 12px 12px;
+    }
+    .e5-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .product-card {
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card.is-disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .product-photo {
+      height: 96px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-photo svg {
+      width: 28px;
+      height: 28px;
+      color: rgba(0, 0, 0, 0.35);
+    }
+    .product-flag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      padding: 3px 7px;
+      border-radius: 5px;
+      letter-spacing: 0.04em;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .product-flag.popular { background: var(--error); }
+    .product-flag.sin-stock { background: rgba(0, 0, 0, 0.65); }
+    .product-counter {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      min-width: 22px;
+      height: 22px;
+      border-radius: 11px;
+      padding: 0 6px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-info {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .product-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.25;
+      min-height: 32px;
+    }
+    .product-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    .product-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .product-add-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+    }
+    .product-add-btn svg { width: 16px; height: 16px; stroke-width: 2.4; }
+    .product-card.is-disabled .product-add-btn {
+      background: var(--alt);
+      color: var(--muted);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Footer sticky */
+    .e5-footer {
+      padding: 12px 16px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .e5-footer-info {
+      flex: 1;
+    }
+    .e5-footer-meta {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .e5-footer-total {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
+    }
+
+    /* ============= BOTTOM SHEET (E6) ============= */
+    .e6-photo {
+      height: 140px;
+      background: #FECACA;
+      position: relative;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .e6-photo svg {
+      width: 40px;
+      height: 40px;
+      color: rgba(0, 0, 0, 0.35);
+    }
+    .e6-body {
+      padding: 14px 18px 12px;
+    }
+    .e6-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      gap: 12px;
+    }
+    .e6-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .e6-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .e6-price {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    .e6-section { margin-bottom: 16px; }
+    .e6-section-title {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* Cantidad */
+    .e6-qty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 10px;
+      background: var(--alt);
+      border-radius: 12px;
+    }
+    .e6-qty-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 21px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .e6-qty-btn.plus {
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.33);
+    }
+    .e6-qty-btn svg { width: 18px; height: 18px; stroke-width: 2.4; }
+    .e6-qty-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      min-width: 36px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Modificadores chips */
+    .e6-mods {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .e6-mod {
+      padding: 8px 14px;
+      border-radius: 18px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: var(--ff-base);
+      cursor: pointer;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .e6-mod svg { width: 11px; height: 11px; stroke-width: 3; }
+    .e6-mod.is-selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .e6-mod .delta {
+      font-size: 10px;
+      opacity: 0.6;
+    }
+    .e6-mod.is-selected .delta { opacity: 0.85; }
+
+    /* Observación */
+    .e6-textarea {
+      width: 100%;
+      min-height: 54px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: var(--ff-base);
+      background: var(--alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      outline: none;
+      resize: none;
+      box-sizing: border-box;
+    }
+
+    /* ── FAB mic (modo voz) ── */
+    .voice-fab-wrap {
+      position: fixed;
+      bottom: 80px;    /* encima del footer */
+      right: 16px;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    /* Fallback banner si no hay soporte */
+    .voice-no-support-banner {
+      background: var(--alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      margin: 8px 12px 0;
+    }
+    /* FAB circular */
+    .voice-fab {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(79,70,229,0.40);
+      transition: transform 150ms ease, background 150ms ease;
+      position: relative;
+    }
+    .voice-fab:hover { transform: scale(1.06); }
+    .voice-fab svg { width: 26px; height: 26px; }
+    /* Anillo pulsante mientras graba */
+    .voice-fab.is-recording {
+      background: #EF4444;
+      box-shadow: 0 4px 16px rgba(239,68,68,0.45);
+      animation: fabPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes fabPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.50); }
+      50%      { box-shadow: 0 0 0 14px rgba(239,68,68,0); }
+    }
+    .voice-fab.is-processing { background: var(--warning, #F59E0B); animation: none; }
+
+    /* Barra de grabación expandida (bajo el FAB) */
+    .voice-rec-bar {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 200px;
+      max-width: 260px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+    }
+    .voice-rec-bar.is-visible { display: flex; }
+    .voice-rec-timer {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+    }
+    .voice-rec-transcript {
+      font-size: 11px;
+      color: var(--muted);
+      min-height: 18px;
+      text-align: center;
+      font-style: italic;
+      word-break: break-word;
+    }
+    /* Waveform animado */
+    .voice-waveform {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      height: 24px;
+    }
+    .voice-waveform-bar {
+      width: 3px;
+      border-radius: 2px;
+      background: var(--accent);
+      animation: waveAnim 0.8s ease-in-out infinite;
+    }
+    .voice-waveform-bar:nth-child(1) { animation-delay: 0s;    height: 8px; }
+    .voice-waveform-bar:nth-child(2) { animation-delay: 0.1s;  height: 16px; }
+    .voice-waveform-bar:nth-child(3) { animation-delay: 0.2s;  height: 22px; }
+    .voice-waveform-bar:nth-child(4) { animation-delay: 0.3s;  height: 14px; }
+    .voice-waveform-bar:nth-child(5) { animation-delay: 0.4s;  height: 20px; }
+    .voice-waveform-bar:nth-child(6) { animation-delay: 0.2s;  height: 10px; }
+    .voice-waveform-bar:nth-child(7) { animation-delay: 0.1s;  height: 6px; }
+    @keyframes waveAnim {
+      0%,100% { transform: scaleY(0.4); opacity: 0.5; }
+      50%      { transform: scaleY(1);   opacity: 1; }
+    }
+    .voice-rec-bar:not(.is-recording) .voice-waveform-bar { animation-play-state: paused; }
+
+    /* Total mini */
+    .e6-total-mini {
+      padding: 10px 12px;
+      background: var(--alt);
+      border-radius: 9px;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .e6-total-mini-value {
+      color: var(--text);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- ============= TOPBAR ============= -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side">
+            <a href="./detalle.html?mesa=4" class="mesero-icon-btn" aria-label="Atrás" id="e5BackBtn">
+              <i data-lucide="arrow-left"></i>
+            </a>
+          </div>
+          <div class="mesero-topbar-center is-stacked">
+            <div class="mesero-topbar-title">Mesa 4</div>
+            <div class="mesero-topbar-subtitle">Agregar productos</div>
+          </div>
+          <div class="mesero-topbar-side">
+            <button class="mesero-icon-btn" type="button" aria-label="Buscar" id="e5SearchToggle">
+              <i data-lucide="search"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- ============= SEARCH BAR (oculta por default) ============= -->
+        <div id="e5SearchBar" style="display:none; padding:8px 14px 4px; background:var(--bg); border-bottom:1px solid var(--border);">
+          <div style="display:flex; align-items:center; gap:8px; background:var(--alt); border:1px solid var(--border); border-radius:10px; padding:0 12px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="e5SearchInput" placeholder="Buscar producto..." autocomplete="off"
+              style="flex:1;padding:10px 0;background:transparent;border:none;outline:none;font-family:var(--ff-base);font-size:14px;color:var(--text);" />
+            <button type="button" id="e5SearchClear" style="display:none;background:transparent;border:none;padding:2px;cursor:pointer;color:var(--muted);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ============= TABS CATEGORÍAS ============= -->
+        <div class="e5-cat-wrap">
+          <div class="mesero-scroll-tabs">
+            <button class="mesero-scroll-tab">Entradas</button>
+            <button class="mesero-scroll-tab is-active">Platos fuertes</button>
+            <button class="mesero-scroll-tab">Bebidas</button>
+            <button class="mesero-scroll-tab">Postres</button>
+            <button class="mesero-scroll-tab">Combos</button>
+            <button class="mesero-scroll-tab">Todo</button>
+          </div>
+        </div>
+
+        <!-- ============= GRID PRODUCTOS ============= -->
+        <main id="main" class="mesero-content">
+          <div class="e5-grid-wrap">
+            <div class="e5-grid">
+
+              <!-- 1. Bandeja Paisa -->
+              <div class="product-card" data-open-sheet="sheetProducto" data-product="bandeja" data-name="Bandeja Paisa" data-price="32000">
+                <div class="product-photo" style="background:#FED7AA;">
+                  <i data-lucide="utensils"></i>
+                  <span class="product-counter">1</span>
+                </div>
+                <div class="product-info">
+                  <div class="product-name">Bandeja Paisa</div>
+                  <div class="product-bottom">
+                    <span class="product-price">$32.000</span>
+                    <button class="product-add-btn" type="button" aria-label="Agregar"><i data-lucide="plus"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Ajiaco Bogotano (popular) -->
+              <div class="product-card" data-open-sheet="sheetProducto" data-product="ajiaco" data-name="Ajiaco Bogotano" data-price="28000">
+                <div class="product-photo" style="background:#FECACA;">
+                  <i data-lucide="utensils"></i>
+                  <span class="product-flag popular">🔥 POPULAR</span>
+                  <span class="product-counter">1</span>
+                </div>
+                <div class="product-info">
+                  <div class="product-name">Ajiaco Bogotano</div>
+                  <div class="product-bottom">
+                    <span class="product-price">$28.000</span>
+                    <button class="product-add-btn" type="button" aria-label="Agregar"><i data-lucide="plus"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Sancocho -->
+              <div class="product-card" data-open-sheet="sheetProducto" data-product="sancocho" data-name="Sancocho" data-price="25000">
+                <div class="product-photo" style="background:#FEF3C7;">
+                  <i data-lucide="utensils"></i>
+                </div>
+                <div class="product-info">
+                  <div class="product-name">Sancocho</div>
+                  <div class="product-bottom">
+                    <span class="product-price">$25.000</span>
+                    <button class="product-add-btn" type="button" aria-label="Agregar"><i data-lucide="plus"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Lomo al Trapo -->
+              <div class="product-card" data-open-sheet="sheetProducto" data-product="lomo" data-name="Lomo al Trapo" data-price="45000">
+                <div class="product-photo" style="background:#FCA5A5;">
+                  <i data-lucide="utensils"></i>
+                  <span class="product-counter">1</span>
+                </div>
+                <div class="product-info">
+                  <div class="product-name">Lomo al Trapo</div>
+                  <div class="product-bottom">
+                    <span class="product-price">$45.000</span>
+                    <button class="product-add-btn" type="button" aria-label="Agregar"><i data-lucide="plus"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5. Cazuela de Mariscos (sin stock) -->
+              <div class="product-card is-disabled">
+                <div class="product-photo" style="background:#A5F3FC;">
+                  <i data-lucide="utensils"></i>
+                  <span class="product-flag sin-stock">SIN STOCK</span>
+                </div>
+                <div class="product-info">
+                  <div class="product-name">Cazuela de Mariscos</div>
+                  <div class="product-bottom">
+                    <span class="product-price">$42.000</span>
+                    <button class="product-add-btn" type="button" disabled aria-label="Sin stock"><i data-lucide="plus"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 6. Trucha en Salsa -->
+              <div class="product-card" data-open-sheet="sheetProducto" data-product="trucha" data-name="Trucha en Salsa" data-price="38000">
+                <div class="product-photo" style="background:#D9F99D;">
+                  <i data-lucide="utensils"></i>
+                </div>
+                <div class="product-info">
+                  <div class="product-name">Trucha en Salsa</div>
+                  <div class="product-bottom">
+                    <span class="product-price">$38.000</span>
+                    <button class="product-add-btn" type="button" aria-label="Agregar"><i data-lucide="plus"></i></button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Estado vacío de búsqueda -->
+            <div id="e5EmptySearch" style="display:none; padding:32px 20px; text-align:center;">
+              <div style="width:56px;height:56px;border-radius:14px;background:var(--alt);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--muted);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              </div>
+              <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;">Sin resultados</div>
+              <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">
+                Ningún producto coincide con "<span id="e5EmptyQuery"></span>"
+              </div>
+              <button type="button" id="e5EmptySearchClear"
+                style="padding:10px 20px;border-radius:9px;border:1px solid var(--border);background:var(--alt);color:var(--text);font-family:var(--ff-base);font-size:13px;font-weight:500;cursor:pointer;">
+                Limpiar búsqueda
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+          <!-- ============= BOTTOM SHEET (E6) ============= -->
+          <div class="bottom-sheet-backdrop" data-sheet="sheetProducto"></div>
+          <div id="sheetProducto" class="bottom-sheet" style="height:78%;">
+
+            <div class="bottom-sheet-handle" data-close></div>
+
+            <div class="e6-photo">
+              <i data-lucide="utensils"></i>
+            </div>
+
+            <div class="bottom-sheet-body">
+              <div class="e6-body">
+
+                <div class="e6-header">
+                  <div>
+                    <div class="e6-name">Ajiaco Bogotano</div>
+                    <div class="e6-desc">Plato fuerte tradicional</div>
+                  </div>
+                  <div class="e6-price">$28.000</div>
+                </div>
+
+                <!-- Cantidad -->
+                <div class="e6-section">
+                  <div class="e6-section-title">Cantidad</div>
+                  <div class="e6-qty">
+                    <button class="e6-qty-btn" type="button" id="qtyMinus" aria-label="Quitar uno"><i data-lucide="minus"></i></button>
+                    <span class="e6-qty-value" id="qtyValue">1</span>
+                    <button class="e6-qty-btn plus" type="button" id="qtyPlus" aria-label="Agregar uno"><i data-lucide="plus"></i></button>
+                  </div>
+                </div>
+
+                <!-- Modificadores -->
+                <div class="e6-section">
+                  <div class="e6-section-title">Personaliza tu pedido</div>
+                  <div class="e6-mods">
+                    <button type="button" class="e6-mod is-selected" data-delta="2000">
+                      <i data-lucide="check"></i>
+                      Extra papa
+                      <span class="delta">+$2.000</span>
+                    </button>
+                    <button type="button" class="e6-mod" data-delta="0">
+                      Sin guascas
+                    </button>
+                    <button type="button" class="e6-mod" data-delta="5000">
+                      Doble pollo
+                      <span class="delta">+$5.000</span>
+                    </button>
+                    <button type="button" class="e6-mod" data-delta="0">
+                      Extra crema
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Observación -->
+                <div class="e6-section">
+                  <div class="e6-section-title">Observación</div>
+                  <div class="voice-input-row">
+                    <button type="button" class="voice-input-btn" data-voice-input="sheetObservacion"
+                            aria-label="Dictar observación por voz" aria-pressed="false">
+                      <span class="voice-input-icon-mic"><i data-lucide="mic"></i></span>
+                      <span class="voice-input-icon-stop"><i data-lucide="square"></i></span>
+                      <span class="voice-spinner" aria-hidden="true"></span>
+                    </button>
+                    <span class="voice-input-timer" role="timer" aria-live="off">0:00</span>
+                    <span class="voice-input-label">Tocá o mantené para dictar</span>
+                  </div>
+                  <span class="voice-input-hint">Soltá o tocá de nuevo para terminar</span>
+                  <textarea id="sheetObservacion" class="e6-textarea" placeholder="Alguna indicación especial..."></textarea>
+                </div>
+
+                <!-- Total mini -->
+                <div class="e6-total-mini">
+                  <span id="totalMiniDesc">1 × Ajiaco + Extra papa</span>
+                  <span class="e6-total-mini-value" id="totalMiniValue">$30.000</span>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="bottom-sheet-footer">
+              <button type="button" class="mb-btn mb-btn-primary h-56" id="btnAgregarSheet">
+                Agregar a Mesa 4 — <span id="btnTotal">$30.000</span>
+              </button>
+            </div>
+
+          </div>
+        </main>
+
+        <!-- ============= FAB MIC (modo voz) ============= -->
+        <div class="voice-fab-wrap" id="voiceFabWrap" style="display:none;">
+          <!-- Barra expandida mientras graba -->
+          <div class="voice-rec-bar" id="voiceRecBar">
+            <div class="voice-rec-timer" id="voiceTimer">0:00</div>
+            <div class="voice-waveform">
+              <div class="voice-waveform-bar"></div>
+              <div class="voice-waveform-bar"></div>
+              <div class="voice-waveform-bar"></div>
+              <div class="voice-waveform-bar"></div>
+              <div class="voice-waveform-bar"></div>
+              <div class="voice-waveform-bar"></div>
+              <div class="voice-waveform-bar"></div>
+            </div>
+            <div class="voice-rec-transcript" id="voiceLiveText">Esperando...</div>
+          </div>
+          <!-- FAB circular -->
+          <button class="voice-fab" id="voiceFab" type="button" aria-label="Dictar pedido por voz">
+            <i data-lucide="mic"></i>
+          </button>
+        </div>
+
+        <!-- ============= FOOTER ============= -->
+        <div class="e5-footer">
+          <div class="e5-footer-info">
+            <div class="e5-footer-meta">3 items · Mesa 4</div>
+            <div class="e5-footer-total">$105.000</div>
+          </div>
+          <a href="./detalle.html?mesa=4" class="mb-btn mb-btn-primary auto h-48" style="padding: 0 18px;">
+            Ver pedido
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- ============= BOTTOM NAV ============= -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="layout-grid"></i>
+            </span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="clipboard-list"></i>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Nómina</span>
+          </a>
+          <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <div class="mesero-home-indicator"></div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/store-mesas.js"></script>
+  <script src="../assets/js/store-comandas.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // ===== Bottom sheet logic =====
+    var qty = 1;
+    var basePrice = 28000;
+
+    function fmtCOP(n) {
+      return '$' + Number(n).toLocaleString('es-CO');
+    }
+
+    function modsSelectedDelta() {
+      var delta = 0;
+      var names = [];
+      document.querySelectorAll('.e6-mod.is-selected').forEach(function (el) {
+        delta += parseInt(el.dataset.delta || '0', 10);
+        // primer span de texto del botón (ignora delta span)
+        var label = el.childNodes[el.childNodes.length === 1 ? 0 : (el.querySelector('svg') ? 1 : 0)];
+        // mejor: tomar el textContent sin el delta
+        var clone = el.cloneNode(true);
+        var deltaSpan = clone.querySelector('.delta');
+        if (deltaSpan) deltaSpan.remove();
+        var svg = clone.querySelector('svg');
+        if (svg) svg.remove();
+        names.push(clone.textContent.trim());
+      });
+      return { delta: delta, names: names };
+    }
+
+    function updateTotals() {
+      var info = modsSelectedDelta();
+      var total = (basePrice + info.delta) * qty;
+      var desc = qty + ' × Ajiaco' + (info.names.length ? ' + ' + info.names.join(' + ') : '');
+      document.getElementById('totalMiniDesc').textContent = desc;
+      document.getElementById('totalMiniValue').textContent = fmtCOP(total);
+      document.getElementById('btnTotal').textContent = fmtCOP(total);
+    }
+
+    document.getElementById('qtyPlus').addEventListener('click', function () {
+      qty++;
+      document.getElementById('qtyValue').textContent = qty;
+      updateTotals();
+    });
+    document.getElementById('qtyMinus').addEventListener('click', function () {
+      if (qty > 1) { qty--; document.getElementById('qtyValue').textContent = qty; updateTotals(); }
+    });
+
+    document.querySelectorAll('.e6-mod').forEach(function (el) {
+      el.addEventListener('click', function () {
+        el.classList.toggle('is-selected');
+        // Si está seleccionado y no tiene check, agregarlo; si no, quitarlo
+        var hasCheck = !!el.querySelector('svg');
+        if (el.classList.contains('is-selected') && !hasCheck) {
+          var check = document.createElement('i');
+          check.setAttribute('data-lucide', 'check');
+          el.insertBefore(check, el.firstChild);
+          if (window.lucide) window.lucide.createIcons();
+        } else if (!el.classList.contains('is-selected') && hasCheck) {
+          el.querySelector('svg').remove();
+        }
+        updateTotals();
+      });
+    });
+
+    // Reset del sheet al abrir para un producto nuevo
+    function resetSheetProducto() {
+      qty = 1;
+      document.getElementById('qtyValue').textContent = qty;
+      var ta = document.getElementById('sheetObservacion');
+      if (ta) ta.value = '';
+      // Asegurar que el botón mic no quedó atascado
+      if (window.VoiceInput && typeof window.VoiceInput.cancelAll === 'function') {
+        window.VoiceInput.cancelAll();
+      }
+      updateTotals();
+    }
+    document.querySelectorAll('[data-open-sheet="sheetProducto"]').forEach(function (card) {
+      card.addEventListener('click', resetSheetProducto);
+    });
+
+    // ── Params de URL (mode, mesa, q, replaceId) ──────────────────────────────
+    var _qp        = new URLSearchParams(location.search);
+    var _mode      = _qp.get('mode')      || '';
+    var _mesaNum   = _qp.get('mesa')      || '4';
+    var _q         = _qp.get('q')         || '';
+    var _replaceId = _qp.get('replaceId') || '';
+
+    // ── Ajustar back button ───────────────────────────────────────────────────
+    var _backBtn = document.getElementById('e5BackBtn');
+    if (_backBtn) {
+      _backBtn.href = (_mode === 'voice-add')
+        ? './audio-confirmar.html?mesa=' + _mesaNum
+        : './detalle.html?mesa=' + _mesaNum;
+    }
+
+    // ── Agregar a comanda (E6 → E5) ──────────────────────────────────────────
+    var _currentProduct = null; // se actualiza al abrir sheetProducto
+
+    // Capturar producto seleccionado
+    document.querySelectorAll('[data-open-sheet="sheetProducto"]').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var name  = card.dataset.name  || document.querySelector('.e6-name')  && document.querySelector('.e6-name').textContent  || '—';
+        var price = card.dataset.price || '0';
+        _currentProduct = { name: name, price: parseInt(price, 10) || 0 };
+      });
+    });
+
+    document.getElementById('btnAgregarSheet').addEventListener('click', function () {
+      var obs    = (document.getElementById('sheetObservacion').value || '').trim();
+      var qtyVal = parseInt(document.getElementById('qtyValue').textContent, 10) || 1;
+      var prod   = _currentProduct || { name: '—', price: 0 };
+
+      if (_mode === 'voice-add') {
+        // Leer draft existente
+        var draft = [];
+        try { draft = JSON.parse(sessionStorage.getItem('root:voice:draft-items') || '[]'); } catch (e) {}
+
+        // Si hay replaceId, quitar el noEncontrado correspondiente
+        if (_replaceId) {
+          draft = draft.filter(function (it) { return String(it._id) !== String(_replaceId); });
+        }
+
+        // Agregar nuevo ítem manual
+        draft.push({
+          sku:      'MAN-' + Date.now(),
+          nombre:   prod.name,
+          precio:   prod.price,
+          cantidad: qtyVal,
+          _qty:     qtyVal,
+          _id:      Date.now(),
+          mods:     [],
+          _manual:  true
+        });
+
+        try { sessionStorage.setItem('root:voice:draft-items', JSON.stringify(draft)); } catch (e) {}
+
+        UI.toast({ type: 'success', title: 'Agregado al pedido de voz' });
+        UI.closeBottomSheet('sheetProducto');
+
+        setTimeout(function () {
+          location.href = './audio-confirmar.html?mesa=' + _mesaNum;
+        }, 600);
+        return;
+      }
+
+      // Modo normal: quedarse en catálogo (flujo en lote)
+      UI.toast({
+        type: 'success',
+        title: 'Agregado a Mesa ' + _mesaNum,
+        sub: obs ? '↳ ' + (obs.length > 60 ? obs.slice(0, 60) + '…' : obs) : ''
+      });
+      UI.closeBottomSheet('sheetProducto');
+    });
+
+    // ── Search ────────────────────────────────────────────────────────────────
+    var _searchBar   = document.getElementById('e5SearchBar');
+    var _searchInput = document.getElementById('e5SearchInput');
+    var _searchClear = document.getElementById('e5SearchClear');
+    var _emptySearch = document.getElementById('e5EmptySearch');
+    var _emptyQuery  = document.getElementById('e5EmptyQuery');
+
+    function filterProducts(q) {
+      var norm  = q.toLowerCase().trim();
+      var cards = document.querySelectorAll('.e5-grid .product-card');
+      var shown = 0;
+      cards.forEach(function (card) {
+        var name = (card.dataset.name || '').toLowerCase();
+        var match = !norm || name.indexOf(norm) !== -1;
+        card.style.display = match ? '' : 'none';
+        if (match) shown++;
+      });
+      _searchClear.style.display = norm ? '' : 'none';
+      if (_emptySearch) {
+        _emptySearch.style.display = (norm && shown === 0) ? '' : 'none';
+        if (_emptyQuery) _emptyQuery.textContent = q;
+      }
+    }
+
+    document.getElementById('e5SearchToggle').addEventListener('click', function () {
+      var visible = _searchBar.style.display !== 'none';
+      _searchBar.style.display = visible ? 'none' : '';
+      if (!visible) {
+        _searchInput.focus();
+      } else {
+        _searchInput.value = '';
+        filterProducts('');
+      }
+    });
+
+    _searchInput.addEventListener('input', function () { filterProducts(_searchInput.value); });
+
+    _searchClear.addEventListener('click', function () {
+      _searchInput.value = '';
+      filterProducts('');
+      _searchInput.focus();
+    });
+
+    if (document.getElementById('e5EmptySearchClear')) {
+      document.getElementById('e5EmptySearchClear').addEventListener('click', function () {
+        _searchInput.value = '';
+        filterProducts('');
+      });
+    }
+
+    // Si viene con ?q= (desde E14 modo voice-add), pre-rellenar
+    if (_q) {
+      _searchBar.style.display = '';
+      _searchInput.value = _q;
+      filterProducts(_q);
+    }
+
+    // Si modo voice-add, mostrar banner indicador
+    if (_mode === 'voice-add') {
+      var banner = document.createElement('div');
+      banner.style.cssText = 'background:rgba(139,92,246,.1);border-bottom:1px solid rgba(139,92,246,.2);padding:8px 16px;font-size:12px;color:#7C3AED;display:flex;align-items:center;gap:8px;flex-shrink:0;';
+      banner.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>Agregando al pedido de voz · Mesa ' + _mesaNum;
+      var content = document.querySelector('.mesero-content');
+      if (content && content.parentNode) content.parentNode.insertBefore(banner, content);
+    }
+  </script>
+  <script src="../assets/js/voice-input.js"></script>
+  <script src="../assets/js/voice-recorder.js"></script>
+  <script src="../assets/js/mesero-tabbar-badge.js"></script>
+  <script src="../assets/js/nav.js"></script>
+  <script>
+    // ── Modo voz (?mode=voice) ──────────────────────────────────────────────
+    (function () {
+      var qp    = new URLSearchParams(location.search);
+      var mode  = qp.get('mode');
+      var mesa  = qp.get('mesa') || '4';
+
+      if (mode !== 'voice') return; // nada que hacer si no es modo voz
+
+      var fabWrap = document.getElementById('voiceFabWrap');
+      var fab     = document.getElementById('voiceFab');
+      var recBar  = document.getElementById('voiceRecBar');
+      var timerEl = document.getElementById('voiceTimer');
+      var liveEl  = document.getElementById('voiceLiveText');
+
+      // ── Verificar soporte ──────────────────────────────────────────────
+      if (!window.VoiceRecorder || !VoiceRecorder.isSupported()) {
+        // Sin soporte → mostrar banner explicativo, NO mostrar FAB
+        var banner = document.createElement('div');
+        banner.className = 'voice-no-support-banner';
+        banner.textContent = 'Tu navegador no soporta dictado por voz. Usá Chrome o Safari.';
+        var content = document.querySelector('.mesero-content');
+        if (content) content.insertBefore(banner, content.firstChild);
+        return;
+      }
+
+      // ── Mostrar FAB ────────────────────────────────────────────────────
+      fabWrap.style.display = 'flex';
+
+      var _timerInterval = null;
+      var _startTime = 0;
+      var _isRecording = false;
+      var _transcript = '';
+
+      function startTimer() {
+        _startTime = Date.now();
+        _timerInterval = setInterval(function () {
+          var elapsed = Math.floor((Date.now() - _startTime) / 1000);
+          var m = Math.floor(elapsed / 60);
+          var s = elapsed % 60;
+          timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        }, 500);
+      }
+      function stopTimer() {
+        clearInterval(_timerInterval);
+        _timerInterval = null;
+        timerEl.textContent = '0:00';
+      }
+
+      fab.addEventListener('click', function () {
+        if (_isRecording) {
+          // Confirmar grabación
+          VoiceRecorder.stop();
+        } else {
+          // Iniciar
+          _transcript = '';
+          liveEl.textContent = 'Escuchando...';
+          recBar.classList.add('is-visible', 'is-recording');
+          fab.classList.add('is-recording');
+
+          VoiceRecorder.start({
+            onStateChange: function (state) {
+              if (state === 'recording') {
+                _isRecording = true;
+                startTimer();
+                fab.setAttribute('aria-label', 'Detener grabación');
+              } else if (state === 'processing') {
+                _isRecording = false;
+                stopTimer();
+                fab.classList.remove('is-recording');
+                fab.classList.add('is-processing');
+                recBar.classList.remove('is-recording');
+                liveEl.textContent = 'Procesando...';
+              } else if (state === 'idle') {
+                fab.classList.remove('is-processing');
+                recBar.classList.remove('is-visible');
+                fab.setAttribute('aria-label', 'Dictar pedido por voz');
+              } else if (state === 'error') {
+                _isRecording = false;
+                stopTimer();
+                fab.classList.remove('is-recording', 'is-processing');
+                recBar.classList.remove('is-visible', 'is-recording');
+              }
+            },
+            onTranscript: function (text) {
+              _transcript = text;
+              liveEl.textContent = text || 'Escuchando...';
+            },
+            onResult: function (finalText) {
+              _transcript = finalText || '';
+              if (!_transcript.trim()) {
+                if (window.UI) UI.toast({ type: 'info', title: 'No detectamos voz. Intentá de nuevo.' });
+                return;
+              }
+              // Guardar en sessionStorage y navegar a confirmación
+              try {
+                sessionStorage.setItem('root:voice:last-transcript', _transcript);
+                sessionStorage.setItem('root:voice:mesa', mesa);
+              } catch (e) {}
+              location.href = './audio-confirmar.html?mesa=' + mesa;
+            },
+            onError: function (msg) {
+              if (window.UI) UI.toast({ type: 'error', title: msg });
+              // Fallback visible
+              if (msg.includes('micrófono') || msg.includes('permiso')) {
+                var el = document.createElement('div');
+                el.className = 'voice-no-support-banner';
+                el.innerHTML = msg + ' <a href="./catalogo.html?mesa=' + mesa + '" style="color:var(--accent);">Agregar manual</a>';
+                var content = document.querySelector('.mesero-content');
+                if (content) content.insertBefore(el, content.firstChild);
+                fabWrap.style.display = 'none';
+              }
+            },
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Confirmar pedido por voz · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    /* ── Transcripción card ── */
+    .ac-transcript-card {
+      margin: 10px 14px 0;
+      background: var(--alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .ac-transcript-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+    .ac-transcript-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .ac-transcript-label svg { width: 14px; height: 14px; color: var(--accent); }
+    .ac-transcript-chevron { width: 16px; height: 16px; color: var(--muted); transition: transform 200ms ease; }
+    .ac-transcript-card.is-collapsed .ac-transcript-chevron { transform: rotate(-90deg); }
+    .ac-transcript-body {
+      padding: 0 14px 12px;
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.45;
+    }
+    .ac-transcript-card.is-collapsed .ac-transcript-body { display: none; }
+
+    /* ── Sección ítems ── */
+    .ac-items-header {
+      padding: 14px 14px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .ac-items-list { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; }
+
+    /* ── Item card ── */
+    .ac-item {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .ac-item.is-not-found {
+      border-color: var(--warning, #F59E0B);
+      background: rgba(245,158,11,0.06);
+    }
+    .ac-item-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* Qty control */
+    .ac-qty {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .ac-qty-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--alt); border: 1px solid var(--border);
+      color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ac-qty-btn svg { width: 13px; height: 13px; }
+    .ac-qty-val {
+      font-size: 15px; font-weight: 700; color: var(--text);
+      min-width: 20px; text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    /* Nombre y badge */
+    .ac-item-info { flex: 1; min-width: 0; }
+    .ac-item-name {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ac-item-mods {
+      font-size: 10px; color: var(--muted); margin-top: 2px; font-style: italic;
+    }
+    .ac-item-not-found-badge {
+      font-size: 9px; font-weight: 700;
+      color: #fff;
+      background: var(--warning, #F59E0B);
+      padding: 2px 7px; border-radius: 8px;
+      white-space: nowrap;
+    }
+    /* Precio + acciones */
+    .ac-item-right {
+      display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+    }
+    .ac-item-price { font-size: 13px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+    .ac-icon-btn {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ac-icon-btn:hover { background: var(--alt); color: var(--text); }
+    .ac-icon-btn.danger:hover { background: #FEE2E2; color: var(--error); border-color: var(--error); }
+    .ac-icon-btn svg { width: 14px; height: 14px; }
+
+    /* "No encontrado" — fila de búsqueda */
+    .ac-not-found-row {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .ac-not-found-text {
+      flex: 1;
+      font-style: italic;
+      color: var(--warning, #F59E0B);
+      font-weight: 500;
+    }
+    .ac-buscar-btn {
+      font-size: 11px; padding: 5px 10px;
+      background: var(--warning, #F59E0B); color: #fff;
+      border: none; border-radius: 7px; cursor: pointer; font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* "+ Agregar ítem manual" */
+    .ac-add-manual {
+      margin: 8px 12px 0;
+    }
+    .ac-add-manual-btn {
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      border: 1.5px dashed var(--border);
+      border-radius: 10px;
+      font-size: 12px; color: var(--muted);
+      cursor: pointer; font-family: var(--ff-base);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .ac-add-manual-btn:hover { background: var(--alt); color: var(--text); }
+    .ac-add-manual-btn svg { width: 14px; height: 14px; }
+
+    /* Estado vacío */
+    .ac-empty {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .ac-empty svg { width: 36px; height: 36px; color: var(--border); margin-bottom: 10px; }
+
+    /* Footer sticky */
+    .ac-footer {
+      padding: 10px 14px 12px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .ac-footer-subtotal {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .ac-footer-subtotal span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .ac-footer-actions {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 8px;
+    }
+    .ac-footer-actions .mb-btn { justify-content: center; font-size: 13px; }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- TOPBAR -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side">
+            <a id="backBtn" href="./catalogo.html" class="mesero-icon-btn" aria-label="Atrás">
+              <i data-lucide="arrow-left"></i>
+            </a>
+          </div>
+          <div class="mesero-topbar-center is-stacked">
+            <div class="mesero-topbar-title">Confirmar pedido por voz</div>
+            <div class="mesero-topbar-subtitle" id="mesaSubtitle">Mesa —</div>
+          </div>
+          <div class="mesero-topbar-side"></div>
+        </header>
+
+        <!-- CONTENT -->
+        <main id="main" class="mesero-content">
+
+          <!-- Card transcripción (colapsable) -->
+          <div class="ac-transcript-card" id="transcriptCard">
+            <div class="ac-transcript-header" id="transcriptToggle">
+              <div class="ac-transcript-label">
+                <i data-lucide="mic"></i>
+                Lo que dictaste
+              </div>
+              <i data-lucide="chevron-down" class="ac-transcript-chevron"></i>
+            </div>
+            <div class="ac-transcript-body" id="transcriptText">—</div>
+          </div>
+
+          <!-- Ítems detectados -->
+          <div class="ac-items-header">Ítems detectados <span id="itemCount">(0)</span></div>
+          <div class="ac-items-list" id="acItemsList">
+            <!-- JS renderiza -->
+          </div>
+
+          <!-- Agregar manual -->
+          <div class="ac-add-manual">
+            <a id="btnAgregarManual" href="./catalogo.html" class="ac-add-manual-btn">
+              <i data-lucide="plus"></i>
+              Agregar ítem manual
+            </a>
+          </div>
+
+        </main>
+
+        <!-- FOOTER STICKY -->
+        <div class="ac-footer">
+          <div class="ac-footer-subtotal">
+            <span>Subtotal</span>
+            <span id="acSubtotal">$0</span>
+          </div>
+          <div class="ac-footer-actions">
+            <a id="btnVolverGrabar" href="./catalogo.html" class="mb-btn mb-btn-secondary h-48">
+              <i data-lucide="mic"></i>
+              Volver a grabar
+            </a>
+            <button class="mb-btn mb-btn-success h-48" id="btnEnviar" type="button" disabled>
+              Enviar a cocina
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ============= BOTTOM NAV ============= -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="layout-grid"></i>
+            </span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="clipboard-list"></i>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Nómina</span>
+          </a>
+          <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div><!-- /.mesero-body-inner -->
+
+      <div class="mesero-home-indicator"></div>
+    </div>
+  </div>
+
+  <script src="../assets/js/store-mesas.js"></script>
+  <script src="../assets/js/store-comandas.js"></script>
+  <script src="../assets/js/voice-parser.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // ─── Leer params ─────────────────────────────────────────────────────────
+    var qp = new URLSearchParams(location.search);
+    var mesaNum = qp.get('mesa') || '4';
+    var mesaId  = 'mesa-' + mesaNum;
+
+    // Links de vuelta
+    var backHref = './catalogo.html?mesa=' + mesaNum + '&mode=voice';
+    document.getElementById('backBtn').href             = backHref;
+    document.getElementById('btnVolverGrabar').href     = backHref;
+    document.getElementById('btnAgregarManual').href    = './catalogo.html?mesa=' + mesaNum + '&mode=voice-add';
+
+    // Subtítulo de la mesa
+    var subtitleEl = document.getElementById('mesaSubtitle');
+    var mesaInfo = window.StoreMesas ? StoreMesas.getMesa(mesaId) : null;
+    if (mesaInfo) {
+      var SALA_L = { principal: 'Salón Principal', terraza: 'Terraza', vip: 'VIP' };
+      subtitleEl.textContent = 'Mesa ' + mesaInfo.numero + ' · ' + (mesaInfo.comensales || '?') + ' comensales';
+    } else {
+      subtitleEl.textContent = 'Mesa ' + mesaNum;
+    }
+
+    // ─── Leer transcripción de sessionStorage ─────────────────────────────
+    var transcript = '';
+    try { transcript = sessionStorage.getItem('root:voice:last-transcript') || ''; } catch (e) {}
+
+    document.getElementById('transcriptText').textContent = transcript || '(sin transcripción)';
+
+    // Toggle colapsar transcripción
+    document.getElementById('transcriptToggle').addEventListener('click', function () {
+      document.getElementById('transcriptCard').classList.toggle('is-collapsed');
+      if (window.lucide) window.lucide.createIcons();
+    });
+
+    // ─── Parsear ítems (+ hidratar draft de sessionStorage) ──────────────
+    var items = []; // cada ítem: { ...parseResult, _qty, _id }
+
+    // Leer draft manual (items añadidos desde E5 en modo voice-add)
+    var _draftItems = [];
+    try { _draftItems = JSON.parse(sessionStorage.getItem('root:voice:draft-items') || '[]'); } catch (e) {}
+
+    if (transcript && window.VoiceParser) {
+      var parsed = VoiceParser.parse(transcript);
+      items = parsed.map(function (it, i) {
+        return Object.assign({}, it, { _qty: it.cantidad, _id: i });
+      });
+    }
+
+    // Agregar ítems del draft (evitar duplicados por _id)
+    _draftItems.forEach(function (di) {
+      var exists = items.some(function (it) { return String(it._id) === String(di._id); });
+      if (!exists) items.push(di);
+    });
+
+    function saveDraft() {
+      try { sessionStorage.setItem('root:voice:draft-items', JSON.stringify(items)); } catch (e) {}
+    }
+
+    // ─── Helpers ──────────────────────────────────────────────────────────
+    function fmtCOP(n) { return '$' + Number(n || 0).toLocaleString('es-CO'); }
+
+    function calcSubtotal() {
+      return items.filter(function (it) { return !it.noEncontrado; })
+        .reduce(function (acc, it) { return acc + it.precio * it._qty; }, 0);
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, function(c) {
+        return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+      });
+    }
+
+    // ─── Render ───────────────────────────────────────────────────────────
+    function render() {
+      var list = document.getElementById('acItemsList');
+      document.getElementById('itemCount').textContent = '(' + items.length + ')';
+
+      if (items.length === 0) {
+        list.innerHTML = '<div class="ac-empty" style="padding:24px 0;">'
+          + '<div style="width:56px;height:56px;border-radius:14px;background:var(--alt);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:var(--muted);">'
+          + '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>'
+          + '</div>'
+          + '<div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;">No pudimos identificar productos</div>'
+          + '<div style="font-size:13px;color:var(--muted);margin-bottom:20px;">El audio no coincidió con ningún producto del catálogo.</div>'
+          + '<a href="' + backHref + '" class="mb-btn mb-btn-primary" style="display:inline-flex;margin-bottom:10px;padding:12px 20px;">'
+          + '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>'
+          + '&nbsp;Volver a grabar</a>'
+          + '<div style="margin-top:4px;">'
+          + '<a href="./catalogo.html?mesa=' + mesaNum + '&mode=voice-add" style="font-size:13px;color:var(--accent);font-weight:500;">Agregar ítem manual</a>'
+          + '</div>'
+          + '</div>';
+        updateFooter();
+        return;
+      }
+
+      list.innerHTML = items.map(function (it) {
+        var modsText = (it.mods || []).map(function (m) {
+          return (m.tipo === 'remover' ? 'sin ' : m.tipo === 'extra' ? 'extra ' : '') + m.valor;
+        }).join(', ');
+
+        if (it.noEncontrado) {
+          return '<div class="ac-item is-not-found" data-id="' + it._id + '">'
+            + '<div class="ac-item-row">'
+            + '<div class="ac-item-info">'
+            + '<div class="ac-item-name"><span class="ac-item-not-found-badge">No encontrado</span></div>'
+            + '<div class="ac-item-mods">↳ "' + escapeHtml(it.textoOriginal) + '"</div>'
+            + '</div>'
+            + '<div class="ac-item-right">'
+            + '<button class="ac-icon-btn danger" data-del="' + it._id + '" type="button" aria-label="Eliminar"><i data-lucide="x"></i></button>'
+            + '</div>'
+            + '</div>'
+            + '<div class="ac-not-found-row">'
+            + '<a href="./catalogo.html?mesa=' + mesaNum + '&mode=voice-add&replaceId=' + it._id + '&q=' + encodeURIComponent(it.textoOriginal || '') + '" class="ac-buscar-btn">Buscar en catálogo</a>'
+            + '</div>'
+            + '</div>';
+        }
+
+        return '<div class="ac-item" data-id="' + it._id + '">'
+          + '<div class="ac-item-row">'
+          + '<div class="ac-qty">'
+          + '<button class="ac-qty-btn" data-minus="' + it._id + '" type="button" aria-label="Quitar"><i data-lucide="minus"></i></button>'
+          + '<span class="ac-qty-val" id="qty-' + it._id + '">' + it._qty + '</span>'
+          + '<button class="ac-qty-btn" data-plus="' + it._id + '" type="button" aria-label="Agregar"><i data-lucide="plus"></i></button>'
+          + '</div>'
+          + '<div class="ac-item-info">'
+          + '<div class="ac-item-name">' + escapeHtml(it.nombre) + '</div>'
+          + (modsText ? '<div class="ac-item-mods">↳ ' + escapeHtml(modsText) + '</div>' : '')
+          + '</div>'
+          + '<div class="ac-item-right">'
+          + '<span class="ac-item-price">' + fmtCOP(it.precio * it._qty) + '</span>'
+          + '<button class="ac-icon-btn danger" data-del="' + it._id + '" type="button" aria-label="Eliminar"><i data-lucide="x"></i></button>'
+          + '</div>'
+          + '</div>'
+          + '</div>';
+      }).join('');
+
+      attachItemListeners();
+      updateFooter();
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function updateFooter() {
+      var subtotal = calcSubtotal();
+      document.getElementById('acSubtotal').textContent = fmtCOP(subtotal);
+
+      // Botón Enviar: habilitado si hay al menos 1 ítem válido
+      var hasValid = items.some(function (it) { return !it.noEncontrado; });
+      var btn = document.getElementById('btnEnviar');
+      btn.disabled = !hasValid;
+      btn.style.opacity = hasValid ? '' : '0.45';
+    }
+
+    // ─── Listeners de acciones ─────────────────────────────────────────────
+    function attachItemListeners() {
+      // Quitar cantidad
+      document.querySelectorAll('[data-minus]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = parseInt(btn.dataset.minus, 10);
+          var it = items.find(function (x) { return x._id === id; });
+          if (!it) return;
+          if (it._qty <= 1) {
+            items = items.filter(function (x) { return x._id !== id; });
+          } else {
+            it._qty--;
+          }
+          saveDraft();
+          render();
+        });
+      });
+
+      // Agregar cantidad
+      document.querySelectorAll('[data-plus]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = parseInt(btn.dataset.plus, 10);
+          var it = items.find(function (x) { return x._id === id; });
+          if (it) { it._qty++; saveDraft(); render(); }
+        });
+      });
+
+      // Eliminar ítem
+      document.querySelectorAll('[data-del]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = parseInt(btn.dataset.del, 10);
+          items = items.filter(function (x) { return x._id !== id; });
+          saveDraft();
+          render();
+        });
+      });
+    }
+
+    // ─── Enviar a cocina ──────────────────────────────────────────────────
+    document.getElementById('btnEnviar').addEventListener('click', function () {
+      var validos = items.filter(function (it) { return !it.noEncontrado; });
+      if (validos.length === 0) return;
+
+      if (window.StoreMesas) {
+        StoreMesas.addItemsAMesa(mesaId, validos.map(function (it) {
+          return {
+            sku:      it.sku,
+            nombre:   it.nombre,
+            cantidad: it._qty,
+            precio:   it.precio,
+            mods:     it.mods || [],
+          };
+        }), { origen: 'voz' });
+      }
+
+      // Limpiar sessionStorage
+      try {
+        sessionStorage.removeItem('root:voice:last-transcript');
+        sessionStorage.removeItem('root:voice:draft-items');
+        sessionStorage.removeItem('root:voice:mesa');
+      } catch (e) {}
+
+      UI.toast({ type: 'success', title: 'Comanda enviada a cocina ✓' });
+      setTimeout(function () {
+        location.href = './detalle.html?mesa=' + mesaNum;
+      }, 800);
+    });
+
+    // ─── Init ─────────────────────────────────────────────────────────────
+    render();
+  </script>
+  <script src="../assets/js/mesero-tabbar-badge.js"></script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

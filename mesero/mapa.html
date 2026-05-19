@@ -210,6 +210,30 @@
             </div>
           </div>
 
+          <!-- Bottom sheet: ¿Cuántos comensales? (tap en mesa libre) -->
+          <div class="bottom-sheet-backdrop" data-sheet="sheetComensales"></div>
+          <div id="sheetComensales" class="bottom-sheet">
+            <div class="bottom-sheet-handle" data-close></div>
+            <div class="bottom-sheet-header">
+              <h3 class="bottom-sheet-title">¿Cuántos comensales?</h3>
+              <p class="bottom-sheet-subtitle" id="sheetComensalesMesa">Mesa —</p>
+            </div>
+            <div class="bottom-sheet-body" style="padding: 16px 20px 8px;">
+              <div style="display:flex; align-items:center; justify-content:center; gap:20px; padding:12px 0;">
+                <button type="button" id="stepperMinus" style="width:48px;height:48px;border-radius:50%;border:1.5px solid var(--border);background:var(--alt);font-size:24px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button>
+                <span id="stepperValue" style="font-size:40px;font-weight:700;color:var(--text);min-width:48px;text-align:center;font-variant-numeric:tabular-nums;">2</span>
+                <button type="button" id="stepperPlus" style="width:48px;height:48px;border-radius:50%;border:1.5px solid var(--border);background:var(--alt);font-size:24px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button>
+              </div>
+              <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:4px;">Podés ajustarlo después desde la mesa</p>
+            </div>
+            <div class="bottom-sheet-footer">
+              <button type="button" id="btnConfirmarComensales" class="mb-btn mb-btn-primary h-48">
+                Abrir mesa
+                <i data-lucide="arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
           <!-- Bottom sheet acciones (long-press) -->
           <div class="bottom-sheet-backdrop" data-sheet="sheetAcciones"></div>
           <div id="sheetAcciones" class="bottom-sheet">
@@ -282,6 +306,7 @@
   </div>
 
   <script src="../assets/js/store-mesas.js"></script>
+  <script src="../assets/js/store-comandas.js"></script>
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
@@ -422,10 +447,20 @@
         });
         card.addEventListener('pointerup', function(e) {
           if (_pressTimer) {
-            // Fue tap (timer aún pendiente) → navegar
+            // Fue tap (timer aún pendiente) → navegar según estado
             cancelPress();
             var mesa = StoreMesas.getMesa(mesaId);
-            if (mesa) location.href = './detalle.html?mesa=' + mesa.numero;
+            if (!mesa) return;
+
+            if (mesa.estado === 'por-cobrar') {
+              // Ir directo a cobro
+              location.href = './cobro.html?mesa=' + mesa.numero;
+            } else if (mesa.estado === 'libre') {
+              // Mini sheet de comensales
+              openComensalesSheet(mesa);
+            } else {
+              location.href = './detalle.html?mesa=' + mesa.numero;
+            }
           }
           // Si _pressTimer es null, el long-press ya disparó → no navegar
         });
@@ -437,11 +472,54 @@
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             var mesa = StoreMesas.getMesa(mesaId);
-            if (mesa) location.href = './detalle.html?mesa=' + mesa.numero;
+            if (!mesa) return;
+            if (mesa.estado === 'por-cobrar') {
+              location.href = './cobro.html?mesa=' + mesa.numero;
+            } else if (mesa.estado === 'libre') {
+              openComensalesSheet(mesa);
+            } else {
+              location.href = './detalle.html?mesa=' + mesa.numero;
+            }
           }
         });
       });
     }
+
+    // ─── Sheet de comensales (mesa libre) ────────────────────────────────────
+    var _comensalesMesaId = null;
+    var _comensalesVal    = 2;
+
+    function openComensalesSheet(mesa) {
+      _comensalesMesaId = mesa.id;
+      _comensalesVal = Math.min(2, mesa.capacidad);
+      document.getElementById('stepperValue').textContent = _comensalesVal;
+      document.getElementById('sheetComensalesMesa').textContent = 'Mesa #' + mesa.numero;
+      UI.openBottomSheet('sheetComensales');
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    document.getElementById('stepperMinus').addEventListener('click', function() {
+      if (_comensalesVal > 1) {
+        _comensalesVal--;
+        document.getElementById('stepperValue').textContent = _comensalesVal;
+      }
+    });
+
+    document.getElementById('stepperPlus').addEventListener('click', function() {
+      _comensalesVal++;
+      document.getElementById('stepperValue').textContent = _comensalesVal;
+    });
+
+    document.getElementById('btnConfirmarComensales').addEventListener('click', function() {
+      if (!_comensalesMesaId) return;
+      var mesa = StoreMesas.getMesa(_comensalesMesaId);
+      UI.closeBottomSheet('sheetComensales');
+      if (mesa) {
+        // Guardar comensales en el store
+        StoreMesas.cambiarEstado(_comensalesMesaId, 'ocupada');
+        location.href = './detalle.html?mesa=' + mesa.numero + '&comensales=' + _comensalesVal;
+      }
+    });
 
     // ─── Sheet de acciones ────────────────────────────────────────────────────
     var _accionMesaId = null;
@@ -507,6 +585,7 @@
     renderResumen();
     if (window.lucide) window.lucide.createIcons();
   </script>
+  <script src="../assets/js/mesero-tabbar-badge.js"></script>
   <script src="../assets/js/nav.js"></script>
 </body>
 </html>

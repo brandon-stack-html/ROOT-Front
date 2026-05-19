@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Cobro · Mesa 4 · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    .e8-content {
+      padding: 18px 16px 12px;
+    }
+
+    /* Total enorme */
+    .e8-total-block {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .e8-total-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .e8-total-value {
+      font-size: 46px;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .e8-total-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Section title */
+    .e8-section { margin-bottom: 16px; }
+    .e8-section-title {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* Métodos de pago grid 2x2 */
+    .e8-metodos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .e8-metodo {
+      padding: 14px 10px;
+      border-radius: 11px;
+      cursor: pointer;
+      font-family: var(--ff-base);
+      background: var(--alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      min-height: 64px;
+    }
+    .e8-metodo svg {
+      width: 20px;
+      height: 20px;
+      color: var(--muted);
+    }
+    .e8-metodo-label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .e8-metodo.is-selected {
+      background: rgba(79, 70, 229, 0.08);
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+    }
+    [data-theme="dark"] .e8-metodo.is-selected {
+      background: rgba(79, 70, 229, 0.18);
+    }
+    .e8-metodo.is-selected svg { color: var(--accent); }
+    .e8-metodo-check {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 7px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    /* Card recibido */
+    .e8-recibido {
+      padding: 14px;
+      background: var(--alt);
+      border-radius: 11px;
+      margin-bottom: 16px;
+    }
+    .e8-recibido-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .e8-recibido-input-wrap {
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .e8-recibido-prefix {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .e8-recibido-input {
+      width: 100%;
+      padding: 12px 14px 12px 32px;
+      font-size: 24px;
+      font-weight: 600;
+      font-family: var(--ff-base);
+      background: var(--bg);
+      border: 1.5px solid var(--accent);
+      border-radius: 9px;
+      color: var(--text);
+      outline: none;
+      box-sizing: border-box;
+      font-variant-numeric: tabular-nums;
+    }
+    .e8-cambio {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #D1FAE5;
+      border-radius: 7px;
+    }
+    [data-theme="dark"] .e8-cambio {
+      background: rgba(16, 185, 129, 0.18);
+    }
+    .e8-cambio-label {
+      font-size: 12px;
+      color: #065F46;
+      font-weight: 600;
+    }
+    [data-theme="dark"] .e8-cambio-label { color: var(--success); }
+    .e8-cambio-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #065F46;
+      font-variant-numeric: tabular-nums;
+    }
+    [data-theme="dark"] .e8-cambio-value { color: var(--success); }
+
+    /* Propina chips */
+    .e8-propinas {
+      display: flex;
+      gap: 6px;
+    }
+    .e8-propina {
+      flex: 1;
+      padding: 10px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: var(--ff-base);
+      background: var(--alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+    }
+    .e8-propina.is-selected {
+      background: rgba(79, 70, 229, 0.08);
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+    }
+    [data-theme="dark"] .e8-propina.is-selected {
+      background: rgba(79, 70, 229, 0.18);
+    }
+    .e8-propina-pct {
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .e8-propina-val {
+      font-size: 10px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .e8-propina.is-selected .e8-propina-val { color: var(--accent); }
+
+    /* Switch FE */
+    .e8-switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--alt);
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+    .e8-switch-label {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .e8-switch-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    /* Total con propina */
+    .e8-total-propina {
+      padding: 12px 14px;
+      border-radius: 11px;
+      background: rgba(79, 70, 229, 0.06);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    [data-theme="dark"] .e8-total-propina {
+      background: rgba(79, 70, 229, 0.15);
+    }
+    .e8-total-propina-label {
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .e8-total-propina-value {
+      font-size: 20px;
+      color: var(--accent);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Footer */
+    .e8-footer {
+      padding: 10px 16px 14px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    /* División: link discreto encima de los métodos */
+    .e8-division-link {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 500;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-family: var(--ff-base);
+    }
+    .e8-division-link svg { width: 13px; height: 13px; }
+
+    /* División sheet: opciones */
+    .e8-div-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      background: transparent;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      width: 100%;
+      text-align: left;
+      font-family: var(--ff-base);
+      transition: background .1s;
+    }
+    .e8-div-option:last-child { border-bottom: none; }
+    .e8-div-option:active { background: var(--alt); }
+    .e8-div-option-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--alt); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .e8-div-option-icon svg { width: 18px; height: 18px; color: var(--accent); }
+    .e8-div-option-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .e8-div-option-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    /* Mixto: cards apiladas de métodos */
+    .e8-mixto-stack { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .e8-mixto-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--alt); border: 1px solid var(--border); border-radius: 10px; padding: 12px;
+    }
+    .e8-mixto-label { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+    .e8-mixto-amount { font-size: 14px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .e8-mixto-bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+    .e8-mixto-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width .3s ease; }
+
+    /* Print toggle */
+    .e8-print-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+      margin-bottom: 10px; cursor: pointer; background: var(--bg);
+    }
+    .e8-print-row svg { width: 16px; height: 16px; color: var(--muted); }
+    .e8-print-label { flex: 1; font-size: 13px; color: var(--text); font-weight: 500; }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- ============= TOPBAR ============= -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side">
+            <a href="./detalle.html?mesa=4" class="mesero-icon-btn" aria-label="Atrás">
+              <i data-lucide="arrow-left"></i>
+            </a>
+          </div>
+          <div class="mesero-topbar-center is-stacked">
+            <div class="mesero-topbar-title">Mesa 4</div>
+            <div class="mesero-topbar-subtitle">Cobro</div>
+          </div>
+          <div class="mesero-topbar-side" style="width:34px;"></div>
+        </header>
+
+        <!-- ============= CONTENT ============= -->
+        <main id="main" class="mesero-content">
+          <div class="e8-content">
+
+            <!-- Total enorme -->
+            <div class="e8-total-block">
+              <div class="e8-total-label">Total a cobrar</div>
+              <div class="e8-total-value">$116.000</div>
+              <div class="e8-total-meta">4 items · Mesa 4 · Andrea García</div>
+            </div>
+
+            <!-- División de cuenta -->
+            <button type="button" class="e8-division-link" id="btnDivision">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M21 3 9 15"/><path d="M3 21h5v-5"/><path d="M3 21 15 9"/></svg>
+              Dividir cuenta
+            </button>
+
+            <!-- Métodos -->
+            <div class="e8-section">
+              <div class="e8-section-title">Medio de pago</div>
+              <div class="e8-metodos">
+                <button type="button" class="e8-metodo is-selected" data-metodo="efectivo">
+                  <span class="e8-metodo-check">✓</span>
+                  <i data-lucide="banknote"></i>
+                  <span class="e8-metodo-label">Efectivo</span>
+                </button>
+                <button type="button" class="e8-metodo" data-metodo="debito">
+                  <i data-lucide="credit-card"></i>
+                  <span class="e8-metodo-label">Débito</span>
+                </button>
+                <button type="button" class="e8-metodo" data-metodo="credito">
+                  <i data-lucide="credit-card"></i>
+                  <span class="e8-metodo-label">Crédito</span>
+                </button>
+                <button type="button" class="e8-metodo" data-metodo="multiple">
+                  <i data-lucide="shuffle"></i>
+                  <span class="e8-metodo-label">Múltiple</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Recibido -->
+            <div class="e8-recibido">
+              <div class="e8-recibido-label">Recibido</div>
+              <div class="e8-recibido-input-wrap">
+                <span class="e8-recibido-prefix">$</span>
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  class="e8-recibido-input"
+                  id="recibidoInput"
+                  value="150.000"
+                />
+              </div>
+              <div class="e8-cambio">
+                <span class="e8-cambio-label">Cambio</span>
+                <span class="e8-cambio-value" id="cambioValue">$28.200</span>
+              </div>
+            </div>
+
+            <!-- Propina -->
+            <div class="e8-section">
+              <div class="e8-section-title">Propina</div>
+              <div class="e8-propinas">
+                <button type="button" class="e8-propina is-selected" data-pct="5">
+                  <span class="e8-propina-pct">5%</span>
+                  <span class="e8-propina-val">$5.800</span>
+                </button>
+                <button type="button" class="e8-propina" data-pct="10">
+                  <span class="e8-propina-pct">10%</span>
+                  <span class="e8-propina-val">$11.600</span>
+                </button>
+                <button type="button" class="e8-propina" data-pct="-1">
+                  <span class="e8-propina-pct">Otro</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Mixto stack (visible cuando se selecciona "Múltiple") -->
+            <div id="e8MixtoWrap" style="display:none;">
+              <div class="e8-mixto-stack" id="e8MixtoStack"></div>
+              <div class="e8-mixto-bar"><div class="e8-mixto-fill" id="e8MixtoBarFill" style="width:0%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;margin-bottom:12px;">
+                <span>Cubierto: <strong id="e8MixtoCubierto">$0</strong></span>
+                <span>Restante: <strong id="e8MixtoRestante">$116.000</strong></span>
+              </div>
+            </div>
+
+            <!-- Switch FE -->
+            <div class="e8-switch-row">
+              <div>
+                <div class="e8-switch-label">Factura electrónica</div>
+                <div class="e8-switch-sub">Solicitar al cliente</div>
+              </div>
+              <button type="button" class="mb-switch" id="switchFE" aria-label="Factura electrónica"></button>
+            </div>
+
+            <!-- Total con propina -->
+            <div class="e8-total-propina">
+              <span class="e8-total-propina-label">Total con propina</span>
+              <span class="e8-total-propina-value" id="totalConPropina">$121.800</span>
+            </div>
+
+          </div>
+        </main>
+
+        <!-- ============= FOOTER ============= -->
+        <div class="e8-footer">
+          <!-- Print toggle -->
+          <div class="e8-print-row" id="printRow">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            <span class="e8-print-label">Imprimir comprobante</span>
+            <button type="button" class="mb-switch" id="switchPrint" aria-label="Imprimir"></button>
+          </div>
+          <button type="button" class="mb-btn mb-btn-success h-56" id="btnConfirmarCobro">
+            <i data-lucide="check"></i>
+            Confirmar cobro
+          </button>
+        </div>
+
+        <!-- ============= SHEET DIVISIÓN ============= -->
+        <div class="bottom-sheet-backdrop" data-sheet="sheetDivision"></div>
+        <div id="sheetDivision" class="bottom-sheet">
+          <div class="bottom-sheet-handle" data-close></div>
+          <div class="bottom-sheet-header">
+            <h3 class="bottom-sheet-title">Dividir cuenta</h3>
+            <p class="bottom-sheet-subtitle">$116.000 entre comensales</p>
+          </div>
+          <div class="bottom-sheet-body" style="padding:0;">
+            <button type="button" class="e8-div-option" id="divEquitativo">
+              <div class="e8-div-option-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+              <div>
+                <div class="e8-div-option-title">Equitativo</div>
+                <div class="e8-div-option-sub">Dividir en partes iguales por # de personas</div>
+              </div>
+            </button>
+            <button type="button" class="e8-div-option" id="divItems">
+              <div class="e8-div-option-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 12 2 2 4-4"/></svg></div>
+              <div>
+                <div class="e8-div-option-title">Por ítems</div>
+                <div class="e8-div-option-sub">Cada uno selecciona lo que consumió</div>
+              </div>
+            </button>
+            <button type="button" class="e8-div-option" id="divManual">
+              <div class="e8-div-option-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+              <div>
+                <div class="e8-div-option-title">Montos libres</div>
+                <div class="e8-div-option-sub">Ingresar cuánto paga cada persona</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- ============= BOTTOM NAV ============= -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="layout-grid"></i>
+            </span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="clipboard-list"></i>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Nómina</span>
+          </a>
+          <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <div class="mesero-home-indicator"></div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/store-mesas.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    var qp = new URLSearchParams(location.search);
+    var mesaNum = qp.get('mesa') || '4';
+    var mesaId  = 'mesa-' + mesaNum;
+
+    // Cargar total del store si existe
+    var total = 116000;
+    if (window.StoreMesas) {
+      var mesaData = StoreMesas.getMesa(mesaId);
+      if (mesaData && mesaData.total > 0) total = mesaData.total;
+    }
+    document.querySelector('.e8-total-value').textContent = '$' + total.toLocaleString('es-CO');
+    document.getElementById('e8MixtoRestante').textContent = '$' + total.toLocaleString('es-CO');
+
+    var propinaPct = 5;
+    var recibido = Math.ceil(total * 1.1 / 1000) * 1000;
+
+    function fmt(n) {
+      if (n < 0) return '-$' + Math.abs(n).toLocaleString('es-CO');
+      return '$' + Number(n).toLocaleString('es-CO');
+    }
+    function fmtInput(n) {
+      return Number(n).toLocaleString('es-CO');
+    }
+    function parseInput(s) {
+      var clean = String(s).replace(/[^\d]/g, '');
+      return clean === '' ? 0 : parseInt(clean, 10);
+    }
+
+    function recalc() {
+      var propina = Math.round(total * propinaPct / 100);
+      var totalFinal = total + propina;
+      var cambio = recibido - totalFinal;
+      document.getElementById('totalConPropina').textContent = fmt(totalFinal);
+      document.getElementById('cambioValue').textContent = fmt(cambio);
+    }
+
+    // Recibido input
+    var recibidoEl = document.getElementById('recibidoInput');
+    recibidoEl.addEventListener('input', function () {
+      recibido = parseInput(recibidoEl.value);
+      recibidoEl.value = fmtInput(recibido);
+      recalc();
+    });
+
+    // Métodos
+    document.querySelectorAll('.e8-metodo').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.e8-metodo').forEach(function (b) {
+          b.classList.remove('is-selected');
+          var c = b.querySelector('.e8-metodo-check');
+          if (c) c.remove();
+        });
+        btn.classList.add('is-selected');
+        if (!btn.querySelector('.e8-metodo-check')) {
+          var c = document.createElement('span');
+          c.className = 'e8-metodo-check';
+          c.textContent = '✓';
+          btn.insertBefore(c, btn.firstChild);
+        }
+      });
+    });
+
+    // Propina chips
+    document.querySelectorAll('.e8-propina').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.e8-propina').forEach(function (b) {
+          b.classList.remove('is-selected');
+        });
+        btn.classList.add('is-selected');
+        var pct = parseInt(btn.dataset.pct, 10);
+        if (pct >= 0) propinaPct = pct;
+        recalc();
+      });
+    });
+
+    // Switch FE
+    document.getElementById('switchFE').addEventListener('click', function () {
+      this.classList.toggle('is-on');
+    });
+
+    // ── División de cuenta ────────────────────────────────────────────────────
+    document.getElementById('btnDivision').addEventListener('click', function () {
+      UI.openBottomSheet('sheetDivision');
+    });
+
+    ['divEquitativo', 'divItems', 'divManual'].forEach(function (id) {
+      document.getElementById(id).addEventListener('click', function () {
+        var labels = { divEquitativo: 'Equitativo', divItems: 'Por ítems', divManual: 'Montos libres' };
+        UI.closeBottomSheet('sheetDivision');
+        UI.toast({ type: 'info', title: 'División: ' + labels[id], sub: 'Funcionalidad en construcción', duration: 3000 });
+      });
+    });
+
+    // ── Múltiple payment ──────────────────────────────────────────────────────
+    var mixtoMethods = [];
+
+    document.querySelectorAll('.e8-metodo').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var metodo = btn.dataset.metodo;
+
+        if (metodo === 'multiple') {
+          // Mostrar UI de pago mixto
+          document.querySelectorAll('.e8-metodo').forEach(function (b) {
+            b.classList.remove('is-selected');
+            var c = b.querySelector('.e8-metodo-check');
+            if (c) c.remove();
+          });
+          btn.classList.add('is-selected');
+          if (!btn.querySelector('.e8-metodo-check')) {
+            var c = document.createElement('span');
+            c.className = 'e8-metodo-check';
+            c.textContent = '✓';
+            btn.insertBefore(c, btn.firstChild);
+          }
+          document.getElementById('e8MixtoWrap').style.display = '';
+          addMixtoMethod('Efectivo', Math.round(total / 2));
+          return;
+        }
+
+        // Un solo método
+        mixtoMethods = [];
+        document.getElementById('e8MixtoWrap').style.display = 'none';
+        document.getElementById('e8MixtoStack').innerHTML = '';
+
+        document.querySelectorAll('.e8-metodo').forEach(function (b) {
+          b.classList.remove('is-selected');
+          var c = b.querySelector('.e8-metodo-check');
+          if (c) c.remove();
+        });
+        btn.classList.add('is-selected');
+        if (!btn.querySelector('.e8-metodo-check')) {
+          var c = document.createElement('span');
+          c.className = 'e8-metodo-check';
+          c.textContent = '✓';
+          btn.insertBefore(c, btn.firstChild);
+        }
+      });
+    });
+
+    function addMixtoMethod(label, amount) {
+      mixtoMethods.push({ label: label, amount: amount });
+      renderMixto();
+    }
+
+    function renderMixto() {
+      var stack = document.getElementById('e8MixtoStack');
+      var cubierto = mixtoMethods.reduce(function (s, m) { return s + m.amount; }, 0);
+      var restante = Math.max(0, total - cubierto);
+      var pct = total > 0 ? Math.min(100, Math.round(cubierto / total * 100)) : 0;
+
+      stack.innerHTML = mixtoMethods.map(function (m) {
+        return '<div class="e8-mixto-item">' +
+          '<span class="e8-mixto-label">' + m.label + '</span>' +
+          '<span class="e8-mixto-amount">$' + m.amount.toLocaleString('es-CO') + '</span>' +
+          '</div>';
+      }).join('');
+
+      if (restante > 0) {
+        stack.innerHTML += '<button type="button" onclick="promptAddMixtoMethod()" style="width:100%;padding:10px;border:1px dashed var(--border);border-radius:9px;background:transparent;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--ff-base);">+ Agregar otro método</button>';
+      }
+
+      document.getElementById('e8MixtoBarFill').style.width = pct + '%';
+      document.getElementById('e8MixtoCubierto').textContent = '$' + cubierto.toLocaleString('es-CO');
+      document.getElementById('e8MixtoRestante').textContent = '$' + restante.toLocaleString('es-CO');
+    }
+
+    window.promptAddMixtoMethod = function () {
+      var restante = Math.max(0, total - mixtoMethods.reduce(function (s, m) { return s + m.amount; }, 0));
+      addMixtoMethod('Tarjeta', restante);
+    };
+
+    // ── Print switch ──────────────────────────────────────────────────────────
+    document.getElementById('printRow').addEventListener('click', function () {
+      document.getElementById('switchPrint').classList.toggle('is-on');
+    });
+
+    // ── Confirmar cobro ───────────────────────────────────────────────────────
+    document.getElementById('btnConfirmarCobro').addEventListener('click', function () {
+      var totalFinal = total + Math.round(total * propinaPct / 100);
+      UI.toast({ type: 'success', title: 'Mesa ' + mesaNum + ' · Venta registrada', sub: '$' + totalFinal.toLocaleString('es-CO') + ' cobrados' });
+
+      // Liberar mesa en el store
+      if (window.StoreMesas) StoreMesas.liberar(mesaId);
+
+      // Print si está activo
+      if (document.getElementById('switchPrint').classList.contains('is-on')) {
+        setTimeout(function () { window.print(); }, 400);
+      }
+
+      setTimeout(function () {
+        window.location.href = './mapa.html';
+      }, 1400);
+    });
+  </script>
+  <script src="../assets/js/mesero-tabbar-badge.js"></script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Iniciar sesión · App Mesero · ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    /* ── Shake animation (credenciales inválidas) ── */
+    @keyframes e1-shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-8px); }
+      40%       { transform: translateX(8px); }
+      60%       { transform: translateX(-6px); }
+      80%       { transform: translateX(6px); }
+    }
+    .e1-shake { animation: e1-shake 0.42s ease; }
+
+    /* Error inline */
+    .e1-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 9px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #EF4444;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .e1-error svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .e1-error.is-visible { display: flex; }
+    .e1-counter {
+      font-size: 11px;
+      color: #EF4444;
+      text-align: center;
+      margin-top: -6px;
+      margin-bottom: 10px;
+      display: none;
+    }
+    .e1-counter.is-visible { display: block; }
+
+    /* ── Login específico (E1) ── */
+    .e1-top {
+      height: 40%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent) 0%, #6366F1 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .e1-deco-1,
+    .e1-deco-2 {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .e1-deco-1 {
+      top: -60px;
+      right: -40px;
+      width: 180px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .e1-deco-2 {
+      bottom: -40px;
+      left: -30px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .e1-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      position: relative;
+    }
+    .e1-tagline {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.85);
+      position: relative;
+      text-align: center;
+    }
+    .e1-bottom {
+      flex: 1;
+      padding: 28px 24px 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+    }
+    .e1-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .e1-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .e1-field {
+      margin-bottom: 14px;
+    }
+    .e1-field-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .e1-input {
+      width: 100%;
+      padding: 14px;
+      font-size: 14px;
+      font-family: var(--ff-base);
+      background: var(--alt);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      color: var(--text);
+      outline: none;
+      box-sizing: border-box;
+    }
+    .e1-input-wrap-focused {
+      display: flex;
+      align-items: center;
+      background: var(--alt);
+      border: 1.5px solid var(--accent);
+      border-radius: 11px;
+      padding: 0 14px;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.13);
+    }
+    .e1-input-wrap-focused input {
+      flex: 1;
+      padding: 14px 0;
+      font-size: 14px;
+      font-family: var(--ff-base);
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      min-width: 0;
+    }
+    .e1-eye {
+      background: transparent;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex;
+    }
+    .e1-eye svg { width: 18px; height: 18px; }
+    .e1-forgot {
+      text-align: center;
+      margin-top: 16px;
+    }
+    .e1-forgot a {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .e1-spacer { flex: 1; min-height: 12px; }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <!-- Status bar -->
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- ============= TOP 40% (gradiente) ============= -->
+        <div class="e1-top">
+          <div class="e1-deco-1"></div>
+          <div class="e1-deco-2"></div>
+          <div class="e1-brand">
+            <span class="root-wordmark" style="font-size:24px">[ROOT]</span>
+          </div>
+          <div class="e1-tagline">Toma pedidos al instante</div>
+        </div>
+
+        <!-- ============= BOTTOM 60% (form) ============= -->
+        <form class="e1-bottom" id="loginForm" novalidate>
+          <div class="e1-title">Bienvenido</div>
+          <div class="e1-subtitle">Inicia sesión para empezar tu turno</div>
+
+          <div class="e1-field">
+            <div class="e1-field-label">Correo</div>
+            <input
+              class="e1-input"
+              type="email"
+              value="andrea.gomez@elbuensabor.co"
+              autocomplete="email"
+            />
+          </div>
+
+          <!-- Error inline -->
+          <div class="e1-error" id="loginError">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="loginErrorText">Credenciales inválidas. Verifica tus datos.</span>
+          </div>
+
+          <div class="e1-field">
+            <div class="e1-field-label">Contraseña</div>
+            <div class="e1-input-wrap-focused">
+              <input
+                type="password"
+                value="••••••••••"
+                id="loginPassword"
+                autocomplete="current-password"
+              />
+              <button type="button" class="e1-eye" aria-label="Mostrar contraseña" id="togglePwd">
+                <i data-lucide="eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="mb-btn mb-btn-primary" id="loginBtn">
+            Iniciar sesión
+            <i data-lucide="arrow-right"></i>
+          </button>
+
+          <div class="e1-counter" id="loginCounter"></div>
+
+          <div class="e1-forgot">
+            <a href="#">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <div class="e1-spacer"></div>
+
+          <div class="conn-status">
+            <span style="display:inline-flex; align-items:center; gap:5px;">
+              <span class="dot"></span>
+              Conectado
+            </span>
+            <span class="sep">·</span>
+            <span class="version">v1.0.0</span>
+          </div>
+        </form>
+
+      </div>
+
+      <div class="mesero-home-indicator"></div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // Toggle ojo de password
+    document.getElementById('togglePwd').addEventListener('click', function () {
+      var pwd = document.getElementById('loginPassword');
+      pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    });
+
+    // ── Auth mock (E1 S16) ───────────────────────────────────────────────────
+    var VALID_EMAIL = 'andrea.gomez@elbuensabor.co';
+    var VALID_PWD_DEMO = '••••••••••'; // valor pre-rellenado = acceso OK
+    var MAX_ATTEMPTS = 5;
+    var attempts = 0;
+
+    var formEl    = document.getElementById('loginForm');
+    var errorEl   = document.getElementById('loginError');
+    var errorText = document.getElementById('loginErrorText');
+    var counterEl = document.getElementById('loginCounter');
+
+    function shakeForm() {
+      formEl.classList.remove('e1-shake');
+      void formEl.offsetWidth; // reflow para reiniciar animación
+      formEl.classList.add('e1-shake');
+      setTimeout(function () { formEl.classList.remove('e1-shake'); }, 500);
+    }
+
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorEl.classList.add('is-visible');
+    }
+
+    formEl.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var email = document.querySelector('.e1-input').value.trim();
+      var pwd   = document.getElementById('loginPassword').value;
+
+      // Happy path: email válido y contraseña no cambiada (bullets) o "123456"
+      if (email === VALID_EMAIL && (pwd === VALID_PWD_DEMO || pwd === '123456')) {
+        errorEl.classList.remove('is-visible');
+        counterEl.classList.remove('is-visible');
+        window.location.href = './sala.html';
+        return;
+      }
+
+      // Error
+      attempts++;
+      shakeForm();
+
+      var remaining = MAX_ATTEMPTS - attempts;
+      if (remaining <= 0) {
+        showError('Cuenta bloqueada temporalmente. Intenta en 5 minutos.');
+        counterEl.classList.remove('is-visible');
+        document.getElementById('loginBtn').disabled = true;
+      } else if (attempts >= 3) {
+        showError('Credenciales inválidas.');
+        counterEl.textContent = 'Intentos restantes: ' + remaining;
+        counterEl.classList.add('is-visible');
+      } else {
+        showError('Correo o contraseña incorrectos. Verifica tus datos.');
+        counterEl.classList.remove('is-visible');
+      }
+
+      if (window.UI) UI.toast({ type: 'error', title: 'Credenciales inválidas', duration: 2000 });
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

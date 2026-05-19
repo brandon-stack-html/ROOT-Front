@@ -158,12 +158,6 @@
             </div>
           </div>
 
-          <!-- Alert adelanto pendiente -->
-          <div class="e10-alert" id="alertPendiente" style="display:none">
-            <i data-lucide="alert-circle"></i>
-            <span>Ya tienes una solicitud de adelanto <strong>pendiente</strong> para este periodo. Espera la respuesta del administrador.</span>
-          </div>
-
           <!-- Info cards -->
           <section class="e10-section">
             <div class="e10-section-title">Resumen del periodo</div>
@@ -197,6 +191,18 @@
               <i data-lucide="plus-circle"></i>
               Solicitar adelanto
             </a>
+
+            <!-- Tooltip-card bloqueado (se muestra debajo cuando hay pendiente) -->
+            <div id="tooltipBloqueado" style="display:none; padding:12px 14px; border-radius:11px; background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.25); margin-top:-4px;">
+              <div style="display:flex;align-items:flex-start;gap:10px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--warning);flex-shrink:0;margin-top:1px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <div style="flex:1;">
+                  <div style="font-size:12px;color:var(--text);line-height:1.4;" id="tooltipBloqueadoText">Ya tienes una solicitud <strong>pendiente</strong>. Espera la respuesta del administrador.</div>
+                  <a href="./adelantos-historial.html" style="font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;margin-top:6px;display:inline-block;">Ver solicitud →</a>
+                </div>
+              </div>
+            </div>
+
             <a href="./adelantos-historial.html" class="mb-btn mb-btn-secondary h-48">
               <i data-lucide="list"></i>
               Ver mis adelantos
@@ -275,10 +281,16 @@
         return a.empleado_id === emp.id && a.periodo_id === per.id && (a.estado === 'pendiente' || a.estado === 'aprobada');
       });
       if (advPendiente) {
-        document.getElementById('alertPendiente').style.display = 'flex';
         var btnSolicitar = document.getElementById('btnSolicitar');
-        btnSolicitar.style.opacity = '.5';
+        btnSolicitar.style.opacity = '.45';
         btnSolicitar.style.pointerEvents = 'none';
+        btnSolicitar.setAttribute('aria-disabled', 'true');
+
+        var tooltipEl   = document.getElementById('tooltipBloqueado');
+        var tooltipText = document.getElementById('tooltipBloqueadoText');
+        tooltipEl.style.display = '';
+        tooltipText.innerHTML = 'Ya tienes una solicitud <strong>' + advPendiente.estado + '</strong> para este periodo. Espera la respuesta del administrador.';
+        if (window.lucide) window.lucide.createIcons();
       }
     }
 
@@ -287,6 +299,8 @@
       setTimeout(function(){ UI.toast({ type: 'success', title: 'Solicitud enviada', body: 'Tu solicitud está pendiente de aprobación.' }); }, 300);
     }
   </script>
+  <script src="../assets/js/store-comandas.js"></script>
+  <script src="../assets/js/mesero-tabbar-badge.js"></script>
   <script src="../assets/js/nav.js"></script>
 </body>
 </html>

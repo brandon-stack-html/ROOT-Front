@@ -191,8 +191,14 @@
     if (myAdelantos.length === 0) {
       lista.innerHTML = '<div class="e12-empty">' +
         '<div class="e12-empty-icon"><i data-lucide="inbox"></i></div>' +
-        '<div class="e12-empty-title">Sin adelantos</div>' +
-        '<div class="e12-empty-sub">No tienes solicitudes de adelanto aún.</div>' +
+        '<div class="e12-empty-title">No tienes adelantos aún</div>' +
+        '<div class="e12-empty-sub">Cuando solicites tu primer adelanto aparecerá aquí.</div>' +
+        '<div style="margin-top:16px;">' +
+          '<a href="./adelanto-solicitar.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;background:var(--accent);color:#fff;font-size:13px;font-weight:600;text-decoration:none;">' +
+            '<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2.5\'><circle cx=\'12\' cy=\'12\' r=\'10\'/><line x1=\'12\' y1=\'8\' x2=\'12\' y2=\'16\'/><line x1=\'8\' y1=\'12\' x2=\'16\' y2=\'12\'/></svg>' +
+            'Solicitar tu primero' +
+          '</a>' +
+        '</div>' +
         '</div>';
     } else {
       myAdelantos.forEach(function(adv){
@@ -221,6 +227,32 @@
     }
 
     if (window.lucide) window.lucide.createIcons();
+
+    // ── Highlight ítem recién creado (viene de E11) ───────────────────────────
+    var _qp        = new URLSearchParams(location.search);
+    var highlightId = _qp.get('highlight') || '';
+    var toastParam  = _qp.get('toast') || '';
+
+    if (toastParam === 'enviado') {
+      setTimeout(function () {
+        if (window.UI) UI.toast({ type: 'success', title: 'Solicitud enviada', sub: 'Pendiente de aprobación.' });
+      }, 300);
+    }
+
+    if (highlightId) {
+      setTimeout(function () {
+        var target = document.querySelector('[data-id="' + highlightId + '"]');
+        if (!target) return;
+        target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        target.style.transition = 'box-shadow .3s, outline .3s';
+        target.style.outline = '2px solid var(--accent)';
+        target.style.boxShadow = '0 0 0 4px rgba(79,70,229,.15)';
+        setTimeout(function () {
+          target.style.outline = '';
+          target.style.boxShadow = '';
+        }, 2200);
+      }, 400);
+    }
 
     // Bottom sheet
     var backdrop = document.getElementById('bsBackdrop');
@@ -276,10 +308,11 @@
         btnPdf.className = 'mb-btn mb-btn-secondary h-48';
         btnPdf.innerHTML = '<i data-lucide="download"></i> Descargar comprobante';
         btnPdf.addEventListener('click', function(){
+          // Sheet permanece abierto (no cierra)
           if (window.generarComprobante) {
             window.generarComprobante(adv.id);
           } else {
-            UI.toast({ type: 'info', title: 'Comprobante', body: 'Generando PDF…' });
+            if (window.UI) UI.toast({ type: 'success', title: 'Comprobante descargado' });
           }
         });
         footer.appendChild(btnPdf);

@@ -261,13 +261,71 @@
             </div>
           </section>
 
-          <!-- Cerrar sesión -->
+          <!-- Sesión -->
           <section class="e9-section">
-            <button type="button" class="mb-btn mb-btn-danger h-50" id="btnLogout">
-              <i data-lucide="log-out"></i>
-              Cerrar sesión
-            </button>
+            <div class="e9-section-title">Sesión</div>
+            <div class="e9-settings-card">
+              <button type="button" class="setting-row" id="settingCambiarPin">
+                <div class="setting-row-icon"><i data-lucide="key-round"></i></div>
+                <span class="setting-row-label">Cambiar PIN</span>
+                <span class="setting-row-right"><i data-lucide="chevron-right"></i></span>
+              </button>
+              <button type="button" class="setting-row last" style="color:var(--error);" id="btnLogout">
+                <div class="setting-row-icon" style="background:rgba(239,68,68,.1);color:var(--error);"><i data-lucide="log-out"></i></div>
+                <span class="setting-row-label" style="color:var(--error);">Cerrar sesión</span>
+              </button>
+            </div>
           </section>
+
+          <!-- Modal confirm logout -->
+          <div id="modalLogout" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;padding:0;">
+            <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 20px;width:100%;box-sizing:border-box;">
+              <div style="text-align:center;margin-bottom:16px;">
+                <div style="width:48px;height:48px;border-radius:12px;background:rgba(239,68,68,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--error);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </div>
+                <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;">¿Cerrar sesión?</div>
+                <div style="font-size:13px;color:var(--muted);">Se cerrará tu turno activo. Asegúrate de haber enviado todas las comandas.</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <button type="button" class="mb-btn mb-btn-danger h-50" id="btnLogoutConfirm">
+                  <i data-lucide="log-out"></i>Sí, cerrar sesión
+                </button>
+                <button type="button" class="mb-btn mb-btn-secondary h-44" id="btnLogoutCancel">Cancelar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom sheet cambiar PIN -->
+          <div class="bottom-sheet-backdrop" data-sheet="sheetCambiarPin"></div>
+          <div id="sheetCambiarPin" class="bottom-sheet">
+            <div class="bottom-sheet-handle" data-close></div>
+            <div class="bottom-sheet-header">
+              <h3 class="bottom-sheet-title">Cambiar PIN</h3>
+              <p class="bottom-sheet-subtitle">Elige un PIN de 4 dígitos</p>
+            </div>
+            <div class="bottom-sheet-body" style="padding:16px 20px 8px;">
+              <div style="margin-bottom:14px;">
+                <label style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:6px;">PIN actual</label>
+                <input type="password" inputmode="numeric" maxlength="4" id="pinActual"
+                  style="width:100%;padding:12px 14px;font-size:20px;letter-spacing:.3em;border:1px solid var(--border);border-radius:10px;background:var(--alt);color:var(--text);font-family:monospace;box-sizing:border-box;outline:none;" placeholder="••••">
+              </div>
+              <div style="margin-bottom:14px;">
+                <label style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:6px;">PIN nuevo</label>
+                <input type="password" inputmode="numeric" maxlength="4" id="pinNuevo"
+                  style="width:100%;padding:12px 14px;font-size:20px;letter-spacing:.3em;border:1px solid var(--border);border-radius:10px;background:var(--alt);color:var(--text);font-family:monospace;box-sizing:border-box;outline:none;" placeholder="••••">
+              </div>
+              <div style="margin-bottom:4px;">
+                <label style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:6px;">Confirmar nuevo PIN</label>
+                <input type="password" inputmode="numeric" maxlength="4" id="pinConfirmar"
+                  style="width:100%;padding:12px 14px;font-size:20px;letter-spacing:.3em;border:1px solid var(--border);border-radius:10px;background:var(--alt);color:var(--text);font-family:monospace;box-sizing:border-box;outline:none;" placeholder="••••">
+              </div>
+              <div id="pinError" style="font-size:12px;color:var(--error);min-height:18px;margin-top:6px;"></div>
+            </div>
+            <div class="bottom-sheet-footer">
+              <button type="button" class="mb-btn mb-btn-primary h-48" id="btnGuardarPin">Guardar PIN</button>
+            </div>
+          </div>
 
           <div class="e9-footer-version">
             ROOT v1.0.0 · Build 2026.05
@@ -342,14 +400,55 @@
       document.getElementById('notifSwitch').classList.toggle('is-on');
     });
 
-    // Cerrar sesión
+    // Logout → modal de confirmación
+    var modalLogout = document.getElementById('modalLogout');
     document.getElementById('btnLogout').addEventListener('click', function () {
+      modalLogout.style.display = 'flex';
+      if (window.lucide) window.lucide.createIcons();
+    });
+    document.getElementById('btnLogoutCancel').addEventListener('click', function () {
+      modalLogout.style.display = 'none';
+    });
+    document.getElementById('btnLogoutConfirm').addEventListener('click', function () {
+      modalLogout.style.display = 'none';
       UI.toast({ type: 'info', title: 'Sesión cerrada' });
-      setTimeout(function () {
-        window.location.href = './login.html';
-      }, 600);
+      setTimeout(function () { window.location.href = './login.html'; }, 600);
+    });
+
+    // Cambiar PIN
+    document.getElementById('settingCambiarPin').addEventListener('click', function () {
+      document.getElementById('pinActual').value   = '';
+      document.getElementById('pinNuevo').value    = '';
+      document.getElementById('pinConfirmar').value= '';
+      document.getElementById('pinError').textContent = '';
+      UI.openBottomSheet('sheetCambiarPin');
+    });
+
+    document.getElementById('btnGuardarPin').addEventListener('click', function () {
+      var actual     = document.getElementById('pinActual').value.trim();
+      var nuevo      = document.getElementById('pinNuevo').value.trim();
+      var confirmar  = document.getElementById('pinConfirmar').value.trim();
+      var errEl      = document.getElementById('pinError');
+
+      if (actual.length < 4) {
+        errEl.textContent = 'Ingresá tu PIN actual de 4 dígitos.';
+        return;
+      }
+      if (nuevo.length < 4) {
+        errEl.textContent = 'El PIN nuevo debe tener 4 dígitos.';
+        return;
+      }
+      if (nuevo !== confirmar) {
+        errEl.textContent = 'Los PINs nuevos no coinciden.';
+        return;
+      }
+      errEl.textContent = '';
+      UI.closeBottomSheet('sheetCambiarPin');
+      UI.toast({ type: 'success', title: 'PIN actualizado correctamente' });
     });
   </script>
+  <script src="../assets/js/store-comandas.js"></script>
+  <script src="../assets/js/mesero-tabbar-badge.js"></script>
   <script src="../assets/js/nav.js"></script>
 </body>
 </html>
