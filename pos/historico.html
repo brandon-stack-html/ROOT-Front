@@ -11,6 +11,91 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/pos-shell.css" />
+  <style>
+    /* ── C5: Modal detalle de ticket ──────────────────────── */
+    .ticket-detail-modal { width: min(500px, 96vw); }
+    .ticket-detail-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 18px 20px 12px; border-bottom: 1px solid var(--border);
+    }
+    .ticket-detail-num { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
+    .ticket-detail-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .ticket-detail-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 999px; font-size: 10px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .tdb-cerrada { background: rgba(var(--success-rgb),.12); color: var(--success); border: 1px solid rgba(var(--success-rgb),.25); }
+    .tdb-anulada { background: rgba(var(--error-rgb),.12);   color: var(--error);   border: 1px solid rgba(var(--error-rgb),.25); }
+
+    .ticket-detail-body { padding: 16px 20px; }
+    .ticket-items-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 14px; }
+    .ticket-items-table th {
+      text-align: left; font-size: 9px; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase; color: var(--muted);
+      padding: 5px 0; border-bottom: 1px solid var(--border);
+    }
+    .ticket-items-table th:last-child { text-align: right; }
+    .ticket-items-table td { padding: 8px 0; border-bottom: 1px dashed var(--border); color: var(--text); }
+    .ticket-items-table tbody tr:last-child td { border-bottom: none; }
+    .ticket-items-table td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .ticket-items-table .qty-cell { color: var(--muted); width: 32px; }
+
+    .ticket-totals { border-top: 1px solid var(--border); padding-top: 10px; }
+    .ticket-total-row {
+      display: flex; justify-content: space-between;
+      font-size: 12px; padding: 3px 0;
+    }
+    .ticket-total-row .lbl { color: var(--muted); }
+    .ticket-total-row .val { font-variant-numeric: tabular-nums; font-weight: 500; }
+    .ticket-total-row.is-total {
+      font-size: 15px; font-weight: 700; padding-top: 8px;
+      border-top: 1.5px solid var(--border); margin-top: 4px;
+    }
+    .ticket-total-row.is-total .val { color: var(--text); }
+
+    .ticket-meta-pills {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;
+    }
+    .ticket-meta-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 9px; border-radius: 999px; font-size: 10px;
+      font-weight: 600; background: var(--alt); border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* Botones del footer */
+    .ticket-footer-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .ticket-footer-actions .btn { flex-shrink: 0; }
+
+    /* Email input inline */
+    .ticket-email-row {
+      display: flex; gap: 8px; margin-top: 6px;
+    }
+    .ticket-email-input {
+      flex: 1; padding: 8px 12px;
+      background: var(--alt); border: 1px solid var(--border);
+      border-radius: 8px; font-family: var(--ff-base); font-size: 12px;
+      color: var(--text); outline: none;
+    }
+    .ticket-email-input:focus { border-color: var(--accent); }
+
+    /* Fila clickable cursor en historico */
+    .pos-historico-row { cursor: pointer; }
+    .pos-historico-row:hover .col-num { color: var(--accent); }
+
+    /* Filtro turno activo */
+    .turno-filtro-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px; font-size: 11px;
+      font-weight: 600; background: rgba(var(--accent-rgb),.10);
+      border: 1px solid rgba(var(--accent-rgb),.25); color: var(--accent);
+    }
+    .turno-filtro-chip button {
+      background: none; border: none; cursor: pointer; color: var(--accent);
+      font-size: 14px; line-height: 1; padding: 0; display: flex; align-items: center;
+    }
+  </style>
 </head>
 <body>
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
@@ -19,7 +104,7 @@
 
     <header class="pos-topbar">
       <div class="pos-topbar-brand">
-        <img src="../ROOT.png" class="pos-brand-logo-img" alt="[ROOT]">
+        <span class="root-wordmark" style="font-size:15px">[ROOT]</span>
         
         <span class="pos-brand-badge">POS</span>
       </div>
@@ -238,6 +323,92 @@
     </main>
   </div>
 
+  <!-- ════ MODAL DETALLE DE TICKET ════ -->
+  <div id="modalTicketDetalle" class="modal-backdrop">
+    <div class="modal ticket-detail-modal" role="dialog" aria-labelledby="ticketDetalleTitle">
+
+      <div class="ticket-detail-header">
+        <div>
+          <div class="ticket-detail-num" id="tdTitle">Ticket #1</div>
+          <div class="ticket-detail-sub" id="tdSub">Mesa 3 · 12:15 · Juan C.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <button class="modal-close" type="button" data-close aria-label="Cerrar">×</button>
+          <div class="ticket-detail-badge tdb-cerrada" id="tdBadge">Cerrada</div>
+        </div>
+      </div>
+
+      <div class="ticket-detail-body">
+        <table class="ticket-items-table">
+          <thead>
+            <tr><th>Cant.</th><th>Producto</th><th>Total</th></tr>
+          </thead>
+          <tbody id="tdItemsBody">
+            <!-- Llenado por JS -->
+          </tbody>
+        </table>
+
+        <div class="ticket-totals">
+          <div class="ticket-total-row">
+            <span class="lbl">Subtotal</span>
+            <span class="val" id="tdSub2">$81.481</span>
+          </div>
+          <div class="ticket-total-row">
+            <span class="lbl">IVA (8%)</span>
+            <span class="val" id="tdIva">$6.519</span>
+          </div>
+          <div class="ticket-total-row">
+            <span class="lbl">Propina (5%)</span>
+            <span class="val" id="tdPropina">$0</span>
+          </div>
+          <div class="ticket-total-row is-total">
+            <span class="lbl">Total cobrado</span>
+            <span class="val" id="tdTotal">$88.000</span>
+          </div>
+        </div>
+
+        <div class="ticket-meta-pills">
+          <span class="ticket-meta-pill" id="tdMetaPago">
+            <i data-lucide="banknote" style="width:11px;height:11px"></i> Efectivo
+          </span>
+          <span class="ticket-meta-pill" id="tdMetaFact">
+            <i data-lucide="file-text" style="width:11px;height:11px"></i> Factura POS
+          </span>
+        </div>
+
+        <!-- Email inline (oculto por defecto) -->
+        <div id="tdEmailRow" style="display:none;margin-top:12px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Enviar comprobante por email</div>
+          <div class="ticket-email-row">
+            <input type="email" class="ticket-email-input" id="tdEmailInput"
+              placeholder="cliente@email.com" />
+            <button class="btn btn-primary btn-sm" type="button" id="tdEmailSend">
+              <i data-lucide="send" style="width:12px;height:12px"></i> Enviar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="gap:8px;flex-wrap:wrap">
+        <button class="btn btn-secondary" type="button" data-close style="margin-right:auto">
+          Cerrar
+        </button>
+        <div class="ticket-footer-actions">
+          <button class="btn btn-secondary btn-sm" type="button" id="tdBtnEmail">
+            <i data-lucide="mail"></i> Email
+          </button>
+          <button class="btn btn-secondary btn-sm" type="button" id="tdBtnReimprimir">
+            <i data-lucide="printer"></i> Re-imprimir
+          </button>
+          <button class="btn btn-destructive btn-sm" type="button" id="tdBtnAnular">
+            <i data-lucide="x-circle"></i> Anular
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
@@ -288,18 +459,146 @@
       filterVentas();
     });
 
-    // Click en fila: toast con detalle (mock)
+    // Filtro de turno desde ?turno=N (viene de B20)
+    (function applyTurnoFilter() {
+      const turnoParam = new URLSearchParams(location.search).get('turno');
+      if (!turnoParam) return;
+      const chip = document.createElement('div');
+      chip.className = 'turno-filtro-chip';
+      chip.innerHTML = `Turno #${turnoParam} <button onclick="clearTurnoFilter()" title="Quitar filtro">×</button>`;
+      document.querySelector('.pos-filtros-row')?.prepend(chip);
+    })();
+    window.clearTurnoFilter = function() {
+      const url = new URL(location.href);
+      url.searchParams.delete('turno');
+      location.href = url.toString();
+    };
+
+    // ─────────────────────────────────────────────────────────
+    // Mock data de tickets (para el modal detalle)
+    // ─────────────────────────────────────────────────────────
+    const TICKETS_MOCK = {
+      '1': {
+        num: 1, mesa: 'Mesa 3', hora: '12:15', cajero: 'Juan C.',
+        estado: 'cerrada', pago: 'Efectivo', factura: 'POS',
+        items: [
+          { nombre: 'Bandeja Paisa', qty: 2, precio: 32000 },
+          { nombre: 'Limonada Natural', qty: 2, precio: 9000 },
+        ],
+        sub: 82000, iva: 6000, propina: 0, total: 88000,
+      },
+      '2': {
+        num: 2, mesa: 'Mesa 7', hora: '12:43', cajero: 'Andrea G.',
+        estado: 'cerrada', pago: 'Tarjeta', factura: 'Factura E.',
+        items: [
+          { nombre: 'Lomo al Trapo', qty: 2, precio: 45000 },
+          { nombre: 'Ajiaco Bogotano', qty: 1, precio: 28000 },
+          { nombre: 'Jugo de Mora', qty: 3, precio: 8000 },
+        ],
+        sub: 142000, iva: 11360, propina: 4260, total: 134000,
+      },
+      '3': {
+        num: 3, mesa: 'Mostrador', hora: '13:10', cajero: 'Juan C.',
+        estado: 'cerrada', pago: 'Efectivo', factura: '—',
+        items: [{ nombre: 'Arepa con Queso', qty: 2, precio: 12000 }],
+        sub: 22222, iva: 1778, propina: 0, total: 24000,
+      },
+      '4': {
+        num: 4, mesa: 'Mesa 2', hora: '13:55', cajero: 'Andrea G.',
+        estado: 'cerrada', pago: 'Múltiple', factura: '—',
+        items: [
+          { nombre: 'Sancocho de Gallina', qty: 4, precio: 25000 },
+          { nombre: 'Pollo a la Plancha', qty: 2, precio: 22000 },
+          { nombre: 'Bebida Gaseosa', qty: 4, precio: 6000 },
+        ],
+        sub: 194444, iva: 15556, propina: 0, total: 210000,
+      },
+      '5': {
+        num: 5, mesa: 'Mesa 1', hora: '14:20', cajero: 'Juan C.',
+        estado: 'anulada', pago: '—', factura: '—',
+        items: [
+          { nombre: 'Trucha en Salsa', qty: 2, precio: 38000 },
+          { nombre: 'Agua Mineral', qty: 1, precio: 5000 },
+        ],
+        sub: 75926, iva: 6074, propina: 0, total: 67000,
+      },
+    };
+
+    const fmt = n => '$' + Number(n || 0).toLocaleString('es-CO');
+
+    function openTicketModal(ticketId) {
+      const t = TICKETS_MOCK[ticketId];
+      if (!t) return;
+
+      document.getElementById('tdTitle').textContent = 'Ticket #' + t.num;
+      document.getElementById('tdSub').textContent = t.mesa + ' · ' + t.hora + ' · ' + t.cajero;
+      const badge = document.getElementById('tdBadge');
+      badge.textContent = t.estado === 'anulada' ? 'Anulada' : 'Cerrada';
+      badge.className = 'ticket-detail-badge ' + (t.estado === 'anulada' ? 'tdb-anulada' : 'tdb-cerrada');
+
+      // Items
+      const tbody = document.getElementById('tdItemsBody');
+      tbody.innerHTML = '';
+      t.items.forEach(it => {
+        tbody.innerHTML += `<tr>
+          <td class="qty-cell">×${it.qty}</td>
+          <td>${it.nombre}</td>
+          <td>${fmt(it.qty * it.precio)}</td>
+        </tr>`;
+      });
+
+      document.getElementById('tdSub2').textContent = fmt(t.sub);
+      document.getElementById('tdIva').textContent = fmt(t.iva);
+      document.getElementById('tdPropina').textContent = fmt(t.propina);
+      document.getElementById('tdTotal').textContent = fmt(t.total);
+
+      document.getElementById('tdMetaPago').innerHTML =
+        `<i data-lucide="banknote" style="width:11px;height:11px"></i> ${t.pago}`;
+      document.getElementById('tdMetaFact').innerHTML =
+        `<i data-lucide="file-text" style="width:11px;height:11px"></i> ${t.factura}`;
+
+      // Anular — solo visible si no está ya anulada
+      const btnAnular = document.getElementById('tdBtnAnular');
+      btnAnular.style.display = t.estado === 'anulada' ? 'none' : '';
+
+      // Ocultar email row
+      document.getElementById('tdEmailRow').style.display = 'none';
+
+      UI.openModal('modalTicketDetalle');
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // Click en fila → abrir modal detalle
     document.querySelectorAll('.pos-historico-row').forEach((row) => {
       row.addEventListener('click', (e) => {
-        if (e.target.closest('button')) return; // ignorar clic en menú de acciones
-        const ticket = row.dataset.ticket;
-        const total = row.querySelector('.col-total').textContent;
-        UI.toast({
-          type: 'info',
-          title: 'Ticket #' + ticket,
-          sub: 'Total ' + total + ' — abrir detalle (próximamente)',
-        });
+        if (e.target.closest('button')) return;
+        openTicketModal(row.dataset.ticket);
       });
+    });
+
+    // Botones del modal
+    document.getElementById('tdBtnReimprimir').addEventListener('click', () => {
+      UI.toast({ type: 'success', title: 'Reimprimiendo ticket', sub: 'Enviado a la impresora…' });
+    });
+
+    document.getElementById('tdBtnEmail').addEventListener('click', () => {
+      const row = document.getElementById('tdEmailRow');
+      row.style.display = row.style.display === 'none' ? '' : 'none';
+      if (row.style.display === '') document.getElementById('tdEmailInput').focus();
+    });
+
+    document.getElementById('tdEmailSend').addEventListener('click', () => {
+      const email = document.getElementById('tdEmailInput').value.trim();
+      if (!email) { UI.toast({ type: 'warning', title: 'Ingresá un email válido' }); return; }
+      document.getElementById('tdEmailRow').style.display = 'none';
+      document.getElementById('tdEmailInput').value = '';
+      UI.toast({ type: 'success', title: 'Comprobante enviado', sub: 'Enviado a ' + email });
+    });
+
+    document.getElementById('tdBtnAnular').addEventListener('click', () => {
+      if (!confirm('¿Anular esta venta? Esta acción no se puede deshacer.')) return;
+      UI.closeModal('modalTicketDetalle');
+      UI.toast({ type: 'warning', title: 'Venta anulada', sub: 'Quedó registrada en el histórico.' });
     });
   </script>
   <script src="../assets/js/nav.js"></script>

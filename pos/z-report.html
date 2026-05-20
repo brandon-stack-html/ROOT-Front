@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Z-Report · ROOT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       Z-Report — Documento imprimible del cierre de turno
+       ROOT · Sprint 15 · window.print() — sin libs externas
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12px;
+      color: #111;
+      background: #f0f0f0;
+      min-height: 100vh;
+    }
+
+    /* ── Controles de pantalla ───────────────────────────────── */
+    .screen-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 20px;
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .screen-controls-brand {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111;
+      letter-spacing: -.02em;
+      margin-right: 8px;
+    }
+    .screen-controls-title {
+      font-size: 12px;
+      color: #555;
+      margin-right: auto;
+    }
+    .zr-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 7px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .zr-btn-primary { background: #4F46E5; color: #fff; }
+    .zr-btn-primary:hover { background: #4338CA; }
+    .zr-btn-secondary { background: #f5f5f5; color: #333; border: 1px solid #e5e5e5; }
+    .zr-btn-secondary:hover { background: #eee; }
+
+    /* ── Página A4 ───────────────────────────────────────────── */
+    .zr-page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 24px auto;
+      background: #fff;
+      padding: 18mm 16mm 20mm;
+      box-shadow: 0 4px 32px rgba(0,0,0,.14);
+      position: relative;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .zr-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 14px;
+      border-bottom: 2.5px solid #111;
+      margin-bottom: 18px;
+    }
+    .zr-brand { font-size: 24px; font-weight: 700; letter-spacing: -.04em; color: #111; }
+    .zr-brand-sub { font-size: 10px; color: #666; margin-top: 3px; }
+    .zr-doc-block { text-align: right; }
+    .zr-doc-type {
+      font-size: 15px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: #111;
+    }
+    .zr-doc-consec { font-size: 11px; color: #666; margin-top: 2px; }
+    .zr-doc-biz { font-size: 12px; font-weight: 600; margin-top: 6px; }
+    .zr-doc-nit { font-size: 10px; color: #666; }
+
+    /* ── Sección ─────────────────────────────────────────────── */
+    .zr-section {
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .zr-section:last-of-type { border-bottom: none; margin-bottom: 0; }
+    .zr-section-title {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: #888; margin-bottom: 10px;
+    }
+
+    /* ── Grid turno ─────────────────────────────────────────── */
+    .zr-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px 20px;
+    }
+    .zr-info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      padding: 3px 0;
+    }
+    .zr-info-label { color: #666; }
+    .zr-info-val { font-weight: 600; }
+
+    /* ── KPIs ventas ────────────────────────────────────────── */
+    .zr-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .zr-kpi {
+      background: #f8f8f8;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+    .zr-kpi-label { font-size: 8px; text-transform: uppercase; letter-spacing: .07em; color: #888; margin-bottom: 3px; }
+    .zr-kpi-val { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+
+    /* ── Tabla genérica ─────────────────────────────────────── */
+    .zr-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .zr-table th {
+      text-align: left; font-size: 9px; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      color: #888; padding: 6px 8px;
+      border-bottom: 1px solid #ddd;
+    }
+    .zr-table th.r, .zr-table td.r { text-align: right; }
+    .zr-table th.c, .zr-table td.c { text-align: center; }
+    .zr-table td { padding: 7px 8px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    .zr-table tbody tr:last-child td { border-bottom: none; }
+    .zr-table tfoot td {
+      padding: 8px 8px; font-weight: 700;
+      border-top: 2px solid #ddd; font-variant-numeric: tabular-nums;
+    }
+    .zr-table .num { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+    /* ── Arqueo ─────────────────────────────────────────────── */
+    .zr-arqueo-rows { margin-bottom: 8px; }
+    .zr-arqueo-row {
+      display: flex; justify-content: space-between;
+      font-size: 11px; padding: 4px 0;
+      border-bottom: 1px solid #f4f4f4;
+    }
+    .zr-arqueo-row:last-child { border-bottom: none; }
+    .zr-arqueo-label { color: #555; }
+    .zr-arqueo-val { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .zr-arqueo-result {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px; margin-top: 8px;
+      background: #f8f8f8; border-radius: 6px; border: 1px solid #eee;
+      font-size: 13px; font-weight: 700;
+    }
+    .dif-ok      { color: #16a34a; }
+    .dif-sobrante { color: #2563eb; }
+    .dif-faltante { color: #dc2626; }
+
+    /* ── Anulaciones ────────────────────────────────────────── */
+    .zr-anul-list { list-style: none; }
+    .zr-anul-item {
+      display: grid; grid-template-columns: 40px 1fr auto;
+      gap: 8px; font-size: 11px; padding: 5px 0;
+      border-bottom: 1px solid #f4f4f4;
+      align-items: center;
+    }
+    .zr-anul-item:last-child { border-bottom: none; }
+    .zr-anul-num { color: #888; font-variant-numeric: tabular-nums; }
+    .zr-anul-monto { font-weight: 600; color: #dc2626; font-variant-numeric: tabular-nums; }
+
+    /* ── Top productos ──────────────────────────────────────── */
+    .zr-top-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; padding: 4px 0;
+      border-bottom: 1px dashed #ebebeb;
+    }
+    .zr-top-row:last-child { border-bottom: none; }
+    .zr-top-rank { color: #888; width: 18px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+    .zr-top-name { flex: 1; }
+    .zr-top-qty { color: #666; width: 56px; text-align: center; font-variant-numeric: tabular-nums; }
+    .zr-top-monto { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    /* ── Observaciones ──────────────────────────────────────── */
+    .zr-obs-box {
+      background: #f9f9f9; border: 1px solid #eee; border-radius: 6px;
+      padding: 10px 12px; font-size: 11px; color: #333;
+      font-style: italic; line-height: 1.5;
+    }
+
+    /* ── Firmas ─────────────────────────────────────────────── */
+    .zr-firma-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .zr-firma-slot { text-align: center; }
+    .zr-firma-line { height: 32px; border-bottom: 1px solid #999; margin-bottom: 6px; }
+    .zr-firma-name { font-size: 11px; font-weight: 600; }
+    .zr-firma-role { font-size: 9px; color: #888; margin-top: 2px; }
+
+    /* ── Footer doc ─────────────────────────────────────────── */
+    .zr-doc-footer {
+      margin-top: 20px; padding-top: 12px;
+      border-top: 1px solid #e8e8e8;
+      text-align: center; font-size: 9px;
+      color: #aaa; line-height: 1.7;
+    }
+
+    /* ── Print ──────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff; }
+      .screen-controls { display: none !important; }
+      .zr-page {
+        width: 100%; margin: 0;
+        padding: 10mm 12mm 15mm;
+        box-shadow: none;
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 230mm) {
+      .zr-page { width: 100%; margin: 12px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controles de pantalla (ocultos al imprimir) -->
+  <div class="screen-controls">
+    <span class="screen-controls-brand">[ROOT]</span>
+    <span class="screen-controls-title">Z-Report · Cierre de turno</span>
+    <a href="./historico.html" class="zr-btn zr-btn-secondary">Ver tickets del turno</a>
+    <button class="zr-btn zr-btn-primary" onclick="window.print()">
+      Imprimir Z-Report
+    </button>
+  </div>
+
+  <div class="zr-page" id="zrPage">
+
+    <!-- ── HEADER ── -->
+    <div class="zr-header">
+      <div>
+        <div class="zr-brand">[ROOT]</div>
+        <div class="zr-brand-sub">Sistema de Gestión de Restaurantes</div>
+        <div class="zr-brand-sub" id="zrSucursal">Sede Norte · Caja 1 - Mostrador</div>
+      </div>
+      <div class="zr-doc-block">
+        <div class="zr-doc-type">Z-Report</div>
+        <div class="zr-doc-consec" id="zrConsec">#T-042</div>
+        <div class="zr-doc-biz">El Buen Sabor</div>
+        <div class="zr-doc-nit">NIT: 900.123.456-7</div>
+      </div>
+    </div>
+
+    <!-- ── DATOS DEL TURNO ── -->
+    <div class="zr-section">
+      <div class="zr-section-title">Datos del turno</div>
+      <div class="zr-info-grid">
+        <div class="zr-info-row">
+          <span class="zr-info-label">Cajero</span>
+          <span class="zr-info-val" id="zrCajero">Juan Camilo Restrepo</span>
+        </div>
+        <div class="zr-info-row">
+          <span class="zr-info-label">Turno</span>
+          <span class="zr-info-val" id="zrTurnoId">#T-042 · Tarde</span>
+        </div>
+        <div class="zr-info-row">
+          <span class="zr-info-label">Apertura</span>
+          <span class="zr-info-val" id="zrApertura">Hoy 12:03</span>
+        </div>
+        <div class="zr-info-row">
+          <span class="zr-info-label">Cierre</span>
+          <span class="zr-info-val" id="zrCierre">Hoy 19:47</span>
+        </div>
+        <div class="zr-info-row">
+          <span class="zr-info-label">Duración</span>
+          <span class="zr-info-val" id="zrDuracion">7h 44min</span>
+        </div>
+        <div class="zr-info-row">
+          <span class="zr-info-label">Impreso</span>
+          <span class="zr-info-val" id="zrImpreso">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RESUMEN DE VENTAS ── -->
+    <div class="zr-section">
+      <div class="zr-section-title">Resumen de ventas</div>
+      <div class="zr-kpi-row">
+        <div class="zr-kpi">
+          <div class="zr-kpi-label">Tickets</div>
+          <div class="zr-kpi-val" id="zrTickets">18</div>
+        </div>
+        <div class="zr-kpi">
+          <div class="zr-kpi-label">Total neto</div>
+          <div class="zr-kpi-val" id="zrNeto">$1.318.720</div>
+        </div>
+        <div class="zr-kpi">
+          <div class="zr-kpi-label">Ticket prom.</div>
+          <div class="zr-kpi-val" id="zrPromedio">$73.262</div>
+        </div>
+        <div class="zr-kpi">
+          <div class="zr-kpi-label">Anulaciones</div>
+          <div class="zr-kpi-val" id="zrAnulCount">2</div>
+        </div>
+      </div>
+      <table class="zr-table">
+        <thead>
+          <tr><th>Concepto</th><th class="r">Monto</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Total bruto</td><td class="r num" id="zrBruto">$1.234.000</td></tr>
+          <tr><td style="color:#888">− Descuentos</td><td class="r num" id="zrDescuentos" style="color:#dc2626">−$15.000</td></tr>
+          <tr><td style="color:#888">+ IVA (8%)</td><td class="r num" id="zrImpuestos">+$98.720</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td>Total neto</td><td class="r" id="zrNetoFoot">$1.318.720</td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- ── MÉTODOS DE PAGO ── -->
+    <div class="zr-section">
+      <div class="zr-section-title">Desglose por método de pago</div>
+      <table class="zr-table">
+        <thead>
+          <tr><th>Método</th><th class="c">Transacciones</th><th class="c">% total</th><th class="r">Monto</th></tr>
+        </thead>
+        <tbody id="zrMediosBody">
+          <!-- llenado por JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── ARQUEO ── -->
+    <div class="zr-section">
+      <div class="zr-section-title">Arqueo de efectivo</div>
+      <div class="zr-arqueo-rows">
+        <div class="zr-arqueo-row">
+          <span class="zr-arqueo-label">Base inicial (apertura)</span>
+          <span class="zr-arqueo-val" id="zrBase">$150.000</span>
+        </div>
+        <div class="zr-arqueo-row">
+          <span class="zr-arqueo-label">+ Ventas en efectivo</span>
+          <span class="zr-arqueo-val" id="zrVentasEfe">$567.040</span>
+        </div>
+        <div class="zr-arqueo-row">
+          <span class="zr-arqueo-label">− Retiros parciales</span>
+          <span class="zr-arqueo-val" id="zrRetiros">−$45.000</span>
+        </div>
+        <div class="zr-arqueo-row">
+          <span class="zr-arqueo-label">− Propinas en efectivo</span>
+          <span class="zr-arqueo-val" id="zrPropinas">$0</span>
+        </div>
+        <div class="zr-arqueo-row" style="border-top:1.5px solid #ddd;padding-top:6px;margin-top:4px">
+          <span class="zr-arqueo-label" style="font-weight:600">= Efectivo esperado</span>
+          <span class="zr-arqueo-val" id="zrEsperado">$672.040</span>
+        </div>
+        <div class="zr-arqueo-row">
+          <span class="zr-arqueo-label" style="font-weight:600">Efectivo contado</span>
+          <span class="zr-arqueo-val" id="zrContado">$672.040</span>
+        </div>
+      </div>
+      <div class="zr-arqueo-result">
+        <span>Diferencia</span>
+        <span id="zrDiferencia" class="dif-ok">$0 · Cuadrado</span>
+      </div>
+    </div>
+
+    <!-- ── MOVIMIENTOS ESPECIALES ── -->
+    <div class="zr-section" id="secAnulaciones">
+      <div class="zr-section-title">Anulaciones del turno</div>
+      <ul class="zr-anul-list" id="zrAnulList">
+        <li class="zr-anul-item">
+          <span class="zr-anul-num">#5</span>
+          <span>Mesa 1 · 3 ítems · Anulado por Juan C.</span>
+          <span class="zr-anul-monto">$67.000</span>
+        </li>
+        <li class="zr-anul-item">
+          <span class="zr-anul-num">#12</span>
+          <span>Mesa 5 · 2 ítems · Anulado por Andrea G.</span>
+          <span class="zr-anul-monto">$45.000</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ── TOP 5 PRODUCTOS ── -->
+    <div class="zr-section">
+      <div class="zr-section-title">Top 5 productos del turno</div>
+      <div>
+        <div class="zr-top-row"><span class="zr-top-rank">1</span><span class="zr-top-name">Bandeja Paisa</span><span class="zr-top-qty">14 uds</span><span class="zr-top-monto">$448.000</span></div>
+        <div class="zr-top-row"><span class="zr-top-rank">2</span><span class="zr-top-name">Ajiaco Bogotano</span><span class="zr-top-qty">12 uds</span><span class="zr-top-monto">$336.000</span></div>
+        <div class="zr-top-row"><span class="zr-top-rank">3</span><span class="zr-top-name">Lomo al Trapo</span><span class="zr-top-qty">9 uds</span><span class="zr-top-monto">$405.000</span></div>
+        <div class="zr-top-row"><span class="zr-top-rank">4</span><span class="zr-top-name">Sancocho de Gallina</span><span class="zr-top-qty">8 uds</span><span class="zr-top-monto">$200.000</span></div>
+        <div class="zr-top-row"><span class="zr-top-rank">5</span><span class="zr-top-name">Limonada Natural</span><span class="zr-top-qty">22 uds</span><span class="zr-top-monto">$198.000</span></div>
+      </div>
+    </div>
+
+    <!-- ── OBSERVACIONES (condicional) ── -->
+    <div class="zr-section" id="secObs" style="display:none">
+      <div class="zr-section-title">Observaciones del cajero</div>
+      <div class="zr-obs-box" id="zrObs"></div>
+    </div>
+
+    <!-- ── FIRMAS ── -->
+    <div class="zr-section">
+      <div class="zr-section-title">Firmas de cierre</div>
+      <div class="zr-firma-grid">
+        <div class="zr-firma-slot">
+          <div class="zr-firma-line"></div>
+          <div class="zr-firma-name" id="zrFirmaCajero">Juan Camilo Restrepo</div>
+          <div class="zr-firma-role">Cajero responsable</div>
+        </div>
+        <div class="zr-firma-slot">
+          <div class="zr-firma-line"></div>
+          <div class="zr-firma-name">_________________________</div>
+          <div class="zr-firma-role">Supervisor / Administrador</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOOTER DOC ── -->
+    <div class="zr-doc-footer">
+      <div>Impreso el <span id="zrTimestamp">—</span> · ROOT v1.0.0</div>
+      <div>Documento de carácter informativo. No tiene validez tributaria.</div>
+      <div>Consecutivo de cierre: <span id="zrConsecFooter">#T-042</span> · Para conciliación contable use este número.</div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ──────────────────────────────────────────────────────────────
+       Leer datos del turno cerrado desde localStorage
+       Si no hay datos, se muestran los valores mock del HTML.
+    ────────────────────────────────────────────────────────────── */
+    const fmtCOP = n => '$' + Number(n || 0).toLocaleString('es-CO');
+
+    function fmtDateTime(iso) {
+      const d = new Date(iso);
+      const hoy = new Date();
+      const esHoy = d.toDateString() === hoy.toDateString();
+      const hora = d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+      if (esHoy) return 'Hoy ' + hora;
+      return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) + ' ' + hora;
+    }
+
+    function calcDuracion(apertura, cierre) {
+      const mins = Math.floor((new Date(cierre) - new Date(apertura)) / 60000);
+      const h = Math.floor(mins / 60), m = mins % 60;
+      return h + 'h' + (m ? ' ' + m + 'min' : '');
+    }
+
+    const raw = localStorage.getItem('pos:turno:last');
+    if (raw) {
+      try {
+        const t = JSON.parse(raw);
+
+        // Encabezado
+        document.getElementById('zrConsec').textContent = '#' + t.id;
+        document.getElementById('zrConsecFooter').textContent = '#' + t.id;
+        document.getElementById('zrTurnoId').textContent = '#' + t.id + ' · Tarde';
+        document.getElementById('zrCajero').textContent = t.cajero;
+        document.getElementById('zrFirmaCajero').textContent = t.cajero;
+        if (t.sucursal) document.getElementById('zrSucursal').textContent = t.sucursal;
+        document.getElementById('zrApertura').textContent = fmtDateTime(t.apertura);
+        document.getElementById('zrCierre').textContent = fmtDateTime(t.cierre);
+        document.getElementById('zrDuracion').textContent = calcDuracion(t.apertura, t.cierre);
+
+        // Ventas
+        if (t.ventas) {
+          document.getElementById('zrTickets').textContent = t.tickets;
+          document.getElementById('zrNeto').textContent = fmtCOP(t.ventas.neto);
+          document.getElementById('zrNetoFoot').textContent = fmtCOP(t.ventas.neto);
+          document.getElementById('zrPromedio').textContent = t.tickets ? fmtCOP(Math.round(t.ventas.neto / t.tickets)) : '—';
+          document.getElementById('zrBruto').textContent = fmtCOP(t.ventas.bruto);
+          document.getElementById('zrDescuentos').textContent = '−' + fmtCOP(t.ventas.descuentos);
+          document.getElementById('zrImpuestos').textContent = '+' + fmtCOP(t.ventas.impuestos);
+        }
+
+        // Medios de pago
+        if (t.medios && t.medios.length) {
+          const tbody = document.getElementById('zrMediosBody');
+          tbody.innerHTML = '';
+          const totalBruto = t.ventas ? t.ventas.bruto : 1;
+          t.medios.forEach(m => {
+            const pct = Math.round(m.monto / totalBruto * 100);
+            tbody.innerHTML += `<tr>
+              <td>${m.nombre}</td>
+              <td class="c">${m.txs}</td>
+              <td class="c">${pct}%</td>
+              <td class="r num">${fmtCOP(m.monto)}</td>
+            </tr>`;
+          });
+        }
+
+        // Arqueo
+        if (t.arqueo) {
+          const a = t.arqueo;
+          document.getElementById('zrBase').textContent = fmtCOP(a.base);
+          document.getElementById('zrVentasEfe').textContent = fmtCOP(a.ventasEfectivo);
+          document.getElementById('zrRetiros').textContent = '−' + fmtCOP(a.retiros);
+          document.getElementById('zrPropinas').textContent = fmtCOP(a.propinas);
+          document.getElementById('zrEsperado').textContent = fmtCOP(a.esperado);
+          document.getElementById('zrContado').textContent = fmtCOP(a.contado);
+
+          const dif = a.diferencia;
+          const difEl = document.getElementById('zrDiferencia');
+          if (Math.abs(dif) < 1) {
+            difEl.textContent = '$0 · Cuadrado';
+            difEl.className = 'dif-ok';
+          } else if (dif > 0) {
+            difEl.textContent = '+' + fmtCOP(dif) + ' · Sobrante';
+            difEl.className = 'dif-sobrante';
+          } else {
+            difEl.textContent = '−' + fmtCOP(Math.abs(dif)) + ' · Faltante';
+            difEl.className = 'dif-faltante';
+          }
+        }
+
+        // Observaciones
+        if (t.obs) {
+          document.getElementById('secObs').style.display = '';
+          document.getElementById('zrObs').textContent = t.obs;
+        }
+      } catch(e) {
+        console.warn('Z-report: error leyendo localStorage', e);
+      }
+    }
+
+    // Timestamp de impresión
+    document.getElementById('zrImpreso').textContent = new Date().toLocaleString('es-CO', {
+      day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    });
+    document.getElementById('zrTimestamp').textContent = new Date().toLocaleString('es-CO', {
+      day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    });
+
+    // Auto-print si ?autoprint=1
+    if (new URLSearchParams(location.search).get('autoprint') === '1') {
+      window.addEventListener('load', () => setTimeout(() => window.print(), 600));
+    }
+  </script>
+</body>
+</html>

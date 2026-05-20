@@ -11,6 +11,60 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/pos-shell.css" />
+  <style>
+    /* ── Estado: turno ya abierto ────────────────────────────── */
+    .ya-abierto-modal {
+      max-width: 420px;
+      text-align: center;
+    }
+    .ya-abierto-icon-wrap {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(245,158,11,.12);
+      border: 1.5px solid rgba(245,158,11,.30);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 26px;
+    }
+    .ya-abierto-title {
+      font-size: 18px; font-weight: 700;
+      color: var(--text); letter-spacing: -.01em; margin-bottom: 6px;
+    }
+    .ya-abierto-sub {
+      font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 20px;
+    }
+    .ya-abierto-info {
+      background: var(--alt); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 16px;
+      text-align: left; margin-bottom: 20px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .ya-abierto-info-row { display: flex; justify-content: space-between; font-size: 12px; }
+    .ya-abierto-info-lbl { color: var(--muted); }
+    .ya-abierto-info-val { font-weight: 600; color: var(--text); }
+
+    /* ── Splash post-apertura ────────────────────────────────── */
+    #aperturaSplash {
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--accent);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: #fff; gap: 12px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 300ms ease;
+    }
+    #aperturaSplash.is-visible { opacity: 1; pointer-events: all; }
+    .splash-logo { font-size: 28px; font-weight: 700; letter-spacing: -.04em; opacity: .9; }
+    .splash-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+    .splash-sub { font-size: 14px; opacity: .75; }
+    .splash-spinner {
+      width: 28px; height: 28px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 700ms linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
@@ -20,7 +74,7 @@
     <!-- Topbar (idéntico al _layout, queda detrás del modal) -->
     <header class="pos-topbar">
       <div class="pos-topbar-brand">
-        <img src="../ROOT.png" class="pos-brand-logo-img" alt="[ROOT]">
+        <span class="root-wordmark" style="font-size:15px">[ROOT]</span>
         
         <span class="pos-brand-badge">POS</span>
       </div>
@@ -63,8 +117,41 @@
 
         <div class="pos-apertura-backdrop"></div>
 
+        <!-- Modal: turno ya abierto (condicional) -->
+        <div class="pos-apertura-modal ya-abierto-modal" id="yaAbiertoPanel" role="dialog" style="display:none">
+          <div class="pos-apertura-header" style="text-align:center;justify-content:center">
+            <div class="ya-abierto-icon-wrap">⚠️</div>
+          </div>
+          <div class="pos-apertura-body" style="padding-top:0">
+            <div class="ya-abierto-title">Ya hay un turno abierto</div>
+            <div class="ya-abierto-sub">
+              No se puede abrir un nuevo turno mientras el anterior está activo.
+              Cerralo desde el mapa de mesas antes de continuar.
+            </div>
+            <div class="ya-abierto-info">
+              <div class="ya-abierto-info-row">
+                <span class="ya-abierto-info-lbl">Cajero</span>
+                <span class="ya-abierto-info-val" id="yaAbCajero">Juan Camilo Restrepo</span>
+              </div>
+              <div class="ya-abierto-info-row">
+                <span class="ya-abierto-info-lbl">Apertura</span>
+                <span class="ya-abierto-info-val" id="yaAbApertura">Hoy 12:03</span>
+              </div>
+              <div class="ya-abierto-info-row">
+                <span class="ya-abierto-info-lbl">Caja</span>
+                <span class="ya-abierto-info-val">Caja 1 - Mostrador</span>
+              </div>
+            </div>
+          </div>
+          <div class="pos-apertura-footer">
+            <a href="./mapa.html" class="btn btn-primary btn-lg" style="width:100%;justify-content:center">
+              Ir al mapa de mesas →
+            </a>
+          </div>
+        </div>
+
         <!-- Modal de apertura -->
-        <div class="pos-apertura-modal" role="dialog" aria-labelledby="aperturaTitle">
+        <div class="pos-apertura-modal" id="aperturaForm" role="dialog" aria-labelledby="aperturaTitle">
           <div class="pos-apertura-header">
             <div class="pos-apertura-header-row">
               <div class="pos-apertura-icon-wrap">
@@ -184,6 +271,14 @@
 
   </div>
 
+  <!-- Splash post-apertura -->
+  <div id="aperturaSplash">
+    <div class="splash-logo">[ROOT]</div>
+    <div class="splash-title">¡Turno abierto!</div>
+    <div class="splash-sub" id="splashSub">Caja 1 · Sede Norte · Iniciando…</div>
+    <div class="splash-spinner"></div>
+  </div>
+
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
@@ -230,12 +325,49 @@
         grid.classList.toggle('is-hidden', !on);
       });
 
+      // ──────────────────────────────────────────────────────
+      // Verificar si ya hay turno abierto
+      // ──────────────────────────────────────────────────────
+      const turnoAbierto = localStorage.getItem('pos:turno:abierto');
+      if (turnoAbierto) {
+        try {
+          const t = JSON.parse(turnoAbierto);
+          document.getElementById('aperturaForm').style.display = 'none';
+          document.getElementById('yaAbiertoPanel').style.display = '';
+          if (t.cajero) document.getElementById('yaAbCajero').textContent = t.cajero;
+          if (t.apertura) {
+            const d = new Date(t.apertura);
+            const hora = d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('yaAbApertura').textContent = 'Hoy ' + hora;
+          }
+        } catch(e) {
+          localStorage.removeItem('pos:turno:abierto');
+        }
+      }
+
+      // ──────────────────────────────────────────────────────
       // Acciones del footer
+      // ──────────────────────────────────────────────────────
       document.querySelector('[data-action="cancelar"]').addEventListener('click', () => {
         location.href = '../index.html';
       });
+
       document.querySelector('[data-action="abrir-caja"]').addEventListener('click', () => {
-        location.href = './mapa.html';
+        // Guardar turno en localStorage
+        const base = parseInt((amountInput.value || '').replace(/\D/g,''), 10) || 150000;
+        const turnoData = {
+          cajero: 'Juan Camilo Restrepo',
+          apertura: new Date().toISOString(),
+          base,
+          caja: 'Caja 1 - Mostrador',
+          sucursal: 'Sede Norte',
+        };
+        localStorage.setItem('pos:turno:abierto', JSON.stringify(turnoData));
+
+        // Splash
+        const splash = document.getElementById('aperturaSplash');
+        splash.classList.add('is-visible');
+        setTimeout(() => { location.href = './mapa.html'; }, 1600);
       });
     })();
   </script>

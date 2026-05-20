@@ -776,6 +776,169 @@
       color: var(--border);
       margin-bottom: 12px;
     }
+
+    /* ════════════════════════ MODAL CERRAR TURNO 2-STEP ════════════════════════ */
+    .modal-cerrar-turno {
+      width: min(620px, 96vw);
+      max-height: 92vh;
+      overflow-y: auto;
+      border-radius: 16px;
+      scrollbar-width: thin;
+    }
+    .modal-cerrar-turno::-webkit-scrollbar { width: 4px; }
+    .modal-cerrar-turno::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Step indicator */
+    .cerrar-steps {
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 20px;
+    }
+    .cerrar-step-dot {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg); color: var(--muted);
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 200ms ease; flex-shrink: 0;
+    }
+    .cerrar-step-dot.is-active { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .cerrar-step-dot.is-done { border-color: var(--success); background: var(--success); color: #fff; }
+    .cerrar-step-line { flex: 1; height: 1px; background: var(--border); }
+    .cerrar-step-lbl { font-size: 11px; font-weight: 500; color: var(--muted); }
+    .cerrar-step-lbl.is-active { color: var(--text); font-weight: 600; }
+
+    /* Turno header card */
+    .cerrar-meta-grid {
+      background: var(--alt); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 7px 16px; margin-bottom: 16px;
+    }
+    .cerrar-meta-row { display: flex; justify-content: space-between; font-size: 12px; }
+    .cerrar-meta-lbl { color: var(--muted); }
+    .cerrar-meta-val { font-weight: 600; color: var(--text); }
+
+    /* Section label */
+    .cerrar-sec-lbl {
+      font-size: 9px; font-weight: 700; letter-spacing: .09em;
+      text-transform: uppercase; color: var(--muted);
+      margin: 14px 0 8px;
+    }
+
+    /* KPI strip */
+    .cerrar-kpi-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 10px; }
+    .cerrar-kpi {
+      background: var(--alt); border: 1px solid var(--border);
+      border-radius: 8px; padding: 9px 12px;
+    }
+    .cerrar-kpi-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 3px; }
+    .cerrar-kpi-val { font-size: 15px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+
+    /* Tabla métodos de pago en modal */
+    .cerrar-medios-tbl { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 4px; }
+    .cerrar-medios-tbl th {
+      text-align: left; font-size: 9px; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      color: var(--muted); padding: 5px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .cerrar-medios-tbl th:last-child { text-align: right; }
+    .cerrar-medios-tbl td { padding: 8px 8px; border-bottom: 1px solid var(--border); }
+    .cerrar-medios-tbl td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .cerrar-medios-tbl tr:last-child td { border-bottom: none; }
+
+    /* Arqueo block */
+    .cerrar-arqueo-block {
+      background: var(--alt); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .cerrar-arq-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px; padding: 5px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .cerrar-arq-row:last-of-type { border-bottom: none; }
+    .cerrar-arq-lbl { color: var(--muted); }
+    .cerrar-arq-val { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+    .cerrar-arq-divider {
+      border-top: 1.5px solid var(--border);
+      margin: 6px 0 8px;
+    }
+    .cerrar-arq-input-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0 4px;
+    }
+    .cerrar-arq-input-lbl { font-size: 13px; font-weight: 600; color: var(--text); }
+    .cerrar-arq-input-wrap {
+      display: flex; align-items: center; gap: 2px;
+      background: var(--bg); border: 1.5px solid var(--accent);
+      border-radius: 8px; padding: 5px 10px;
+    }
+    .cerrar-arq-input-wrap .pfx { color: var(--muted); font-size: 13px; }
+    .cerrar-arq-input {
+      background: transparent; border: none; outline: none;
+      font-family: var(--ff-base); font-size: 14px; font-weight: 700;
+      color: var(--text); font-variant-numeric: tabular-nums;
+      width: 110px; text-align: right;
+    }
+    .cerrar-dif-badge {
+      display: flex; align-items: center; justify-content: center;
+      padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      margin-top: 8px; letter-spacing: -.005em;
+    }
+    .dif-ok     { background: rgba(var(--success-rgb),.12); color: var(--success); border: 1px solid rgba(var(--success-rgb),.25); }
+    .dif-sobre  { background: rgba(var(--info-rgb),.12);    color: var(--info);    border: 1px solid rgba(var(--info-rgb),.25); }
+    .dif-falta  { background: rgba(var(--error-rgb),.12);   color: var(--error);   border: 1px solid rgba(var(--error-rgb),.25); }
+
+    /* Obs textarea */
+    .cerrar-obs-ta {
+      width: 100%; padding: 10px 12px; background: var(--alt);
+      border: 1px solid var(--border); border-radius: 8px;
+      font-family: var(--ff-base); font-size: 12px; color: var(--text);
+      resize: vertical; min-height: 60px; outline: none; box-sizing: border-box;
+    }
+    .cerrar-obs-ta:focus { border-color: var(--accent); }
+
+    /* Step 2 */
+    .cerrar-s2-confirm-title {
+      font-size: 17px; font-weight: 700; color: var(--text);
+      letter-spacing: -.01em; text-align: center; margin-bottom: 4px;
+    }
+    .cerrar-s2-confirm-sub {
+      font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 18px;
+    }
+    .cerrar-s2-kpi-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
+    .cerrar-s2-kpi {
+      background: var(--alt); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; text-align: center;
+    }
+    .cerrar-s2-kpi-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 4px; }
+    .cerrar-s2-kpi-val { font-size: 18px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+    .cerrar-s2-kpi-val.dif-ok    { color: var(--success); }
+    .cerrar-s2-kpi-val.dif-sobre { color: var(--info); }
+    .cerrar-s2-kpi-val.dif-falta { color: var(--error); }
+
+    .cerrar-warning-box {
+      background: rgba(var(--warning-rgb),.10); border: 1px solid rgba(var(--warning-rgb),.30);
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;
+    }
+    .cerrar-warning-title { font-size: 12px; font-weight: 700; color: var(--warning); margin-bottom: 4px; }
+    .cerrar-warning-text { font-size: 11px; color: var(--text); opacity: .85; margin-bottom: 10px; line-height: 1.5; }
+    .cerrar-warning-check {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 12px; color: var(--text); cursor: pointer; line-height: 1.4;
+    }
+    .cerrar-warning-check input { margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
+
+    /* Mesa liberada animación */
+    @keyframes mesaLiberada {
+      0%   { background: rgba(var(--success-rgb),.25); border-color: var(--success); }
+      60%  { background: rgba(var(--success-rgb),.12); border-color: rgba(var(--success-rgb),.5); }
+      100% { background: var(--alt); border-color: var(--border); }
+    }
+    .mesa-card.is-liberando {
+      animation: mesaLiberada 1.8s cubic-bezier(.4,0,.2,1) forwards;
+    }
   </style>
 </head>
 <body>
@@ -985,22 +1148,171 @@
 
   </div>
 
-  <!-- Modal cerrar caja -->
+  <!-- ════ MODAL CERRAR TURNO — 2 pasos ════ -->
   <div id="modalCerrarCaja" class="modal-backdrop">
-    <div class="modal modal-sm" role="dialog" aria-labelledby="modalCerrarCajaTitle">
+    <div class="modal modal-cerrar-turno" role="dialog" aria-labelledby="cerrarTurnoTitle">
+
       <div class="modal-header">
-        <span id="modalCerrarCajaTitle">Cerrar caja</span>
+        <span id="cerrarTurnoTitle">Cerrar turno</span>
         <button class="modal-close" type="button" data-close aria-label="Cerrar">×</button>
       </div>
+
       <div class="modal-body">
-        ¿Seguro que querés cerrar el turno actual? Podés consultar el resumen en el histórico.
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" type="button" data-close>Cancelar</button>
-        <button class="btn btn-destructive" type="button" id="confirmCerrarCaja">
-          <i data-lucide="lock"></i> Cerrar turno
+
+        <!-- Indicador de pasos -->
+        <div class="cerrar-steps">
+          <div class="cerrar-step-dot is-active" id="csDot1">1</div>
+          <span class="cerrar-step-lbl is-active" id="csLbl1">Resumen y arqueo</span>
+          <div class="cerrar-step-line"></div>
+          <div class="cerrar-step-dot" id="csDot2">2</div>
+          <span class="cerrar-step-lbl" id="csLbl2">Confirmar</span>
+        </div>
+
+        <!-- ════ PASO 1 ════ -->
+        <div id="cerrarStep1">
+          <!-- Encabezado del turno -->
+          <div class="cerrar-meta-grid">
+            <div class="cerrar-meta-row">
+              <span class="cerrar-meta-lbl">Turno</span>
+              <span class="cerrar-meta-val">#T-042 · Tarde</span>
+            </div>
+            <div class="cerrar-meta-row">
+              <span class="cerrar-meta-lbl">Cajero</span>
+              <span class="cerrar-meta-val">Juan Camilo R.</span>
+            </div>
+            <div class="cerrar-meta-row">
+              <span class="cerrar-meta-lbl">Apertura</span>
+              <span class="cerrar-meta-val">Hoy 12:03</span>
+            </div>
+            <div class="cerrar-meta-row">
+              <span class="cerrar-meta-lbl">Duración</span>
+              <span class="cerrar-meta-val" id="cerrarDuracion">—</span>
+            </div>
+          </div>
+
+          <!-- Resumen ventas -->
+          <div class="cerrar-sec-lbl">Resumen de ventas</div>
+          <div class="cerrar-kpi-row">
+            <div class="cerrar-kpi">
+              <div class="cerrar-kpi-lbl">Tickets</div>
+              <div class="cerrar-kpi-val">18</div>
+            </div>
+            <div class="cerrar-kpi">
+              <div class="cerrar-kpi-lbl">Total neto</div>
+              <div class="cerrar-kpi-val">$1.318.720</div>
+            </div>
+            <div class="cerrar-kpi">
+              <div class="cerrar-kpi-lbl">Ticket prom.</div>
+              <div class="cerrar-kpi-val">$73.262</div>
+            </div>
+          </div>
+
+          <!-- Tabla métodos de pago -->
+          <table class="cerrar-medios-tbl">
+            <thead>
+              <tr><th>Método</th><th>Txs</th><th>Monto</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Efectivo</td><td>8</td><td>$567.040</td></tr>
+              <tr><td>Débito</td><td>4</td><td>$234.000</td></tr>
+              <tr><td>Crédito</td><td>3</td><td>$210.000</td></tr>
+              <tr><td>Transferencia</td><td>2</td><td>$211.000</td></tr>
+              <tr><td>Otros</td><td>1</td><td>$96.680</td></tr>
+            </tbody>
+          </table>
+
+          <!-- Arqueo de efectivo -->
+          <div class="cerrar-sec-lbl">Arqueo de efectivo</div>
+          <div class="cerrar-arqueo-block">
+            <div class="cerrar-arq-row">
+              <span class="cerrar-arq-lbl">Base inicial</span>
+              <span class="cerrar-arq-val">$150.000</span>
+            </div>
+            <div class="cerrar-arq-row">
+              <span class="cerrar-arq-lbl">+ Ventas en efectivo</span>
+              <span class="cerrar-arq-val">$567.040</span>
+            </div>
+            <div class="cerrar-arq-row">
+              <span class="cerrar-arq-lbl">− Retiros parciales</span>
+              <span class="cerrar-arq-val">−$45.000</span>
+            </div>
+            <div class="cerrar-arq-row">
+              <span class="cerrar-arq-lbl">− Propinas en efectivo</span>
+              <span class="cerrar-arq-val">$0</span>
+            </div>
+            <div class="cerrar-arq-divider"></div>
+            <div class="cerrar-arq-row" style="border-bottom:none;padding-bottom:0">
+              <span class="cerrar-arq-lbl" style="font-weight:600;color:var(--text)">= Efectivo esperado</span>
+              <span class="cerrar-arq-val" id="csEsperado">$672.040</span>
+            </div>
+            <div class="cerrar-arq-input-row">
+              <span class="cerrar-arq-input-lbl">Efectivo contado</span>
+              <div class="cerrar-arq-input-wrap">
+                <span class="pfx">$</span>
+                <input id="csContadoInput" class="cerrar-arq-input" type="text" value="672.040"
+                       inputmode="numeric" autocomplete="off" />
+              </div>
+            </div>
+            <div class="cerrar-dif-badge dif-ok" id="csDifBadge">Cuadrado ✓</div>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="cerrar-sec-lbl">
+            Observaciones <span style="font-weight:400;opacity:.55">(opcional)</span>
+          </div>
+          <textarea id="csObs" class="cerrar-obs-ta"
+            placeholder="Incidencias del turno, diferencias justificadas…"></textarea>
+        </div>
+
+        <!-- ════ PASO 2 ════ -->
+        <div id="cerrarStep2" style="display:none">
+          <div class="cerrar-s2-confirm-title">Vas a cerrar el turno #T-042</div>
+          <div class="cerrar-s2-confirm-sub">Esta acción no se puede deshacer. Se generará el Z-Report.</div>
+
+          <div class="cerrar-s2-kpi-row">
+            <div class="cerrar-s2-kpi">
+              <div class="cerrar-s2-kpi-lbl">Total neto</div>
+              <div class="cerrar-s2-kpi-val" id="s2KpiNeto">$1.318.720</div>
+            </div>
+            <div class="cerrar-s2-kpi">
+              <div class="cerrar-s2-kpi-lbl">Tickets</div>
+              <div class="cerrar-s2-kpi-val" id="s2KpiTickets">18</div>
+            </div>
+            <div class="cerrar-s2-kpi">
+              <div class="cerrar-s2-kpi-lbl">Diferencia caja</div>
+              <div class="cerrar-s2-kpi-val" id="s2KpiDif">Cuadrado</div>
+            </div>
+          </div>
+
+          <!-- Warning si diferencia > $1.000 -->
+          <div class="cerrar-warning-box" id="csWarning" style="display:none">
+            <div class="cerrar-warning-title">⚠ Diferencia de efectivo detectada</div>
+            <div class="cerrar-warning-text">
+              El efectivo contado difiere del esperado. Revisá el arqueo antes de continuar.
+              La diferencia quedará registrada en el Z-Report.
+            </div>
+            <label class="cerrar-warning-check">
+              <input type="checkbox" id="csDifCheck">
+              Confirmo que revisé el arqueo y la diferencia es correcta
+            </label>
+          </div>
+        </div>
+
+      </div><!-- /modal-body -->
+
+      <div class="modal-footer" id="cerrarFooter">
+        <button class="btn btn-secondary" type="button" data-close id="csBtnCancelar">Cancelar</button>
+        <button class="btn btn-primary" type="button" id="csBtnContinuar">
+          Continuar <i data-lucide="arrow-right"></i>
+        </button>
+        <button class="btn btn-secondary" type="button" id="csBtnAtras" style="display:none">
+          <i data-lucide="arrow-left"></i> Atrás
+        </button>
+        <button class="btn btn-destructive" type="button" id="csBtnConfirmar" style="display:none">
+          <i data-lucide="lock"></i> Confirmar cierre
         </button>
       </div>
+
     </div>
   </div>
 
@@ -1365,20 +1677,157 @@
     window.addEventListener('mesa-actualizada', () => { render(); renderSummary(); renderSelected(); });
 
     // ─────────────────────────────────────────────────────────────────────
-    // Cerrar caja
+    // Cerrar turno — flujo 2 pasos
     // ─────────────────────────────────────────────────────────────────────
-    document.getElementById('confirmCerrarCaja').addEventListener('click', () => {
+    const CS = {
+      BASE: 150000, VENTAS_EFE: 567040, RETIROS: 45000, PROPINAS: 0,
+      get ESPERADO() { return this.BASE + this.VENTAS_EFE - this.RETIROS - this.PROPINAS; },
+      get contado() {
+        const raw = (document.getElementById('csContadoInput')?.value || '').replace(/\D/g,'');
+        const n = parseInt(raw, 10); return isNaN(n) ? 0 : n;
+      },
+      get diferencia() { return this.contado - this.ESPERADO; },
+    };
+
+    function csDuracion() {
+      const ap = new Date(); ap.setHours(12, 3, 0, 0);
+      const mins = Math.floor((Date.now() - ap.getTime()) / 60000);
+      const h = Math.floor(mins / 60), m = mins % 60;
+      return h + 'h ' + m + 'min';
+    }
+
+    function csUpdateDif() {
+      const dif = CS.diferencia;
+      const el = document.getElementById('csDifBadge');
+      if (!el) return;
+      if (Math.abs(dif) < 1) {
+        el.textContent = 'Cuadrado ✓';
+        el.className = 'cerrar-dif-badge dif-ok';
+      } else if (dif > 0) {
+        el.textContent = 'Sobrante +' + fmtCOP(dif);
+        el.className = 'cerrar-dif-badge dif-sobre';
+      } else {
+        el.textContent = 'Faltante −' + fmtCOP(Math.abs(dif));
+        el.className = 'cerrar-dif-badge dif-falta';
+      }
+    }
+
+    function csGoStep(n) {
+      document.getElementById('cerrarStep1').style.display = n === 1 ? '' : 'none';
+      document.getElementById('cerrarStep2').style.display = n === 2 ? '' : 'none';
+      document.getElementById('csBtnCancelar').style.display = n === 1 ? '' : 'none';
+      document.getElementById('csBtnContinuar').style.display = n === 1 ? '' : 'none';
+      document.getElementById('csBtnAtras').style.display = n === 2 ? '' : 'none';
+      document.getElementById('csBtnConfirmar').style.display = n === 2 ? '' : 'none';
+
+      const dot1 = document.getElementById('csDot1');
+      const dot2 = document.getElementById('csDot2');
+      const lbl1 = document.getElementById('csLbl1');
+      const lbl2 = document.getElementById('csLbl2');
+      dot1.className = 'cerrar-step-dot ' + (n === 1 ? 'is-active' : 'is-done');
+      dot2.className = 'cerrar-step-dot ' + (n === 2 ? 'is-active' : '');
+      lbl1.className = 'cerrar-step-lbl' + (n === 1 ? ' is-active' : '');
+      lbl2.className = 'cerrar-step-lbl' + (n === 2 ? ' is-active' : '');
+
+      if (n === 2) {
+        const dif = CS.diferencia;
+        document.getElementById('s2KpiNeto').textContent = '$1.318.720';
+        document.getElementById('s2KpiTickets').textContent = '18';
+        const difEl = document.getElementById('s2KpiDif');
+        if (Math.abs(dif) < 1) {
+          difEl.textContent = 'Cuadrado'; difEl.className = 'cerrar-s2-kpi-val dif-ok';
+        } else if (dif > 0) {
+          difEl.textContent = '+' + fmtCOP(dif); difEl.className = 'cerrar-s2-kpi-val dif-sobre';
+        } else {
+          difEl.textContent = '−' + fmtCOP(Math.abs(dif)); difEl.className = 'cerrar-s2-kpi-val dif-falta';
+        }
+        const warn = document.getElementById('csWarning');
+        const chk  = document.getElementById('csDifCheck');
+        const btn  = document.getElementById('csBtnConfirmar');
+        if (Math.abs(dif) > 1000) {
+          warn.style.display = '';
+          chk.checked = false;
+          btn.disabled = true;
+          chk.onchange = () => { btn.disabled = !chk.checked; };
+        } else {
+          warn.style.display = 'none';
+          btn.disabled = false;
+        }
+      }
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // Abrir modal: init
+    document.querySelector('[data-open-modal="modalCerrarCaja"]').addEventListener('click', () => {
+      const durEl = document.getElementById('cerrarDuracion');
+      if (durEl) durEl.textContent = csDuracion();
+      document.getElementById('csContadoInput').value = CS.ESPERADO.toLocaleString('es-CO');
+      csUpdateDif();
+      csGoStep(1);
+    });
+
+    document.getElementById('csContadoInput').addEventListener('input', csUpdateDif);
+    document.getElementById('csBtnContinuar').addEventListener('click', () => csGoStep(2));
+    document.getElementById('csBtnAtras').addEventListener('click', () => csGoStep(1));
+
+    document.getElementById('csBtnConfirmar').addEventListener('click', () => {
+      const apertura = new Date(); apertura.setHours(12, 3, 0, 0);
+      const turnoData = {
+        id: 'T-042',
+        cajero: 'Juan Camilo Restrepo',
+        sucursal: 'Sede Norte · Caja 1 - Mostrador',
+        apertura: apertura.toISOString(),
+        cierre: new Date().toISOString(),
+        tickets: 18,
+        ventas: { bruto: 1234000, descuentos: 15000, impuestos: 98720, neto: 1318720 },
+        medios: [
+          { nombre: 'Efectivo',      txs: 8, monto: 567040 },
+          { nombre: 'Débito',        txs: 4, monto: 234000 },
+          { nombre: 'Crédito',       txs: 3, monto: 210000 },
+          { nombre: 'Transferencia', txs: 2, monto: 211000 },
+          { nombre: 'Otros',         txs: 1, monto: 96680  },
+        ],
+        arqueo: {
+          base: CS.BASE, ventasEfectivo: CS.VENTAS_EFE,
+          retiros: CS.RETIROS, propinas: CS.PROPINAS,
+          esperado: CS.ESPERADO, contado: CS.contado,
+          diferencia: CS.diferencia,
+        },
+        obs: (document.getElementById('csObs')?.value || '').trim(),
+      };
+      localStorage.setItem('pos:turno:last', JSON.stringify(turnoData));
+      localStorage.removeItem('pos:turno:abierto');
+
       UI.closeModal('modalCerrarCaja');
-      UI.toast({ type: 'success', title: 'Caja cerrada', sub: 'Redirigiendo al histórico…' });
-      setTimeout(() => { location.href = './historico.html'; }, 900);
+      window.open('./z-report.html?autoprint=1', '_blank');
+      UI.toast({
+        type: 'success',
+        title: 'Turno #T-042 cerrado',
+        sub: 'Z-Report generado · Redirigiendo al login…',
+        duration: 6000,
+      });
+      setTimeout(() => { location.href = '../auth/login.html'; }, 2500);
     });
 
     // ─────────────────────────────────────────────────────────────────────
-    // Init
+    // Init + animación de mesa liberada post-cobro
     // ─────────────────────────────────────────────────────────────────────
     render();
     renderSummary();
     if (window.lucide) window.lucide.createIcons();
+
+    // Si venimos de un cobro, animar la mesa liberada
+    const cobroReciente = localStorage.getItem('pos:cobro:mesaLiberada');
+    if (cobroReciente) {
+      localStorage.removeItem('pos:cobro:mesaLiberada');
+      requestAnimationFrame(() => {
+        const card = document.querySelector(`#pmCanvas .mesa-card[data-id="${cobroReciente}"]`);
+        if (card) {
+          card.classList.add('is-liberando');
+          setTimeout(() => card.classList.remove('is-liberando'), 2000);
+        }
+      });
+    }
   </script>
   <script src="../assets/js/nav.js"></script>
 </body>
