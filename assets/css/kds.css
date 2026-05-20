@@ -571,3 +571,77 @@
   .kds-topbar { flex-wrap: wrap; height: auto; padding: 8px 12px; gap: 8px; }
   .kds-topbar-right { order: 2; flex-wrap: wrap; }
 }
+
+/* ── S21: Ticket listo (completado, movido a sección) ───────────── */
+.kds-ticket.is-listo {
+  opacity: .68;
+  border: 1px solid rgba(16,185,129,.25);
+  animation: none;
+  min-height: unset;
+}
+.kds-ticket.is-listo .kds-ticket-header {
+  background: rgba(16,185,129,.08);
+  border-bottom-color: rgba(16,185,129,.2);
+}
+.kds-listo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success);
+  padding: 8px 14px;
+  width: 100%;
+}
+
+/* ── S21: Sección "Listos" ──────────────────────────────────────── */
+.kds-listos-sep {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 2px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--success);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.kds-listos-sep::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(16,185,129,.2);
+}
+
+/* ── S21: Empty state (sin comandas) ────────────────────────────── */
+.kds-empty-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 14px;
+  text-align: center;
+  padding: 48px 24px;
+  min-height: 60vh;
+}
+.kds-empty-state.is-visible { display: flex; }
+.kds-empty-clock {
+  font-size: 76px;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  opacity: .9;
+}
+.kds-empty-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 8px;
+}
+.kds-empty-sub {
+  font-size: 14px;
+  color: var(--muted);
+}

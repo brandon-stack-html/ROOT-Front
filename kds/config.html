@@ -24,7 +24,7 @@
   <div class="kds-shell">
     <header class="kds-topbar" style="pointer-events:none">
       <div class="kds-topbar-brand">
-        <i data-lucide="chef-hat" style="color:var(--accent)"></i>
+        <span class="root-wordmark">[ROOT]</span>
         <span>Cocina Caliente</span>
       </div>
       <div class="kds-topbar-clock">19:34:22</div>
@@ -235,12 +235,26 @@
 
   // Save + redirect
   function guardarConfig() {
-    UI.toast({ type:'success', title:'Configuración guardada', sub:'Los cambios se aplicaron al KDS' });
-    setTimeout(() => { location.href = 'main.html'; }, 1200);
+    var warn   = parseInt(document.getElementById('threshWarn').value)   || 8;
+    var urgent = parseInt(document.getElementById('threshUrgent').value) || 12;
+    var theme  = document.documentElement.getAttribute('data-theme') || 'dark';
+    localStorage.setItem('kds:config:v1', JSON.stringify({
+      warnMin:   warn,
+      urgentMin: urgent,
+      theme:     theme,
+    }));
+    UI.toast({ type:'success', title:'Configuración guardada', sub:'Los cambios se aplicarán al KDS · Volviendo…' });
+    setTimeout(() => { location.href = 'main.html'; }, 1000);
   }
 
   window.addEventListener('load', () => {
     lucide.createIcons();
+    // Pre-cargar valores guardados
+    var cfg = {};
+    try { cfg = JSON.parse(localStorage.getItem('kds:config:v1') || '{}'); } catch(e) {}
+    if (cfg.warnMin)   document.getElementById('threshWarn').value   = cfg.warnMin;
+    if (cfg.urgentMin) document.getElementById('threshUrgent').value = cfg.urgentMin;
+    if (cfg.theme)     setThemeFromSeg(cfg.theme);
   });
 </script>
   <script src="../assets/js/nav.js"></script>

@@ -479,7 +479,24 @@
         </div>
       </div>
 
+    </div><!-- /kdsGrid -->
+
+    <!-- Sección Listos (tickets completados) -->
+    <div id="kdsListosSection" style="display:none">
+      <div class="kds-listos-sep">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Listos · <span id="listosCount">0</span>
+      </div>
+      <div class="kds-grid" id="kdsGridListos"></div>
     </div>
+
+    <!-- Empty state: sin comandas -->
+    <div id="kdsEmpty" class="kds-empty-state">
+      <div class="kds-empty-clock" id="emptyClockDisplay">00:00</div>
+      <div class="kds-empty-title">Sin comandas en este momento</div>
+      <div class="kds-empty-sub">La cocina está libre · Todas las mesas servidas</div>
+    </div>
+
   </main>
 </div>
 
@@ -526,13 +543,22 @@
 </style>
 
 <script>
+  // ── Config desde localStorage ──────────────────────────────────
+  var _kdsCfg = {};
+  try { _kdsCfg = JSON.parse(localStorage.getItem('kds:config:v1') || '{}'); } catch(e) {}
+  var THRESH_WARN_CFG   = (_kdsCfg.warnMin   || 8)  * 60;
+  var THRESH_URGENT_CFG = (_kdsCfg.urgentMin || 12) * 60;
+
   // ── Clock ──────────────────────────────────────────────────────
   function updateClock() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2,'0');
     const m = String(now.getMinutes()).padStart(2,'0');
     const s = String(now.getSeconds()).padStart(2,'0');
-    document.getElementById('kdsClock').textContent = `${h}:${m}:${s}`;
+    const t = `${h}:${m}:${s}`;
+    document.getElementById('kdsClock').textContent = t;
+    const emptyClk = document.getElementById('emptyClockDisplay');
+    if (emptyClk) emptyClk.textContent = t;
   }
   updateClock();
 
@@ -546,10 +572,10 @@
     t.dataset.start = LOAD_TIME - elapsed * 1000;
   });
 
-  // Urgency thresholds (seconds) — from KDS_URGENCY in JSX
-  const THRESH_NUEVO   = 60;   // < 60s → nuevo
-  const THRESH_WARN    = 480;  // 480s (8min) → warn
-  const THRESH_URGENT  = 720;  // 720s (12min) → urgent
+  // Urgency thresholds (seconds) — configurable desde D2
+  const THRESH_NUEVO   = 60;
+  const THRESH_WARN    = THRESH_WARN_CFG;
+  const THRESH_URGENT  = THRESH_URGENT_CFG;
 
   function getUrgencyClass(elapsed) {
     if (elapsed < THRESH_NUEVO)  return 'is-nuevo';
@@ -585,11 +611,13 @@
   // ── Timer loop ─────────────────────────────────────────────────
   function tickTimers() {
     const now = Date.now();
-    document.querySelectorAll('.kds-ticket:not(.is-serving)').forEach(ticket => {
+    // Solo actualizar timers de tickets activos (no listos)
+    document.querySelectorAll('#kdsGrid .kds-ticket:not(.is-serving)').forEach(ticket => {
       const start = parseInt(ticket.dataset.start);
       if (!start) return;
       const elapsed = Math.floor((now - start) / 1000);
-      ticket.querySelector('.kds-timer-display').textContent = formatTime(elapsed);
+      const timerEl = ticket.querySelector('.kds-timer-display');
+      if (timerEl) timerEl.textContent = formatTime(elapsed);
       if (ticket.dataset.status === 'pendiente') {
         updateUrgency(ticket, elapsed);
       }
@@ -599,15 +627,36 @@
 
   // ── Tab counts ─────────────────────────────────────────────────
   function updateCounts() {
-    const tickets = document.querySelectorAll('.kds-ticket:not(.is-serving)');
+    const tickets = document.querySelectorAll('#kdsGrid .kds-ticket');
     let pending = 0, prep = 0;
     tickets.forEach(t => {
-      if (t.dataset.status === 'pendiente') pending++;
+      if (t.dataset.status === 'pendiente')   pending++;
       else if (t.dataset.status === 'preparacion') prep++;
     });
-    document.getElementById('countPendientes').textContent = pending;
+    document.getElementById('countPendientes').textContent  = pending;
     document.getElementById('countPreparacion').textContent = prep;
-    document.getElementById('countListos').textContent = listoCount.count;
+    document.getElementById('countListos').textContent      = listoCount.count;
+    var lc = document.getElementById('listosCount');
+    if (lc) lc.textContent = listoCount.count;
+  }
+
+  // ── Empty state ────────────────────────────────────────────────
+  function checkEmpty() {
+    var emptyEl  = document.getElementById('kdsEmpty');
+    var gridEl   = document.getElementById('kdsGrid');
+    if (!emptyEl) return;
+
+    if (activeFilter === 'listos') {
+      emptyEl.classList.toggle('is-visible', listoCount.count === 0);
+      return;
+    }
+
+    var visible = Array.from(document.querySelectorAll('#kdsGrid .kds-ticket')).filter(function(t) {
+      return !t.classList.contains('is-hidden');
+    });
+    var isEmpty = visible.length === 0;
+    emptyEl.classList.toggle('is-visible', isEmpty);
+    if (gridEl) gridEl.style.display = isEmpty ? 'none' : 'grid';
   }
 
   // ── Interactions ───────────────────────────────────────────────
@@ -625,15 +674,41 @@
   }
 
   function servirTicket(btn) {
-    const ticket = btn.closest('.kds-ticket');
-    const num    = ticket.dataset.ticket;
-    const mesaId = ticket.dataset.mesaId || '';
-    const mesaNum = ticket.dataset.mesa  || mesaNumFromId(mesaId);
-    ticket.classList.add('is-serving');
+    const ticket  = btn.closest('.kds-ticket');
+    const num     = ticket.dataset.ticket;
+    const mesaId  = ticket.dataset.mesaId || '';
+    const mesaNum = ticket.dataset.mesa   || mesaNumFromId(mesaId);
+    const elapsed = ticket.querySelector('.kds-timer-display').textContent;
+
+    // Transformar en ticket "listo"
+    ticket.classList.remove('is-urgent', 'is-warn', 'is-nuevo', 'is-serving');
+    ticket.classList.add('is-listo');
+    ticket.dataset.status = 'listo';
+
+    // Reemplazar footer con badge de tiempo
+    const footer = ticket.querySelector('.kds-ticket-footer');
+    footer.innerHTML =
+      '<span class="kds-listo-badge">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
+        ' Completado en ' + elapsed +
+      '</span>';
+
+    // Mover a sección listos
+    const listosGrid    = document.getElementById('kdsGridListos');
+    const listosSection = document.getElementById('kdsListosSection');
+    listosGrid.insertBefore(ticket, listosGrid.firstChild);
+    listosSection.style.display = 'block';
+
     listoCount.count++;
-    UI.toast({ type: 'success', title: `Ticket #${num} servido`, sub: `Mesa ${mesaNum} · Comanda completada` });
+
+    // Notificar al mesero (StoreComandas dispara 'comanda-lista')
     if (window.StoreComandas) StoreComandas.marcarLista(num, mesaId || ('mesa-' + mesaNum), mesaNum);
-    setTimeout(() => { ticket.remove(); updateCounts(); }, 320);
+
+    UI.toast({ type: 'success', title: 'Ticket #' + num + ' listo', sub: 'Mesa ' + mesaNum + ' · ' + elapsed });
+
+    updateCounts();
+    applyTabFilter();
+    checkEmpty();
   }
 
   // ── Tab filter ─────────────────────────────────────────────────
@@ -648,14 +723,29 @@
   }
 
   function applyTabFilter() {
-    document.querySelectorAll('.kds-ticket').forEach(ticket => {
-      const matchStation = activeStation === 'todas' || ticket.dataset.station === activeStation;
-      let matchFilter = true;
+    var listosSection = document.getElementById('kdsListosSection');
+    var kdsGridEl     = document.getElementById('kdsGrid');
+    var emptyEl       = document.getElementById('kdsEmpty');
+
+    if (activeFilter === 'listos') {
+      if (kdsGridEl) kdsGridEl.style.display = 'none';
+      if (listosSection) listosSection.style.display = listoCount.count > 0 ? 'block' : 'none';
+      if (emptyEl)       emptyEl.classList.toggle('is-visible', listoCount.count === 0);
+      return;
+    }
+
+    if (listosSection) listosSection.style.display = 'none';
+    if (kdsGridEl) kdsGridEl.style.display = 'grid';
+
+    document.querySelectorAll('#kdsGrid .kds-ticket').forEach(function(ticket) {
+      var matchStation = activeStation === 'todas' || ticket.dataset.station === activeStation;
+      var matchFilter  = true;
       if (activeFilter === 'pendientes')  matchFilter = ticket.dataset.status === 'pendiente';
       if (activeFilter === 'preparacion') matchFilter = ticket.dataset.status === 'preparacion';
-      if (activeFilter === 'listos')      matchFilter = false; // removed from DOM
       ticket.classList.toggle('is-hidden', !(matchStation && matchFilter));
     });
+
+    checkEmpty();
   }
 
   // ── Station selector ───────────────────────────────────────────
