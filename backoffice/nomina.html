@@ -62,7 +62,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -211,6 +211,7 @@
                 <th>Devengado</th>
                 <th>Adelantos</th>
                 <th>Neto a pagar</th>
+                <th></th>
               </tr>
             </thead>
             <tbody id="nominaTbody"></tbody>
@@ -219,6 +220,36 @@
       </div>
 
     </main>
+  </div>
+</div>
+
+<!-- Modal: adelantos pendientes al cerrar -->
+<div class="modal-backdrop" id="modalAdvPendWarning">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:400px">
+    <div class="modal-header">
+      <div class="modal-title">Adelantos pendientes</div>
+      <button class="modal-close" type="button" id="advWarnClose"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;">
+        <div style="width:42px;height:42px;border-radius:10px;background:rgba(245,158,11,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i data-lucide="alert-triangle" style="width:18px;height:18px;color:var(--warning);"></i>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;" id="advWarnMsg">Hay adelantos pendientes</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.5;">Si cierras la nómina ahora, estos adelantos quedarán sin resolver en este periodo.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="./adelantos.html" class="btn btn-secondary">
+        <i data-lucide="clock" style="width:13px;height:13px"></i>
+        Revisar adelantos
+      </a>
+      <button class="btn btn-primary" type="button" id="advWarnCerrarIgual">
+        Cerrar igual
+      </button>
+    </div>
   </div>
 </div>
 
@@ -260,12 +291,16 @@
 
 <script src="../assets/js/constants.js"></script>
 <script src="../assets/js/data/nomina-mock.js"></script>
+<script src="../assets/js/empleados.js"></script>
 <script src="../assets/js/ui.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
   if (window.lucide) window.lucide.createIcons();
 
   var NM = window.NominaMock;
+  /* Sincroniza la sección "empleados" del store de nómina con el store unificado.
+     Empleados es la fuente de verdad; nómina sólo conserva períodos/adelantos/pagos. */
+  if (window.Empleados) Empleados.forceSyncNomina();
   var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   function fmtDate(str) { var d = new Date(str + 'T12:00:00'); return d.getDate() + ' ' + meses[d.getMonth()]; }
 
@@ -340,6 +375,11 @@
       var sucNombre  = (suc.find(function(s){ return s.id === e.sucursal_id; }) || {}).nombre || e.sucursal_id;
       var advPendEmp = adv.filter(function(a){ return a.empleado_id === e.id && a.estado === 'pendiente'; });
 
+      // ¿Ya pagado en este periodo?
+      var yaPagado = perEmp ? state.pagos.some(function(p){
+        return p.empleado_id === e.id && p.periodo_id === perEmp.id;
+      }) : false;
+
       var tr = document.createElement('tr');
       tr.dataset.empId = e.id;
       tr.innerHTML =
@@ -350,15 +390,21 @@
         '<td class="num">' + window.formatCOP(devengado) + '</td>' +
         '<td>' + (advTotal > 0 ? '<span class="nomina-badge-adv">−' + window.formatCOP(advTotal) + '</span>' : '<span style="color:var(--muted)">$0</span>') +
                (advPendEmp.length > 0 ? ' <span style="font-size:10px;color:var(--warning)">+' + advPendEmp.length + ' pend.</span>' : '') + '</td>' +
-        '<td class="num neto">' + window.formatCOP(neto) + '</td>';
-      tr.addEventListener('click', function(){
+        '<td class="num neto">' + window.formatCOP(neto) + '</td>' +
+        '<td style="text-align:right;white-space:nowrap">' +
+          (yaPagado
+            ? '<span class="badge badge-success" style="font-size:11px;"><span class="dot"></span>Pagado</span>'
+            : '<a href="./usuarios.html?edit=' + e.id + '&tab=nomina" data-cfg="' + e.id + '" style="color:var(--accent);font-size:12px;font-weight:600;text-decoration:none">Configurar →</a>') +
+        '</td>';
+      tr.addEventListener('click', function(ev){
+        if (ev.target.closest('[data-cfg]')) return; /* deja pasar el link */
         window.location.href = './nomina-empleado.html?id=' + e.id;
       });
       tbody.appendChild(tr);
     });
 
     if (empsFiltrados.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">Sin resultados</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">Sin resultados</td></tr>';
     }
   }
 
@@ -385,6 +431,33 @@
   document.getElementById('btnRegistrarPago').addEventListener('click', openModalPago);
   document.getElementById('modalPagoClose').addEventListener('click', closeModalPago);
   document.getElementById('modalPagoCancelar').addEventListener('click', closeModalPago);
+  var pagoEnEspera = null; // datos del pago mientras se muestra el warning
+
+  function ejecutarPago(pagoData) {
+    var state = NM.loadState();
+    state.pagos.push(pagoData);
+    NM.saveState(state);
+    closeModalPago();
+
+    // Guardar datos para impresión
+    localStorage.setItem('nomina:impresion:data', JSON.stringify({
+      emp: pagoData.emp_nombre,
+      periodo: pagoData.periodo_label,
+      neto: pagoData.neto,
+      bruto: pagoData.bruto,
+      adelantos: pagoData.adelantos_descontados,
+      metodo: pagoData.metodo,
+      fecha: pagoData.fecha_pago,
+    }));
+
+    // Abrir imprimible en nueva pestaña
+    window.open('../backoffice/nomina-imprimible.html', '_blank');
+
+    UI.toast({ type: 'success', title: 'Nómina pagada', sub: pagoData.emp_nombre + ' · Volver a imprimir ↗' });
+    render();
+    if (window.lucide) window.lucide.createIcons();
+  }
+
   document.getElementById('modalPagoConfirmar').addEventListener('click', function(){
     var empId  = document.getElementById('pagoEmpSelect').value;
     var metodo = document.getElementById('pagoMetodo').value;
@@ -397,17 +470,44 @@
       return a.empleado_id === emp.id && a.periodo_id === per.id &&
              (a.estado === 'aprobada' || a.estado === 'pagada');
     }).reduce(function(s,a){ return s + (a.monto_aprobado || 0); }, 0);
-    var pago = {
+
+    var pagoData = {
       id: 'pay-' + Date.now(),
       empleado_id: emp.id, sucursal_id: emp.sucursal_id, periodo_id: per.id,
       bruto: devengado, adelantos_descontados: advDesc, neto: devengado - advDesc,
       fecha_pago: new Date().toISOString().slice(0,10), metodo: metodo,
+      emp_nombre: emp.nombre,
+      periodo_label: per.inicio + ' – ' + per.fin,
     };
-    state.pagos.push(pago);
-    NM.saveState(state);
-    closeModalPago();
-    UI.toast({ type: 'success', title: 'Pago registrado', body: emp.nombre + ' — ' + window.formatCOP(pago.neto) });
-    render();
+
+    // Check adelantos pendientes del empleado
+    var advPend = state.adelantos.filter(function(a){
+      return a.empleado_id === emp.id && a.periodo_id === per.id && a.estado === 'pendiente';
+    });
+
+    if (advPend.length > 0) {
+      pagoEnEspera = pagoData;
+      closeModalPago();
+      document.getElementById('advWarnMsg').textContent =
+        'Hay ' + advPend.length + ' adelanto' + (advPend.length > 1 ? 's' : '') + ' pendiente' + (advPend.length > 1 ? 's' : '') + ' de aprobación para ' + emp.nombre + '.';
+      document.getElementById('modalAdvPendWarning').classList.add('is-open');
+      if (window.lucide) window.lucide.createIcons();
+    } else {
+      ejecutarPago(pagoData);
+    }
+  });
+
+  // Warning adelantos: cerrar igual
+  document.getElementById('advWarnCerrarIgual').addEventListener('click', function(){
+    document.getElementById('modalAdvPendWarning').classList.remove('is-open');
+    if (pagoEnEspera) { ejecutarPago(pagoEnEspera); pagoEnEspera = null; }
+  });
+  document.getElementById('advWarnClose').addEventListener('click', function(){
+    document.getElementById('modalAdvPendWarning').classList.remove('is-open');
+    pagoEnEspera = null;
+  });
+  document.getElementById('modalAdvPendWarning').addEventListener('click', function(e){
+    if (e.target === this) { this.classList.remove('is-open'); pagoEnEspera = null; }
   });
 
   document.getElementById('modalPagoBackdrop').addEventListener('click', function(e){

@@ -71,7 +71,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -372,13 +372,19 @@
   }
   document.getElementById('aprobarClose').addEventListener('click', function(){ document.getElementById('modalAprobarBackdrop').classList.remove('is-open'); });
   document.getElementById('aprobarCancelar').addEventListener('click', function(){ document.getElementById('modalAprobarBackdrop').classList.remove('is-open'); });
+  function notificarMesero(estado) {
+    localStorage.setItem('root:nomina-novedad:v1', JSON.stringify({ estado: estado, ts: Date.now() }));
+    window.dispatchEvent(new CustomEvent('nomina-novedad', { detail: { estado: estado } }));
+  }
+
   document.getElementById('aprobarConfirmar').addEventListener('click', function(){
     var monto = parseInt(document.getElementById('aprobarMonto').value, 10);
     var nota  = document.getElementById('aprobarNota').value.trim();
     if (!monto || monto <= 0) { UI.toast({ type: 'error', title: 'Monto inválido' }); return; }
     NM.aprobarAdelanto(advActual, monto, nota || null);
     document.getElementById('modalAprobarBackdrop').classList.remove('is-open');
-    UI.toast({ type: 'success', title: 'Adelanto aprobado', body: window.formatCOP(monto) + ' aprobado correctamente.' });
+    notificarMesero('aprobada');
+    UI.toast({ type: 'success', title: 'Adelanto aprobado', sub: window.formatCOP(monto) + ' · El mesero fue notificado.' });
     render();
   });
 
@@ -401,7 +407,8 @@
     if (!motivo) { UI.toast({ type: 'error', title: 'El motivo es obligatorio' }); return; }
     NM.rechazarAdelanto(advActual, motivo);
     document.getElementById('modalRechazarBackdrop').classList.remove('is-open');
-    UI.toast({ type: 'success', title: 'Adelanto rechazado' });
+    notificarMesero('rechazada');
+    UI.toast({ type: 'success', title: 'Adelanto rechazado', sub: 'El mesero fue notificado.' });
     render();
   });
 

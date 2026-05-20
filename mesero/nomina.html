@@ -243,6 +243,10 @@
   <script>
     if (window.lucide) window.lucide.createIcons();
 
+    // Limpiar badge de novedad al entrar a la pantalla
+    localStorage.removeItem('root:nomina-novedad:v1');
+    window.dispatchEvent(new CustomEvent('nomina-novedad'));
+
     var NM = window.NominaMock;
     var state = NM.loadState();
     var emp   = state.empleados.find(function(e){ return e.id === NM.MESERO_ACTUAL_ID; });

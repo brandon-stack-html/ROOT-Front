@@ -67,7 +67,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -179,8 +179,12 @@
           </div>
           <div class="form-group">
             <label class="form-label">Salario base</label>
-            <input type="number" class="form-input" id="fSalario" min="1623500" step="1000" />
+            <input type="number" class="form-input" id="fSalario" min="1623500" step="1000" oninput="validarSalario()" />
             <div class="emp-form-note">Mínimo SMMLV 2026: $1.623.500</div>
+            <div id="salarioError" style="display:none;margin-top:5px;font-size:11px;color:var(--error);display:none;align-items:center;gap:4px;">
+              <i data-lucide="alert-circle" style="width:11px;height:11px;flex-shrink:0;"></i>
+              El salario no puede ser menor al SMMLV ($1.623.500)
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Periodicidad de pago</label>
@@ -229,6 +233,7 @@
 
 <script src="../assets/js/constants.js"></script>
 <script src="../assets/js/data/nomina-mock.js"></script>
+<script src="../assets/js/empleados.js"></script>
 <script src="../assets/js/ui.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
@@ -236,6 +241,20 @@
 
   var NM = window.NominaMock;
   var SMMLV = window.SMMLV_2026;
+
+  // Validación inline salario
+  function validarSalario() {
+    var val = parseInt(document.getElementById('fSalario').value, 10);
+    var err = document.getElementById('salarioError');
+    var btn = document.getElementById('btnGuardar');
+    var invalid = isNaN(val) || val < SMMLV;
+    err.style.display = invalid ? 'flex' : 'none';
+    btn.disabled = invalid;
+    btn.style.opacity = invalid ? '0.45' : '';
+    if (window.lucide) window.lucide.createIcons();
+  }
+  /* Sincroniza el store de nómina con la fuente de verdad (Empleados) */
+  if (window.Empleados) Empleados.forceSyncNomina();
   var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   function fmtDate(str){ if (!str) return '—'; var d = new Date(str + 'T12:00:00'); return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear(); }
 
@@ -349,13 +368,27 @@
       UI.toast({ type: 'error', title: 'Salario inválido', body: 'El salario no puede ser menor al SMMLV 2026 (' + window.formatCOP(SMMLV) + ').' });
       return;
     }
-    NM.guardarEmpleado(emp.id, {
+    var cambios = {
       nombre:            document.getElementById('fNombre').value,
       sucursal_id:       document.getElementById('fSucursal').value,
       salario_base:      salario,
       periodicidad:      document.getElementById('fPeriodicidad').value,
       tope_adelanto_pct: parseInt(document.getElementById('fTope').value, 10),
-    });
+    };
+    /* Actualiza fuente de verdad — re-sincroniza nómina automáticamente */
+    if (window.Empleados && Empleados.getById(emp.id)) {
+      Empleados.actualizar(emp.id, {
+        nombre: cambios.nombre,
+        sucursales: [cambios.sucursal_id],
+        nomina: {
+          salarioBase: cambios.salario_base,
+          periodicidad: cambios.periodicidad,
+          topesAdelanto: cambios.tope_adelanto_pct,
+        },
+      });
+    } else {
+      NM.guardarEmpleado(emp.id, cambios);
+    }
     emp = loadEmp();
     renderHeader(emp);
     UI.toast({ type: 'success', title: 'Cambios guardados' });

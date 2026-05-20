@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprobante de nómina · ROOT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f4f4f5; color: #18181b; padding: 32px 16px; }
+
+    .page { max-width: 680px; margin: 0 auto; }
+
+    .print-btn-bar {
+      display: flex; gap: 10px; margin-bottom: 24px;
+    }
+    .print-btn {
+      padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer;
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      background: #4F46E5; color: #fff;
+    }
+    .back-btn {
+      padding: 9px 18px; border-radius: 8px; border: 1px solid #e4e4e7; cursor: pointer;
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      background: #fff; color: #52525b; text-decoration: none; display: inline-flex; align-items: center;
+    }
+
+    .comprobante {
+      background: #fff;
+      border: 1px solid #e4e4e7;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .comp-header {
+      background: #4F46E5;
+      color: #fff;
+      padding: 24px 28px;
+    }
+    .comp-logo { font-size: 20px; font-weight: 700; margin-bottom: 4px; letter-spacing: -.01em; }
+    .comp-sub  { font-size: 12px; opacity: .75; }
+    .comp-title { font-size: 16px; font-weight: 700; margin-top: 16px; }
+    .comp-period { font-size: 12px; opacity: .8; margin-top: 3px; }
+
+    .comp-body { padding: 24px 28px; }
+
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .comp-field label { font-size: 10px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: .05em; display: block; margin-bottom: 3px; }
+    .comp-field .val { font-size: 14px; font-weight: 600; color: #18181b; }
+
+    .comp-divider { border: none; border-top: 1px solid #e4e4e7; margin: 20px 0; }
+
+    .comp-table { width: 100%; border-collapse: collapse; }
+    .comp-table th { padding: 8px 0; text-align: left; font-size: 10px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid #e4e4e7; }
+    .comp-table td { padding: 10px 0; font-size: 13px; color: #18181b; border-bottom: 1px solid #f4f4f5; }
+    .comp-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .comp-table tr.total td { font-weight: 700; border-top: 2px solid #e4e4e7; border-bottom: none; padding-top: 12px; }
+    .comp-table tr.total td.num { color: #4F46E5; font-size: 16px; }
+
+    .comp-footer { padding: 16px 28px; background: #f9f9fb; border-top: 1px solid #e4e4e7; font-size: 11px; color: #71717a; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+
+    .stamp {
+      display: inline-block; padding: 4px 12px; border-radius: 20px;
+      background: rgba(16,185,129,.1); color: #065F46;
+      font-size: 12px; font-weight: 700;
+    }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .print-btn-bar { display: none !important; }
+      .comprobante { border: none; }
+      .comp-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="print-btn-bar">
+      <button class="print-btn" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+      <a href="./nomina.html" class="back-btn">← Volver a nómina</a>
+    </div>
+
+    <div class="comprobante" id="comprobante">
+      <div class="comp-header">
+        <div class="comp-logo">[ROOT]</div>
+        <div class="comp-sub">Restaurante El Buen Sabor SAS · NIT 900.123.456</div>
+        <div class="comp-title">Comprobante de pago de nómina</div>
+        <div class="comp-period" id="compPeriod">—</div>
+      </div>
+
+      <div class="comp-body">
+        <div class="comp-grid">
+          <div class="comp-field"><label>Empleado</label><div class="val" id="compEmp">—</div></div>
+          <div class="comp-field"><label>Fecha de pago</label><div class="val" id="compFecha">—</div></div>
+          <div class="comp-field"><label>Método</label><div class="val" id="compMetodo">—</div></div>
+          <div class="comp-field"><label>Estado</label><div class="val"><span class="stamp">Pagado ✓</span></div></div>
+        </div>
+
+        <hr class="comp-divider">
+
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="num">Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Salario devengado del periodo</td>
+              <td class="num" id="compBruto">—</td>
+            </tr>
+            <tr id="rowAdelantos" style="display:none">
+              <td>Descuento adelantos aprobados</td>
+              <td class="num" id="compAdelantos" style="color:#ef4444">—</td>
+            </tr>
+            <tr class="total">
+              <td>Neto a pagar</td>
+              <td class="num" id="compNeto">—</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p style="font-size:11px;color:#71717a;margin-top:16px;" id="compNote"></p>
+      </div>
+
+      <div class="comp-footer">
+        <span>Generado por ROOT POS · <span id="compTs"></span></span>
+        <span>Folio: <strong id="compFolio">—</strong></span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function fmt(n) { return '$' + Number(n || 0).toLocaleString('es-CO'); }
+    function fmtDate(str) {
+      if (!str) return '—';
+      var d = new Date(str.length === 10 ? str + 'T12:00:00' : str);
+      var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    var raw = localStorage.getItem('nomina:impresion:data');
+    var data = raw ? JSON.parse(raw) : null;
+
+    if (data) {
+      document.getElementById('compPeriod').textContent = 'Periodo: ' + (data.periodo || '—');
+      document.getElementById('compEmp').textContent = data.emp || '—';
+      document.getElementById('compFecha').textContent = fmtDate(data.fecha);
+      document.getElementById('compMetodo').textContent =
+        { transferencia:'Transferencia bancaria', efectivo:'Efectivo', cheque:'Cheque' }[data.metodo] || data.metodo || '—';
+      document.getElementById('compBruto').textContent = fmt(data.bruto);
+      document.getElementById('compNeto').textContent  = fmt(data.neto);
+      if (data.adelantos > 0) {
+        document.getElementById('rowAdelantos').style.display = '';
+        document.getElementById('compAdelantos').textContent  = '−' + fmt(data.adelantos);
+      }
+      document.getElementById('compNote').textContent =
+        data.adelantos > 0
+          ? 'Se descontaron adelantos aprobados por ' + fmt(data.adelantos) + ' del devengado del periodo.'
+          : '';
+    } else {
+      document.getElementById('compEmp').textContent = 'Demo — datos no disponibles';
+      document.getElementById('compPeriod').textContent = 'Periodo: 1 – 31 may 2026';
+      document.getElementById('compFecha').textContent = fmtDate(new Date().toISOString().slice(0,10));
+      document.getElementById('compMetodo').textContent = 'Transferencia bancaria';
+      document.getElementById('compBruto').textContent = '$1.623.500';
+      document.getElementById('compNeto').textContent  = '$1.623.500';
+    }
+
+    document.getElementById('compTs').textContent = new Date().toLocaleString('es-CO');
+    document.getElementById('compFolio').textContent = 'NOM-' + Date.now().toString(36).toUpperCase().slice(-6);
+  </script>
+</body>
+</html>

@@ -17,6 +17,7 @@
     { name: 'Restablecer contraseña',    path: '/auth/restablecer.html',            module: 'Auth' },
     { name: 'Selector de sucursal',      path: '/auth/selector-sucursal.html',      module: 'Auth' },
     { name: 'Registro exitoso',          path: '/auth/registro-ok.html',            module: 'Auth' },
+    { name: 'Nómina · Comprobante imprimible', path: '/backoffice/nomina-imprimible.html', module: 'Backoffice' },
 
     { name: 'Dashboard',                 path: '/backoffice/dashboard.html',        module: 'Backoffice' },
     { name: 'Usuarios',                  path: '/backoffice/usuarios.html',         module: 'Backoffice' },
