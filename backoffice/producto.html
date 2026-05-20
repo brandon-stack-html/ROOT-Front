@@ -21,7 +21,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -230,10 +230,32 @@
           <div class="producto-section">
             <div class="producto-section-title">Modificadores vinculados</div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Permiten al cliente personalizar este producto al ordenar.</div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px">
-              <span class="chip">Término de cocción</span>
-              <span class="chip">Acompañamiento</span>
-              <button class="chip-add"><i data-lucide="plus"></i>Agregar modificador</button>
+            <div style="display:flex;flex-wrap:wrap;gap:6px" id="modsChips">
+              <span class="chip mod-chip" data-mod="Término de cocción" style="cursor:pointer" onclick="abrirMods()">Término de cocción</span>
+              <span class="chip mod-chip" data-mod="Acompañamiento" style="cursor:pointer" onclick="abrirMods()">Acompañamiento</span>
+              <button class="chip-add" onclick="abrirMods()"><i data-lucide="plus"></i>Agregar modificador</button>
+            </div>
+          </div>
+
+          <!-- Sub-drawer modificadores -->
+          <div id="drawerMods" class="drawer-backdrop">
+            <div class="drawer" style="width:340px">
+              <div class="drawer-header">
+                Modificadores del producto
+                <button class="modal-close" data-close aria-label="Cerrar">×</button>
+              </div>
+              <div class="drawer-body" style="padding:18px 22px;">
+                <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Selecciona los grupos de modificadores que aplican a este producto.</p>
+                <div style="display:flex;flex-direction:column;gap:8px;" id="modsList">
+                  <!-- Generado por JS -->
+                </div>
+              </div>
+              <div class="drawer-footer">
+                <button class="btn btn-secondary" data-close>Cancelar</button>
+                <button class="btn btn-primary" id="btnGuardarMods">
+                  <i data-lucide="check" style="width:13px;height:13px"></i> Aplicar
+                </button>
+              </div>
             </div>
           </div>
 
@@ -375,11 +397,71 @@
   });
 
   // Guardar → toast + redirect
+  var isNuevo = new URLSearchParams(location.search).has('nuevo');
   document.getElementById('btnGuardar').addEventListener('click', function () {
+    var nombre = document.getElementById('prodNombre').value || 'Producto';
     if (window.UI) {
-      UI.toast({ type: 'success', title: 'Producto guardado', sub: 'Los cambios se aplicaron correctamente.' });
+      UI.toast({
+        type: 'success',
+        title: isNuevo ? 'Producto creado' : 'Cambios guardados',
+        sub: isNuevo ? nombre + ' agregado al catálogo' : 'Los cambios se aplicaron correctamente.'
+      });
     }
-    setTimeout(() => { location.href = './catalogo.html'; }, 1400);
+    setTimeout(function () {
+      location.href = isNuevo
+        ? './catalogo.html?nuevo=' + encodeURIComponent(nombre)
+        : './catalogo.html';
+    }, 1400);
+  });
+
+  // Modificadores
+  var MODS_DISPONIBLES = [
+    { id: 'coccion',      label: 'Término de cocción',  opciones: 'Rojo, Término medio, Tres cuartos, Bien cocido' },
+    { id: 'acompanamiento', label: 'Acompañamiento',   opciones: 'Arroz, Papa, Ensalada, Yuca' },
+    { id: 'tamanio',     label: 'Tamaño',               opciones: 'Personal, Regular, Grande' },
+    { id: 'salsa',       label: 'Salsas adicionales',   opciones: 'Ají, Mostaza, Hogao, BBQ' },
+    { id: 'sin',         label: 'Sin ingredientes',     opciones: 'Sin cebolla, Sin cilantro, Sin gluten' },
+  ];
+  var modSeleccionados = new Set(['coccion', 'acompanamiento']);
+
+  function abrirMods() {
+    var lista = document.getElementById('modsList');
+    lista.innerHTML = MODS_DISPONIBLES.map(function (m) {
+      var checked = modSeleccionados.has(m.id);
+      return '<label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:' + (checked ? 'rgba(79,70,229,.06)' : 'var(--bg)') + ';">' +
+        '<input type="checkbox" data-mod-id="' + m.id + '" ' + (checked ? 'checked' : '') + ' style="margin-top:2px;accent-color:var(--accent);">' +
+        '<div><div style="font-size:13px;font-weight:500;color:var(--text);">' + m.label + '</div>' +
+        '<div style="font-size:11px;color:var(--muted);margin-top:1px;">' + m.opciones + '</div></div>' +
+        '</label>';
+    }).join('');
+    if (window.UI) UI.openDrawer('drawerMods');
+  }
+
+  document.getElementById('btnGuardarMods').addEventListener('click', function () {
+    modSeleccionados = new Set();
+    document.querySelectorAll('[data-mod-id]:checked').forEach(function (cb) {
+      modSeleccionados.add(cb.dataset.modId);
+    });
+    // Re-renderizar chips
+    var chips = document.getElementById('modsChips');
+    var addBtn = chips.querySelector('.chip-add');
+    chips.querySelectorAll('.mod-chip').forEach(function (c) { c.remove(); });
+    MODS_DISPONIBLES.forEach(function (m) {
+      if (modSeleccionados.has(m.id)) {
+        var s = document.createElement('span');
+        s.className = 'chip mod-chip';
+        s.dataset.mod = m.label;
+        s.style.cursor = 'pointer';
+        s.textContent = m.label;
+        s.onclick = abrirMods;
+        chips.insertBefore(s, addBtn);
+      }
+    });
+    if (window.UI) {
+      UI.closeDrawer('drawerMods');
+      UI.toast({ type: 'success', title: 'Modificadores actualizados', sub: modSeleccionados.size + ' grupos vinculados' });
+    }
+    if (window.lucide) window.lucide.createIcons();
   });
 </script>
   <script src="../assets/js/nav.js"></script>

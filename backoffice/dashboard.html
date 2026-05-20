@@ -21,7 +21,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -116,7 +116,7 @@
       <!-- Saludo + controles -->
       <div class="bo-page-header">
         <div>
-          <div class="bo-page-title">Buenos días, Juan Camilo</div>
+          <div class="bo-page-title" id="dashGreeting">Buenos días, Juan Camilo</div>
           <div class="bo-page-subtitle">Lunes, 15 de noviembre · Sede Norte</div>
         </div>
         <div class="bo-page-actions">
@@ -165,7 +165,7 @@
       <!-- KPI Grid: 3 KPIs + EstadoDIAN -->
       <div class="kpi-grid">
         <!-- Ventas hoy -->
-        <div class="kpi-card">
+        <div class="kpi-card" onclick="location.href='./reportes.html?kpi=ventas'" style="cursor:pointer" title="Ver reporte de ventas">
           <div class="kpi-card-head">
             <span class="kpi-label">Ventas hoy</span>
             <div class="kpi-icon-wrap" style="color:var(--success)"><i data-lucide="dollar-sign" style="width:15px;height:15px"></i></div>
@@ -174,7 +174,7 @@
           <div class="kpi-delta up"><i data-lucide="trending-up" style="width:12px;height:12px"></i>↑ 12% vs ayer</div>
         </div>
         <!-- Transacciones -->
-        <div class="kpi-card">
+        <div class="kpi-card" onclick="location.href='./reportes.html?kpi=transacciones'" style="cursor:pointer" title="Ver reporte de transacciones">
           <div class="kpi-card-head">
             <span class="kpi-label">Transacciones</span>
             <div class="kpi-icon-wrap" style="color:var(--info)"><i data-lucide="receipt" style="width:15px;height:15px"></i></div>
@@ -183,7 +183,7 @@
           <div class="kpi-delta up"><i data-lucide="trending-up" style="width:12px;height:12px"></i>↑ 8%</div>
         </div>
         <!-- Ticket promedio -->
-        <div class="kpi-card">
+        <div class="kpi-card" onclick="location.href='./reportes.html?kpi=ticket'" style="cursor:pointer" title="Ver reporte de ticket promedio">
           <div class="kpi-card-head">
             <span class="kpi-label">Ticket promedio</span>
             <div class="kpi-icon-wrap" style="color:var(--accent)"><i data-lucide="trending-up" style="width:15px;height:15px"></i></div>
@@ -192,7 +192,7 @@
           <div class="kpi-delta down"><i data-lucide="trending-down" style="width:12px;height:12px"></i>↓ 3%</div>
         </div>
         <!-- Estado DIAN -->
-        <div class="dian-card ok">
+        <div class="dian-card ok" onclick="location.href='./facturacion-dian.html'" style="cursor:pointer" title="Ver estado DIAN">
           <div class="dian-card-head">
             <span class="dian-card-label">Estado DIAN</span>
             <div class="dian-icon-wrap">
@@ -402,6 +402,14 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
   if (window.lucide) window.lucide.createIcons();
+
+  // Saludo dinámico según hora del día
+  (function() {
+    var h = new Date().getHours();
+    var saludo = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
+    var el = document.getElementById('dashGreeting');
+    if (el) el.textContent = saludo + ', Juan Camilo';
+  })();
 
   // Toggle vista normal / alertas
   document.querySelectorAll('#viewToggle [data-view]').forEach(btn => {

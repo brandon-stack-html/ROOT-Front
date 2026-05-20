@@ -243,7 +243,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -541,6 +541,23 @@
     </div>
   </div>
 
+  <!-- Modal detalle de ticket -->
+  <div id="modalTicketDetalle" class="modal-backdrop">
+    <div class="modal modal-md">
+      <div class="modal-header">
+        <div class="modal-title" id="ticketModalTitle">Detalle del ticket</div>
+        <button class="modal-close" data-close>×</button>
+      </div>
+      <div class="modal-body" id="ticketModalBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cerrar</button>
+        <button class="btn btn-ghost" onclick="UI.toast({type:'info',title:'Imprimiendo ticket…'})">
+          <i data-lucide="printer" style="width:13px;height:13px;"></i> Reimprimir
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
@@ -716,15 +733,15 @@
       }).join('');
       document.getElementById('drawerMovStats').innerHTML = statsHtml;
 
-      // Movimientos rows
+      // Movimientos rows (clickeables → modal detalle)
       var movRows = '';
       if (c.movimientos.length) {
-        c.movimientos.forEach(function (m) {
+        c.movimientos.forEach(function (m, mi) {
           var cargoHtml = m.cargo ? '<span style="color:var(--error);font-weight:600;">' + fmtCOP(m.cargo) + '</span>' : '<span style="color:var(--muted);">—</span>';
           var abonoHtml = m.abono ? '<span style="color:var(--success);font-weight:600;">' + fmtCOP(m.abono) + '</span>' : '<span style="color:var(--muted);">—</span>';
           var saldoColor = m.saldo > 0 ? 'var(--text)' : 'var(--muted)';
           movRows +=
-            '<div class="mov-row">' +
+            '<div class="mov-row" style="cursor:pointer;" data-mov-idx="' + mi + '" title="Ver detalle">' +
               '<div class="mov-fecha">' + m.fecha + '</div>' +
               '<div class="mov-concepto">' + m.concepto + '</div>' +
               '<div class="mov-cargo" style="text-align:right;">' + cargoHtml + '</div>' +
@@ -736,6 +753,16 @@
         movRows = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:12px;">Sin movimientos registrados</div>';
       }
       document.getElementById('drawerMovRows').innerHTML = movRows;
+
+      // Wiring clicks en movimientos
+      document.querySelectorAll('[data-mov-idx]').forEach(function (row) {
+        row.addEventListener('click', function () {
+          var mi = parseInt(row.dataset.movIdx);
+          var m  = c.movimientos[mi];
+          if (!m) return;
+          abrirModalTicket(c, m);
+        });
+      });
 
       // Botón abono
       document.getElementById('btnAbonoDrawer').onclick = function () {
@@ -786,6 +813,42 @@
         document.getElementById('drawerCreditoLabel').textContent = this.checked ? 'Sí' : 'No';
       });
     });
+
+    // Modal detalle de ticket (movimiento)
+    function abrirModalTicket(cliente, mov) {
+      var ticketNum = 'TKT-' + String(Math.floor(Math.random() * 90000) + 10000);
+      var esVenta  = mov.cargo > 0;
+      var modal    = document.getElementById('modalTicketDetalle');
+      if (!modal) return;
+
+      modal.querySelector('#ticketModalTitle').textContent = esVenta ? mov.concepto : 'Abono · ' + cliente.nombre;
+      modal.querySelector('#ticketModalBody').innerHTML =
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">' +
+          campo2('N° Ticket', ticketNum) +
+          campo2('Fecha', mov.fecha + ' 2026') +
+          campo2('Cliente', cliente.nombre) +
+          campo2('Estado', esVenta ? '<span class="badge badge-success">Pagado</span>' : '<span class="badge badge-info">Abono</span>') +
+        '</div>' +
+        (esVenta ? '<div style="background:var(--alt);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;">' +
+          '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;">Ítems</div>' +
+          '<div style="font-size:12px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;"><span>Ajiaco Bogotano × 2</span><span>$56.000</span></div>' +
+          '<div style="font-size:12px;color:var(--muted);padding:8px 0;display:flex;justify-content:space-between;"><span>Limonada Natural × 1</span><span>' + fmtCOP(mov.cargo - 56000) + '</span></div>' +
+        '</div>' : '') +
+        '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--text);padding-top:8px;border-top:1px solid var(--border);">' +
+          '<span>' + (esVenta ? 'Total' : 'Monto abonado') + '</span>' +
+          '<span>' + fmtCOP(esVenta ? mov.cargo : mov.abono) + '</span>' +
+        '</div>';
+
+      if (window.UI) UI.openModal('modalTicketDetalle');
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function campo2(label, val) {
+      return '<div>' +
+        '<div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;">' + label + '</div>' +
+        '<div style="font-size:13px;color:var(--text);font-weight:500;">' + val + '</div>' +
+      '</div>';
+    }
 
     renderTabla();
     if (window.lucide) window.lucide.createIcons();

@@ -54,6 +54,8 @@
     .prov-row { border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s; }
     .prov-row:last-child { border-bottom:none; }
     .prov-row:hover { background:var(--alt); }
+    @keyframes provRowIn { 0% { opacity:0; transform:translateY(-6px); background:rgba(79,70,229,.10); } 60% { background:rgba(79,70,229,.06); } 100% { opacity:1; transform:none; background:transparent; } }
+    .prov-row.is-new { animation: provRowIn 1.8s ease; }
 
     /* ── Provider cell ── */
     .prov-cell { display:flex; align-items:center; gap:10px; min-width:0; }
@@ -139,7 +141,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -405,11 +407,11 @@
               </div>
               <div class="compras-table">
                 <div class="ct2-header"><div>Fecha</div><div># Orden</div><div>Total</div><div>Estado</div><div></div></div>
-                <div class="ct2-row"><div>12/03/25</div><div>OC-0089</div><div>$850.000</div><div><span class="badge badge-success"><span class="dot"></span>Entregado</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
-                <div class="ct2-row"><div>05/03/25</div><div>OC-0081</div><div>$620.000</div><div><span class="badge badge-info"><span class="dot"></span>En tránsito</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
-                <div class="ct2-row"><div>26/02/25</div><div>OC-0074</div><div>$370.000</div><div><span class="badge badge-success"><span class="dot"></span>Entregado</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
-                <div class="ct2-row"><div>14/02/25</div><div>OC-0065</div><div>$910.000</div><div><span class="badge badge-success"><span class="dot"></span>Entregado</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
-                <div class="ct2-row"><div>03/02/25</div><div>OC-0058</div><div>$480.000</div><div><span class="badge badge-warning"><span class="dot"></span>Pendiente</span></div><div><button class="more-btn"><i data-lucide="more-horizontal" style="width:14px;height:14px;"></i></button></div></div>
+                <div class="ct2-row compra-row" data-oc="0" style="cursor:pointer;" title="Ver detalle"><div>12/03/25</div><div>OC-0089</div><div>$850.000</div><div><span class="badge badge-success"><span class="dot"></span>Entregado</span></div><div><i data-lucide="chevron-right" style="width:13px;height:13px;color:var(--muted);"></i></div></div>
+                <div class="ct2-row compra-row" data-oc="1" style="cursor:pointer;" title="Ver detalle"><div>05/03/25</div><div>OC-0081</div><div>$620.000</div><div><span class="badge badge-info"><span class="dot"></span>En tránsito</span></div><div><i data-lucide="chevron-right" style="width:13px;height:13px;color:var(--muted);"></i></div></div>
+                <div class="ct2-row compra-row" data-oc="2" style="cursor:pointer;" title="Ver detalle"><div>26/02/25</div><div>OC-0074</div><div>$370.000</div><div><span class="badge badge-success"><span class="dot"></span>Entregado</span></div><div><i data-lucide="chevron-right" style="width:13px;height:13px;color:var(--muted);"></i></div></div>
+                <div class="ct2-row compra-row" data-oc="0" style="cursor:pointer;" title="Ver detalle"><div>14/02/25</div><div>OC-0065</div><div>$910.000</div><div><span class="badge badge-success"><span class="dot"></span>Entregado</span></div><div><i data-lucide="chevron-right" style="width:13px;height:13px;color:var(--muted);"></i></div></div>
+                <div class="ct2-row compra-row" data-oc="1" style="cursor:pointer;" title="Ver detalle"><div>03/02/25</div><div>OC-0058</div><div>$480.000</div><div><span class="badge badge-warning"><span class="dot"></span>Pendiente</span></div><div><i data-lucide="chevron-right" style="width:13px;height:13px;color:var(--muted);"></i></div></div>
               </div>
             </div>
 
@@ -440,6 +442,42 @@
         <div style="flex:1;"></div>
         <button class="btn btn-secondary" data-close>Cerrar</button>
         <button class="btn btn-primary" onclick="UI.toast({type:'success',title:'Cambios guardados'})">Editar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal confirmar eliminar proveedor -->
+  <div id="modalEliminarProv" class="modal-backdrop">
+    <div class="modal modal-sm" style="max-width:360px;">
+      <div class="modal-header">
+        Eliminar proveedor
+        <button class="modal-close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0;">
+          ¿Seguro que quieres eliminar a <strong id="elimProvNombre" style="color:var(--text);"></strong>? Esta acción no se puede deshacer.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-destructive" id="btnConfirmarElimProv">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal detalle orden de compra -->
+  <div id="modalOrdenCompra" class="modal-backdrop">
+    <div class="modal modal-md">
+      <div class="modal-header">
+        <div class="modal-title" id="ordenCompraTitle">Orden de compra</div>
+        <button class="modal-close" data-close>×</button>
+      </div>
+      <div class="modal-body" id="ordenCompraBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cerrar</button>
+        <button class="btn btn-ghost" onclick="UI.toast({type:'info',title:'Descargando orden…'})">
+          <i data-lucide="download" style="width:13px;height:13px;"></i> Descargar
+        </button>
       </div>
     </div>
   </div>
@@ -567,7 +605,20 @@
           saldoHtml+
           '<div>'+estadoBadge(p.estado)+'</div>'+
           '<div><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:15px;height:15px;"></i></button></div>';
-        row.addEventListener('click', function(){ abrirDrawer(idx); });
+        row.addEventListener('click', function(e){
+          if (e.target.closest('.more-btn')) return;
+          abrirDrawer(idx);
+        });
+
+        // Menú contextual more-btn
+        var moreBtn = row.querySelector('.more-btn');
+        if (moreBtn) {
+          moreBtn.addEventListener('click', function(e){
+            e.stopPropagation();
+            abrirMenuProv(idx, moreBtn);
+          });
+        }
+
         body.appendChild(row);
       });
       document.getElementById('provEmpty').hidden = visible > 0;
@@ -622,15 +673,119 @@
       document.getElementById('btnGuardarProveedor').addEventListener('click', function(){
         var razon = document.getElementById('npRazon').value.trim();
         if(!razon){ UI.toast({type:'error',title:'Campo requerido',sub:'Ingresá la razón social'}); return; }
+        var nit = document.getElementById('npNit').value.trim() || '—';
+        var contacto = document.getElementById('npContacto').value.trim() || 'Contacto';
+        var tel = document.getElementById('npTel').value.trim() || '—';
+        var cat = document.getElementById('npCategoria').value || 'Otros';
+
         UI.closeModal('modalNuevoProveedor');
+
+        // Agregar al array y renderizar con fila animada
+        var initials = razon.split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+        PROVEEDORES.unshift({ iniciales:initials, avBg:'#EEF2FF', avFg:'#4338CA', nombre:razon, nit:nit, contactoNombre:contacto, tel:tel, categoria:cat, saldo:0, estado:'Activo', ultima:'Hoy', _isNew:true });
+        renderTabla();
+
+        // Marcar primera fila como nueva
+        var firstRow = document.querySelector('#provBody .prov-row');
+        if (firstRow) {
+          firstRow.classList.add('is-new');
+          setTimeout(function(){ firstRow.classList.remove('is-new'); }, 2000);
+        }
+
         UI.toast({type:'success',title:'Proveedor creado',sub:razon});
         // Reset form
         ['npRazon','npNit','npContacto','npTel','npEmail','npDireccion','npCiudad','npNotas'].forEach(function(id){
           var el = document.getElementById(id); if(el) el.value='';
         });
+        document.getElementById('npCategoria').value = '';
       });
       renderTabla();
     });
+
+    // Menú contextual proveedor
+    var provContextMenu = null;
+    var provIdxPendiente = null;
+
+    function abrirMenuProv(idx, anchor) {
+      cerrarMenuProv();
+      provIdxPendiente = idx;
+      var m = document.createElement('div');
+      m.id = 'provContextMenu';
+      m.style.cssText = 'position:fixed;z-index:9100;background:var(--bg-elevated,var(--alt));border:1px solid var(--border);border-radius:10px;padding:4px;min-width:160px;box-shadow:var(--shadow-lg);';
+      m.innerHTML =
+        '<button type="button" class="prov-menu-item" data-action="editar" style="width:100%;text-align:left;padding:8px 12px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:13px;color:var(--text);font-family:var(--ff-base);display:flex;align-items:center;gap:8px;">' +
+          '<i data-lucide="pencil" style="width:13px;height:13px;color:var(--muted);"></i> Editar</button>' +
+        '<button type="button" class="prov-menu-item" data-action="eliminar" style="width:100%;text-align:left;padding:8px 12px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:13px;color:var(--error);font-family:var(--ff-base);display:flex;align-items:center;gap:8px;">' +
+          '<i data-lucide="trash-2" style="width:13px;height:13px;color:var(--error);"></i> Eliminar</button>';
+      document.body.appendChild(m);
+      provContextMenu = m;
+      var rect = anchor.getBoundingClientRect();
+      m.style.top  = (rect.bottom + 6) + 'px';
+      m.style.right = (window.innerWidth - rect.right) + 'px';
+
+      m.querySelector('[data-action="editar"]').addEventListener('click', function(){
+        cerrarMenuProv();
+        abrirDrawer(idx);
+      });
+      m.querySelector('[data-action="eliminar"]').addEventListener('click', function(){
+        cerrarMenuProv();
+        document.getElementById('elimProvNombre').textContent = PROVEEDORES[idx].nombre;
+        UI.openModal('modalEliminarProv');
+      });
+
+      setTimeout(function(){
+        document.addEventListener('click', cerrarMenuProv, { once:true });
+      }, 50);
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function cerrarMenuProv() {
+      if (provContextMenu) { provContextMenu.remove(); provContextMenu = null; }
+    }
+
+    document.getElementById('btnConfirmarElimProv').addEventListener('click', function(){
+      UI.closeModal('modalEliminarProv');
+      if (provIdxPendiente !== null) {
+        var nombre = PROVEEDORES[provIdxPendiente].nombre;
+        PROVEEDORES.splice(provIdxPendiente, 1);
+        provIdxPendiente = null;
+        renderTabla();
+        UI.toast({ type: 'success', title: 'Proveedor eliminado', sub: nombre });
+      }
+    });
+
+    // Tab Compras: filas de compra clickeables
+    var COMPRAS_MOCK = [
+      { num:'OC-2025-0043', fecha:'12 mar 2025', monto:1230000, estado:'Recibida', items:4 },
+      { num:'OC-2025-0031', fecha:'1 mar 2025',  monto:840000,  estado:'Recibida', items:2 },
+      { num:'OC-2025-0018', fecha:'14 feb 2025', monto:360000,  estado:'Parcial',  items:3 },
+    ];
+
+    document.addEventListener('click', function(e){
+      var row = e.target.closest('.compra-row');
+      if (!row) return;
+      var oc = COMPRAS_MOCK[parseInt(row.dataset.oc || '0')] || COMPRAS_MOCK[0];
+      document.getElementById('ordenCompraTitle').textContent = 'Orden ' + oc.num;
+      document.getElementById('ordenCompraBody').innerHTML =
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">' +
+          ocCampo('N° Orden', oc.num) + ocCampo('Fecha', oc.fecha) +
+          ocCampo('Monto', '$' + oc.monto.toLocaleString('es-CO')) +
+          ocCampo('Estado', '<span class="badge badge-success">' + oc.estado + '</span>') +
+        '</div>' +
+        '<div style="background:var(--alt);border:1px solid var(--border);border-radius:8px;padding:12px 14px;">' +
+          '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;">Ítems (' + oc.items + ')</div>' +
+          '<div style="font-size:12px;color:var(--muted);">Detalle disponible al conectar con proveedor.</div>' +
+        '</div>';
+      UI.openModal('modalOrdenCompra');
+    });
+
+    function ocCampo(label, val) {
+      return '<div>' +
+        '<div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;">' + label + '</div>' +
+        '<div style="font-size:13px;color:var(--text);font-weight:500;">' + val + '</div>' +
+      '</div>';
+    }
 
     if(window.lucide) window.lucide.createIcons();
   </script>

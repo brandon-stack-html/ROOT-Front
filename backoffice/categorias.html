@@ -69,6 +69,8 @@
     .tree-row:last-child { border-bottom: none; }
     .tree-row.child { background: rgba(244,244,245,.4); }
     [data-theme="dark"] .tree-row.child { background: rgba(24,24,27,.4); }
+    @keyframes rowHighlight { 0%,100% { background: transparent; } 15% { background: rgba(79,70,229,.10); } 85% { background: rgba(79,70,229,.06); } }
+    .tree-row.is-new { animation: rowHighlight 2s ease; }
 
     .row-drag { display: flex; align-items: center; justify-content: center; cursor: grab; color: var(--muted); }
     .color-dot { border-radius: 50%; display: inline-block; flex-shrink: 0; }
@@ -171,7 +173,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -579,6 +581,47 @@
           </div>
         </div>
 
+        <!-- Modal Eliminar categoría con productos -->
+        <div id="modalEliminarCat" class="modal-backdrop">
+          <div class="modal modal-md">
+            <div class="modal-header">
+              Eliminar categoría
+              <button class="modal-close" data-close>×</button>
+            </div>
+            <div class="modal-body">
+              <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;">
+                <div style="width:42px;height:42px;border-radius:10px;background:rgba(239,68,68,.10);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i data-lucide="alert-triangle" style="width:18px;height:18px;color:var(--error);"></i>
+                </div>
+                <div>
+                  <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">Esta categoría tiene <span id="deleteCatProductos">0</span> productos</div>
+                  <div style="font-size:13px;color:var(--muted);line-height:1.5;">Si la eliminas, debes indicar qué pasa con sus productos.</div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <label style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;">
+                  <input type="radio" name="deleteCatOpt" value="reasignar" checked style="margin-top:2px;accent-color:var(--accent);">
+                  <div>
+                    <div style="font-weight:500;color:var(--text);">Reasignar productos</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px;">Los productos se mueven a la categoría que elijas.</div>
+                  </div>
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;">
+                  <input type="radio" name="deleteCatOpt" value="eliminar" style="margin-top:2px;accent-color:var(--error);">
+                  <div>
+                    <div style="font-weight:500;color:var(--error);">Eliminar todos los productos</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px;">Se borrarán del catálogo. No se puede deshacer.</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" data-close>Cancelar</button>
+              <button class="btn btn-destructive" id="btnConfirmarEliminarCat">Eliminar categoría</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Modal Nueva categoría -->
         <div id="modalCategoria" class="modal-backdrop">
           <div class="modal modal-md">
@@ -640,6 +683,11 @@
   <script>
     if (window.lucide) window.lucide.createIcons();
 
+    // Agregar clase trash-btn a todos los botones Eliminar existentes
+    document.querySelectorAll('[aria-label="Eliminar"]').forEach(function (btn) {
+      btn.classList.add('trash-btn');
+    });
+
     // Expand / collapse hijos
     document.querySelectorAll('[data-expand]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -678,11 +726,84 @@
       chip.classList.add('selected');
     });
 
-    // Crear categoría
+    // Colores disponibles (cicla)
+    var CAT_COLORS = ['#F97316','#3B82F6','#10B981','#8B5CF6','#EC4899','#EAB308'];
+    var catColorIdx = 0;
+
+    // Crear categoría → fila animada al tope
     document.getElementById('btnCrearCat').addEventListener('click', function () {
       var nombre = document.getElementById('catNombre').value.trim() || 'Nueva categoría';
+      var color = CAT_COLORS[catColorIdx++ % CAT_COLORS.length];
+      var uid = 'cat-new-' + Date.now();
+
       UI.closeModal('modalCategoria');
+
+      // Construir fila
+      var row = document.createElement('div');
+      row.className = 'tree-row is-new';
+      row.dataset.id = uid;
+      row.innerHTML =
+        '<div class="row-drag"><i data-lucide="grip-vertical" style="width:14px;height:14px;"></i></div>' +
+        '<div><span class="color-dot" style="width:14px;height:14px;background:' + color + ';"></span></div>' +
+        '<div class="row-name">' +
+          '<button class="expand-btn" disabled aria-label="Sin subcategorías"><i data-lucide="chevron-right" style="width:12px;height:12px;opacity:.35;"></i></button>' +
+          '<span class="row-name-txt">' + nombre + '</span>' +
+          '<span class="badge badge-success" style="font-size:9px;padding:1px 6px;margin-left:4px;">Nuevo</span>' +
+        '</div>' +
+        '<div class="row-count">0</div>' +
+        '<div class="row-visible"><label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label></div>' +
+        '<div class="row-actions">' +
+          '<button class="icon-btn" aria-label="Editar"><i data-lucide="pencil" style="width:13px;height:13px;"></i></button>' +
+          '<button class="icon-btn trash-btn" data-productos="0" aria-label="Eliminar"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>' +
+        '</div>';
+
+      // Insertar después del tree-header
+      var header = document.querySelector('.tree-header');
+      header.parentNode.insertBefore(row, header.nextSibling);
+
+      // Quitar highlight después de 2s
+      setTimeout(function () { row.classList.remove('is-new'); }, 2000);
+
+      // Reset form + wiring
+      document.getElementById('catNombre').value = '';
+      wireTrashBtns();
+      if (window.lucide) window.lucide.createIcons();
       UI.toast({ type: 'success', title: 'Categoría creada', sub: nombre });
+    });
+
+    // Wiring de botones eliminar
+    var catPendienteEliminar = null;
+    function wireTrashBtns() {
+      document.querySelectorAll('.trash-btn').forEach(function (btn) {
+        if (btn.dataset.wired) return;
+        btn.dataset.wired = 'true';
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var row = btn.closest('.tree-row');
+          var count = parseInt(row.querySelector('.row-count')?.textContent || '0', 10);
+          catPendienteEliminar = row;
+          if (count > 0) {
+            document.getElementById('deleteCatProductos').textContent = count;
+            UI.openModal('modalEliminarCat');
+          } else {
+            // Sin productos → eliminar directo con confirmación simple
+            document.getElementById('deleteCatProductos').textContent = '0';
+            UI.openModal('modalEliminarCat');
+          }
+        });
+      });
+    }
+    wireTrashBtns();
+
+    document.getElementById('btnConfirmarEliminarCat').addEventListener('click', function () {
+      UI.closeModal('modalEliminarCat');
+      var opt = document.querySelector('[name="deleteCatOpt"]:checked')?.value || 'reasignar';
+      var msg = opt === 'reasignar' ? 'Los productos se movieron a Sin categoría' : 'Categoría y productos eliminados';
+      if (catPendienteEliminar) {
+        catPendienteEliminar.remove();
+        catPendienteEliminar = null;
+      }
+      UI.toast({ type: 'success', title: 'Categoría eliminada', sub: msg });
     });
   </script>
   <script src="../assets/js/nav.js"></script>

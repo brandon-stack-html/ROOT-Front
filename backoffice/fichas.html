@@ -209,7 +209,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -384,7 +384,7 @@
               </div>
             </div>
             <div class="drawer-footer">
-              <button class="btn btn-secondary" data-close>Cancelar</button>
+              <button class="btn btn-secondary" id="btnListoIng">Listo</button>
               <button class="btn btn-primary" id="btnAgregarIng"><i data-lucide="plus"></i> Agregar</button>
             </div>
           </div>
@@ -635,10 +635,24 @@
     var fichaInicial = FICHAS.find(function (f) { return f.id === 'ajiaco'; });
     renderDetalle(fichaInicial);
 
-    // Drawer agregar ingrediente
+    // Drawer agregar ingrediente: queda abierto + form limpio + toast
     document.getElementById('btnAgregarIng').addEventListener('click', function () {
+      var nombreInput = document.querySelector('#drawerIngrediente input[list]');
+      var cantInput   = document.querySelector('#drawerIngrediente input[type="number"]');
+      var ingNombre   = nombreInput ? nombreInput.value.trim() : 'Ingrediente';
+      if (!ingNombre) {
+        UI.toast({ type: 'error', title: 'Campo requerido', sub: 'Selecciona un ingrediente' });
+        return;
+      }
+      // Limpiar form (queda abierto)
+      if (nombreInput) nombreInput.value = '';
+      if (cantInput) cantInput.value = '';
+      UI.toast({ type: 'success', title: 'Ingrediente agregado', sub: ingNombre + ' · El costo se recalculó' });
+    });
+
+    // Botón "Listo" → cerrar drawer
+    document.getElementById('btnListoIng').addEventListener('click', function () {
       UI.closeDrawer('drawerIngrediente');
-      UI.toast({ type: 'success', title: 'Ingrediente agregado', sub: 'El costo se recalculó automáticamente' });
     });
   </script>
   <script src="../assets/js/nav.js"></script>

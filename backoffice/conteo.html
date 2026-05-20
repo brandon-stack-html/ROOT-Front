@@ -228,7 +228,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -300,6 +300,10 @@
           <span class="bo-breadcrumb-item is-active">Conteo #003</span>
         </nav>
         <div class="bo-topbar-spacer"></div>
+        <span id="autoSaveStatus" style="font-size:11px;color:var(--muted);display:none;align-items:center;gap:4px;margin-right:4px;">
+          <i data-lucide="check-circle-2" style="width:11px;height:11px;color:var(--success);"></i>
+          <span id="autoSaveText">Guardado</span>
+        </span>
         <button class="bo-topbar-sucursal" type="button">
           <i data-lucide="store"></i>
           <span class="label">Sede Norte</span>
@@ -563,13 +567,56 @@
       });
     });
 
-    // Confirmar finalizar
+    // Auto-save cada 30s
+    var lastSaved = null;
+    var autoSaveStatus = document.getElementById('autoSaveStatus');
+    var autoSaveText  = document.getElementById('autoSaveText');
+
+    function doAutoSave() {
+      lastSaved = new Date();
+      autoSaveStatus.style.display = 'flex';
+      autoSaveText.textContent = 'Guardado';
+      updateSaveAge();
+    }
+
+    function updateSaveAge() {
+      if (!lastSaved) return;
+      var sec = Math.round((Date.now() - lastSaved.getTime()) / 1000);
+      if (sec < 10) {
+        autoSaveText.textContent = 'Guardado';
+      } else if (sec < 60) {
+        autoSaveText.textContent = 'Guardado hace ' + sec + 's';
+      } else {
+        autoSaveText.textContent = 'Guardado hace ' + Math.round(sec / 60) + ' min';
+      }
+    }
+
+    // Primer auto-save inmediato (simula borrador existente)
+    doAutoSave();
+    setInterval(doAutoSave, 30000);
+    setInterval(updateSaveAge, 10000);
+
+    // Botón "Guardar borrador" manual
+    document.querySelectorAll('.btn').forEach(function (btn) {
+      if (btn.textContent.trim().indexOf('Guardar borrador') !== -1) {
+        btn.addEventListener('click', function () {
+          doAutoSave();
+          UI.toast({ type: 'success', title: 'Borrador guardado', sub: 'Conteo #003 guardado en ' + lastSaved.toLocaleTimeString('es-CO', {hour:'2-digit',minute:'2-digit'}) });
+        });
+      }
+    });
+
+    // Confirmar finalizar → window.print() + redirect
     document.getElementById('btnConfirmarConteo').addEventListener('click', function () {
       UI.closeModal('modalFinalizar');
-      UI.toast({ type: 'success', title: 'Conteo finalizado', sub: 'Los ajustes se aplicaron al inventario' });
+      // Mostrar breve toast y abrir impresión
+      UI.toast({ type: 'success', title: 'Conteo finalizado', sub: 'Generando reporte de diferencias…' });
       setTimeout(function () {
-        window.location.href = './inventario.html';
-      }, 1500);
+        window.print();
+        setTimeout(function () {
+          window.location.href = './inventario.html';
+        }, 800);
+      }, 600);
     });
   </script>
   <script src="../assets/js/nav.js"></script>

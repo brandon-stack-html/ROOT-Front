@@ -21,7 +21,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -127,6 +127,27 @@
           <button class="btn btn-primary">
             <i data-lucide="plus" style="width:14px;height:14px"></i>
             Nuevo ingrediente
+          </button>
+        </div>
+      </div>
+
+      <!-- Banner bajo stock -->
+      <div class="alert-banner" id="invLowBanner" style="margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:36px;height:36px;border-radius:9px;background:rgba(245,158,11,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i data-lucide="alert-triangle" style="width:16px;height:16px;color:#D97706;"></i>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">5 ingredientes con stock bajo</div>
+            <div style="font-size:11px;color:var(--muted);">Pollo entero, Aguacate y 3 más están por debajo del mínimo.</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('invSearch').value='';filterByLow();">
+            <i data-lucide="filter" style="width:11px;height:11px;"></i> Ver solo críticos
+          </button>
+          <button class="btn-icon" onclick="document.getElementById('invLowBanner').style.display='none'" aria-label="Cerrar alerta">
+            <i data-lucide="x" style="width:14px;height:14px;"></i>
           </button>
         </div>
       </div>
@@ -316,6 +337,30 @@
         </div>
       </div>
 
+      <!-- Drawer detalle ingrediente -->
+      <div id="drawerIngrediente" class="drawer-backdrop">
+        <div class="drawer" style="width:400px">
+          <div class="drawer-header" id="drawerIngHeader">
+            Ingrediente
+            <button class="modal-close" data-close aria-label="Cerrar">×</button>
+          </div>
+          <div style="display:flex;border-bottom:1px solid var(--border);">
+            <button class="drawer-tab-btn is-active" data-ing-tab="info" style="flex:1;padding:10px;border:none;background:transparent;border-bottom:2px solid var(--accent);font-size:12px;font-weight:600;cursor:pointer;color:var(--text);font-family:var(--ff-base);">Info</button>
+            <button class="drawer-tab-btn" data-ing-tab="kardex" style="flex:1;padding:10px;border:none;background:transparent;border-bottom:2px solid transparent;font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);font-family:var(--ff-base);">Kardex</button>
+            <button class="drawer-tab-btn" data-ing-tab="alertas" style="flex:1;padding:10px;border:none;background:transparent;border-bottom:2px solid transparent;font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);font-family:var(--ff-base);">Alertas</button>
+          </div>
+          <div class="drawer-body" style="padding:18px 22px;overflow-y:auto;" id="drawerIngBody">
+            <!-- JS-rendered -->
+          </div>
+          <div class="drawer-footer">
+            <button class="btn btn-secondary" data-close>Cerrar</button>
+            <button class="btn btn-primary" onclick="UI.toast({type:'success',title:'Cambios guardados'})">
+              <i data-lucide="save" style="width:13px;height:13px;"></i> Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 </div>
@@ -324,6 +369,127 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
   if (window.lucide) window.lucide.createIcons();
+
+  // Filtrar solo críticos (banner CTA)
+  function filterByLow() {
+    var rows = document.querySelectorAll('.inv-table-row');
+    rows.forEach(function (r) {
+      r.hidden = !r.classList.contains('row-low') && !r.classList.contains('row-out');
+    });
+    var invEmpty = document.getElementById('invEmpty');
+    var visible = document.querySelectorAll('.inv-table-row:not([hidden])').length;
+    if (invEmpty) invEmpty.hidden = visible > 0;
+  }
+
+  // Drawer detalle ingrediente
+  var ING_DATA = {
+    'papa criolla':  { categoria:'Vegetal', stock:'12.5 kg', min:'5 kg', bodega:'Principal', precio:'$3.000/kg', proveedor:'Fruver La Cosecha', kardex: [
+      { fecha:'14 nov', op:'Consumo', cant:'-2.0 kg', saldo:'14.5 kg' },
+      { fecha:'12 nov', op:'Entrada', cant:'+10.0 kg', saldo:'16.5 kg' },
+      { fecha:'10 nov', op:'Consumo', cant:'-3.5 kg', saldo:'6.5 kg' },
+    ]},
+    'pollo entero':  { categoria:'Proteína', stock:'8 unid', min:'10 unid', bodega:'Refrigerador', precio:'$12.000/unid', proveedor:'Carnes Premium del Llano', kardex: [
+      { fecha:'14 nov', op:'Consumo', cant:'-3 unid', saldo:'8 unid' },
+      { fecha:'13 nov', op:'Consumo', cant:'-2 unid', saldo:'11 unid' },
+      { fecha:'12 nov', op:'Entrada', cant:'+8 unid', saldo:'13 unid' },
+    ]},
+    'default': { categoria:'—', stock:'—', min:'—', bodega:'—', precio:'—', proveedor:'—', kardex:[] }
+  };
+
+  function abrirDrawerIng(nombre) {
+    var d = ING_DATA[nombre.toLowerCase()] || ING_DATA['default'];
+    document.getElementById('drawerIngHeader').innerHTML =
+      nombre + '<button class="modal-close" data-close aria-label="Cerrar">×</button>';
+
+    renderIngTab('info', nombre, d);
+
+    document.querySelectorAll('[data-ing-tab]').forEach(function (btn) {
+      btn.dataset.ingNombre = nombre;
+      btn.removeEventListener('click', ingTabClick);
+      btn.addEventListener('click', ingTabClick);
+    });
+
+    if (window.UI) UI.openDrawer('drawerIngrediente');
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function ingTabClick() {
+    var tab = this.dataset.ingTab;
+    var nombre = this.dataset.ingNombre;
+    var d = ING_DATA[nombre.toLowerCase()] || ING_DATA['default'];
+    document.querySelectorAll('[data-ing-tab]').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.ingTab === tab);
+      b.style.borderBottomColor = b.dataset.ingTab === tab ? 'var(--accent)' : 'transparent';
+      b.style.fontWeight = b.dataset.ingTab === tab ? '600' : '500';
+      b.style.color = b.dataset.ingTab === tab ? 'var(--text)' : 'var(--muted)';
+    });
+    renderIngTab(tab, nombre, d);
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function renderIngTab(tab, nombre, d) {
+    var body = document.getElementById('drawerIngBody');
+    if (tab === 'info') {
+      body.innerHTML =
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">' +
+          campo('Categoría', d.categoria) + campo('Bodega', d.bodega) +
+          campo('Stock actual', d.stock) + campo('Stock mínimo', d.min) +
+          campo('Costo unitario', d.precio) + campo('Proveedor', d.proveedor) +
+        '</div>' +
+        '<div class="field"><label class="field-label">Notas</label>' +
+          '<textarea class="field-input" rows="2" placeholder="Observaciones sobre este ingrediente..."></textarea>' +
+        '</div>';
+    } else if (tab === 'kardex') {
+      var rows = d.kardex.length ? d.kardex.map(function (k) {
+        var color = k.cant.startsWith('+') ? 'var(--success)' : 'var(--error)';
+        return '<div style="display:grid;grid-template-columns:80px 1fr 90px 90px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;align-items:center;">' +
+          '<div style="color:var(--muted);">' + k.fecha + '</div>' +
+          '<div>' + k.op + '</div>' +
+          '<div style="color:' + color + ';font-weight:600;text-align:right;">' + k.cant + '</div>' +
+          '<div style="text-align:right;color:var(--muted);">' + k.saldo + '</div>' +
+        '</div>';
+      }).join('') : '<div style="color:var(--muted);font-size:12px;padding:16px 0;text-align:center;">Sin movimientos registrados</div>';
+      body.innerHTML =
+        '<div style="display:grid;grid-template-columns:80px 1fr 90px 90px;padding:0 0 8px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">' +
+          '<div>Fecha</div><div>Operación</div><div style="text-align:right">Cantidad</div><div style="text-align:right">Saldo</div>' +
+        '</div>' + rows;
+    } else {
+      body.innerHTML =
+        '<div class="field"><label class="field-label">Stock mínimo</label>' +
+          '<input type="number" class="field-input" value="' + (parseInt(d.min) || 5) + '">' +
+        '</div>' +
+        '<div class="field"><label class="field-label">Notificar por</label>' +
+          '<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">' +
+            checkRow('email', 'Correo electrónico', true) +
+            checkRow('app', 'Notificación en app', true) +
+            checkRow('sms', 'SMS', false) +
+          '</div>' +
+        '</div>' +
+        '<div class="field"><label class="field-label">Proveedor de reposición</label>' +
+          '<select class="field-input"><option>' + d.proveedor + '</option><option>Fruver La Cosecha</option><option>Distribuidora El Valle S.A.S</option></select>' +
+        '</div>';
+    }
+  }
+
+  function campo(label, val) {
+    return '<div><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;">' + label + '</div>' +
+      '<div style="font-size:13px;color:var(--text);font-weight:500;">' + val + '</div></div>';
+  }
+
+  function checkRow(id, label, checked) {
+    return '<label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">' +
+      '<input type="checkbox" ' + (checked ? 'checked' : '') + ' style="accent-color:var(--accent);"> ' + label + '</label>';
+  }
+
+  // Click en fila de ingrediente
+  document.querySelectorAll('.inv-table-row').forEach(function (row) {
+    row.style.cursor = 'pointer';
+    row.addEventListener('click', function (e) {
+      if (e.target.closest('.inv-row-btn')) return;
+      var nombre = row.querySelector('[data-label="Nombre"]')?.textContent || row.dataset.nombre || 'Ingrediente';
+      abrirDrawerIng(nombre.trim());
+    });
+  });
 
   // Search en vivo
   const invSearch = document.getElementById('invSearch');

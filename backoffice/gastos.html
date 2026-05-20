@@ -103,7 +103,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -359,9 +359,29 @@
       </div>
       <div class="modal-body">
         <div class="form-grid-2" style="margin-bottom:0">
-          <div class="field">
+          <div class="field" style="grid-column:1/-1;">
             <label class="field-label">Proveedor</label>
-            <input class="field-input" type="text" placeholder="Nombre del proveedor" id="gastoProveedor" />
+            <select class="field-input" id="gastoProveedor" onchange="toggleNuevoProveedor(this.value)">
+              <option value="">Seleccionar proveedor...</option>
+              <option>Distribuidora El Valle S.A.S</option>
+              <option>Carnes Premium del Llano</option>
+              <option>Cervecería Nacional S.A</option>
+              <option>Fruver La Cosecha</option>
+              <option>Empaques del Pacífico</option>
+              <option>Gas Natural Fenosa</option>
+              <option value="__nuevo__">+ Crear nuevo proveedor</option>
+            </select>
+            <!-- Inline: crear nuevo proveedor -->
+            <div id="nuevoProveedorInline" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(79,70,229,.04);border:1px dashed var(--accent);border-radius:8px;">
+              <div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em;">Nuevo proveedor</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div class="field" style="margin-bottom:0;"><label class="field-label" style="font-size:11px;">Nombre *</label><input class="field-input" id="nuevoProvNombre" type="text" placeholder="Distribuidora XYZ"></div>
+                <div class="field" style="margin-bottom:0;"><label class="field-label" style="font-size:11px;">Teléfono</label><input class="field-input" id="nuevoProvTel" type="tel" placeholder="310 234 5678"></div>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" style="margin-top:10px;" onclick="guardarNuevoProv()">
+                <i data-lucide="check" style="width:11px;height:11px;"></i> Guardar y seleccionar
+              </button>
+            </div>
           </div>
           <div class="field">
             <label class="field-label">Concepto</label>
@@ -414,8 +434,30 @@
   <script>
     if (window.lucide) window.lucide.createIcons();
 
+    function toggleNuevoProveedor(val) {
+      var inline = document.getElementById('nuevoProveedorInline');
+      if (inline) inline.style.display = val === '__nuevo__' ? 'block' : 'none';
+    }
+
+    function guardarNuevoProv() {
+      var nombre = document.getElementById('nuevoProvNombre').value.trim();
+      if (!nombre) { UI.toast({ type: 'error', title: 'Ingresa el nombre del proveedor' }); return; }
+      var sel = document.getElementById('gastoProveedor');
+      // Insertar opción antes de "__nuevo__"
+      var newOpt = document.createElement('option');
+      newOpt.value = nombre;
+      newOpt.textContent = nombre;
+      sel.insertBefore(newOpt, sel.querySelector('[value="__nuevo__"]'));
+      sel.value = nombre;
+      toggleNuevoProveedor(nombre);
+      document.getElementById('nuevoProvNombre').value = '';
+      document.getElementById('nuevoProvTel').value = '';
+      UI.toast({ type: 'success', title: 'Proveedor creado', sub: nombre });
+    }
+
     document.getElementById('btnGuardarGasto').addEventListener('click', function () {
-      var proveedor = document.getElementById('gastoProveedor').value || 'Nuevo proveedor';
+      var proveedor = document.getElementById('gastoProveedor').value || 'Sin proveedor';
+      if (proveedor === '__nuevo__') { UI.toast({ type: 'error', title: 'Guarda el nuevo proveedor primero' }); return; }
       var monto = document.getElementById('gastoMonto').value || '0';
       UI.closeModal('modalGasto');
       UI.toast({ type: 'success', title: 'Gasto registrado', sub: proveedor + ' · $' + parseInt(monto).toLocaleString('es-CO') });
