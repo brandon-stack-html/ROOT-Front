@@ -1,0 +1,212 @@
+/* ============================================================================
+   utilities.css — Sprint 10 (Pulido y QA)
+   Reglas globales: a11y (focus visible, skip-link, reduced-motion),
+   navegación global (back-home, Ctrl+K jumper), skeletons.
+   ============================================================================ */
+
+/* ---------- Wordmark [ROOT] ---------- */
+.root-wordmark {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--accent);
+  letter-spacing: 0.10em;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ---------- A11y: focus visible ---------- */
+:focus { outline: none; }
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.field-input:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  border-color: var(--accent);
+}
+
+/* ---------- A11y: skip link ---------- */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent);
+  color: #fff;
+  padding: 8px 16px;
+  z-index: 1000;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 8px 0;
+  transition: top 150ms ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 0;
+  outline: 3px solid #fff;
+  outline-offset: -3px;
+}
+
+/* ---------- A11y: reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Navegación: botón "Volver al demo" ---------- */
+.nav-back-home {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 200;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  text-decoration: none;
+  border: none;
+}
+.nav-back-home:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+}
+.nav-back-home:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.nav-back-home i {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---------- Navegación: modal de salto Ctrl+K ---------- */
+.nav-jump-modal .modal-header {
+  padding: 12px 14px;
+  gap: 10px;
+}
+.nav-jump-input {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  padding: 6px 8px;
+  color: var(--text);
+}
+.nav-jump-input:focus,
+.nav-jump-input:focus-visible {
+  outline: none;
+  border: none;
+}
+.nav-jump-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+.nav-jump-item {
+  padding: 10px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+}
+.nav-jump-item:hover,
+.nav-jump-item.is-selected {
+  background: var(--alt);
+}
+.nav-jump-item-name {
+  flex: 1;
+  font-weight: 500;
+}
+.nav-jump-module {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--alt);
+  flex-shrink: 0;
+}
+.nav-jump-item.is-selected .nav-jump-module {
+  background: var(--bg);
+}
+.nav-jump-empty {
+  padding: 32px 18px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+.nav-jump-hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+.nav-jump-hint kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--alt);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  color: var(--text);
+  margin: 0 2px;
+}
+
+/* ---------- Skeleton (estados de carga) ---------- */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--alt) 0%,
+    var(--bg) 50%,
+    var(--alt) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+  border-radius: 6px;
+  display: inline-block;
+}
+.skeleton-text { height: 12px; width: 100%; }
+.skeleton-title { height: 20px; width: 60%; }
+.skeleton-circle { border-radius: 50%; }
+
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
