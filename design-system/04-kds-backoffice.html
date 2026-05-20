@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sesión 4 — KDS + Backoffice Core · Inventario</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; width: 100%; overflow: hidden; }
+    body { font-family: Inter, sans-serif; background: #F0F0F2; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Sistema base -->
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="ds-tokens.jsx"></script>
+  <script type="text/babel" src="ds-components.jsx"></script>
+
+  <!-- KDS -->
+  <script type="text/babel" src="kds/kds-shared.jsx"></script>
+  <script type="text/babel" src="kds/kds-d1-main.jsx"></script>
+  <script type="text/babel" src="kds/kds-d2-config.jsx"></script>
+
+  <!-- Backoffice -->
+  <script type="text/babel" src="backoffice/bo-shared.jsx"></script>
+  <script type="text/babel" src="backoffice/bo-b1-dashboard.jsx"></script>
+  <script type="text/babel" src="backoffice/bo-b8-catalogo.jsx"></script>
+  <script type="text/babel" src="backoffice/bo-b11-inventario.jsx"></script>
+
+  <script type="text/babel">
+    const App = () => (
+      <DesignCanvas title="Sesión 4 · KDS + Backoffice Core">
+
+        {/* ── KDS — Tablet 1024×768 ─────────────────────────── */}
+        <DCSection id="d1" title="D1 · KDS Pantalla principal" subtitle="Tablet 1024×768 · 4 estados de urgencia">
+          <DCArtboard id="d1-dark"  label="Tablet · Oscuro (principal)" width={1024} height={768}>
+            <KDSD1Main t={DST.dark}/>
+          </DCArtboard>
+          <DCArtboard id="d1-light" label="Tablet · Claro (alternativo)" width={1024} height={768}>
+            <KDSD1Main t={DST.light}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="d2" title="D2 · KDS Configuración" subtitle="Modal sobre KDS">
+          <DCArtboard id="d2-dark"  label="Tablet · Oscuro" width={1024} height={768}>
+            <KDSD2Config t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        {/* ── Backoffice — Desktop 1440×900 ─────────────────── */}
+        <DCSection id="b1" title="B1 · Dashboard" subtitle="Versión A (día normal) y B (con alertas críticas) · KPIs + charts + Estado DIAN">
+          <DCArtboard id="b1a-light" label="Versión A · Claro"  width={1440} height={900}>
+            <BOB1Dashboard t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="b1a-dark"  label="Versión A · Oscuro" width={1440} height={900}>
+            <BOB1Dashboard t={DST.dark}/>
+          </DCArtboard>
+          <DCArtboard id="b1b-light" label="Versión B · Claro · Con alertas"  width={1440} height={900}>
+            <BOB1Dashboard t={DST.light} alertas={true}/>
+          </DCArtboard>
+          <DCArtboard id="b1b-dark"  label="Versión B · Oscuro · Con alertas" width={1440} height={900}>
+            <BOB1Dashboard t={DST.dark} alertas={true}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="b8" title="B8 · Catálogo de productos" subtitle="Árbol de categorías + grid 3 cols">
+          <DCArtboard id="b8-light" label="Desktop · Claro"  width={1440} height={900}>
+            <BOB8Catalogo t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="b8-dark"  label="Desktop · Oscuro" width={1440} height={900}>
+            <BOB8Catalogo t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="b11" title="B11 · Inventario" subtitle="KPIs + tabla con estados de stock">
+          <DCArtboard id="b11-light" label="Desktop · Claro"  width={1440} height={900}>
+            <BOB11Inventario t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="b11-dark"  label="Desktop · Oscuro" width={1440} height={900}>
+            <BOB11Inventario t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+      </DesignCanvas>
+    );
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>

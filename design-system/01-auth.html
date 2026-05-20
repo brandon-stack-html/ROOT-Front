@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sesión 1 — Autenticación · Inventario</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; width: 100%; overflow: hidden; }
+    body { font-family: Inter, sans-serif; background: #F0F0F2; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Sistema de diseño base (reuso) -->
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="ds-tokens.jsx"></script>
+  <script type="text/babel" src="ds-components.jsx"></script>
+
+  <!-- Auth: helpers + pantallas -->
+  <script type="text/babel" src="auth/auth-shared.jsx"></script>
+  <script type="text/babel" src="auth/auth-a1-login.jsx"></script>
+  <script type="text/babel" src="auth/auth-a2-registro.jsx"></script>
+  <script type="text/babel" src="auth/auth-a3-recuperar.jsx"></script>
+  <script type="text/babel" src="auth/auth-a4-restablecer.jsx"></script>
+  <script type="text/babel" src="auth/auth-a5-selector.jsx"></script>
+
+  <script type="text/babel">
+    const App = () => (
+      <DesignCanvas title="Sesión 1 · Autenticación — Entrada al sistema">
+
+        {/* ── A1 · Login ──────────────────────────────────────── */}
+        <DCSection id="a1" title="A1 · Login" subtitle="Entrada principal · 4 versiones">
+          <DCArtboard id="a1-desktop-light" label="Desktop · Claro"  width={1440} height={900}>
+            <AuthA1Login t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="a1-desktop-dark"  label="Desktop · Oscuro" width={1440} height={900}>
+            <AuthA1Login t={DST.dark}/>
+          </DCArtboard>
+          <DCArtboard id="a1-mobile-light"  label="Móvil · Claro"    width={390}  height={844}>
+            <AuthA1Login t={DST.light} mobile/>
+          </DCArtboard>
+          <DCArtboard id="a1-mobile-dark"   label="Móvil · Oscuro"   width={390}  height={844}>
+            <AuthA1Login t={DST.dark} mobile/>
+          </DCArtboard>
+        </DCSection>
+
+        {/* ── A2 · Registro de negocio ────────────────────────── */}
+        <DCSection id="a2" title="A2 · Registro de negocio" subtitle="Onboarding · stepper paso 1 · 2 versiones">
+          <DCArtboard id="a2-light" label="Desktop · Claro"  width={1440} height={900}>
+            <AuthA2Registro t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="a2-dark"  label="Desktop · Oscuro" width={1440} height={900}>
+            <AuthA2Registro t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        {/* ── A3 · Recuperar contraseña ───────────────────────── */}
+        <DCSection id="a3" title="A3 · Recuperar contraseña" subtitle="Card 380px · 2 versiones">
+          <DCArtboard id="a3-light" label="Desktop · Claro"  width={1440} height={900}>
+            <AuthA3Recuperar t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="a3-dark"  label="Desktop · Oscuro" width={1440} height={900}>
+            <AuthA3Recuperar t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        {/* ── A4 · Restablecer contraseña ─────────────────────── */}
+        <DCSection id="a4" title="A4 · Restablecer contraseña" subtitle="Barra de fuerza + checklist · 2 versiones">
+          <DCArtboard id="a4-light" label="Desktop · Claro"  width={1440} height={900}>
+            <AuthA4Restablecer t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="a4-dark"  label="Desktop · Oscuro" width={1440} height={900}>
+            <AuthA4Restablecer t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        {/* ── A5 · Selector de sucursal ───────────────────────── */}
+        <DCSection id="a5" title="A5 · Selector de sucursal" subtitle="Post-login · grid 3 sucursales · 3 versiones">
+          <DCArtboard id="a5-desktop-light" label="Desktop · Claro"  width={1440} height={900}>
+            <AuthA5Selector t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="a5-desktop-dark"  label="Desktop · Oscuro" width={1440} height={900}>
+            <AuthA5Selector t={DST.dark}/>
+          </DCArtboard>
+          <DCArtboard id="a5-mobile-light"  label="Móvil · Claro"    width={390}  height={844}>
+            <AuthA5Selector t={DST.light} mobile/>
+          </DCArtboard>
+        </DCSection>
+
+      </DesignCanvas>
+    );
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>

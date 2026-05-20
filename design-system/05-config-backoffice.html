@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sesión 5 — Backoffice Config (Usuarios, Roles, Configuración) · Inventario</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; width: 100%; overflow: hidden; }
+    body { font-family: Inter, sans-serif; background: #F0F0F2; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Sistema base -->
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="ds-tokens.jsx"></script>
+  <script type="text/babel" src="ds-components.jsx"></script>
+
+  <!-- Backoffice -->
+  <script type="text/babel" src="backoffice/bo-shared.jsx"></script>
+  <script type="text/babel" src="backoffice/bo-b2-usuarios.jsx"></script>
+  <script type="text/babel" src="backoffice/bo-b3-drawer-usuario.jsx"></script>
+  <script type="text/babel" src="backoffice/bo-b4-roles.jsx"></script>
+  <script type="text/babel" src="backoffice/bo-b5-config-general.jsx"></script>
+  <script type="text/babel" src="backoffice/bo-b6-config-sucursales.jsx"></script>
+  <script type="text/babel" src="backoffice/bo-b7-config-mesas.jsx"></script>
+
+  <script type="text/babel">
+    const W = 1440, H = 900;
+
+    const App = () => (
+      <DesignCanvas title="Sesión 5 · Backoffice — Usuarios, Roles y Configuración">
+
+        <DCSection id="b2" title="B2 · Gestión de usuarios" subtitle="Tabla con datos colombianos · 5 filas · paginación">
+          <DCArtboard id="b2-light" label="Desktop · Claro"  width={W} height={H}>
+            <BOB2Usuarios t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="b2-dark"  label="Desktop · Oscuro" width={W} height={H}>
+            <BOB2Usuarios t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="b3" title="B3 · Drawer crear usuario" subtitle="Drawer 480px sobre B2 dimmed · datos pre-llenados">
+          <DCArtboard id="b3-light" label="Desktop · Claro"  width={W} height={H}>
+            <BOB3DrawerUsuario t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="b3-dark"  label="Desktop · Oscuro" width={W} height={H}>
+            <BOB3DrawerUsuario t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="b4" title="B4 · Roles y permisos" subtitle="Lista de roles + matriz de permisos del rol Mesero">
+          <DCArtboard id="b4-light" label="Desktop · Claro"  width={W} height={H}>
+            <BOB4Roles t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="b4-dark"  label="Desktop · Oscuro" width={W} height={H}>
+            <BOB4Roles t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="b5" title="B5 · Configuración general" subtitle="Tab General · datos del negocio + preview de factura">
+          <DCArtboard id="b5-light" label="Desktop · Claro"  width={W} height={H}>
+            <BOB5ConfigGeneral t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="b5-dark"  label="Desktop · Oscuro" width={W} height={H}>
+            <BOB5ConfigGeneral t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="b6" title="B6 · Configuración — Sucursales" subtitle="Grid 3 cols · Norte (principal), Centro, Sur (inactiva) + agregar">
+          <DCArtboard id="b6-light" label="Desktop · Claro"  width={W} height={H}>
+            <BOB6ConfigSucursales t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="b6-dark"  label="Desktop · Oscuro" width={W} height={H}>
+            <BOB6ConfigSucursales t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="b7" title="B7 · Editor de salas y mesas" subtitle="Canvas SVG con grid milimetrado · Mesa 5 seleccionada">
+          <DCArtboard id="b7-light" label="Desktop · Claro"  width={W} height={H}>
+            <BOB7ConfigMesas t={DST.light}/>
+          </DCArtboard>
+          <DCArtboard id="b7-dark"  label="Desktop · Oscuro" width={W} height={H}>
+            <BOB7ConfigMesas t={DST.dark}/>
+          </DCArtboard>
+        </DCSection>
+
+      </DesignCanvas>
+    );
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
