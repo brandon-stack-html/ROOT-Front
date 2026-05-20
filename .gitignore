@@ -1,5 +1,40 @@
+# ── Sistema operativo ──────────────────────────────────────
 .DS_Store
-node_modules/
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Editores e IDEs ────────────────────────────────────────
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# ── Node (por si se usa servidor local) ───────────────────
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ── Variables de entorno / secretos ───────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Archivos temporales y logs ────────────────────────────
 *.log
+*.tmp
+*.temp
+*.cache
+
+# ── Claude Code — memoria interna (no es código del proyecto)
+memory/
+
+# ── Build / output ────────────────────────────────────────
+dist/
+build/
+out/
