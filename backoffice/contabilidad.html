@@ -144,7 +144,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -306,13 +306,18 @@
           </div>
         </div>
 
-        <!-- ── Tabs ── -->
-        <div class="cont-tabs" role="tablist">
-          <button class="cont-tab is-active" data-ctab="resumen" role="tab">Resumen</button>
-          <button class="cont-tab" data-ctab="plan" role="tab">Plan de cuentas</button>
-          <button class="cont-tab" data-ctab="libros" role="tab">Libros auxiliares</button>
-          <button class="cont-tab" data-ctab="costos" role="tab">Centro de costos</button>
-          <button class="cont-tab" data-ctab="impuestos" role="tab">Impuestos</button>
+        <!-- ── Tabs + Exportar ── -->
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+          <div class="cont-tabs" role="tablist">
+            <button class="cont-tab is-active" data-ctab="resumen" role="tab">Resumen</button>
+            <button class="cont-tab" data-ctab="plan" role="tab">Plan de cuentas</button>
+            <button class="cont-tab" data-ctab="libros" role="tab">Libros auxiliares</button>
+            <button class="cont-tab" data-ctab="costos" role="tab">Centro de costos</button>
+            <button class="cont-tab" data-ctab="impuestos" role="tab">Impuestos</button>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="btnExportarTab" onclick="exportarTabActual()">
+            <i data-lucide="download" style="width:12px;height:12px;"></i> Exportar
+          </button>
         </div>
 
         <!-- Panels (content added in 11.G, 11.H, 11.I) -->
@@ -824,6 +829,47 @@
     }
 
     if(window.lucide) window.lucide.createIcons();
+
+    // ── Exportar tab actual ──────────────────────────────────────────────────
+    var tabActual = 'resumen';
+    document.querySelectorAll('.cont-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() { tabActual = tab.dataset.ctab; });
+    });
+    var TAB_LABELS = { resumen:'Estado de Resultados', plan:'Plan de cuentas', libros:'Libros auxiliares', costos:'Centro de costos', impuestos:'Impuestos' };
+    function exportarTabActual() {
+      UI.toast({ type: 'success', title: TAB_LABELS[tabActual] + ' exportado', sub: 'Descargando PDF...' });
+    }
+    window.exportarTabActual = exportarTabActual;
+
+    // ── Click en cuenta del Plan → filtra Libros auxiliares ─────────────────
+    document.addEventListener('click', function(e) {
+      var row = e.target.closest('.tree-row[data-key]');
+      if (!row) return;
+      if (e.target.closest('.tree-toggle')) return; // solo para expand, no abrir libros
+      var cuentaNombre = row.querySelector('.code-num') ? row.querySelector('.code-num').textContent + ' ' : '';
+      cuentaNombre += row.querySelector('.code-name') ? row.querySelector('.code-name').textContent : '';
+
+      // Cambiar a tab Libros auxiliares
+      document.querySelectorAll('.cont-tab').forEach(function(t) { t.classList.remove('is-active'); });
+      document.querySelectorAll('.cont-panel').forEach(function(p) { p.classList.remove('is-active'); });
+      var librosTab = document.querySelector('[data-ctab="libros"]');
+      var librosPanel = document.getElementById('panel-libros');
+      if (librosTab) librosTab.classList.add('is-active');
+      if (librosPanel) librosPanel.classList.add('is-active');
+      tabActual = 'libros';
+
+      // Actualizar título del filtro activo en Libros
+      var filtroEl = document.getElementById('libros-cuenta-activa');
+      if (!filtroEl) {
+        filtroEl = document.createElement('div');
+        filtroEl.id = 'libros-cuenta-activa';
+        filtroEl.style.cssText = 'font-size:12px;color:var(--accent);font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:6px;';
+        if (librosPanel) librosPanel.insertBefore(filtroEl, librosPanel.firstChild);
+      }
+      filtroEl.innerHTML = '<i data-lucide="filter" style="width:12px;height:12px;"></i> Filtrando por: <strong>' + cuentaNombre.trim() + '</strong>' +
+        ' <button onclick="document.getElementById(\'libros-cuenta-activa\').remove()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px;padding:0 4px;">× Limpiar</button>';
+      if (window.lucide) window.lucide.createIcons();
+    });
   </script>
   <script src="../assets/js/nav.js"></script>
 </body>

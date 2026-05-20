@@ -431,7 +431,7 @@
     body.innerHTML = html;
     if (window.lucide) lucide.createIcons();
 
-    // Click en celda → ciclar valor
+    // Click en celda → ciclar valor + toast sutil auto-save
     body.querySelectorAll('.perm-cell[data-perm]').forEach(cell => {
       cell.addEventListener('click', () => {
         const gi = +cell.dataset.gi, ri = +cell.dataset.ri, ci = +cell.dataset.ci;
@@ -441,6 +441,7 @@
         data[roleId][gi].items[ri].perms[ci] = next;
         savePerms(data);
         renderPerms(roleId);
+        if (window.UI) UI.toast({ type: 'success', title: 'Permiso actualizado', sub: 'Guardado automáticamente' });
       });
     });
   }
@@ -524,8 +525,30 @@
 <script>
   document.getElementById('btnCrearRol')?.addEventListener('click', () => {
     const nombre = document.getElementById('nuevoRolNombre').value.trim();
+    const desc   = document.getElementById('nuevoRolDesc').value.trim() || 'Rol personalizado';
     if (!nombre) { UI.toast({ type: 'error', title: 'Ingresa un nombre para el rol' }); return; }
     UI.closeDrawer('crearRol');
+
+    // Inyectar nueva tarjeta animada en la lista de roles
+    const roleId = 'custom-' + nombre.toLowerCase().replace(/\s+/g, '-');
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'role-card-btn';
+    card.dataset.roleId = roleId;
+    card.style.cssText = 'animation:roleCardIn .4s ease;';
+    card.innerHTML =
+      '<div class="role-card-icon"><i data-lucide="star" style="width:17px;height:17px;color:var(--muted);"></i></div>' +
+      '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--text);">' + nombre + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + desc + '</div></div>' +
+      '<span class="role-card-count">0</span>';
+    card.addEventListener('click', function() { selectRole(roleId, card); });
+
+    // Insertar antes del botón "Crear rol personalizado"
+    const addBtn = document.querySelector('.roles-add-btn');
+    if (addBtn) addBtn.parentNode.insertBefore(card, addBtn);
+    if (window.lucide) window.lucide.createIcons();
+    selectRole(roleId, card);
+
     UI.toast({ type: 'success', title: 'Rol "' + nombre + '" creado', sub: 'Ajusta los permisos desde la matriz.' });
   });
 </script>

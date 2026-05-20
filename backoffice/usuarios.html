@@ -5,12 +5,80 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Usuarios · Backoffice</title>
+  <title>Empleados · Backoffice</title>
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* Tabs activos/inactivos */
+    .emp-state-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .emp-state-tab { padding: 10px 18px; font-size: 13px; font-weight: 600; color: var(--muted); border: none; background: transparent; cursor: pointer; font-family: var(--ff-base); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .emp-state-tab.is-active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* Drawer tabs internos */
+    .drawer-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .drawer-tab { padding: 8px 14px; font-size: 12px; font-weight: 600; color: var(--muted); border: none; background: transparent; cursor: pointer; font-family: var(--ff-base); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .drawer-tab.is-active { color: var(--accent); border-bottom-color: var(--accent); }
+    .drawer-panel { display: none; }
+    .drawer-panel.is-active { display: block; }
+
+    /* Action menu (···) */
+    .row-action-wrap { position: relative; }
+    .row-action-menu { position: absolute; right: 0; top: calc(100% + 4px); min-width: 200px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 6px; box-shadow: var(--shadow-lg); z-index: 100; display: none; }
+    .row-action-menu.is-open { display: block; }
+    .row-action-item { width: 100%; text-align: left; padding: 8px 10px; border-radius: 6px; background: transparent; border: none; cursor: pointer; font-size: 13px; font-family: var(--ff-base); color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .row-action-item:hover { background: var(--alt); }
+    .row-action-item.is-destructive { color: var(--error); }
+    .row-action-item[disabled] { opacity: .4; cursor: not-allowed; }
+    .row-action-item[disabled]:hover { background: transparent; }
+
+    /* Role chips compactas */
+    .role-chip { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; text-transform: capitalize; background: var(--alt); color: var(--muted); }
+    .role-chip.admin   { background: rgba(239,68,68,.12); color: #991B1B; }
+    .role-chip.gerente { background: rgba(99,102,241,.14); color: #4338CA; }
+    .role-chip.cajero  { background: rgba(34,197,94,.12); color: #166534; }
+    .role-chip.mesero  { background: rgba(59,130,246,.12); color: #1E40AF; }
+    .role-chip.cocina  { background: rgba(245,158,11,.14); color: #92400E; }
+    [data-theme="dark"] .role-chip.admin   { background: rgba(239,68,68,.18); color: #FCA5A5; }
+    [data-theme="dark"] .role-chip.gerente { background: rgba(99,102,241,.22); color: #C4B5FD; }
+    [data-theme="dark"] .role-chip.cajero  { background: rgba(34,197,94,.2); color: #86EFAC; }
+    [data-theme="dark"] .role-chip.mesero  { background: rgba(59,130,246,.2); color: #93C5FD; }
+    [data-theme="dark"] .role-chip.cocina  { background: rgba(245,158,11,.2); color: #FCD34D; }
+
+    /* Tabla */
+    .emp-table-wrap { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .emp-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .emp-table th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--alt); }
+    .emp-table td { padding: 12px 14px; font-size: 13px; color: var(--text); border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .emp-table tr:last-child td { border-bottom: none; }
+    .emp-table .num { font-variant-numeric: tabular-nums; }
+    .emp-row-user { display: flex; align-items: center; gap: 10px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .emp-row-name { font-weight: 600; font-size: 13px; line-height: 1.2; }
+    .emp-row-email { font-size: 11px; color: var(--muted); font-family: monospace; }
+    .emp-table-scroll { overflow-x: auto; }
+
+    /* Slider tope */
+    .slider-row { display: flex; align-items: center; gap: 12px; }
+    .slider-row input[type=range] { flex: 1; -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: var(--border); outline: none; }
+    .slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 9px; background: var(--accent); cursor: pointer; }
+    .slider-val { min-width: 48px; text-align: right; font-weight: 700; font-size: 14px; color: var(--text); }
+
+    /* Switch row helper */
+    .seg-pill { display: inline-flex; padding: 3px; border: 1px solid var(--border); border-radius: 8px; background: var(--alt); }
+    .seg-pill button { padding: 6px 12px; border: none; background: transparent; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--muted); border-radius: 6px; font-family: var(--ff-base); }
+    .seg-pill button.is-active { background: var(--bg); color: var(--text); box-shadow: var(--shadow-sm); }
+
+    .form-input.is-error, .form-select.is-error { border-color: var(--error) !important; }
+    .form-input-error { font-size: 11px; color: var(--error); margin-top: 4px; }
+
+    .chip-multi { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip-multi label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; font-size: 12px; }
+    .chip-multi input { accent-color: var(--accent); }
+    .chip-multi label.is-checked { background: rgba(79,70,229,.12); border-color: var(--accent); color: var(--accent); }
+  </style>
 </head>
 <body>
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
@@ -20,15 +88,10 @@
   <!-- SIDEBAR -->
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
-      <div class="bo-sidebar-brand">
-        <span class="root-wordmark">[ROOT]</span>
-      </div>
+      <div class="bo-sidebar-brand"><span class="root-wordmark">[ROOT]</span></div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
-        <span class="bo-business-info">
-          <span class="label">Negocio</span>
-          <span class="name">El Buen Sabor</span>
-        </span>
+        <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
         <i data-lucide="chevron-down"></i>
       </button>
     </div>
@@ -52,7 +115,7 @@
         <div class="bo-sidebar-group-title">Nómina</div>
         <a href="./nomina.html" class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
         <a href="./adelantos.html" class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
-        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Detalle empleado</a>
       </div>
       <div class="bo-sidebar-group">
         <div class="bo-sidebar-group-title">Finanzas</div>
@@ -63,16 +126,13 @@
       <div class="bo-sidebar-group">
         <div class="bo-sidebar-group-title">Config</div>
         <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
-        <a href="./usuarios.html" class="bo-sidebar-item is-active"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./usuarios.html" class="bo-sidebar-item is-active"><i data-lucide="user-circle"></i>Empleados</a>
         <a href="./roles.html" class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
       </div>
     </nav>
     <div class="bo-sidebar-footer">
       <span class="bo-user-avatar">JC</span>
-      <span class="bo-user-info">
-        <span class="name">Juan Camilo R.</span>
-        <span class="role">Administrador</span>
-      </span>
+      <span class="bo-user-info"><span class="name">Juan Camilo R.</span><span class="role">Administrador</span></span>
       <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
     </div>
   </aside>
@@ -85,12 +145,11 @@
       <nav class="bo-breadcrumb">
         <span class="bo-breadcrumb-item">Inicio</span>
         <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
-        <span class="bo-breadcrumb-item is-active">Usuarios</span>
+        <span class="bo-breadcrumb-item is-active">Empleados</span>
       </nav>
       <div class="bo-topbar-spacer"></div>
       <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
       <div class="bo-topbar-actions">
-        <button class="bo-topbar-icon" type="button" aria-label="Buscar"><i data-lucide="search"></i></button>
         <button class="bo-topbar-icon" type="button" aria-label="Notificaciones"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
         <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
           <i data-lucide="sun" class="theme-icon-light"></i>
@@ -101,15 +160,16 @@
     </header>
 
     <main id="main" class="bo-content">
+
       <!-- Page Header -->
       <header class="bo-page-header">
         <div>
-          <h1>Usuarios</h1>
-          <p class="bo-page-subtitle">12 usuarios · 5 roles asignados</p>
+          <h1>Empleados</h1>
+          <p class="bo-page-subtitle" id="empSubtitle">—</p>
         </div>
         <div class="bo-page-actions">
-          <button class="btn btn-primary" data-open-drawer="crearUsuario">
-            <i data-lucide="plus"></i> Nuevo usuario
+          <button class="btn btn-primary" id="btnNuevoEmpleado" data-requires="users:write">
+            <i data-lucide="plus"></i> Nuevo empleado
           </button>
         </div>
       </header>
@@ -118,564 +178,911 @@
       <div class="bo-toolbar" style="margin-bottom:14px;">
         <div class="bo-toolbar-search">
           <i data-lucide="search"></i>
-          <input type="text" id="searchInput" placeholder="Buscar usuario..." />
+          <input type="text" id="searchInput" placeholder="Buscar por nombre o email…" />
         </div>
         <select class="bo-toolbar-filter" id="filterRol">
           <option value="">Rol: Todos</option>
-          <option value="Admin">Admin</option>
-          <option value="Mesera">Mesera</option>
-          <option value="Mesero">Mesero</option>
-          <option value="Cajero">Cajero</option>
-          <option value="Encargada">Encargada</option>
+          <option value="admin">Admin</option>
+          <option value="gerente">Gerente</option>
+          <option value="cajero">Cajero</option>
+          <option value="mesero">Mesero</option>
+          <option value="cocina">Cocina</option>
         </select>
-        <select class="bo-toolbar-filter" id="filterEstado">
-          <option value="">Estado: Todos</option>
-          <option value="activo">Activos</option>
-          <option value="inactivo">Inactivos</option>
+        <select class="bo-toolbar-filter" id="filterSucursal">
+          <option value="">Sucursal: Todas</option>
+          <option value="suc-norte">Sede Norte</option>
+          <option value="suc-sur">Sede Sur</option>
         </select>
         <div class="bo-toolbar-spacer"></div>
-        <button class="btn btn-ghost" style="display:flex;align-items:center;gap:6px;">
-          <i data-lucide="download" style="width:14px;height:14px;"></i> Exportar
-        </button>
+      </div>
+
+      <!-- Tabs activos / inactivos -->
+      <div class="emp-state-tabs">
+        <button type="button" class="emp-state-tab is-active" data-state-tab="activo">Activos (<span id="countActivos">0</span>)</button>
+        <button type="button" class="emp-state-tab" data-state-tab="inactivo">Inactivos (<span id="countInactivos">0</span>)</button>
       </div>
 
       <!-- Table -->
-      <div class="usuarios-table-wrap">
-        <div class="usuarios-header-row">
-          <div>Usuario</div>
-          <div>Email</div>
-          <div>Rol</div>
-          <div>Sucursales</div>
-          <div>Última conexión</div>
-          <div>Estado</div>
-          <div></div>
-        </div>
-        <div id="usuariosBody">
-          <!-- Fila 1 -->
-          <div class="usuarios-data-row" data-rol="Admin" data-estado="activo">
-            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
-              <div class="user-avatar" style="background:#FCA5A5;color:#7F1D1D;">JC</div>
-              <span style="font-size:13px;font-weight:500;">Juan Camilo R.</span>
-            </div>
-            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">jcamilo@buen-sabor.co</div>
-            <div><span class="role-chip admin">Admin</span></div>
-            <div style="font-size:12px;">Todas</div>
-            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Hace 2 min</div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-              <span class="status-dot" style="background:var(--success);"></span>Activo
-            </div>
-            <div style="display:flex;justify-content:flex-end;">
-              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
-                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
-              </button>
-            </div>
-          </div>
-          <!-- Fila 2 -->
-          <div class="usuarios-data-row" data-rol="Mesera" data-estado="activo">
-            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
-              <div class="user-avatar" style="background:#FCA5A5;color:#7F1D1D;">AG</div>
-              <span style="font-size:13px;font-weight:500;">Andrea García</span>
-            </div>
-            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">andrea.garcia@buen-sabor.co</div>
-            <div><span class="role-chip mesera">Mesera</span></div>
-            <div style="font-size:12px;">Sede Norte</div>
-            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Hace 15 min</div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-              <span class="status-dot" style="background:var(--success);"></span>Activo
-            </div>
-            <div style="display:flex;justify-content:flex-end;">
-              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
-                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
-              </button>
-            </div>
-          </div>
-          <!-- Fila 3 -->
-          <div class="usuarios-data-row" data-rol="Cajero" data-estado="activo">
-            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
-              <div class="user-avatar" style="background:#86EFAC;color:#14532D;">MR</div>
-              <span style="font-size:13px;font-weight:500;">Miguel Rodríguez</span>
-            </div>
-            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">m.rodriguez@buen-sabor.co</div>
-            <div><span class="role-chip cajero">Cajero</span></div>
-            <div style="font-size:12px;">Sede Norte</div>
-            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Ayer 20:34</div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-              <span class="status-dot" style="background:var(--success);"></span>Activo
-            </div>
-            <div style="display:flex;justify-content:flex-end;">
-              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
-                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
-              </button>
-            </div>
-          </div>
-          <!-- Fila 4 — Inactiva -->
-          <div class="usuarios-data-row is-inactive" data-rol="Encargada" data-estado="inactivo">
-            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
-              <div class="user-avatar" style="background:#E4E4E7;color:#71717A;">LP</div>
-              <span style="font-size:13px;font-weight:500;">Laura Pérez</span>
-            </div>
-            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">l.perez@buen-sabor.co</div>
-            <div><span class="role-chip encargada">Encargada</span></div>
-            <div style="font-size:12px;">Sede Centro</div>
-            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Hace 3 días</div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-              <span class="status-dot" style="background:var(--muted);"></span>Inactiva
-            </div>
-            <div style="display:flex;justify-content:flex-end;">
-              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
-                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
-              </button>
-            </div>
-          </div>
-          <!-- Fila 5 -->
-          <div class="usuarios-data-row" data-rol="Mesero" data-estado="activo">
-            <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
-              <div class="user-avatar" style="background:#93C5FD;color:#1E3A8A;">CF</div>
-              <span style="font-size:13px;font-weight:500;">Carlos Forero</span>
-            </div>
-            <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">c.forero@buen-sabor.co</div>
-            <div><span class="role-chip mesero">Mesero</span></div>
-            <div style="font-size:12px;">Sede Sur</div>
-            <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">Hace 1 hora</div>
-            <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-              <span class="status-dot" style="background:var(--success);"></span>Activo
-            </div>
-            <div style="display:flex;justify-content:flex-end;">
-              <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Más opciones">
-                <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
-              </button>
-            </div>
-          </div>
+      <div class="emp-table-wrap">
+        <div class="emp-table-scroll">
+          <table class="emp-table" id="empTable">
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>Rol</th>
+                <th>Sucursal</th>
+                <th>Salario base</th>
+                <th>Periodicidad</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="empTbody"></tbody>
+          </table>
         </div>
 
         <!-- Empty state -->
-        <div class="empty-state" id="usuariosEmpty" hidden>
+        <div class="empty-state" id="emptyEmpleados" hidden style="padding:32px;">
           <div class="empty-state-icon"><i data-lucide="users"></i></div>
-          <div class="empty-state-title">No encontramos usuarios</div>
-          <div class="empty-state-text">Probá con otro nombre o email, o limpiá los filtros activos.</div>
-          <button type="button" class="btn btn-secondary empty-state-action" id="usuariosClearFilters">
-            Limpiar filtros
+          <div class="empty-state-title" id="emptyTitle">Aún no tienes empleados</div>
+          <div class="empty-state-text" id="emptyText">Crea el primero para comenzar a gestionar tu equipo.</div>
+          <button type="button" class="btn btn-primary empty-state-action" id="emptyCta" data-requires="users:write">
+            <i data-lucide="plus" style="width:14px;height:14px"></i> Nuevo empleado
           </button>
         </div>
-
-        <!-- Paginación -->
-        <div class="bo-pagination">
-          <span class="bo-pagination-info">Mostrando 1–5 de 12 usuarios</span>
-          <div class="bo-pagination-pages">
-            <button class="bo-page-btn" aria-label="Anterior"><i data-lucide="chevron-left" style="width:13px;height:13px;"></i></button>
-            <button class="bo-page-btn is-active">1</button>
-            <button class="bo-page-btn">2</button>
-            <button class="bo-page-btn">3</button>
-            <button class="bo-page-btn" aria-label="Siguiente"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button>
-          </div>
-        </div>
       </div>
+
     </main>
   </div>
 </div>
 
-<!-- DRAWER: Editar usuario -->
-<div id="editarUsuario" class="drawer-backdrop">
+<!-- DRAWER: Crear / Editar empleado -->
+<div id="empDrawer" class="drawer-backdrop">
   <div class="drawer">
     <div class="drawer-header">
       <div>
-        <div class="drawer-title" id="editDrawerTitle">Editar usuario</div>
-        <div class="drawer-subtitle">Actualiza los datos de acceso</div>
+        <div class="drawer-title" id="drawerTitle">Nuevo empleado</div>
+        <div class="drawer-subtitle" id="drawerSubtitle">Datos, acceso y configuración de pago</div>
       </div>
       <button class="drawer-close" data-close aria-label="Cerrar">&times;</button>
     </div>
     <div class="drawer-body">
-      <div class="form-section">
-        <div class="form-section-title">Datos personales</div>
-        <div class="form-section-fields">
-          <div class="form-field">
-            <label class="form-label">Nombre completo</label>
-            <div class="form-input-wrap"><input type="text" id="editNombre" placeholder="Nombre y apellido" /></div>
-          </div>
-          <div class="form-field">
-            <label class="form-label">Email</label>
-            <div class="form-input-wrap"><input type="email" id="editEmail" placeholder="correo@ejemplo.com" /></div>
-          </div>
-        </div>
+
+      <!-- Tabs -->
+      <div class="drawer-tabs">
+        <button type="button" class="drawer-tab is-active" data-drawer-tab="datos">Datos</button>
+        <button type="button" class="drawer-tab" data-drawer-tab="acceso">Acceso</button>
+        <button type="button" class="drawer-tab" data-drawer-tab="nomina">Nómina</button>
       </div>
-      <div class="form-section">
-        <div class="form-section-title">Rol y estado</div>
-        <div class="form-section-fields">
-          <div class="form-field">
-            <label class="form-label">Rol</label>
-            <div class="form-input-wrap">
-              <select id="editRol">
-                <option>Mesero</option>
-                <option>Mesera</option>
-                <option>Cajero</option>
-                <option>Encargado</option>
-                <option>Encargada</option>
-                <option>Admin</option>
-              </select>
-              <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+
+      <!-- Panel: Datos personales -->
+      <div class="drawer-panel is-active" id="panel-datos">
+        <div class="form-section">
+          <div class="form-section-fields">
+            <div class="form-field">
+              <label class="form-label">Nombre completo *</label>
+              <div class="form-input-wrap"><input type="text" class="form-input" id="fNombre" placeholder="Nombre y apellido" /></div>
+              <div class="form-input-error" id="errNombre" hidden>Requerido</div>
             </div>
-          </div>
-          <div class="form-field">
-            <label class="form-label">Estado</label>
-            <div class="form-input-wrap">
-              <select id="editEstado">
-                <option value="activo">Activo</option>
-                <option value="inactivo">Inactivo</option>
-              </select>
-              <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
+            <div class="form-field">
+              <label class="form-label">Email *</label>
+              <div class="form-input-wrap"><input type="email" class="form-input" id="fEmail" placeholder="correo@empresa.co" /></div>
+              <div class="form-input-error" id="errEmail" hidden>Email inválido o duplicado</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Teléfono</label>
+              <div class="form-input-wrap"><input type="tel" class="form-input" id="fTelefono" placeholder="+57 300 000 0000" /></div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Número de documento (CC)</label>
+              <div class="form-input-wrap"><input type="text" class="form-input" id="fDocumento" placeholder="1.234.567" /></div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Fecha de ingreso *</label>
+              <div class="form-input-wrap"><input type="date" class="form-input" id="fFechaIngreso" /></div>
+              <div class="form-input-error" id="errFecha" hidden>Requerido</div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Panel: Acceso al sistema -->
+      <div class="drawer-panel" id="panel-acceso">
+        <div class="form-section">
+          <div class="form-section-fields">
+            <div class="form-field">
+              <label class="form-label">Rol *</label>
+              <div class="form-input-wrap">
+                <select class="form-select" id="fRol">
+                  <option value="admin">Admin</option>
+                  <option value="gerente">Gerente</option>
+                  <option value="cajero">Cajero</option>
+                  <option value="mesero" selected>Mesero</option>
+                  <option value="cocina">Cocina</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Sucursales asignadas *</label>
+              <div class="chip-multi" id="fSucursales">
+                <label><input type="checkbox" value="suc-norte" /> Sede Norte</label>
+                <label><input type="checkbox" value="suc-sur" /> Sede Sur</label>
+              </div>
+              <div class="form-input-error" id="errSucursales" hidden>Selecciona al menos una</div>
+            </div>
+            <div class="form-field" id="fPinRow">
+              <label class="form-label">PIN de acceso (4 dígitos)</label>
+              <div class="form-input-wrap"><input type="text" inputmode="numeric" maxlength="4" pattern="\d{4}" class="form-input" id="fPin" placeholder="1234" style="font-family:monospace;letter-spacing:.3em;" /></div>
+              <div class="form-input-hint" id="pinHint">El mesero o cocinero usa este PIN para entrar a la app.</div>
+              <div class="form-input-error" id="errPin" hidden>El PIN debe ser de exactamente 4 dígitos</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Estado</label>
+              <div class="seg-pill">
+                <button type="button" class="is-active" data-estado="activo">Activo</button>
+                <button type="button" data-estado="inactivo">Inactivo</button>
+              </div>
+            </div>
+            <!-- Invitación por email -->
+            <div class="form-field" id="inviteRow">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+                <input type="checkbox" id="chkInvitar" style="accent-color:var(--accent);" onchange="toggleInvitePreview()">
+                Enviar invitación por email
+              </label>
+              <div id="invitePreview" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(79,70,229,.04);border:1px dashed var(--accent);border-radius:8px;font-size:12px;line-height:1.6;">
+                <div style="font-weight:600;color:var(--accent);margin-bottom:6px;">Preview del email</div>
+                <div style="color:var(--text);">Para: <span id="prevEmail" style="font-weight:500;">—</span></div>
+                <div style="color:var(--muted);margin-top:4px;">Asunto: Invitación a ROOT POS — <span id="prevNegocio">El Buen Sabor</span></div>
+                <div style="color:var(--muted);margin-top:2px;">Hola, <span id="prevNombre">—</span>. Te invitamos a acceder a ROOT POS con el rol de <span id="prevRol">—</span>.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Configuración de nómina -->
+      <div class="drawer-panel" id="panel-nomina">
+        <div class="form-section">
+          <div class="form-section-fields">
+            <div class="form-field">
+              <label class="form-label">Salario base mensual *</label>
+              <div class="form-input-wrap"><input type="number" min="1623500" step="1000" class="form-input" id="fSalario" /></div>
+              <div class="form-input-hint" id="hintSalario">Mínimo SMMLV 2026: $1.623.500</div>
+              <div class="form-input-error" id="errSalario" hidden>El salario no puede ser menor al SMMLV 2026</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Periodicidad de pago *</label>
+              <div class="seg-pill" id="fPeriodicidad">
+                <button type="button" class="is-active" data-periodicidad="quincenal">Quincenal</button>
+                <button type="button" data-periodicidad="mensual">Mensual</button>
+              </div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Tope de adelanto: <span id="topeLabel">50</span>%</label>
+              <div class="slider-row">
+                <input type="range" id="fTope" min="10" max="80" step="5" value="50" />
+                <span class="slider-val" id="topeVal">50%</span>
+              </div>
+              <div class="form-input-hint" id="topePreview">Puede solicitar hasta —</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Método de pago *</label>
+              <div class="form-input-wrap">
+                <select class="form-select" id="fMetodo">
+                  <option value="transferencia">Transferencia bancaria</option>
+                  <option value="efectivo">Efectivo</option>
+                  <option value="nequi">Nequi</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field" id="fBancoRow">
+              <label class="form-label">Banco</label>
+              <div class="form-input-wrap"><input type="text" class="form-input" id="fBanco" placeholder="Ej: Bancolombia" /></div>
+            </div>
+            <div class="form-field" id="fCuentaRow">
+              <label class="form-label">Número de cuenta</label>
+              <div class="form-input-wrap"><input type="text" class="form-input" id="fCuenta" placeholder="xxxx-1234" /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="drawer-footer" style="flex-direction:column;gap:8px;">
       <div style="display:flex;gap:8px;width:100%;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Descartar</button>
-        <button class="btn btn-primary" id="btnGuardarUsuario" style="flex:2;display:flex;align-items:center;gap:6px;">
-          <i data-lucide="save" style="width:13px;height:13px;"></i> Guardar cambios
+        <button class="btn btn-secondary" data-close style="flex:1;">Cancelar</button>
+        <button class="btn btn-primary" id="btnGuardarEmp" style="flex:2;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <i data-lucide="save" style="width:13px;height:13px;"></i> <span id="btnGuardarLabel">Crear empleado</span>
         </button>
       </div>
-      <button class="btn" id="btnEliminarUsuario" data-requires="users:delete"
+      <button class="btn" id="btnDesactivarEmp" hidden
         style="width:100%;background:transparent;border:1px solid rgba(244,63,94,.22);color:var(--error);display:flex;align-items:center;justify-content:center;gap:6px;">
-        <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Eliminar usuario
+        <i data-lucide="user-x" style="width:13px;height:13px;"></i> <span id="btnDesactivarLabel">Desactivar empleado</span>
       </button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Confirmar eliminación -->
-<div id="modalEliminarUsuario" class="modal-backdrop">
+<!-- MODAL: Confirmar desactivación -->
+<div id="modalDesactivar" class="modal-backdrop">
   <div class="modal modal-sm" role="dialog">
     <div class="modal-header">
-      <span>Eliminar usuario</span>
+      <span id="modalDesactivarTitle">Desactivar empleado</span>
       <button class="modal-close" data-close aria-label="Cerrar">×</button>
     </div>
-    <div class="modal-body">
-      ¿Eliminar a <strong id="modalEliminarNombre">—</strong>? Esta acción no se puede deshacer.
-      Sus comandas históricas se conservan.
+    <div class="modal-body" id="modalDesactivarBody">¿Desactivar a <strong>—</strong>?</div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close>Cancelar</button>
+      <button class="btn btn-primary" id="confirmDesactivar">
+        <i data-lucide="user-x" style="width:13px;height:13px;"></i> <span id="confirmDesactivarLabel">Desactivar</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Eliminar permanentemente -->
+<div id="modalEliminar" class="modal-backdrop">
+  <div class="modal modal-sm" role="dialog">
+    <div class="modal-header">
+      <span>Eliminar empleado</span>
+      <button class="modal-close" data-close aria-label="Cerrar">×</button>
+    </div>
+    <div class="modal-body" id="modalEliminarBody">
+      ¿Eliminar a <strong>—</strong>? No podrá deshacerse. El historial de comandas y ventas se conserva.
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" data-close>Cancelar</button>
-      <button class="btn btn-destructive" id="confirmEliminarUsuario">
+      <button class="btn btn-destructive" id="confirmEliminar">
         <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Eliminar
       </button>
     </div>
   </div>
 </div>
 
-<!-- DRAWER: Nuevo usuario -->
-<div id="crearUsuario" class="drawer-backdrop">
+<!-- DRAWER: Ver detalle (solo lectura) -->
+<div id="empDetail" class="drawer-backdrop">
   <div class="drawer">
     <div class="drawer-header">
       <div>
-        <div class="drawer-title">Nuevo usuario</div>
-        <div class="drawer-subtitle">Completa los datos para crear el acceso</div>
+        <div class="drawer-title" id="detailName">—</div>
+        <div class="drawer-subtitle" id="detailSubtitle">—</div>
       </div>
       <button class="drawer-close" data-close aria-label="Cerrar">&times;</button>
     </div>
-    <div class="drawer-body">
-
-      <!-- Datos personales -->
-      <div class="form-section">
-        <div class="form-section-title">Datos personales</div>
-        <div class="form-section-fields">
-          <div class="form-field">
-            <label class="form-label">Nombre completo</label>
-            <div class="form-input-wrap">
-              <input type="text" id="nuevoNombre" value="Sara Vélez Quintero" placeholder="Nombre y apellido" />
-            </div>
-          </div>
-          <div class="form-field">
-            <label class="form-label">Email</label>
-            <div class="form-input-wrap">
-              <input type="email" id="nuevoEmail" value="s.velez@buen-sabor.co" placeholder="correo@ejemplo.com" />
-            </div>
-          </div>
-          <div class="form-field">
-            <label class="form-label">Contraseña inicial</label>
-            <div class="form-input-wrap">
-              <input type="text" id="nuevoPassword" value="Xk9$mPq2" style="font-family:monospace;letter-spacing:.06em;" />
-              <button class="form-input-action" type="button">
-                <i data-lucide="dices" style="width:12px;height:12px;"></i> Generar
-              </button>
-            </div>
-            <div class="form-input-hint">Le pediremos cambiarla en su primer ingreso.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Rol y acceso -->
-      <div class="form-section">
-        <div class="form-section-title">Rol y acceso</div>
-        <div class="form-section-fields">
-          <div class="form-field">
-            <label class="form-label">Rol</label>
-            <div class="form-input-wrap">
-              <select id="nuevoRol">
-                <option>Mesero</option>
-                <option>Cajero</option>
-                <option>Encargado</option>
-                <option>Repartidor</option>
-                <option>Administrador</option>
-              </select>
-              <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
-            </div>
-          </div>
-          <div class="form-field">
-            <label class="form-label">Sucursales asignadas</label>
-            <div class="chip-wrap">
-              <span class="chip">Sede Norte <button class="chip-remove" type="button" aria-label="Cerrar"><i data-lucide="x" style="width:11px;height:11px;"></i></button></span>
-              <span class="chip">Sede Sur <button class="chip-remove" type="button" aria-label="Cerrar"><i data-lucide="x" style="width:11px;height:11px;"></i></button></span>
-              <span class="chip-add-label">+ Agregar sucursal</span>
-            </div>
-          </div>
-          <div class="form-field">
-            <label class="form-label">Caja asignada</label>
-            <div class="form-input-wrap">
-              <input type="text" placeholder="Selecciona una caja" />
-              <i data-lucide="chevron-down" style="width:12px;height:12px;color:var(--muted);flex-shrink:0;"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Opciones adicionales -->
-      <div class="form-section">
-        <div class="form-section-title">Opciones adicionales</div>
-        <div class="form-section-fields">
-          <div class="switch-row">
-            <button class="switch is-on" type="button" onclick="this.classList.toggle('is-on')"></button>
-            <div class="switch-row-text">
-              <div class="switch-row-label">Es mesero</div>
-              <div class="switch-row-desc">Aparece en el selector de asignación de mesas.</div>
-            </div>
-          </div>
-          <div class="switch-row">
-            <button class="switch" type="button" onclick="this.classList.toggle('is-on')"></button>
-            <div class="switch-row-text">
-              <div class="switch-row-label">Es repartidor</div>
-              <div class="switch-row-desc">Recibe pedidos para entregas a domicilio.</div>
-            </div>
-          </div>
-          <div class="form-field">
-            <label class="form-label">PIN de autorización de mesa</label>
-            <div class="form-label-helper">Protege sus mesas de intervención de otros usuarios.</div>
-            <div class="pin-inputs" style="margin-top:8px;">
-              <div class="pin-cell">●</div>
-              <div class="pin-cell">●</div>
-              <div class="pin-cell">●</div>
-              <div class="pin-cell">●</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div class="drawer-body" id="detailBody"></div>
     <div class="drawer-footer">
-      <button class="btn btn-secondary" data-close>Cancelar</button>
-      <button class="btn btn-primary" id="btnCrearUsuario" style="display:flex;align-items:center;gap:6px;">
-        <i data-lucide="user-plus" style="width:13px;height:13px;"></i> Crear usuario
+      <button class="btn btn-secondary" data-close style="flex:1;">Cerrar</button>
+      <button class="btn btn-primary" id="btnEditarDesdeDetalle" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;" data-requires="users:write">
+        <i data-lucide="pencil" style="width:13px;height:13px"></i> Editar
       </button>
     </div>
   </div>
 </div>
 
+<script src="../assets/js/constants.js"></script>
+<script src="../assets/js/empleados.js"></script>
 <script src="../assets/js/ui.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script src="../assets/js/auth.js"></script>
 <script>
+(function () {
+  'use strict';
+
   if (window.lucide) lucide.createIcons();
 
-  // ── Seed de datos ─────────────────────────────────────────────────────────
-  const SEED_USUARIOS = [
-    { id:'u1',  nombre:'Juan Camilo R.',      email:'jcamilo@buen-sabor.co',          rol:'Admin',       sucursal:'Todas',       estado:'activo',   iniciales:'JC', avatarBg:'#FCA5A5', avatarColor:'#7F1D1D', lastSeen:'Hace 2 min' },
-    { id:'u2',  nombre:'Andrea García',       email:'andrea.garcia@buen-sabor.co',    rol:'Mesera',      sucursal:'Sede Norte',  estado:'activo',   iniciales:'AG', avatarBg:'#FCA5A5', avatarColor:'#7F1D1D', lastSeen:'Hace 15 min' },
-    { id:'u3',  nombre:'Miguel Rodríguez',    email:'m.rodriguez@buen-sabor.co',      rol:'Cajero',      sucursal:'Sede Norte',  estado:'activo',   iniciales:'MR', avatarBg:'#86EFAC', avatarColor:'#14532D', lastSeen:'Ayer 20:34' },
-    { id:'u4',  nombre:'Laura Pérez',         email:'l.perez@buen-sabor.co',          rol:'Encargada',   sucursal:'Sede Centro', estado:'inactivo', iniciales:'LP', avatarBg:'#E4E4E7', avatarColor:'#71717A', lastSeen:'Hace 3 días' },
-    { id:'u5',  nombre:'Carlos Forero',       email:'c.forero@buen-sabor.co',         rol:'Mesero',      sucursal:'Sede Sur',    estado:'activo',   iniciales:'CF', avatarBg:'#93C5FD', avatarColor:'#1E3A8A', lastSeen:'Hace 1 hora' },
-    { id:'u6',  nombre:'Sara Vélez Quintero', email:'s.velez@buen-sabor.co',          rol:'Mesera',      sucursal:'Sede Norte',  estado:'activo',   iniciales:'SV', avatarBg:'#DDD6FE', avatarColor:'#4C1D95', lastSeen:'Hace 30 min' },
-    { id:'u7',  nombre:'Andrés Morales',      email:'a.morales@buen-sabor.co',        rol:'Cajero',      sucursal:'Sede Centro', estado:'activo',   iniciales:'AM', avatarBg:'#FDE68A', avatarColor:'#78350F', lastSeen:'Hace 2 horas' },
-    { id:'u8',  nombre:'Valentina Ramos',     email:'v.ramos@buen-sabor.co',          rol:'Mesera',      sucursal:'Sede Sur',    estado:'activo',   iniciales:'VR', avatarBg:'#FCA5A5', avatarColor:'#7F1D1D', lastSeen:'Hace 5 min' },
-    { id:'u9',  nombre:'Diego Castillo',      email:'d.castillo@buen-sabor.co',       rol:'Mesero',      sucursal:'Sede Norte',  estado:'activo',   iniciales:'DC', avatarBg:'#6EE7B7', avatarColor:'#064E3B', lastSeen:'Hace 45 min' },
-    { id:'u10', nombre:'Luisa Herrera',       email:'l.herrera@buen-sabor.co',        rol:'Encargada',   sucursal:'Sede Sur',    estado:'activo',   iniciales:'LH', avatarBg:'#C4B5FD', avatarColor:'#4C1D95', lastSeen:'Hace 10 min' },
-    { id:'u11', nombre:'Felipe Ospina',       email:'f.ospina@buen-sabor.co',         rol:'Admin',       sucursal:'Todas',       estado:'activo',   iniciales:'FO', avatarBg:'#93C5FD', avatarColor:'#1E3A8A', lastSeen:'Hace 1 día' },
-    { id:'u12', nombre:'María Gómez',         email:'m.gomez@buen-sabor.co',          rol:'Cajero',      sucursal:'Sede Norte',  estado:'inactivo', iniciales:'MG', avatarBg:'#E4E4E7', avatarColor:'#71717A', lastSeen:'Hace 1 semana' },
-  ];
+  function toggleInvitePreview() {
+    var chk  = document.getElementById('chkInvitar');
+    var prev = document.getElementById('invitePreview');
+    if (!chk || !prev) return;
+    prev.style.display = chk.checked ? 'block' : 'none';
+    if (chk.checked) {
+      var nombre = (document.getElementById('fNombre') || {}).value || '—';
+      var email  = (document.getElementById('fEmail')  || {}).value || '—';
+      var rolSel = document.getElementById('fRol');
+      var rol    = rolSel ? rolSel.options[rolSel.selectedIndex].text : '—';
+      if (document.getElementById('prevNombre')) document.getElementById('prevNombre').textContent = nombre;
+      if (document.getElementById('prevEmail'))  document.getElementById('prevEmail').textContent  = email;
+      if (document.getElementById('prevRol'))    document.getElementById('prevRol').textContent    = rol;
+    }
+  }
+  window.toggleInvitePreview = toggleInvitePreview;
 
-  const USERS_KEY = 'root:users:v1';
+  var fmt = window.formatCOP || function (n) { return '$' + (n || 0).toLocaleString('es-CO'); };
+  var SMMLV = Empleados.SMMLV;
 
-  function getUsers() {
-    try {
-      const raw = localStorage.getItem(USERS_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch (e) {}
-    localStorage.setItem(USERS_KEY, JSON.stringify(SEED_USUARIOS));
-    return SEED_USUARIOS;
+  var ROL_LABEL = { admin:'Admin', gerente:'Gerente', cajero:'Cajero', mesero:'Mesero', cocina:'Cocina' };
+  var PERIODO_LABEL = { quincenal:'Quincenal', mensual:'Mensual' };
+  var METODO_LABEL = { transferencia:'Transferencia', efectivo:'Efectivo', nequi:'Nequi' };
+
+  // ── Estado UI ────────────────────────────────────────────────────────
+  var currentStateTab = 'activo';
+  var editingId = null;        // null = creando
+  var pendingActionId = null;  // empleado objetivo de modal desactivar/eliminar
+  var openMenuId = null;
+
+  // ── Render tabla ─────────────────────────────────────────────────────
+  function avatarHtml(emp) {
+    var c = Empleados.avatarColor(emp.id);
+    return '<div class="user-avatar" style="background:' + c.bg + ';color:' + c.fg + '">' + Empleados.iniciales(emp.nombre) + '</div>';
   }
 
-  function saveUsers(users) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  function sucursalesText(emp) {
+    if (!emp.sucursales || !emp.sucursales.length) return '—';
+    return emp.sucursales.map(Empleados.sucursalNombre).join(', ');
   }
 
-  // ── Render de tabla ───────────────────────────────────────────────────────
-  function buildRow(u) {
-    const rolClass = (u.rol || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-    const esActivo = u.estado === 'activo';
-    return `<div class="usuarios-data-row${esActivo ? '' : ' is-inactive'}" data-id="${u.id}" data-rol="${u.rol}" data-estado="${u.estado}">
-      <div class="user-col-user" style="display:flex;align-items:center;gap:10px;">
-        <div class="user-avatar" style="background:${u.avatarBg};color:${u.avatarColor};">${u.iniciales}</div>
-        <span style="font-size:13px;font-weight:500;">${u.nombre}</span>
-      </div>
-      <div class="user-col-email" style="font-size:12px;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.email}</div>
-      <div><span class="role-chip ${rolClass}">${u.rol}</span></div>
-      <div style="font-size:12px;">${u.sucursal}</div>
-      <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;">${u.lastSeen}</div>
-      <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-        <span class="status-dot" style="background:${esActivo ? 'var(--success)' : 'var(--muted)'};"></span>
-        ${esActivo ? 'Activo' : 'Inactivo'}
-      </div>
-      <div style="display:flex;justify-content:flex-end;">
-        <button class="btn btn-ghost" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;" aria-label="Editar" data-edit-id="${u.id}">
-          <i data-lucide="more-horizontal" style="width:15px;height:15px;"></i>
-        </button>
-      </div>
-    </div>`;
+  function rowHtml(emp) {
+    var rolClass = emp.rol;
+    var disabled = emp.estado === 'inactivo' ? ' style="opacity:.55"' : '';
+    return '' +
+      '<tr data-id="' + emp.id + '"' + disabled + '>' +
+        '<td>' +
+          '<div class="emp-row-user">' + avatarHtml(emp) +
+            '<div><div class="emp-row-name">' + escapeHtml(emp.nombre) + '</div>' +
+            '<div class="emp-row-email">' + escapeHtml(emp.email) + '</div></div>' +
+          '</div>' +
+        '</td>' +
+        '<td><span class="role-chip ' + rolClass + '">' + ROL_LABEL[emp.rol] + '</span></td>' +
+        '<td>' + escapeHtml(sucursalesText(emp)) + '</td>' +
+        '<td class="num">' + fmt(emp.nomina.salarioBase) + '</td>' +
+        '<td>' + PERIODO_LABEL[emp.nomina.periodicidad] + '</td>' +
+        '<td>' +
+          '<div class="row-action-wrap">' +
+            '<button class="btn btn-ghost" type="button" data-row-menu="' + emp.id + '" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;">' +
+              '<i data-lucide="more-horizontal" style="width:15px;height:15px"></i>' +
+            '</button>' +
+            buildRowMenu(emp) +
+          '</div>' +
+        '</td>' +
+      '</tr>';
   }
 
-  function renderTable() {
-    const users = getUsers();
-    const body = document.getElementById('usuariosBody');
-    body.innerHTML = users.map(buildRow).join('');
-    document.querySelector('.bo-page-subtitle').textContent = `${users.length} usuarios · 5 roles asignados`;
-    document.querySelector('.bo-pagination-info').textContent = `Mostrando 1–${Math.min(users.length, 10)} de ${users.length} usuarios`;
+  function buildRowMenu(emp) {
+    var canEliminar = Empleados.puedeEliminar(emp.id);
+    var html = '<div class="row-action-menu" id="menu-' + emp.id + '">' +
+      '<button class="row-action-item" data-action="ver" data-id="' + emp.id + '"><i data-lucide="eye" style="width:14px;height:14px"></i> Ver detalle</button>';
+    if (Auth.can('users:write')) {
+      html += '<button class="row-action-item" data-action="editar" data-id="' + emp.id + '"><i data-lucide="pencil" style="width:14px;height:14px"></i> Editar</button>';
+      if (emp.estado === 'activo') {
+        html += '<button class="row-action-item" data-action="desactivar" data-id="' + emp.id + '"><i data-lucide="user-x" style="width:14px;height:14px"></i> Desactivar</button>';
+      } else {
+        html += '<button class="row-action-item" data-action="activar" data-id="' + emp.id + '"><i data-lucide="user-check" style="width:14px;height:14px"></i> Activar</button>';
+      }
+      var dis = canEliminar ? '' : ' disabled title="Tiene historial de pagos"';
+      html += '<button class="row-action-item is-destructive" data-action="eliminar" data-id="' + emp.id + '"' + dis + '><i data-lucide="trash-2" style="width:14px;height:14px"></i> Eliminar permanentemente</button>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+    });
+  }
+
+  function applyFilters(list) {
+    var q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+    var rol = document.getElementById('filterRol').value;
+    var suc = document.getElementById('filterSucursal').value;
+    return list.filter(function (e) {
+      if (e.estado !== currentStateTab) return false;
+      if (rol && e.rol !== rol) return false;
+      if (suc && (!e.sucursales || e.sucursales.indexOf(suc) === -1)) return false;
+      if (q) {
+        var hay = (e.nombre + ' ' + e.email).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  function render() {
+    var all = Empleados.getAll();
+    var activos = all.filter(function (e) { return e.estado === 'activo'; });
+    var inactivos = all.filter(function (e) { return e.estado === 'inactivo'; });
+
+    document.getElementById('countActivos').textContent = activos.length;
+    document.getElementById('countInactivos').textContent = inactivos.length;
+
+    var roles = {};
+    all.forEach(function (e) { roles[e.rol] = true; });
+    document.getElementById('empSubtitle').textContent =
+      all.length + ' empleados · ' + Object.keys(roles).length + ' roles asignados';
+
+    var filtered = applyFilters(all);
+    var tbody = document.getElementById('empTbody');
+    var empty = document.getElementById('emptyEmpleados');
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '';
+      empty.hidden = false;
+      var q = document.getElementById('searchInput').value;
+      var rol = document.getElementById('filterRol').value;
+      var suc = document.getElementById('filterSucursal').value;
+      if (q || rol || suc) {
+        document.getElementById('emptyTitle').textContent = 'Sin resultados';
+        document.getElementById('emptyText').textContent = 'No encontramos empleados con esos filtros.';
+        document.getElementById('emptyCta').style.display = 'none';
+      } else if (currentStateTab === 'inactivo') {
+        document.getElementById('emptyTitle').textContent = 'No hay empleados inactivos';
+        document.getElementById('emptyText').textContent = 'Cuando desactives a alguien aparecerá aquí.';
+        document.getElementById('emptyCta').style.display = 'none';
+      } else {
+        document.getElementById('emptyTitle').textContent = 'Aún no tienes empleados';
+        document.getElementById('emptyText').textContent = 'Crea el primero para comenzar a gestionar tu equipo.';
+        document.getElementById('emptyCta').style.display = '';
+      }
+    } else {
+      empty.hidden = true;
+      tbody.innerHTML = filtered.map(rowHtml).join('');
+    }
+
     if (window.lucide) lucide.createIcons();
+    if (window.Auth) Auth.applyRequires();
     attachRowListeners();
-    filterTable();
   }
 
   function attachRowListeners() {
-    document.querySelectorAll('[data-edit-id]').forEach(btn => {
-      btn.addEventListener('click', e => {
+    document.querySelectorAll('[data-row-menu]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
         e.stopPropagation();
-        const id = btn.dataset.editId;
-        openEditDrawer(id);
+        var id = btn.dataset.rowMenu;
+        toggleMenu(id);
+      });
+    });
+    document.querySelectorAll('.row-action-item').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (btn.disabled) return;
+        var action = btn.dataset.action;
+        var id = btn.dataset.id;
+        closeAllMenus();
+        if (action === 'ver') openDetail(id);
+        else if (action === 'editar') openDrawer(id);
+        else if (action === 'desactivar') confirmDesactivar(id);
+        else if (action === 'activar') doActivar(id);
+        else if (action === 'eliminar') confirmEliminar(id);
       });
     });
   }
 
-  // ── Filtros ───────────────────────────────────────────────────────────────
-  const searchInput = document.getElementById('searchInput');
-  const filterRol = document.getElementById('filterRol');
-  const filterEstado = document.getElementById('filterEstado');
-  const usuariosEmpty = document.getElementById('usuariosEmpty');
+  function toggleMenu(id) {
+    if (openMenuId === id) { closeAllMenus(); return; }
+    closeAllMenus();
+    var m = document.getElementById('menu-' + id);
+    if (m) { m.classList.add('is-open'); openMenuId = id; }
+  }
+  function closeAllMenus() {
+    document.querySelectorAll('.row-action-menu.is-open').forEach(function (m) { m.classList.remove('is-open'); });
+    openMenuId = null;
+  }
+  document.addEventListener('click', closeAllMenus);
 
-  function filterTable() {
-    const q = searchInput.value.toLowerCase();
-    const rol = filterRol.value;
-    const estado = filterEstado.value;
-    let visible = 0;
-    document.querySelectorAll('#usuariosBody .usuarios-data-row').forEach(row => {
-      const nombre = row.querySelector('.user-col-user span').textContent.toLowerCase();
-      const email = row.querySelector('.user-col-email').textContent.toLowerCase();
-      const rowRol = row.dataset.rol || '';
-      const rowEstado = row.dataset.estado || '';
-      const matchQ = !q || nombre.includes(q) || email.includes(q);
-      const matchRol = !rol || rowRol === rol;
-      const matchEstado = !estado || rowEstado === estado;
-      const show = matchQ && matchRol && matchEstado;
-      row.style.display = show ? '' : 'none';
-      if (show) visible++;
+  // ── Tabs activo/inactivo ─────────────────────────────────────────────
+  document.querySelectorAll('.emp-state-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.emp-state-tab').forEach(function (t) { t.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      currentStateTab = tab.dataset.stateTab;
+      render();
     });
-    if (usuariosEmpty) usuariosEmpty.hidden = visible > 0;
-  }
-  searchInput.addEventListener('input', filterTable);
-  filterRol.addEventListener('change', filterTable);
-  filterEstado.addEventListener('change', filterTable);
-  document.getElementById('usuariosClearFilters')?.addEventListener('click', () => {
-    searchInput.value = ''; filterRol.value = ''; filterEstado.value = '';
-    filterTable();
   });
 
-  // ── Crear usuario ─────────────────────────────────────────────────────────
-  document.getElementById('btnCrearUsuario').addEventListener('click', () => {
-    const nombre = document.getElementById('nuevoNombre').value || 'Nuevo usuario';
-    const email  = document.getElementById('nuevoEmail').value  || 'usuario@buen-sabor.co';
-    const rol    = document.getElementById('nuevoRol').value    || 'Mesero';
-    const iniciales = nombre.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+  // ── Filtros ──────────────────────────────────────────────────────────
+  document.getElementById('searchInput').addEventListener('input', render);
+  document.getElementById('filterRol').addEventListener('change', render);
+  document.getElementById('filterSucursal').addEventListener('change', render);
 
-    const users = getUsers();
-    const newUser = {
-      id: 'u' + Date.now(), nombre, email, rol,
-      sucursal: 'Sede Norte', estado: 'activo',
-      iniciales, avatarBg: '#DDD6FE', avatarColor: '#4C1D95',
-      lastSeen: 'Ahora'
+  // ── Drawer: tabs internos ────────────────────────────────────────────
+  document.querySelectorAll('.drawer-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.drawer-tab').forEach(function (t) { t.classList.remove('is-active'); });
+      document.querySelectorAll('.drawer-panel').forEach(function (p) { p.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      document.getElementById('panel-' + tab.dataset.drawerTab).classList.add('is-active');
+    });
+  });
+
+  // ── Segmented pills (estado + periodicidad) ──────────────────────────
+  function bindSeg(selector, attr) {
+    document.querySelectorAll(selector + ' button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.parentElement.querySelectorAll('button').forEach(function (x) { x.classList.remove('is-active'); });
+        b.classList.add('is-active');
+      });
+    });
+  }
+  bindSeg('#panel-acceso .seg-pill', 'data-estado');
+  bindSeg('#fPeriodicidad', 'data-periodicidad');
+
+  // ── Visibilidad PIN según rol ────────────────────────────────────────
+  function syncPinVisibility() {
+    var rol = document.getElementById('fRol').value;
+    var show = (rol === 'mesero' || rol === 'cocina');
+    document.getElementById('fPinRow').style.display = show ? '' : 'none';
+  }
+  document.getElementById('fRol').addEventListener('change', syncPinVisibility);
+
+  // ── Visibilidad campos bancarios según método de pago ────────────────
+  function syncBancoVisibility() {
+    var m = document.getElementById('fMetodo').value;
+    var show = (m === 'transferencia');
+    document.getElementById('fBancoRow').style.display = show ? '' : 'none';
+    document.getElementById('fCuentaRow').style.display = show ? '' : 'none';
+  }
+  document.getElementById('fMetodo').addEventListener('change', syncBancoVisibility);
+
+  // ── Slider tope adelanto + preview en pesos ──────────────────────────
+  function updateTopePreview() {
+    var pct = parseInt(document.getElementById('fTope').value, 10);
+    var salario = parseInt(document.getElementById('fSalario').value, 10) || 0;
+    var devengado = Math.round(salario / 2); /* preview rápido sobre quincena */
+    var maxAdv = Math.round(devengado * pct / 100);
+    document.getElementById('topeLabel').textContent = pct;
+    document.getElementById('topeVal').textContent = pct + '%';
+    document.getElementById('topePreview').textContent = 'Puede solicitar hasta ' + fmt(maxAdv) + ' por periodo';
+  }
+  document.getElementById('fTope').addEventListener('input', updateTopePreview);
+  document.getElementById('fSalario').addEventListener('input', function () {
+    var v = parseInt(this.value, 10);
+    var err = document.getElementById('errSalario');
+    if (v && v < SMMLV) { this.classList.add('is-error'); err.hidden = false; }
+    else { this.classList.remove('is-error'); err.hidden = true; }
+    updateTopePreview();
+  });
+
+  // ── Drawer: abrir crear / editar ─────────────────────────────────────
+  function resetForm() {
+    document.getElementById('fNombre').value = '';
+    document.getElementById('fEmail').value = '';
+    document.getElementById('fTelefono').value = '';
+    document.getElementById('fDocumento').value = '';
+    document.getElementById('fFechaIngreso').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('fRol').value = 'mesero';
+    document.querySelectorAll('#fSucursales input').forEach(function (i) { i.checked = false; });
+    syncCheckedClasses();
+    document.getElementById('fPin').value = '';
+    document.querySelectorAll('#panel-acceso .seg-pill button').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.estado === 'activo');
+    });
+    document.getElementById('fSalario').value = SMMLV;
+    document.querySelectorAll('#fPeriodicidad button').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.periodicidad === 'quincenal');
+    });
+    document.getElementById('fTope').value = 50;
+    document.getElementById('fMetodo').value = 'transferencia';
+    document.getElementById('fBanco').value = '';
+    document.getElementById('fCuenta').value = '';
+    /* Reset errores */
+    ['errNombre','errEmail','errFecha','errSucursales','errPin','errSalario'].forEach(function (id) {
+      var el = document.getElementById(id); if (el) el.hidden = true;
+    });
+    document.querySelectorAll('.is-error').forEach(function (e) { e.classList.remove('is-error'); });
+    syncPinVisibility();
+    syncBancoVisibility();
+    updateTopePreview();
+    /* Vuelve al tab "Datos" */
+    document.querySelectorAll('.drawer-tab').forEach(function (t) { t.classList.toggle('is-active', t.dataset.drawerTab === 'datos'); });
+    document.querySelectorAll('.drawer-panel').forEach(function (p) { p.classList.toggle('is-active', p.id === 'panel-datos'); });
+  }
+
+  function fillForm(emp) {
+    document.getElementById('fNombre').value = emp.nombre || '';
+    document.getElementById('fEmail').value = emp.email || '';
+    document.getElementById('fTelefono').value = emp.telefono || '';
+    document.getElementById('fDocumento').value = emp.documento || '';
+    document.getElementById('fFechaIngreso').value = emp.fechaIngreso || '';
+    document.getElementById('fRol').value = emp.rol || 'mesero';
+    document.querySelectorAll('#fSucursales input').forEach(function (i) {
+      i.checked = (emp.sucursales || []).indexOf(i.value) !== -1;
+    });
+    syncCheckedClasses();
+    document.getElementById('fPin').value = emp.pin || '';
+    document.querySelectorAll('#panel-acceso .seg-pill button').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.estado === emp.estado);
+    });
+    document.getElementById('fSalario').value = emp.nomina.salarioBase;
+    document.querySelectorAll('#fPeriodicidad button').forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.periodicidad === emp.nomina.periodicidad);
+    });
+    document.getElementById('fTope').value = emp.nomina.topesAdelanto;
+    document.getElementById('fMetodo').value = emp.nomina.metodoPago;
+    document.getElementById('fBanco').value = emp.nomina.banco || '';
+    document.getElementById('fCuenta').value = emp.nomina.numeroCuenta || '';
+    syncPinVisibility();
+    syncBancoVisibility();
+    updateTopePreview();
+  }
+
+  function syncCheckedClasses() {
+    document.querySelectorAll('#fSucursales label').forEach(function (l) {
+      l.classList.toggle('is-checked', l.querySelector('input').checked);
+    });
+  }
+  document.querySelectorAll('#fSucursales input').forEach(function (i) {
+    i.addEventListener('change', syncCheckedClasses);
+  });
+
+  function openDrawer(id) {
+    editingId = id || null;
+    resetForm();
+    if (id) {
+      var emp = Empleados.getById(id);
+      if (!emp) return;
+      fillForm(emp);
+      document.getElementById('drawerTitle').textContent = 'Editar: ' + emp.nombre;
+      document.getElementById('drawerSubtitle').textContent = 'Datos, acceso y configuración de pago';
+      document.getElementById('btnGuardarLabel').textContent = 'Guardar cambios';
+      document.getElementById('btnDesactivarEmp').hidden = (emp.estado !== 'activo');
+      document.getElementById('btnDesactivarLabel').textContent = emp.estado === 'activo' ? 'Desactivar empleado' : 'Activar empleado';
+    } else {
+      document.getElementById('drawerTitle').textContent = 'Nuevo empleado';
+      document.getElementById('drawerSubtitle').textContent = 'Datos, acceso y configuración de pago';
+      document.getElementById('btnGuardarLabel').textContent = 'Crear empleado';
+      document.getElementById('btnDesactivarEmp').hidden = true;
+    }
+    if (window.lucide) lucide.createIcons();
+    UI.openDrawer('empDrawer');
+  }
+
+  document.getElementById('btnNuevoEmpleado').addEventListener('click', function () { openDrawer(null); });
+  document.getElementById('emptyCta').addEventListener('click', function () { openDrawer(null); });
+
+  // ── Drawer: guardar ──────────────────────────────────────────────────
+  function readForm() {
+    var checks = Array.prototype.slice.call(document.querySelectorAll('#fSucursales input:checked')).map(function (i) { return i.value; });
+    var estado = (document.querySelector('#panel-acceso .seg-pill button.is-active') || {}).dataset || { estado: 'activo' };
+    var periodicidad = (document.querySelector('#fPeriodicidad button.is-active') || {}).dataset || { periodicidad: 'quincenal' };
+    var rol = document.getElementById('fRol').value;
+    return {
+      nombre: document.getElementById('fNombre').value.trim(),
+      email: document.getElementById('fEmail').value.trim(),
+      telefono: document.getElementById('fTelefono').value.trim(),
+      documento: document.getElementById('fDocumento').value.trim(),
+      fechaIngreso: document.getElementById('fFechaIngreso').value,
+      rol: rol,
+      pin: (rol === 'mesero' || rol === 'cocina') ? document.getElementById('fPin').value.trim() : null,
+      sucursales: checks,
+      estado: estado.estado || 'activo',
+      nomina: {
+        salarioBase: parseInt(document.getElementById('fSalario').value, 10) || 0,
+        periodicidad: periodicidad.periodicidad || 'quincenal',
+        topesAdelanto: parseInt(document.getElementById('fTope').value, 10) || 50,
+        metodoPago: document.getElementById('fMetodo').value,
+        banco: document.getElementById('fBanco').value.trim(),
+        numeroCuenta: document.getElementById('fCuenta').value.trim(),
+      },
     };
-    users.push(newUser);
-    saveUsers(users);
-
-    UI.closeDrawer('crearUsuario');
-    UI.toast({ type: 'success', title: 'Usuario creado', sub: 'Se enviaron las credenciales por correo' });
-    renderTable();
-  });
-
-  // ── Editar usuario ────────────────────────────────────────────────────────
-  let editingUserId = null;
-
-  function openEditDrawer(id) {
-    const users = getUsers();
-    const u = users.find(x => x.id === id);
-    if (!u) return;
-    editingUserId = id;
-
-    document.getElementById('editNombre').value = u.nombre;
-    document.getElementById('editEmail').value  = u.email;
-    document.getElementById('editRol').value    = u.rol;
-    document.getElementById('editEstado').value = u.estado;
-    document.getElementById('editDrawerTitle').textContent = 'Editar: ' + u.nombre;
-    UI.openDrawer('editarUsuario');
   }
 
-  document.getElementById('btnGuardarUsuario').addEventListener('click', () => {
-    if (!editingUserId) return;
-    const users = getUsers();
-    const idx = users.findIndex(x => x.id === editingUserId);
-    if (idx === -1) return;
+  function validate(data) {
+    var ok = true;
+    var setErr = function (id, show) { var el = document.getElementById(id); if (el) el.hidden = !show; };
+    var setFieldErr = function (fieldId, show) { var el = document.getElementById(fieldId); if (el) el.classList.toggle('is-error', !!show); };
 
-    users[idx].nombre  = document.getElementById('editNombre').value || users[idx].nombre;
-    users[idx].email   = document.getElementById('editEmail').value  || users[idx].email;
-    users[idx].rol     = document.getElementById('editRol').value    || users[idx].rol;
-    users[idx].estado  = document.getElementById('editEstado').value || users[idx].estado;
-    users[idx].iniciales = users[idx].nombre.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+    setErr('errNombre', !data.nombre);
+    setFieldErr('fNombre', !data.nombre);
+    if (!data.nombre) ok = false;
 
-    saveUsers(users);
-    UI.closeDrawer('editarUsuario');
-    UI.toast({ type: 'success', title: 'Cambios guardados' });
-    renderTable();
-    editingUserId = null;
+    var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var emailBad = !emailRe.test(data.email);
+    var emailDup = false;
+    if (!emailBad) {
+      emailDup = Empleados.getAll().some(function (e) {
+        return e.id !== editingId && e.email.toLowerCase() === data.email.toLowerCase();
+      });
+    }
+    setErr('errEmail', emailBad || emailDup);
+    document.getElementById('errEmail').textContent = emailDup ? 'Ya existe un empleado con ese email' : 'Email inválido';
+    setFieldErr('fEmail', emailBad || emailDup);
+    if (emailBad || emailDup) ok = false;
+
+    setErr('errFecha', !data.fechaIngreso);
+    setFieldErr('fFechaIngreso', !data.fechaIngreso);
+    if (!data.fechaIngreso) ok = false;
+
+    setErr('errSucursales', data.sucursales.length === 0);
+    if (data.sucursales.length === 0) ok = false;
+
+    if (data.rol === 'mesero' || data.rol === 'cocina') {
+      var pinBad = !/^\d{4}$/.test(data.pin || '');
+      setErr('errPin', pinBad);
+      setFieldErr('fPin', pinBad);
+      if (pinBad) ok = false;
+    }
+
+    var salarioBad = !data.nomina.salarioBase || data.nomina.salarioBase < SMMLV;
+    setErr('errSalario', salarioBad);
+    setFieldErr('fSalario', salarioBad);
+    if (salarioBad) ok = false;
+
+    return ok;
+  }
+
+  document.getElementById('btnGuardarEmp').addEventListener('click', function () {
+    var data = readForm();
+    if (!validate(data)) return;
+
+    try {
+      if (editingId) {
+        Empleados.actualizar(editingId, data);
+        UI.toast({ type: 'success', title: 'Cambios guardados', sub: 'Nómina actualizada' });
+      } else {
+        Empleados.crear(data);
+        UI.toast({ type: 'success', title: 'Empleado creado', sub: 'Ya aparece en nómina' });
+      }
+      var savedId = editingId ? editingId : (Empleados.getAll().slice(-1)[0] || {}).id;
+      var sendInvite = document.getElementById('chkInvitar') && document.getElementById('chkInvitar').checked;
+      UI.closeDrawer('empDrawer');
+      editingId = null;
+      render();
+      // Highlight fila guardada
+      if (savedId) {
+        setTimeout(function() {
+          var row = document.querySelector('[data-id="' + savedId + '"]');
+          if (row) {
+            row.style.transition = 'background .1s';
+            row.style.background = 'rgba(79,70,229,.08)';
+            setTimeout(function() { row.style.background = ''; row.style.transition = ''; }, 2000);
+          }
+        }, 50);
+      }
+      if (sendInvite) {
+        var email = document.getElementById('fEmail').value;
+        UI.toast({ type: 'info', title: 'Invitación enviada', sub: 'A ' + email });
+      }
+    } catch (err) {
+      UI.toast({ type: 'error', title: 'No se pudo guardar', sub: err.message });
+    }
   });
 
-  document.getElementById('btnEliminarUsuario').addEventListener('click', () => {
-    if (!editingUserId) return;
-    const users = getUsers();
-    const u = users.find(x => x.id === editingUserId);
-    if (!u) return;
-    document.getElementById('modalEliminarNombre').textContent = u.nombre;
-    UI.closeDrawer('editarUsuario');
-    UI.openModal('modalEliminarUsuario');
+  // ── Desactivar / Activar / Eliminar ──────────────────────────────────
+  function confirmDesactivar(id) {
+    var emp = Empleados.getById(id); if (!emp) return;
+    pendingActionId = id;
+    var pendientes = Empleados.adelantosPendientes(id);
+    var body = '¿Desactivar a <strong>' + escapeHtml(emp.nombre) + '</strong>? Dejará de aparecer en la nómina activa, pero su historial se conserva.';
+    if (pendientes.length > 0) {
+      var monto = pendientes.reduce(function (s, a) { return s + (a.monto_aprobado || a.monto_solicitado); }, 0);
+      body += '<br><br><strong style="color:var(--warning)">Atención:</strong> tiene ' + pendientes.length +
+              ' adelanto(s) pendiente(s) por un total de ' + fmt(monto) + '. ¿Quieres continuar?';
+    }
+    document.getElementById('modalDesactivarBody').innerHTML = body;
+    document.getElementById('modalDesactivarTitle').textContent = 'Desactivar empleado';
+    document.getElementById('confirmDesactivarLabel').textContent = 'Desactivar';
+    UI.openModal('modalDesactivar');
+  }
+
+  function doActivar(id) {
+    try {
+      var emp = Empleados.actualizar(id, { estado: 'activo' });
+      UI.toast({ type: 'success', title: 'Empleado activado', sub: emp.nombre });
+      render();
+    } catch (e) {
+      UI.toast({ type: 'error', title: 'No se pudo activar', sub: e.message });
+    }
+  }
+
+  document.getElementById('confirmDesactivar').addEventListener('click', function () {
+    if (!pendingActionId) return;
+    try {
+      var emp = Empleados.desactivar(pendingActionId);
+      UI.toast({ type: 'success', title: 'Empleado desactivado', sub: emp.nombre });
+      UI.closeModal('modalDesactivar');
+      pendingActionId = null;
+      render();
+    } catch (e) {
+      UI.toast({ type: 'error', title: 'No se pudo desactivar', sub: e.message });
+    }
   });
 
-  document.getElementById('confirmEliminarUsuario').addEventListener('click', () => {
-    if (!editingUserId) return;
-    const users = getUsers().filter(x => x.id !== editingUserId);
-    saveUsers(users);
-    UI.closeModal('modalEliminarUsuario');
-    UI.toast({ type: 'success', title: 'Usuario eliminado' });
-    renderTable();
-    editingUserId = null;
+  function confirmEliminar(id) {
+    var emp = Empleados.getById(id); if (!emp) return;
+    if (!Empleados.puedeEliminar(id)) {
+      UI.toast({ type: 'warning', title: 'No se puede eliminar', sub: 'Tiene historial de pagos. Usa "Desactivar".' });
+      return;
+    }
+    pendingActionId = id;
+    document.getElementById('modalEliminarBody').innerHTML =
+      '¿Eliminar a <strong>' + escapeHtml(emp.nombre) + '</strong>? No podrá deshacerse. El historial de comandas y ventas se conserva.';
+    UI.openModal('modalEliminar');
+  }
+
+  document.getElementById('confirmEliminar').addEventListener('click', function () {
+    if (!pendingActionId) return;
+    try {
+      Empleados.eliminarPermanente(pendingActionId);
+      UI.toast({ type: 'success', title: 'Empleado eliminado' });
+      UI.closeModal('modalEliminar');
+      pendingActionId = null;
+      render();
+    } catch (e) {
+      UI.toast({ type: 'error', title: 'No se pudo eliminar', sub: e.message });
+    }
   });
 
-  // ── Init ─────────────────────────────────────────────────────────────────
-  renderTable();
+  // Botón desactivar dentro del drawer (sólo en modo edición)
+  document.getElementById('btnDesactivarEmp').addEventListener('click', function () {
+    if (!editingId) return;
+    var emp = Empleados.getById(editingId);
+    if (!emp) return;
+    UI.closeDrawer('empDrawer');
+    if (emp.estado === 'activo') {
+      confirmDesactivar(editingId);
+    } else {
+      doActivar(editingId);
+    }
+  });
+
+  // ── Drawer detalle (solo lectura) ────────────────────────────────────
+  function openDetail(id) {
+    var emp = Empleados.getById(id); if (!emp) return;
+    document.getElementById('detailName').textContent = emp.nombre;
+    document.getElementById('detailSubtitle').textContent = ROL_LABEL[emp.rol] + ' · ' + sucursalesText(emp);
+
+    var devengadoQuincena = Math.round(emp.nomina.salarioBase / 2);
+    var maxAdv = Math.round(devengadoQuincena * emp.nomina.topesAdelanto / 100);
+
+    var html = '' +
+      '<div class="form-section"><div class="form-section-title">Datos personales</div>' +
+        kv('Email', emp.email) +
+        kv('Teléfono', emp.telefono || '—') +
+        kv('Documento', emp.documento || '—') +
+        kv('Fecha de ingreso', emp.fechaIngreso || '—') +
+      '</div>' +
+      '<div class="form-section"><div class="form-section-title">Acceso</div>' +
+        kv('Rol', ROL_LABEL[emp.rol]) +
+        kv('Sucursales', sucursalesText(emp)) +
+        kv('PIN', emp.pin ? '••' + emp.pin.slice(-2) : '—') +
+        kv('Estado', emp.estado === 'activo' ? 'Activo' : 'Inactivo') +
+      '</div>' +
+      '<div class="form-section"><div class="form-section-title">Nómina</div>' +
+        kv('Salario base', fmt(emp.nomina.salarioBase)) +
+        kv('Periodicidad', PERIODO_LABEL[emp.nomina.periodicidad]) +
+        kv('Tope de adelanto', emp.nomina.topesAdelanto + '% (' + fmt(maxAdv) + ')') +
+        kv('Método de pago', METODO_LABEL[emp.nomina.metodoPago]) +
+        (emp.nomina.banco ? kv('Banco', emp.nomina.banco) : '') +
+        (emp.nomina.numeroCuenta ? kv('Cuenta', emp.nomina.numeroCuenta) : '') +
+      '</div>';
+    document.getElementById('detailBody').innerHTML = html;
+    document.getElementById('btnEditarDesdeDetalle').onclick = function () {
+      UI.closeDrawer('empDetail');
+      openDrawer(id);
+    };
+    if (window.lucide) lucide.createIcons();
+    UI.openDrawer('empDetail');
+  }
+
+  function kv(k, v) {
+    return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">' +
+      '<span style="color:var(--muted)">' + escapeHtml(k) + '</span>' +
+      '<span style="font-weight:600;text-align:right">' + escapeHtml(v) + '</span></div>';
+  }
+
+  // ── Boot ─────────────────────────────────────────────────────────────
+  render();
+
+  // Deep-link: ?edit=emp-001&tab=nomina abre el drawer y va al tab indicado
+  var qs = new URLSearchParams(window.location.search);
+  var editParam = qs.get('edit');
+  if (editParam) {
+    var emp = Empleados.getById(editParam);
+    if (emp) {
+      if (emp.estado === 'inactivo') {
+        currentStateTab = 'inactivo';
+        document.querySelectorAll('.emp-state-tab').forEach(function (t) {
+          t.classList.toggle('is-active', t.dataset.stateTab === 'inactivo');
+        });
+        render();
+      }
+      openDrawer(editParam);
+      var tab = qs.get('tab');
+      if (tab && document.querySelector('.drawer-tab[data-drawer-tab="' + tab + '"]')) {
+        document.querySelector('.drawer-tab[data-drawer-tab="' + tab + '"]').click();
+      }
+    }
+  }
+})();
 </script>
   <script src="../assets/js/nav.js"></script>
 </body>

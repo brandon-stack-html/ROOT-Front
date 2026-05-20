@@ -89,7 +89,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -444,9 +444,29 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer">
+      <!-- Email input (oculto hasta seleccionar esa opción) -->
+      <div id="emailReporteWrap" style="display:none;padding:0 22px 12px;">
+        <div class="field" style="margin-bottom:0;">
+          <label class="field-label">Correo destinatario</label>
+          <div style="display:flex;gap:8px;">
+            <input class="field-input" type="email" id="emailReporteInput" placeholder="destinatario@correo.com" style="flex:1;">
+            <button class="btn btn-primary btn-sm" id="btnEnviarReporteEmail">
+              <i data-lucide="send" style="width:12px;height:12px;"></i> Enviar
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="gap:6px;">
         <button class="btn btn-secondary" data-close>Cancelar</button>
-        <button class="btn btn-primary" id="btnDescargarReporte"><i data-lucide="download" style="width:13px;height:13px"></i>Descargar</button>
+        <button class="btn btn-secondary" id="btnDescPDF" style="display:flex;align-items:center;gap:5px;">
+          <i data-lucide="file-text" style="width:12px;height:12px;"></i> PDF
+        </button>
+        <button class="btn btn-secondary" id="btnDescExcel" style="display:flex;align-items:center;gap:5px;">
+          <i data-lucide="table" style="width:12px;height:12px;"></i> Excel
+        </button>
+        <button class="btn btn-primary" id="btnEnviarEmail" style="display:flex;align-items:center;gap:5px;">
+          <i data-lucide="mail" style="width:12px;height:12px;"></i> Por email
+        </button>
       </div>
     </div>
   </div>
@@ -463,9 +483,24 @@
       if (el) el.textContent = nombre;
     }
 
-    document.getElementById('btnDescargarReporte').addEventListener('click', function () {
+    function closeAndToast(formato) {
       UI.closeModal('modalGenerar');
-      UI.toast({ type: 'success', title: 'Reporte generado', sub: reporteActual + ' · Descargando...' });
+      document.getElementById('emailReporteWrap').style.display = 'none';
+      UI.toast({ type: 'success', title: reporteActual + ' generado', sub: 'Descargando ' + formato + '...' });
+    }
+    document.getElementById('btnDescPDF').addEventListener('click', function () { closeAndToast('PDF'); });
+    document.getElementById('btnDescExcel').addEventListener('click', function () { closeAndToast('Excel'); });
+    document.getElementById('btnEnviarEmail').addEventListener('click', function () {
+      var wrap = document.getElementById('emailReporteWrap');
+      wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+      if (window.lucide) window.lucide.createIcons();
+    });
+    document.getElementById('btnEnviarReporteEmail').addEventListener('click', function () {
+      var email = document.getElementById('emailReporteInput').value.trim();
+      if (!email) { UI.toast({ type: 'error', title: 'Ingresa un correo' }); return; }
+      UI.closeModal('modalGenerar');
+      document.getElementById('emailReporteWrap').style.display = 'none';
+      UI.toast({ type: 'success', title: reporteActual + ' enviado', sub: 'A ' + email });
     });
   </script>
   <script src="../assets/js/nav.js"></script>

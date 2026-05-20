@@ -21,7 +21,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -257,13 +257,34 @@
         </div>
       </div>
 
-      <!-- Footer guardar -->
-      <div class="page-save-footer">
-        <button class="btn btn-secondary">Descartar</button>
-        <button class="btn btn-primary" style="display:flex;align-items:center;gap:6px;"
-          onclick="UI.toast({type:'success',title:'Cambios guardados',sub:'La configuración fue actualizada correctamente.'})">
+      <!-- Footer guardar (aparece solo con cambios) -->
+      <div class="page-save-footer" id="saveFbar" style="display:none;">
+        <div style="font-size:12px;color:var(--warning);display:flex;align-items:center;gap:6px;">
+          <i data-lucide="circle" style="width:7px;height:7px;fill:var(--warning);stroke:none;"></i>
+          Tienes cambios sin guardar
+        </div>
+        <div style="flex:1;"></div>
+        <button class="btn btn-secondary" id="btnDescardarConfig">Descartar</button>
+        <button class="btn btn-primary" id="btnGuardarConfig" style="display:flex;align-items:center;gap:6px;">
           <i data-lucide="save" style="width:13px;height:13px;"></i> Guardar cambios
         </button>
+      </div>
+
+      <!-- Modal interceptor navegación -->
+      <div class="modal-backdrop" id="modalUnsaved">
+        <div class="modal modal-sm" style="max-width:360px;">
+          <div class="modal-header">
+            Cambios sin guardar
+            <button class="modal-close" id="unsavedStay" aria-label="Quedarse">×</button>
+          </div>
+          <div class="modal-body">
+            <p style="font-size:13px;color:var(--muted);line-height:1.6;">Tienes cambios sin guardar en esta página. Si sales, se perderán.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" id="unsavedStay2">Quedarme</button>
+            <button class="btn btn-destructive" id="unsavedLeave">Salir igual</button>
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -274,7 +295,64 @@
 <script>
   if (window.lucide) lucide.createIcons();
 
-  // Live preview
+  // ── Dirty state + sticky save bar ──────────────────────────────────────────
+  var dirty = false;
+  var pendingHref = null;
+
+  function markDirty() {
+    if (dirty) return;
+    dirty = true;
+    var bar = document.getElementById('saveFbar');
+    if (bar) bar.style.display = 'flex';
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function clearDirty() {
+    dirty = false;
+    var bar = document.getElementById('saveFbar');
+    if (bar) bar.style.display = 'none';
+  }
+
+  // Detectar cambios en todos los inputs/selects/textareas
+  document.querySelectorAll('input, select, textarea').forEach(function(el) {
+    el.addEventListener('input', markDirty);
+    el.addEventListener('change', markDirty);
+  });
+
+  document.getElementById('btnGuardarConfig').addEventListener('click', function() {
+    clearDirty();
+    UI.toast({ type: 'success', title: 'Cambios guardados', sub: 'La configuración fue actualizada correctamente.' });
+  });
+
+  document.getElementById('btnDescardarConfig').addEventListener('click', function() {
+    clearDirty();
+    window.location.reload();
+  });
+
+  // Interceptor de navegación
+  var modal = document.getElementById('modalUnsaved');
+  document.getElementById('unsavedStay').addEventListener('click', function() { modal.classList.remove('is-open'); pendingHref = null; });
+  document.getElementById('unsavedStay2').addEventListener('click', function() { modal.classList.remove('is-open'); pendingHref = null; });
+  document.getElementById('unsavedLeave').addEventListener('click', function() {
+    clearDirty();
+    modal.classList.remove('is-open');
+    if (pendingHref) window.location.href = pendingHref;
+  });
+
+  document.querySelectorAll('.bo-sidebar-item, .bo-sidebar-brand a').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      if (!dirty) return;
+      e.preventDefault();
+      pendingHref = link.getAttribute('href');
+      modal.classList.add('is-open');
+    });
+  });
+
+  window.addEventListener('beforeunload', function(e) {
+    if (dirty) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  // ── Live preview ────────────────────────────────────────────────────────────
   function liveUpdate() {
     const nombre = document.getElementById('fNombre').value;
     const nit    = document.getElementById('fNit').value;

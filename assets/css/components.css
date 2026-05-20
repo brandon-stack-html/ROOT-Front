@@ -1167,6 +1167,10 @@ textarea.field-input {
   padding: 2px 8px; border-radius: 8px; background: var(--alt);
   font-size: 10px; font-weight: 600; color: var(--muted); flex-shrink: 0;
 }
+@keyframes roleCardIn {
+  0% { opacity:0; transform: translateY(-8px); background: rgba(79,70,229,.06); }
+  100% { opacity:1; transform: none; background: transparent; }
+}
 .roles-add-btn {
   width: 100%; padding: 14px; background: transparent;
   border: 1px dashed var(--border); border-radius: 10px;

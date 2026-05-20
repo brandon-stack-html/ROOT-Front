@@ -21,7 +21,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+        <span class="root-wordmark">[ROOT]</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -260,10 +260,129 @@
   </div>
 </div>
 
+<!-- Modal eliminar sucursal -->
+<div class="modal-backdrop" id="modalEliminarSuc">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      Eliminar sucursal
+      <button class="modal-close" data-close>×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;">
+        <div style="width:42px;height:42px;border-radius:10px;background:rgba(239,68,68,.10);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i data-lucide="alert-triangle" style="width:18px;height:18px;color:var(--error);"></i>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;">Datos afectados al eliminar <span id="delSucNombre"></span></div>
+          <div style="font-size:13px;color:var(--muted);">Esta acción no se puede deshacer. Indica qué hacer con cada tipo de dato.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
+        <div style="background:var(--alt);border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;">Mesas</div>
+          <div style="font-size:18px;font-weight:700;color:var(--text);" id="delSucMesas">12</div>
+        </div>
+        <div style="background:var(--alt);border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;">Empleados</div>
+          <div style="font-size:18px;font-weight:700;color:var(--text);" id="delSucEmps">5</div>
+        </div>
+        <div style="background:var(--alt);border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;">Cajas</div>
+          <div style="font-size:18px;font-weight:700;color:var(--text);" id="delSucCajas">3</div>
+        </div>
+        <div style="background:var(--alt);border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;">Ventas históricas</div>
+          <div style="font-size:18px;font-weight:700;color:var(--text);">483</div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label class="field-label">Transferir datos a</label>
+        <select class="field-input" id="delSucTransfer">
+          <option value="">Eliminar todos los datos (sin transferir)</option>
+          <option value="norte">Sede Norte</option>
+          <option value="centro">Sede Centro</option>
+        </select>
+        <div style="font-size:11px;color:var(--muted);margin-top:5px;">Si seleccionas una sucursal, los empleados y mesas se reasignarán.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close>Cancelar</button>
+      <button class="btn btn-destructive" id="btnConfirmarDelSuc">Eliminar sucursal</button>
+    </div>
+  </div>
+</div>
+
 <script src="../assets/js/ui.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
   if (window.lucide) lucide.createIcons();
+
+  var SUC_DATA = {
+    'Sede Norte':  { mesas:12, emps:8, cajas:3 },
+    'Sede Centro': { mesas:8,  emps:5, cajas:2 },
+    'Sede Sur':    { mesas:6,  emps:3, cajas:1 },
+  };
+  var sucPendiente = null;
+
+  document.querySelectorAll('[aria-label="Más opciones"]').forEach(function(btn) {
+    if (btn.dataset.wired) return;
+    btn.dataset.wired = 'true';
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var card = btn.closest('.sucursal-card');
+      var nombre = card.querySelector('.sucursal-name').textContent;
+      abrirMenuSuc(nombre, btn);
+    });
+  });
+
+  var sucMenu = null;
+  function abrirMenuSuc(nombre, anchor) {
+    cerrarMenuSuc();
+    sucPendiente = nombre;
+    var m = document.createElement('div');
+    m.id = 'sucMenuCtx';
+    m.style.cssText = 'position:fixed;z-index:9100;background:var(--bg-elevated,var(--alt));border:1px solid var(--border);border-radius:10px;padding:4px;min-width:160px;box-shadow:var(--shadow-lg);';
+    m.innerHTML =
+      '<button type="button" style="width:100%;text-align:left;padding:8px 12px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:13px;color:var(--text);font-family:var(--ff-base);display:flex;align-items:center;gap:8px;">' +
+        '<i data-lucide="pencil" style="width:13px;height:13px;color:var(--muted);"></i> Editar</button>' +
+      '<button type="button" id="sucMenuEliminar" style="width:100%;text-align:left;padding:8px 12px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:13px;color:var(--error);font-family:var(--ff-base);display:flex;align-items:center;gap:8px;">' +
+        '<i data-lucide="trash-2" style="width:13px;height:13px;color:var(--error);"></i> Eliminar</button>';
+    document.body.appendChild(m);
+    sucMenu = m;
+    var rect = anchor.getBoundingClientRect();
+    m.style.top  = (rect.bottom + 6) + 'px';
+    m.style.right = (window.innerWidth - rect.right) + 'px';
+
+    m.querySelector('button:first-child').addEventListener('click', function() {
+      cerrarMenuSuc();
+      UI.toast({ type: 'info', title: 'Editar ' + nombre, sub: 'Próximamente' });
+    });
+    m.querySelector('#sucMenuEliminar').addEventListener('click', function() {
+      cerrarMenuSuc();
+      var data = SUC_DATA[nombre] || { mesas:0, emps:0, cajas:0 };
+      document.getElementById('delSucNombre').textContent = '"' + nombre + '"';
+      document.getElementById('delSucMesas').textContent = data.mesas;
+      document.getElementById('delSucEmps').textContent = data.emps;
+      document.getElementById('delSucCajas').textContent = data.cajas;
+      // Excluir la sucursal que se va a eliminar del select de transferencia
+      document.querySelectorAll('#delSucTransfer option').forEach(function(o) {
+        o.style.display = (o.value && o.textContent === nombre) ? 'none' : '';
+      });
+      document.getElementById('modalEliminarSuc').classList.add('is-open');
+      if (window.lucide) window.lucide.createIcons();
+    });
+
+    setTimeout(function() { document.addEventListener('click', cerrarMenuSuc, { once:true }); }, 50);
+    if (window.lucide) window.lucide.createIcons();
+  }
+  function cerrarMenuSuc() { if (sucMenu) { sucMenu.remove(); sucMenu = null; } }
+
+  document.getElementById('btnConfirmarDelSuc').addEventListener('click', function() {
+    document.getElementById('modalEliminarSuc').classList.remove('is-open');
+    var transfer = document.getElementById('delSucTransfer').value;
+    var msg = transfer ? 'Datos transferidos a ' + document.getElementById('delSucTransfer').options[document.getElementById('delSucTransfer').selectedIndex].text : 'Datos eliminados';
+    UI.toast({ type: 'success', title: 'Sucursal eliminada', sub: msg });
+  });
 </script>
   <script src="../assets/js/nav.js"></script>
 </body>

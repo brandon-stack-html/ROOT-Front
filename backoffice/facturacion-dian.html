@@ -136,7 +136,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -222,8 +222,27 @@
           </div>
         </div>
 
+        <!-- Banner error MATIAS (oculto por defecto) -->
+        <div id="matiasBanner" style="display:none;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:none;align-items:center;gap:14px;flex-wrap:wrap;">
+          <div style="width:38px;height:38px;border-radius:9px;background:rgba(239,68,68,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i data-lucide="wifi-off" style="width:17px;height:17px;color:var(--error);"></i>
+          </div>
+          <div style="flex:1;min-width:200px;">
+            <div style="font-size:13px;font-weight:600;color:var(--error);margin-bottom:2px;">Error de conexión con MATIAS</div>
+            <div style="font-size:12px;color:var(--muted);">La facturación electrónica puede estar afectada. Último intento: hace 3 min · Código: 503</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="btn btn-secondary btn-sm" id="btnReintentarMatias" onclick="reintentarMatias()">
+              <i data-lucide="refresh-cw" style="width:11px;height:11px;"></i> Reintentar
+            </button>
+            <a href="./integraciones.html" class="btn btn-ghost btn-sm" style="font-size:12px;">
+              Ir a integraciones →
+            </a>
+          </div>
+        </div>
+
         <!-- DIAN STATUS BANNER -->
-        <div class="dian-banner">
+        <div class="dian-banner" id="dianBanner">
           <div class="dian-banner-icon">
             <i data-lucide="shield-check" style="width:17px;height:17px;color:#fff"></i>
           </div>
@@ -235,6 +254,9 @@
             <span class="dian-online-dot"></span>
             En línea
           </div>
+          <button class="btn-icon" title="Demo: simular error MATIAS" onclick="toggleMatiasError()" style="margin-left:8px;opacity:.5;" aria-label="Simular error">
+            <i data-lucide="zap" style="width:13px;height:13px;"></i>
+          </button>
         </div>
 
         <!-- KPIs 4 cols -->
@@ -455,6 +477,27 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
     if (window.lucide) window.lucide.createIcons();
+
+    var matiasError = false;
+    function toggleMatiasError() {
+      matiasError = !matiasError;
+      document.getElementById('matiasBanner').style.display = matiasError ? 'flex' : 'none';
+      if (window.lucide) window.lucide.createIcons();
+    }
+    function reintentarMatias() {
+      var btn = document.getElementById('btnReintentarMatias');
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader-2" style="width:11px;height:11px;animation:spin 1s linear infinite;"></i> Reintentando…';
+      if (window.lucide) window.lucide.createIcons();
+      setTimeout(function(){
+        matiasError = false;
+        document.getElementById('matiasBanner').style.display = 'none';
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="refresh-cw" style="width:11px;height:11px;"></i> Reintentar';
+        UI.toast({ type: 'success', title: 'Conexión restablecida', sub: 'MATIAS responde correctamente.' });
+        if (window.lucide) window.lucide.createIcons();
+      }, 2000);
+    }
 
     function activarDianTab(btn, id) {
       document.querySelectorAll('.dian-tab').forEach(function(t) { t.classList.remove('is-active'); });

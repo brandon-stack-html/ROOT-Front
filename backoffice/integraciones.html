@@ -101,7 +101,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <img src="../ROOT.png" class="bo-sidebar-logo-img" alt="[ROOT]">
+          <span class="root-wordmark">[ROOT]</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -383,11 +383,16 @@
       <div class="drawer-body" id="drawerIntegBody">
         <!-- Contenido dinámico por tipo -->
       </div>
+      <!-- Resultado validación -->
+      <div id="validarResult" style="display:none;padding:8px 22px 0;font-size:12px;"></div>
       <div class="drawer-footer">
         <button class="btn btn-destructive btn-sm" id="drawerIntegDesconectar" style="margin-right:auto;display:none">
           <i data-lucide="unplug" style="width:12px;height:12px"></i>Desconectar
         </button>
         <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-ghost" id="drawerIntegValidar">
+          <i data-lucide="zap" style="width:13px;height:13px"></i> Validar conexión
+        </button>
         <button class="btn btn-primary" id="drawerIntegGuardar">Guardar</button>
       </div>
     </div>
@@ -425,9 +430,73 @@
     document.getElementById('drawerIntegGuardar').addEventListener('click', function () {
       var nombre = document.getElementById('drawerIntegNombre').textContent;
       UI.closeDrawer('drawerIntegracion');
+      document.getElementById('validarResult').style.display = 'none';
       UI.toast({ type: 'success', title: 'Configuración guardada', sub: nombre + ' actualizado correctamente.' });
     });
+
+    // Validar conexión
+    document.getElementById('drawerIntegValidar').addEventListener('click', function() {
+      var btn = this;
+      var res = document.getElementById('validarResult');
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader-2" style="width:13px;height:13px;animation:spin 1s linear infinite;"></i> Validando…';
+      res.style.display = 'none';
+      if (window.lucide) window.lucide.createIcons();
+      setTimeout(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="zap" style="width:13px;height:13px"></i> Validar conexión';
+        var ok = Math.random() > 0.3; // 70% éxito en demo
+        res.style.display = 'flex';
+        res.style.alignItems = 'center';
+        res.style.gap = '6px';
+        if (ok) {
+          res.style.color = 'var(--success)';
+          res.innerHTML = '<i data-lucide="check-circle-2" style="width:13px;height:13px;"></i> Conexión exitosa · La integración responde correctamente.';
+        } else {
+          res.style.color = 'var(--error)';
+          res.innerHTML = '<i data-lucide="x-circle" style="width:13px;height:13px;"></i> Error de conexión · Verifica las credenciales e intenta de nuevo.';
+        }
+        if (window.lucide) window.lucide.createIcons();
+      }, 1800);
+    });
+
+    // Desconectar → modal de confirmación
+    document.getElementById('drawerIntegDesconectar').addEventListener('click', function() {
+      var nombre = document.getElementById('drawerIntegNombre').textContent;
+      document.getElementById('desconectarNombre').textContent = nombre;
+      UI.closeDrawer('drawerIntegracion');
+      document.getElementById('modalDesconectar').classList.add('is-open');
+      if (window.lucide) window.lucide.createIcons();
+    });
+
+    document.getElementById('btnConfirmarDesconectar').addEventListener('click', function() {
+      document.getElementById('modalDesconectar').classList.remove('is-open');
+      UI.toast({ type: 'success', title: 'Integración desconectada', sub: 'Los pedidos en curso se procesarán normalmente.' });
+    });
+    document.getElementById('modalDesconectar').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('is-open');
+    });
   </script>
+
+  <!-- Modal Desconectar -->
+  <div class="modal-backdrop" id="modalDesconectar">
+    <div class="modal modal-sm" style="max-width:400px;">
+      <div class="modal-header">
+        Desconectar integración
+        <button class="modal-close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0;">
+          Vas a desconectar <strong id="desconectarNombre" style="color:var(--text);"></strong>.<br><br>
+          Los pedidos en curso se procesarán normalmente, pero no entrarán nuevos pedidos desde esta integración. ¿Confirmar?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancelar</button>
+        <button class="btn btn-destructive" id="btnConfirmarDesconectar">Desconectar</button>
+      </div>
+    </div>
+  </div>
   <script src="../assets/js/nav.js"></script>
 </body>
 </html>
