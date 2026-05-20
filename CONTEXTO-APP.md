@@ -244,7 +244,7 @@ PSE, Wompi**.
 | Auth         | `/auth/`         | 5          | split panel centrado   | web responsive                 |
 | Backoffice   | `/backoffice/`   | 24         | sidebar + topbar       | desktop/tablet                 |
 | POS Web      | `/pos/`          | 4 + modal  | topbar + bottombar     | tablet/desktop (cajero)        |
-| App Mesero   | `/mesero/`       | 13 + sheet | frame mobile + tab bar | mobile (PIN `1234`)            |
+| App Mesero   | `/mesero/`       | 14 + sheet | frame mobile + tab bar | mobile (PIN `1234`)            |
 | KDS          | `/kds/`          | 2          | dark default, grid     | TV/tablet cocina               |
 | Storefront   | `/storefront/`   | 6          | público mobile+desktop | cliente final                  |
 
@@ -346,7 +346,7 @@ Shell de tablet/desktop con topbar y bottombar fijos.
 
 ---
 
-### 5. App Mesero — Mobile (13 pantallas + bottom-sheet, Sprints 7 + 13)
+### 5. App Mesero — Mobile (14 pantallas + bottom-sheet, Sprints 7 + 12 + 13 + 14)
 
 Shell con frame de iPhone, bottom-tab de 4 ítems (Mesas / Comandas / Nómina / Perfil). Login por PIN `1234` en la demo. El mesero logueado en la demo es **Camila Rojas** (`emp-001`, Sede Norte, quincenal, $1.623.500).
 
@@ -365,6 +365,7 @@ Shell con frame de iPhone, bottom-tab de 4 ítems (Mesas / Comandas / Nómina / 
 | Solicitar adelanto (E11) | `mesero/adelanto-solicitar.html` | Slider de monto con tope dinámico (% del devengado configurado por admin), preview "Te quedará $X disponible", textarea motivo (opcional, 200 chars), validaciones, CTA "Enviar solicitud" → guarda en `localStorage` y redirige con toast. |
 | Mis adelantos (E12) | `mesero/adelantos-historial.html` | Lista cronológica descendente con badges de estado por color. Bottom-sheet con detalle completo + timeline de transiciones + botón "Descargar comprobante" (PDF via jsPDF) si estado es `pagada` o `descontada`. |
 | Historial de pagos (E13) | `mesero/pagos-historial.html` | Resumen acumulado (pagos, bruto total, neto total) + lista agrupada por mes con headers sticky. Cada item: etiqueta, fecha, método y neto destacado. Bottom-sheet con desglose bruto / descuentos / neto. |
+| Confirmar pedido por voz (E14) | `mesero/audio-confirmar.html` | Pantalla de revisión post-dictado. Card colapsable con la transcripción cruda. Lista de ítems detectados por `VoiceParser.parse()` con qty editable (+/-), precio y botón eliminar. Ítems no reconocidos en badge amarillo "No encontrado" con link "Buscar en catálogo". CTA "Agregar ítem manual" → `catalogo.html`. Footer sticky: subtotal + "Volver a grabar" / "Enviar a cocina" (deshabilitado sin ítems válidos). Al confirmar llama a `StoreMesas.addItemsAMesa()` y redirige a `detalle.html`. Lee transcripción de `sessionStorage: root:voice:last-transcript`. |
 
 ---
 
@@ -411,6 +412,7 @@ Carta QR (mobile) + tienda online (mobile y desktop). Marca demo "El Buen Sabor"
 | Modal detalle ticket | `pos/historico.html` |
 | Modal cerrar turno | `pos/mapa.html` |
 | Bottom-sheet modificadores (E6) | `mesero/catalogo.html` |
+| Bottom-sheet editar observación (voz) | `mesero/detalle.html` |
 | Bottom-sheet detalle adelanto | `mesero/adelantos-historial.html` |
 | Bottom-sheet desglose pago | `mesero/pagos-historial.html` |
 | Modal registrar pago (nómina) | `backoffice/nomina.html` |
@@ -434,6 +436,8 @@ Carta QR (mobile) + tienda online (mobile y desktop). Marca demo "El Buen Sabor"
 - **Operación de sala:** POS web + App mesero con mapa de mesas compartido.
 - **Cara al cliente sin app:** Storefront público + Carta QR para la mesa.
 - **Nómina y adelantos salariales:** módulo completo para gestionar pagos quincenal/mensual, solicitar y aprobar adelantos con flujo de estados (`borrador → pendiente → aprobada → pagada → descontada`), comprobante PDF descargable. Salario mínimo Colombia 2026 (`$1.623.500`) como tope inferior siempre validado.
+- **Pedido por voz (voice ordering):** el mesero dicta la comanda en voz natural desde `catalogo.html?mode=voice` usando `VoiceRecorder` (Web Speech API real, locale `es-CO`). La transcripción se guarda en `sessionStorage: root:voice:last-transcript` y se parsea con `VoiceParser` (fuzzy match + Levenshtein contra catálogo de 18 productos). La pantalla `audio-confirmar.html` (E14) muestra los ítems detectados para revisión antes de enviar a cocina.
+- **Observaciones por voz (voice input mock):** en E6 (bottom-sheet modificadores) y E4 (editar observación de ítem en comanda), un botón de micrófono usa `VoiceInput` en modo simulado (array de 20 frases mock colombianas). Soporta tap-to-toggle y hold-to-record. Feature flag `USE_REAL_AUDIO = false` para upgrade futuro a MediaRecorder.
 - **Diseño:** dark/light con toggle persistente (`localStorage`), mobile-first 360 → 1920px, accesibilidad (skip link, focus visibles, atajos de teclado).
 - **Stack de la demo:** HTML + CSS + JS vanilla, sin build, sin frameworks. Íconos `lucide` por CDN, fuente `Inter`. PDF via `jsPDF` por CDN. Wordmark `[ROOT]` renderizado como texto CSS (`.root-wordmark` en `utilities.css`), sin imagen.
 
@@ -454,12 +458,31 @@ Para mantener consistencia si la landing muestra screenshots, el restaurante dem
 
 **Datos del módulo de nómina (Sprint 13, todos ficticios):**
 - 8 empleados: Camila Rojas, Andrés Martínez, Valentina Torres, Carlos Pedraza, Luisa Herrera, Diego Suárez, Mariana Ospina, Sebastián Castro
-- 2 sucursales: Sede Norte, Sede Sur
+- 2 sucursales: Sede Norte (`suc-norte`), Sede Sur (`suc-sur`)
 - Mesero logueado en la app: Camila Rojas (`emp-001`, quincenal, salario base $1.623.500, tope adelanto 50%)
 - Salario mínimo de referencia: SMMLV Colombia 2026 = `$1.623.500`
 - Persistencia: `localStorage` key `root:nomina:v1`
 - Comprobante PDF: se genera con jsPDF, nombre `comprobante-adv-XXX.pdf`
 - Estados de adelanto posibles: `borrador → pendiente → aprobada → pagada → descontada` (+ rama `rechazada` desde `pendiente`)
+
+**Datos del store de mesas (`StoreMesas`, Sprint 14, `root:mesas:v1`):**
+- 18 mesas en 3 salas: Salón Principal (mesas 1–10), Terraza (mesas 11–16), VIP (mesas 17–18)
+- Estados posibles: `libre`, `ocupada`, `por-cobrar`, `reservada`, `limpieza`
+- Meseros de referencia: Camila Rojas (`emp-001`), Andrés Moreno (`emp-002`), Valentina Cruz (`emp-003`)
+- Seed incluye ítems de comanda reales (Bandeja Paisa, Ajiaco Bogotano, Limonada Natural, etc.)
+
+**Persistencia completa de la demo (localStorage y sessionStorage):**
+| Key | Storage | Módulo |
+|-----|---------|--------|
+| `root:auth:v1` | local | usuario logueado y rol activo |
+| `root:users:v1` | local | lista de usuarios del negocio (derivada de `root:employees:v1`) |
+| `root:roles:v1` | local | matriz de permisos por rol (overrides) |
+| `root:nomina:v1` | local | nómina: empleados, adelantos, pagos |
+| `root:employees:v1` | local | store unificado de empleados (fuente de verdad) |
+| `root:mesas:v1` | local | estado de las 18 mesas y sus comandas |
+| `sf-cart-v1` | local | carrito del storefront (sincroniza entre pestañas) |
+| `root:voice:last-transcript` | session | última transcripción de voz (borrada al confirmar pedido) |
+| `root:voice:permission-denied` | session | flag si el usuario denegó acceso al micrófono |
 
 > Estos datos NO son del SaaS ROOT — son del negocio ficticio que vive dentro de la demo.
 
@@ -499,7 +522,44 @@ Para mantener consistencia si la landing muestra screenshots, el restaurante dem
 ### Páginas de smoke test
 - `test-tokens.html`: página de referencia que muestra todos los tokens (superficies, bordes, radius, sombras, badges, tipografía, botones y cards) en una sola pantalla.
 
+### Documentación generada en Sprint 14
+- `docs/design-system.md` — tokens Vercel completos (superficies, bordes, radius, sombras, estados) + reglas de aplicación.
+- `docs/auth-roles.md` — API de `window.Auth`, matriz de permisos por rol, guía de uso y decisiones técnicas.
+- `docs/sprint-14-qa.md` — smoke test de las 49 pantallas + pruebas de roles + bugs verificados.
+
+### Módulos JS nuevos en Sprint 14
+- **`assets/js/voice-parser.js`** — `window.VoiceParser`. Parsea una transcripción de voz a ítems del catálogo. Flujo: normalización → tokenización de números en palabras → segmentación por separadores (`y`, `,`, `con`, etc.) → extracción de cantidad → extracción de modificadores (`sin`, `extra`, `doble`, `con`) → fuzzy match con Levenshtein contra catálogo de 18 productos. Umbral de confianza: `0.6`. API: `VoiceParser.parse(transcripcion)` → `[{ sku, nombre, cantidad, precio, mods, confianza, noEncontrado, textoOriginal }]`.
+- **`assets/js/voice-recorder.js`** — `window.VoiceRecorder`. Wrapper de la Web Speech API real (`SpeechRecognition`, locale `es-CO`, `continuous = true`, `interimResults = true`). Estados: `idle → requesting-permission → recording → processing → error`. Guarda flag de permiso denegado en `sessionStorage: root:voice:permission-denied`. API: `VoiceRecorder.isSupported()`, `start(opts)`, `stop()`, `cancel()`, `wasPermissionDenied()`.
+- **`assets/js/store-mesas.js`** — `window.StoreMesas`. Store compartido de mesas, persistido en `root:mesas:v1`. Seed de 18 mesas (Salón Principal 1–10, Terraza 11–16, VIP 17–18). Emite Custom Events: `mesa-actualizada`, `comanda-creada`. API: `listMesas({ sala? })`, `getMesa(id)`, `addItemsAMesa(mesaId, items)`, `cambiarEstado(mesaId, estado)`, `liberar(mesaId)`, `_reset()`.
+- **`assets/js/empleados.js`** — `window.Empleados`. Store unificado de empleados (`root:employees:v1`) que sincroniza automáticamente con `root:users:v1` y la sección `empleados` de `root:nomina:v1`. Valida salario ≥ SMMLV. API: `getAll()`, `getById()`, `getActivos()`, `crear()`, `actualizar()`, `desactivar()`, `activar()`, `eliminarPermanente()`, `puedeEliminar()`, `adelantosPendientes()`, `forceSyncNomina()`. Utilidades: `iniciales(nombre)`, `avatarColor(id)`.
+- **`assets/js/storefront.js`** — `window.SF`. Carrito del storefront persistido en `sf-cart-v1`. Sincroniza entre pestañas vía evento `storage`. API: `addToCart()`, `removeFromCart()`, `clearCart()`, `totalItems()`, `totalPrice()`, `fmtCOP()`. Helpers de UI: `renderCartBar()` (barra flotante F1), `renderCartBtn()` (botón nav desktop F3/F4), `bounceCartBar()`.
+
 ### Persistencia usada en Sprint 14
 - `root:auth:v1` — usuario logueado y rol activo
-- `root:users:v1` — lista de usuarios del negocio
+- `root:users:v1` — lista de usuarios del negocio (derivada de `root:employees:v1`)
 - `root:roles:v1` — matriz de permisos por rol (overrides del default)
+- `root:employees:v1` — store unificado de empleados (fuente de verdad)
+- `root:mesas:v1` — estado de las 18 mesas y sus comandas
+
+---
+
+## Sprint 12 — Input por voz en observaciones (2026-05)
+
+> Doc de referencia: `docs/sprint-12-audio-obs.md`
+
+### Concepto clave
+El audio es **solo un input alternativo al textarea** — no se conserva. El resultado es siempre texto plano que viaja como observación normal del ítem a la comanda y al KDS.
+
+### Módulo JS: `assets/js/voice-input.js` (`window.VoiceInput`)
+- **Modos:** hold-to-record (≥ 200ms) y tap-to-toggle (< 200ms inicia, segundo tap detiene).
+- **Grabación corta (< 0.6s):** aborta sin transcribir, muestra toast `"Mantené presionado o tocá de nuevo para grabar"`.
+- **Grabación válida:** spinner 400ms de "procesando", luego apenda texto random al textarea (separador `. ` si ya había texto). Toast `"Transcripción agregada"`.
+- **20 frases mock** en español colombiano de restaurante (sin cebolla, bien cocido, para llevar, etc.).
+- **Feature flag `USE_REAL_AUDIO = false`** — preparado para upgrade a MediaRecorder + API de transcripción sin cambiar la interfaz.
+- **A11y:** `aria-pressed` y `aria-label` cambian dinámicamente. Timer con `role="timer"`. `prefers-reduced-motion` desactiva animaciones.
+- **Mobile:** usa `PointerEvent` si está disponible; fallback a touch/mouse con `preventDefault()` para evitar doble disparo iOS.
+- **API:** `attach(buttonEl, targetTextarea)`, `startRecording()`, `stopRecording()`, `cancelAll()`, `bindAll()`. Auto-inicialización via `[data-voice-input="textareaId"]`.
+
+### Pantallas afectadas (Sprint 12)
+- **`mesero/catalogo.html` (E6):** botón mic encima del textarea de observación en el bottom-sheet de modificadores. Id del textarea: `sheetObservacion`.
+- **`mesero/detalle.html` (E4):** botón lápiz en cada ítem de la comanda abre un bottom-sheet `#sheetEditObs` con textarea `editObsTextarea` + botón mic. Pre-carga la observación actual, "Guardar" la actualiza y llama a `renderComanda()`.
