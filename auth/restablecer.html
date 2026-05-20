@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Restablecer contraseña — ROOT</title>
+  <script src="/assets/js/theme.js"></script>
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/utilities.css">
+  <link rel="stylesheet" href="/assets/css/auth.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="auth-page">
+    <div class="auth-halo"></div>
+
+    <div class="auth-page-inner">
+      <div class="auth-card auth-card-w400">
+
+        <!-- Ícono candado -->
+        <div class="auth-icon-circle auth-icon-circle-sm auth-icon-circle-success">
+          <i data-lucide="lock-open" style="width:24px;height:24px;stroke-width:1.7;color:var(--success);"></i>
+        </div>
+
+        <!-- Heading -->
+        <div class="auth-heading">
+          <h1 class="auth-title" style="font-size:19px;">Crea una nueva contraseña</h1>
+          <p class="auth-subtitle">Debe ser diferente a las últimas 3 contraseñas usadas</p>
+        </div>
+
+        <!-- Nueva contraseña -->
+        <div class="auth-field" style="margin-bottom:14px;">
+          <div class="auth-label-row">
+            <label class="auth-label" for="newPwd">Nueva contraseña</label>
+          </div>
+          <div class="auth-input-wrap">
+            <input id="newPwd" type="password" placeholder="••••••••" oninput="updateStrength()">
+            <span class="auth-input-suffix">
+              <button type="button" data-toggle-password="newPwd" aria-label="Mostrar contraseña">
+                <span class="pwd-show"><i data-lucide="eye" style="width:15px;height:15px;display:block;"></i></span>
+                <span class="pwd-hide" style="display:none;"><i data-lucide="eye-off" style="width:15px;height:15px;display:block;"></i></span>
+              </button>
+            </span>
+          </div>
+          <!-- Barra de fuerza -->
+          <div class="pwd-strength">
+            <div class="pwd-strength-bar">
+              <div class="pwd-strength-seg" id="seg1"></div>
+              <div class="pwd-strength-seg" id="seg2"></div>
+              <div class="pwd-strength-seg" id="seg3"></div>
+              <div class="pwd-strength-seg" id="seg4"></div>
+            </div>
+            <div class="pwd-strength-labels">
+              <span class="pwd-strength-hint">Fuerza de la contraseña</span>
+              <span class="pwd-strength-level" id="pwdLabel" style="color:var(--muted);">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confirmar contraseña -->
+        <div class="auth-field" style="margin-bottom:18px;">
+          <div class="auth-label-row">
+            <label class="auth-label" for="confirmPwd">Confirmar contraseña</label>
+          </div>
+          <div class="auth-input-wrap">
+            <input id="confirmPwd" type="password" placeholder="••••••••" oninput="updateStrength()">
+            <span class="auth-input-suffix">
+              <button type="button" data-toggle-password="confirmPwd" aria-label="Mostrar contraseña">
+                <span class="pwd-show"><i data-lucide="eye" style="width:15px;height:15px;display:block;"></i></span>
+                <span class="pwd-hide" style="display:none;"><i data-lucide="eye-off" style="width:15px;height:15px;display:block;"></i></span>
+              </button>
+            </span>
+          </div>
+        </div>
+
+        <!-- Requisitos -->
+        <div class="pwd-reqs">
+          <div class="pwd-req-row" id="req-length">
+            <div class="pwd-req-circle">
+              <svg class="pwd-req-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            Al menos 8 caracteres
+          </div>
+          <div class="pwd-req-row" id="req-upper">
+            <div class="pwd-req-circle">
+              <svg class="pwd-req-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            Una letra mayúscula
+          </div>
+          <div class="pwd-req-row" id="req-digit">
+            <div class="pwd-req-circle">
+              <svg class="pwd-req-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            Un número
+          </div>
+          <div class="pwd-req-row" id="req-symbol">
+            <div class="pwd-req-circle">
+              <svg class="pwd-req-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            Un carácter especial
+          </div>
+        </div>
+
+        <!-- Botón -->
+        <button
+          id="submitBtn"
+          class="auth-btn auth-btn-primary auth-btn-lg auth-btn-full"
+          disabled
+          onclick="handleRestablecer()"
+        >
+          Restablecer contraseña
+          <i data-lucide="check" style="width:15px;height:15px;"></i>
+        </button>
+
+        <!-- Toggle tema -->
+        <div style="text-align:center; margin-top:16px;">
+          <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light" style="width:16px;height:16px;"></i>
+            <i data-lucide="moon" class="theme-icon-dark" style="width:16px;height:16px;"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/ui.js"></script>
+  <script>
+    lucide.createIcons();
+
+    var LEVEL_LABELS = { 1:'Débil', 2:'Regular', 3:'Fuerte', 4:'Muy fuerte' };
+    var LEVEL_COLORS = { 1:'var(--error)', 2:'var(--warning)', 3:'var(--success)', 4:'var(--success)' };
+
+    function updateStrength() {
+      var val = document.getElementById('newPwd').value;
+      var confirm = document.getElementById('confirmPwd').value;
+
+      var checks = {
+        length: val.length >= 8,
+        upper:  /[A-Z]/.test(val),
+        digit:  /\d/.test(val),
+        symbol: /[^A-Za-z0-9]/.test(val)
+      };
+
+      // Actualizar requisitos
+      document.getElementById('req-length').classList.toggle('is-ok', checks.length);
+      document.getElementById('req-upper').classList.toggle('is-ok',  checks.upper);
+      document.getElementById('req-digit').classList.toggle('is-ok',  checks.digit);
+      document.getElementById('req-symbol').classList.toggle('is-ok', checks.symbol);
+
+      var score = Object.values(checks).filter(Boolean).length;
+
+      // Actualizar segmentos de la barra
+      var color = score > 0 ? LEVEL_COLORS[score] : 'var(--alt)';
+      for (var i = 1; i <= 4; i++) {
+        var seg = document.getElementById('seg' + i);
+        seg.style.background = i <= score ? color : 'var(--alt)';
+      }
+
+      // Actualizar label
+      var label = document.getElementById('pwdLabel');
+      if (score === 0) {
+        label.textContent = '—';
+        label.style.color = 'var(--muted)';
+      } else {
+        label.textContent = LEVEL_LABELS[score];
+        label.style.color = LEVEL_COLORS[score];
+      }
+
+      // Habilitar botón solo si score === 4 y las contraseñas coinciden
+      var btn = document.getElementById('submitBtn');
+      btn.disabled = !(score === 4 && val.length > 0 && val === confirm);
+    }
+
+    function handleRestablecer() {
+      UI.toast({ type: 'success', title: 'Contraseña actualizada', sub: 'Ingresando a tu cuenta…' });
+      // Regla A1: redirige a A5 (o dashboard si sucursal única)
+      var singleBranch = localStorage.getItem('demo:single-branch') === '1';
+      setTimeout(function() {
+        window.location.href = singleBranch
+          ? '/backoffice/dashboard.html'
+          : '/auth/selector-sucursal.html';
+      }, 1500);
+    }
+
+    // Toggle visibilidad de contraseñas
+    document.querySelectorAll('[data-toggle-password]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var input = document.getElementById(btn.getAttribute('data-toggle-password'));
+        var showSpan = btn.querySelector('.pwd-show');
+        var hideSpan = btn.querySelector('.pwd-hide');
+        if (input.type === 'password') {
+          input.type = 'text';
+          showSpan.style.display = 'none';
+          hideSpan.style.display = '';
+        } else {
+          input.type = 'password';
+          showSpan.style.display = '';
+          hideSpan.style.display = 'none';
+        }
+      });
+    });
+  </script>
+  <script src="/assets/js/nav.js"></script>
+</body>
+</html>

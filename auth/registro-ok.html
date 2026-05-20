@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>¡Bienvenido a ROOT!</title>
+  <script src="/assets/js/theme.js"></script>
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/utilities.css">
+  <link rel="stylesheet" href="/assets/css/auth.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="auth-page">
+    <div class="auth-halo"></div>
+
+    <div class="auth-page-inner">
+      <div class="auth-card auth-card-w400">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+          <span class="root-wordmark" style="font-size:28px">[ROOT]</span>
+        </div>
+
+        <!-- Ícono éxito -->
+        <div class="auth-icon-circle auth-icon-circle-success" style="width:64px;height:64px;border-radius:50%;">
+          <i data-lucide="check" style="width:30px;height:30px;stroke-width:2.5;color:var(--success);"></i>
+        </div>
+
+        <!-- Heading -->
+        <div class="auth-heading">
+          <h1 class="auth-title" style="font-size:20px;">¡Tu negocio ya está en ROOT!</h1>
+          <p class="auth-subtitle" style="line-height:1.6;">
+            Hola, Andrea 👋 Tu cuenta fue creada con éxito.<br>
+            Ya puedes empezar a gestionar tu restaurante.
+          </p>
+        </div>
+
+        <!-- Resumen rápido -->
+        <div style="
+          background:var(--alt);
+          border:1px solid var(--border);
+          border-radius:var(--radius-md);
+          padding:14px 16px;
+          margin-bottom:20px;
+          display:flex;
+          flex-direction:column;
+          gap:8px;
+        ">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);">
+            <i data-lucide="building-2" style="width:13px;height:13px;flex-shrink:0;"></i>
+            <span><strong style="color:var(--text);">Restaurante El Buen Sabor SAS</strong> · NIT 900.123.456</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);">
+            <i data-lucide="mail" style="width:13px;height:13px;flex-shrink:0;"></i>
+            <span>andrea.gomez@restaurante.com</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--success);">
+            <i data-lucide="shield-check" style="width:13px;height:13px;flex-shrink:0;"></i>
+            <span>Cuenta verificada</span>
+          </div>
+        </div>
+
+        <!-- CTAs -->
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button
+            class="auth-btn auth-btn-primary auth-btn-lg auth-btn-full"
+            onclick="window.location='/auth/selector-sucursal.html'"
+          >
+            Empezar
+            <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+          </button>
+          <button
+            class="auth-btn auth-btn-ghost auth-btn-full"
+            style="justify-content:center;"
+            onclick="window.location='/backoffice/dashboard.html'"
+          >
+            Saltar al dashboard
+          </button>
+        </div>
+
+        <!-- Toggle tema -->
+        <div style="text-align:center; margin-top:20px;">
+          <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light" style="width:16px;height:16px;"></i>
+            <i data-lucide="moon" class="theme-icon-dark" style="width:16px;height:16px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer legal -->
+      <div class="auth-legal">
+        <span>© 2026 ROOT</span>
+        <span>·</span>
+        <a href="#">Términos</a>
+        <span>·</span>
+        <a href="#">Privacidad</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/ui.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="/assets/js/nav.js"></script>
+</body>
+</html>

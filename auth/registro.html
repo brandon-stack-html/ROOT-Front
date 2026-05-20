@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Registro — ROOT</title>
+  <script src="/assets/js/theme.js"></script>
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/utilities.css">
+  <link rel="stylesheet" href="/assets/css/auth.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="auth-page">
+    <div class="auth-halo"></div>
+
+    <div class="auth-page-inner">
+      <div class="auth-card auth-card-w520">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+          <span class="root-wordmark" style="font-size:28px">[ROOT]</span>
+        </div>
+
+        <!-- Stepper -->
+        <div class="auth-stepper">
+          <!-- Paso 1: activo -->
+          <div class="auth-stepper-step">
+            <div class="auth-stepper-circle is-active">1</div>
+            <span class="auth-stepper-label is-active">Datos del negocio</span>
+          </div>
+
+          <div class="auth-stepper-connector"></div>
+
+          <!-- Paso 2: pendiente -->
+          <div class="auth-stepper-step is-pending">
+            <div class="auth-stepper-circle is-pending">2</div>
+            <span class="auth-stepper-label is-pending">Datos del admin</span>
+          </div>
+
+          <div class="auth-stepper-connector"></div>
+
+          <!-- Paso 3: pendiente -->
+          <div class="auth-stepper-step is-pending">
+            <div class="auth-stepper-circle is-pending">3</div>
+            <span class="auth-stepper-label is-pending">Tipo de negocio</span>
+          </div>
+        </div>
+
+        <!-- Heading -->
+        <div class="auth-heading">
+          <h1 class="auth-title" style="font-size:20px;">Cuéntanos sobre tu negocio</h1>
+          <p class="auth-subtitle">Esta información aparecerá en tus facturas electrónicas</p>
+        </div>
+
+        <!-- Formulario -->
+        <div class="auth-form">
+
+          <!-- NIT -->
+          <div class="auth-field">
+            <div class="auth-label-row">
+              <label class="auth-label" for="regNit">NIT</label>
+              <span class="auth-label-hint">Sin dígito de verificación</span>
+            </div>
+            <div class="auth-input-wrap">
+              <input id="regNit" type="text" value="900.123.456" placeholder="123.456.789">
+            </div>
+          </div>
+
+          <!-- Razón social -->
+          <div class="auth-field">
+            <div class="auth-label-row">
+              <label class="auth-label" for="regRazon">Razón social</label>
+            </div>
+            <div class="auth-input-wrap">
+              <input id="regRazon" type="text" value="Restaurante El Buen Sabor SAS" placeholder="Nombre legal de tu empresa">
+            </div>
+          </div>
+
+          <!-- Nombre comercial -->
+          <div class="auth-field">
+            <div class="auth-label-row">
+              <label class="auth-label" for="regNombre">Nombre comercial</label>
+            </div>
+            <div class="auth-input-wrap">
+              <input id="regNombre" type="text" value="El Buen Sabor" placeholder="¿Cómo te conocen tus clientes?">
+            </div>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="auth-field">
+            <div class="auth-label-row">
+              <label class="auth-label" for="regTel">Teléfono</label>
+            </div>
+            <div class="auth-input-wrap">
+              <span class="auth-input-prefix">+57</span>
+              <input id="regTel" type="tel" value="312 456 7890" placeholder="312 345 6789">
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer row -->
+        <div class="auth-footer-row">
+          <a class="auth-btn-link" href="/auth/login.html" style="font-size:12px;color:var(--muted);">
+            Ya tengo cuenta,
+            <span style="color:var(--accent);font-weight:500;">iniciar sesión</span>
+          </a>
+          <button
+            class="auth-btn auth-btn-primary auth-btn-lg"
+            onclick="window.location='/auth/registro-ok.html'"
+          >
+            Continuar
+            <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+          </button>
+        </div>
+
+        <!-- Toggle tema -->
+        <div style="text-align:center; margin-top:16px;">
+          <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light" style="width:16px;height:16px;"></i>
+            <i data-lucide="moon" class="theme-icon-dark" style="width:16px;height:16px;"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/ui.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="/assets/js/nav.js"></script>
+</body>
+</html>

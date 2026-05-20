@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Selector de sucursal — ROOT</title>
+  <script src="/assets/js/theme.js"></script>
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/utilities.css">
+  <link rel="stylesheet" href="/assets/css/auth.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="selector-page">
+
+    <!-- Topbar -->
+    <div class="selector-topbar">
+      <div class="selector-topbar-logo">
+        <span class="root-wordmark" style="font-size:15px">[ROOT]</span>
+      </div>
+      <div class="selector-topbar-user">
+        <span class="selector-topbar-username">Juan Camilo Restrepo</span>
+        <div class="selector-avatar">JC</div>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light" style="width:15px;height:15px;"></i>
+          <i data-lucide="moon" class="theme-icon-dark" style="width:15px;height:15px;"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Centro -->
+    <div class="selector-center">
+
+      <!-- Encabezado -->
+      <div class="selector-heading">
+        <h1 class="selector-title">Hola, Juan Camilo 👋</h1>
+        <p class="selector-subtitle">Selecciona la sucursal donde vas a trabajar hoy</p>
+      </div>
+
+      <!-- Grid de sucursales -->
+      <div class="selector-grid">
+
+        <!-- Sede Norte -->
+        <div class="sucursal-card" onclick="elegirSucursal('norte')">
+          <div class="sucursal-icon-wrap">
+            <i data-lucide="building-2" style="width:20px;height:20px;stroke-width:1.7;"></i>
+          </div>
+          <div>
+            <div class="sucursal-info-name">Sede Norte</div>
+            <div class="sucursal-info-address">
+              <i data-lucide="map-pin" style="width:11px;height:11px;flex-shrink:0;"></i>
+              Cra. 15 #80-32, Bogotá
+            </div>
+          </div>
+          <div>
+            <span class="sucursal-badge sucursal-badge-success">
+              <span class="sucursal-badge-dot"></span>
+              Caja abierta
+            </span>
+          </div>
+          <div class="sucursal-meta">3 cajas activas · 12 mesas</div>
+        </div>
+
+        <!-- Sede Centro -->
+        <div class="sucursal-card" onclick="elegirSucursal('centro')">
+          <div class="sucursal-icon-wrap">
+            <i data-lucide="building" style="width:20px;height:20px;stroke-width:1.7;"></i>
+          </div>
+          <div>
+            <div class="sucursal-info-name">Sede Centro</div>
+            <div class="sucursal-info-address">
+              <i data-lucide="map-pin" style="width:11px;height:11px;flex-shrink:0;"></i>
+              Cl. 13 #6-55, Bogotá
+            </div>
+          </div>
+          <div>
+            <span class="sucursal-badge sucursal-badge-muted">
+              Caja cerrada
+            </span>
+          </div>
+          <div class="sucursal-meta">2 cajas · 8 mesas</div>
+        </div>
+
+        <!-- Sede Sur (seleccionada por defecto) -->
+        <div class="sucursal-card is-selected" onclick="elegirSucursal('sur')">
+          <div class="sucursal-selected-check">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="sucursal-icon-wrap">
+            <i data-lucide="star" style="width:20px;height:20px;stroke-width:1.7;"></i>
+          </div>
+          <div>
+            <div class="sucursal-info-name">Sede Sur</div>
+            <div class="sucursal-info-address">
+              <i data-lucide="map-pin" style="width:11px;height:11px;flex-shrink:0;"></i>
+              Av. 68 #3-12, Bogotá
+            </div>
+          </div>
+          <div>
+            <span class="sucursal-badge sucursal-badge-warning">
+              Tu sucursal habitual
+            </span>
+          </div>
+          <div class="sucursal-meta">2 cajas activas · 10 mesas</div>
+        </div>
+
+      </div>
+
+      <!-- Link configuración -->
+      <a class="selector-config-link" href="/backoffice/dashboard.html">
+        Solo gestionar configuración
+        <i data-lucide="arrow-right" style="width:12px;height:12px;"></i>
+      </a>
+
+      <!-- Helpers de demo -->
+      <div style="margin-top:24px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <button
+          type="button"
+          id="btnSingleBranch"
+          onclick="toggleSingleBranch()"
+          style="font-size:11px;color:var(--muted);background:none;border:1px dashed var(--border);
+                 border-radius:6px;padding:5px 12px;cursor:pointer;font-family:var(--ff-base);"
+        >
+          🔧 Demo: Simular sucursal única
+        </button>
+        <a href="/auth/login.html" style="font-size:11px;color:var(--muted);text-decoration:none;">
+          Cerrar sesión
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/assets/js/ui.js"></script>
+  <script>
+    // Skip automático si demo:single-branch está activo
+    (function() {
+      if (localStorage.getItem('demo:single-branch') === '1') {
+        window.location.replace('/backoffice/dashboard.html');
+      }
+    })();
+
+    lucide.createIcons();
+
+    function elegirSucursal(id) {
+      localStorage.setItem('sucursal', id);
+      window.location.href = '/backoffice/dashboard.html';
+    }
+
+    function toggleSingleBranch() {
+      var isSingle = localStorage.getItem('demo:single-branch') === '1';
+      if (isSingle) {
+        localStorage.removeItem('demo:single-branch');
+        UI.toast({ type: 'info', title: 'Modo multi-sucursal activado', sub: 'El selector volverá a mostrarse' });
+        document.getElementById('btnSingleBranch').textContent = '🔧 Demo: Simular sucursal única';
+      } else {
+        localStorage.setItem('demo:single-branch', '1');
+        UI.toast({ type: 'success', title: 'Sucursal única activada', sub: 'El próximo login saltará este selector' });
+        document.getElementById('btnSingleBranch').textContent = '🔧 Demo: Desactivar sucursal única';
+      }
+    }
+  </script>
+  <script src="/assets/js/nav.js"></script>
+</body>
+</html>

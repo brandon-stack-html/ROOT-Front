@@ -62,6 +62,15 @@
     ],
   };
 
+  // Home URL por rol (para redirección tras switch)
+  const ROLE_HOMES = {
+    admin:   '/backoffice/dashboard.html',
+    gerente: '/backoffice/dashboard.html',
+    cajero:  '/pos/apertura.html',
+    mesero:  '/mesero/mapa.html',
+    cocina:  '/kds/main.html',
+  };
+
   // Usuarios demo para el switcher de rol
   const DEMO_USERS = {
     admin:   { userId: 'usr-001', name: 'Juan Camilo', initials: 'JC', role: 'admin' },
@@ -141,7 +150,13 @@
       var demo = DEMO_USERS[role];
       if (!demo) return;
       Auth.login(demo);
-      window.location.reload();
+      var roleLabels = { admin:'Administrador', gerente:'Gerente', cajero:'Cajero', mesero:'Mesero', cocina:'Cocina' };
+      var label = roleLabels[role] || role;
+      var home = ROLE_HOMES[role] || '/backoffice/dashboard.html';
+      if (window.UI && typeof window.UI.toast === 'function') {
+        window.UI.toast({ type: 'success', title: 'Cambiado a ' + label, sub: 'Redirigiendo al módulo…' });
+      }
+      setTimeout(function () { window.location.href = home; }, 900);
     },
 
     filterNavItems: function (items) {
@@ -180,6 +195,70 @@
         if (!Auth.can(el.dataset.requires)) {
           el.hidden = true;
         }
+      });
+    },
+
+    // ── Modal de confirmación de logout ──
+    _injectLogoutModal: function () {
+      if (document.getElementById('authLogoutModal')) return;
+      var el = document.createElement('div');
+      el.id = 'authLogoutModal';
+      el.className = 'modal-backdrop';
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-modal', 'true');
+      el.innerHTML = [
+        '<div class="modal modal-sm" style="max-width:360px;">',
+          '<div class="modal-header" style="border-bottom:1px solid var(--border);">',
+            '<div class="modal-title">Cerrar sesión</div>',
+            '<button class="modal-close" data-close-logout aria-label="Cancelar">×</button>',
+          '</div>',
+          '<div class="modal-body" style="padding:20px 22px 8px;">',
+            '<p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0;">',
+              '¿Seguro que quieres cerrar sesión? Volverás a la pantalla de inicio.',
+            '</p>',
+          '</div>',
+          '<div class="modal-footer" style="justify-content:flex-end;gap:8px;">',
+            '<button type="button" id="authLogoutCancel" class="btn btn-ghost btn-sm">Cancelar</button>',
+            '<button type="button" id="authLogoutConfirm" class="btn btn-destructive btn-sm">Cerrar sesión</button>',
+          '</div>',
+        '</div>',
+      ].join('');
+      document.body.appendChild(el);
+
+      el.querySelector('[data-close-logout]').addEventListener('click', function () {
+        Auth._closeLogoutModal();
+      });
+      el.querySelector('#authLogoutCancel').addEventListener('click', function () {
+        Auth._closeLogoutModal();
+      });
+      el.querySelector('#authLogoutConfirm').addEventListener('click', function () {
+        Auth._closeLogoutModal();
+        Auth.logout();
+      });
+      el.addEventListener('click', function (e) {
+        if (e.target === el) Auth._closeLogoutModal();
+      });
+    },
+
+    _openLogoutModal: function () {
+      Auth._injectLogoutModal();
+      var m = document.getElementById('authLogoutModal');
+      if (m) m.classList.add('is-open');
+    },
+
+    _closeLogoutModal: function () {
+      var m = document.getElementById('authLogoutModal');
+      if (m) m.classList.remove('is-open');
+    },
+
+    // ── Wire botones de logout del sidebar ──
+    _wireSidebarLogout: function () {
+      document.querySelectorAll('.bo-logout').forEach(function (btn) {
+        if (btn.dataset.logoutAttached) return;
+        btn.dataset.logoutAttached = 'true';
+        btn.addEventListener('click', function () {
+          Auth._openLogoutModal();
+        });
       });
     },
 
@@ -277,7 +356,7 @@
       if (logoutBtn) {
         logoutBtn.addEventListener('click', function () {
           dd.style.display = 'none';
-          Auth.logout();
+          Auth._openLogoutModal();
         });
       }
     },
@@ -287,6 +366,7 @@
       Auth.applySidebar();
       Auth.applyRequires();
       Auth.injectRoleSwitcher();
+      Auth._wireSidebarLogout();
     },
   };
 

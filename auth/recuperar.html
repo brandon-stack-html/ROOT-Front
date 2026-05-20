@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Recuperar contraseña — ROOT</title>
+  <script src="/assets/js/theme.js"></script>
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/utilities.css">
+  <link rel="stylesheet" href="/assets/css/auth.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="auth-page">
+    <div class="auth-halo"></div>
+
+    <div class="auth-page-inner">
+      <div class="auth-card auth-card-w380">
+
+        <!-- Estado: formulario -->
+        <div id="recForm">
+          <!-- Ícono mail -->
+          <div class="auth-icon-circle auth-icon-circle-accent">
+            <i data-lucide="mail" style="width:26px;height:26px;stroke-width:1.6;"></i>
+          </div>
+
+          <!-- Heading -->
+          <div class="auth-heading">
+            <h1 class="auth-title" style="font-size:19px;">¿Olvidaste tu contraseña?</h1>
+            <p class="auth-subtitle" style="line-height:1.55;">
+              Ingresa tu correo y te enviaremos un enlace para restablecerla.
+            </p>
+          </div>
+
+          <!-- Formulario -->
+          <form onsubmit="handleRecuperar(event)">
+            <div class="auth-field" style="margin-bottom:18px;">
+              <div class="auth-label-row">
+                <label class="auth-label" for="recEmail">Correo electrónico</label>
+              </div>
+              <div class="auth-input-wrap">
+                <input id="recEmail" type="email" placeholder="tu@correo.com" value="andrea.gomez@restaurante.com">
+              </div>
+            </div>
+
+            <button id="recBtn" type="submit" class="auth-btn auth-btn-primary auth-btn-lg auth-btn-full">
+              Enviar instrucciones
+              <i data-lucide="send" style="width:15px;height:15px;"></i>
+            </button>
+          </form>
+
+          <!-- Link volver -->
+          <div class="auth-back-link">
+            <a href="/auth/login.html">
+              <i data-lucide="arrow-left" style="width:12px;height:12px;"></i>
+              Volver al inicio de sesión
+            </a>
+          </div>
+        </div>
+
+        <!-- Estado: éxito (oculto hasta envío) -->
+        <div id="recSuccess" style="display:none;">
+          <div class="auth-icon-circle auth-icon-circle-success">
+            <i data-lucide="mail-check" style="width:26px;height:26px;stroke-width:1.6;color:var(--success);"></i>
+          </div>
+          <div class="auth-heading">
+            <h1 class="auth-title" style="font-size:19px;">¡Revisa tu correo!</h1>
+            <p class="auth-subtitle" style="line-height:1.6;">
+              Enviamos el link de recuperación a<br>
+              <strong id="recEmailShown" style="color:var(--text);"></strong>
+            </p>
+          </div>
+          <p style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:18px;">
+            Si no llega en 5 min, revisa tu carpeta de spam o
+            <button
+              type="button"
+              id="recReenviarBtn"
+              onclick="handleReenviar()"
+              style="background:none;border:none;color:var(--accent);font-size:12px;font-weight:500;cursor:pointer;padding:0;font-family:var(--ff-base);"
+            >reenviar el correo</button>.
+          </p>
+          <div class="auth-back-link">
+            <a href="/auth/login.html">
+              <i data-lucide="arrow-left" style="width:12px;height:12px;"></i>
+              Volver al inicio de sesión
+            </a>
+          </div>
+        </div>
+
+        <!-- Toggle tema -->
+        <div style="text-align:center; margin-top:16px;">
+          <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+            <i data-lucide="sun" class="theme-icon-light" style="width:16px;height:16px;"></i>
+            <i data-lucide="moon" class="theme-icon-dark" style="width:16px;height:16px;"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/ui.js"></script>
+  <script>
+    lucide.createIcons();
+
+    function handleRecuperar(e) {
+      e.preventDefault();
+      var email = document.getElementById('recEmail').value.trim() || 'tu correo';
+      document.getElementById('recEmailShown').textContent = email;
+      document.getElementById('recForm').style.display = 'none';
+      document.getElementById('recSuccess').style.display = 'block';
+      lucide.createIcons();
+    }
+
+    function handleReenviar() {
+      var btn = document.getElementById('recReenviarBtn');
+      btn.disabled = true;
+      btn.textContent = 'Reenviado ✓';
+      UI.toast({ type: 'success', title: 'Correo reenviado', sub: 'Revisa tu bandeja de entrada' });
+      setTimeout(function() {
+        btn.disabled = false;
+        btn.textContent = 'reenviar el correo';
+      }, 4000);
+    }
+  </script>
+  <script src="/assets/js/nav.js"></script>
+</body>
+</html>
