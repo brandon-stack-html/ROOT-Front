@@ -18,6 +18,7 @@
     { name: 'Selector de sucursal',      path: '/auth/selector-sucursal.html',      module: 'Auth' },
     { name: 'Registro exitoso',          path: '/auth/registro-ok.html',            module: 'Auth' },
     { name: 'Nómina · Comprobante imprimible', path: '/backoffice/nomina-imprimible.html', module: 'Backoffice' },
+    { name: 'Notificaciones',                  path: '/backoffice/notificaciones.html',    module: 'Backoffice' },
 
     { name: 'Dashboard',                 path: '/backoffice/dashboard.html',        module: 'Backoffice' },
     { name: 'Usuarios',                  path: '/backoffice/usuarios.html',         module: 'Backoffice' },
@@ -102,8 +103,36 @@
   let inputEl = null;
   let listEl = null;
   let emptyEl = null;
+  let homeEl  = null;
   let selectedIdx = 0;
   let currentResults = PAGES.slice();
+
+  // ── Recientes via localStorage ──────────────────────────────────
+  const RECIENTES_KEY = 'root:nav:recientes';
+  const ACCIONES = [
+    { name: 'Crear producto',  icon: 'plus',         path: '/backoffice/producto.html?nuevo=1' },
+    { name: 'Abrir turno POS', icon: 'dollar-sign',  path: '/pos/apertura.html' },
+    { name: 'Ver adelantos',   icon: 'clock',        path: '/backoffice/adelantos.html' },
+    { name: 'Reportes',        icon: 'bar-chart-3',  path: '/backoffice/reportes.html' },
+    { name: 'Inventario',      icon: 'archive',      path: '/backoffice/inventario.html' },
+    { name: 'Nómina',          icon: 'wallet',       path: '/backoffice/nomina.html' },
+  ];
+  const FRECUENTES = [
+    '/backoffice/dashboard.html', '/backoffice/catalogo.html',
+    '/pos/mapa.html', '/backoffice/nomina.html',
+    '/backoffice/caja.html', '/backoffice/clientes.html',
+    '/backoffice/adelantos.html', '/backoffice/reportes.html',
+  ];
+
+  function getRecientes() {
+    try { return JSON.parse(localStorage.getItem(RECIENTES_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function pushReciente(page) {
+    var list = getRecientes().filter(function(p) { return p.path !== page.path; });
+    list.unshift({ name: page.name, path: page.path, module: page.module });
+    if (list.length > 5) list = list.slice(0, 5);
+    localStorage.setItem(RECIENTES_KEY, JSON.stringify(list));
+  }
 
   function buildModal() {
     if (document.getElementById('navJumpModal')) return;
@@ -113,41 +142,41 @@
     backdrop.setAttribute('role', 'dialog');
     backdrop.setAttribute('aria-modal', 'true');
     backdrop.setAttribute('aria-labelledby', 'navJumpInput');
-    backdrop.innerHTML = `
-      <div class="modal modal-md">
-        <div class="modal-header">
-          <i data-lucide="search" style="width:16px;height:16px;color:var(--muted);"></i>
-          <input
-            id="navJumpInput"
-            type="text"
-            class="nav-jump-input"
-            placeholder="Saltar a pantalla..."
-            autocomplete="off"
-            spellcheck="false"
-            aria-label="Buscar pantalla"
-          >
-          <button class="modal-close" data-close aria-label="Cerrar buscador">×</button>
-        </div>
-        <div class="modal-body" style="padding:0; max-height:60vh; overflow-y:auto;">
-          <ul class="nav-jump-list" role="listbox"></ul>
-          <div class="nav-jump-empty" hidden>Sin resultados.</div>
-        </div>
-        <div class="modal-footer">
-          <span class="nav-jump-hint">
-            <kbd>↑</kbd><kbd>↓</kbd> navegar · <kbd>Enter</kbd> ir · <kbd>Esc</kbd> cerrar
-          </span>
-        </div>
-      </div>
-    `;
+    backdrop.innerHTML =
+      '<div class="modal modal-md">' +
+        '<div class="modal-header">' +
+          '<i data-lucide="search" style="width:16px;height:16px;color:var(--muted);"></i>' +
+          '<input id="navJumpInput" type="text" class="nav-jump-input" placeholder="Buscar pantalla o acción..." autocomplete="off" spellcheck="false" aria-label="Buscar pantalla">' +
+          '<button class="modal-close" data-close aria-label="Cerrar buscador">×</button>' +
+        '</div>' +
+        '<div class="modal-body" style="padding:0; max-height:60vh; overflow-y:auto;">' +
+          '<div id="navJumpHome" style="padding:8px 4px;"></div>' +
+          '<ul class="nav-jump-list" role="listbox" style="display:none;"></ul>' +
+          '<div class="nav-jump-empty" hidden>Sin resultados.</div>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+          '<span class="nav-jump-hint"><kbd>↑</kbd><kbd>↓</kbd> navegar · <kbd>Enter</kbd> ir · <kbd>Esc</kbd> cerrar</span>' +
+        '</div>' +
+      '</div>';
     document.body.appendChild(backdrop);
     modalEl = backdrop;
     inputEl = backdrop.querySelector('.nav-jump-input');
-    listEl = backdrop.querySelector('.nav-jump-list');
+    listEl  = backdrop.querySelector('.nav-jump-list');
     emptyEl = backdrop.querySelector('.nav-jump-empty');
+    homeEl  = backdrop.querySelector('#navJumpHome');
 
     inputEl.addEventListener('input', function () {
       selectedIdx = 0;
-      renderList(inputEl.value);
+      var q = inputEl.value.trim();
+      if (!q) {
+        listEl.style.display  = 'none';
+        emptyEl.hidden = true;
+        renderHome();
+      } else {
+        homeEl.style.display = 'none';
+        listEl.style.display = '';
+        renderList(q);
+      }
     });
 
     inputEl.addEventListener('keydown', function (e) {
@@ -162,6 +191,7 @@
       } else if (e.key === 'Enter') {
         e.preventDefault();
         if (currentResults.length > 0 && currentResults[selectedIdx]) {
+          pushReciente(currentResults[selectedIdx]);
           location.href = currentResults[selectedIdx].path;
         }
       }
@@ -207,6 +237,7 @@
         updateSelection();
       });
       btn.addEventListener('click', function () {
+        pushReciente(currentResults[i]);
         location.href = currentResults[i].path;
       });
     });
@@ -222,6 +253,84 @@
     });
   }
 
+  // ── Home del Ctrl+K: 3 secciones ────────────────────────────────
+  function renderHome() {
+    if (!homeEl) return;
+    var recientes = getRecientes();
+    var frecPage  = FRECUENTES.map(function(path) {
+      return PAGES.find(function(p) { return p.path === path; });
+    }).filter(Boolean);
+
+    var html = '';
+
+    // Sección Recientes
+    if (recientes.length > 0) {
+      html += navSection('Recientes', recientes.map(function(p) {
+        return navItem(p.name, p.module || '', p.path, 'history', true);
+      }).join(''));
+    }
+
+    // Sección Acciones rápidas
+    html += navSection('Acciones rápidas', ACCIONES.map(function(a) {
+      return '<button type="button" class="nav-jump-item" data-path="' + a.path + '" style="gap:8px;">' +
+        '<span class="nav-jump-item-icon" style="display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent);">' +
+          '<i data-lucide="' + a.icon + '" style="width:13px;height:13px;"></i>' +
+        '</span>' +
+        '<span class="nav-jump-item-name">' + a.name + '</span>' +
+        '<span class="nav-jump-module">Acción</span>' +
+      '</button>';
+    }).join(''));
+
+    // Sección Frecuentes
+    if (frecPage.length > 0) {
+      html += navSection('Páginas frecuentes', frecPage.map(function(p) {
+        return navItem(p.name, p.module, p.path, 'layout-grid', false);
+      }).join(''));
+    }
+
+    homeEl.innerHTML = html;
+    homeEl.style.display = 'block';
+
+    homeEl.querySelectorAll('.nav-jump-item').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var path = btn.dataset.path;
+        var page = PAGES.find(function(p) { return p.path === path; });
+        if (page) pushReciente(page);
+        window.location.href = path;
+        closeJump();
+      });
+      btn.addEventListener('mouseenter', function() {
+        homeEl.querySelectorAll('.nav-jump-item').forEach(function(b) { b.classList.remove('is-selected'); });
+        btn.classList.add('is-selected');
+      });
+    });
+
+    refreshLucide();
+  }
+
+  function navSection(title, itemsHtml) {
+    return '<div style="padding:8px 12px 4px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">' + title + '</div>' +
+      '<div>' + itemsHtml + '</div>';
+  }
+
+  function navItem(name, module, path, icon, highlight) {
+    return '<button type="button" class="nav-jump-item" data-path="' + path + '" style="gap:8px;">' +
+      '<span class="nav-jump-item-icon" style="display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;flex-shrink:0;color:' + (highlight ? 'var(--accent)' : 'var(--muted)') + ';">' +
+        '<i data-lucide="' + icon + '" style="width:13px;height:13px;"></i>' +
+      '</span>' +
+      '<span class="nav-jump-item-name">' + name + '</span>' +
+      '<span class="nav-jump-module">' + module + '</span>' +
+    '</button>';
+  }
+
+  function closeJump() {
+    if (window.UI && typeof window.UI.closeModal === 'function') {
+      window.UI.closeModal('navJumpModal');
+    } else if (modalEl) {
+      modalEl.classList.remove('is-open');
+    }
+  }
+
   function openJump() {
     if (!modalEl) buildModal();
     if (window.UI && typeof window.UI.openModal === 'function') {
@@ -231,7 +340,10 @@
     }
     inputEl.value = '';
     selectedIdx = 0;
-    renderList('');
+    // Mostrar home en lugar de todos los resultados
+    if (listEl)  listEl.style.display  = 'none';
+    if (emptyEl) emptyEl.hidden = true;
+    renderHome();
     setTimeout(function () { inputEl.focus(); }, 50);
     refreshLucide();
   }

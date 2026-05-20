@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Notificaciones · ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    .notif-filters { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
+    .notif-filter {
+      padding:6px 14px; border-radius:20px; border:1px solid var(--border);
+      background:transparent; color:var(--muted); font-size:12px; font-weight:600;
+      cursor:pointer; font-family:var(--ff-base); transition:all .12s;
+    }
+    .notif-filter.is-active { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .notif-list { display:flex; flex-direction:column; gap:0; }
+    .notif-item {
+      display:flex; align-items:flex-start; gap:12px;
+      padding:14px 18px; border-bottom:1px solid var(--border);
+      cursor:pointer; transition:background .1s; text-decoration:none; color:inherit;
+    }
+    .notif-item:last-child { border-bottom:none; }
+    .notif-item:hover { background:var(--alt); }
+    .notif-item.is-unread { background:rgba(79,70,229,.03); }
+    [data-theme="dark"] .notif-item.is-unread { background:rgba(79,70,229,.07); }
+    .notif-icon {
+      width:36px; height:36px; border-radius:9px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; margin-top:1px;
+    }
+    .notif-icon.unread { background:rgba(79,70,229,.1); }
+    .notif-icon.read   { background:var(--alt); }
+    .notif-content { flex:1; min-width:0; }
+    .notif-titulo { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; margin-bottom:3px; }
+    .notif-item.read .notif-titulo { font-weight:400; }
+    .notif-meta { font-size:11px; color:var(--muted); }
+    .notif-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; margin-top:6px; }
+    .notif-empty { text-align:center; padding:48px 24px; color:var(--muted); font-size:13px; }
+    @keyframes notifIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+    .notif-item { animation:notifIn .2s ease; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+<div class="bo-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-header">
+      <div class="bo-sidebar-brand"><span class="root-wordmark">[ROOT]</span></div>
+      <button class="bo-business-selector" type="button">
+        <span class="bo-business-avatar">EB</span>
+        <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+    </div>
+    <nav class="bo-sidebar-nav">
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Operación</div>
+        <a href="./dashboard.html" class="bo-sidebar-item"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a href="../pos/mapa.html"  class="bo-sidebar-item"><i data-lucide="shopping-cart"></i>POS</a>
+        <a href="../kds/main.html"  class="bo-sidebar-item"><i data-lucide="chef-hat"></i>KDS</a>
+        <a href="./caja.html"       class="bo-sidebar-item"><i data-lucide="dollar-sign"></i>Caja</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Gestión</div>
+        <a href="./catalogo.html"    class="bo-sidebar-item"><i data-lucide="package"></i>Catálogo</a>
+        <a href="./inventario.html"  class="bo-sidebar-item"><i data-lucide="archive"></i>Inventario</a>
+        <a href="./clientes.html"    class="bo-sidebar-item"><i data-lucide="users"></i>Clientes</a>
+        <a href="./proveedores.html" class="bo-sidebar-item"><i data-lucide="truck"></i>Proveedores</a>
+        <a href="./gastos.html"      class="bo-sidebar-item"><i data-lucide="receipt"></i>Gastos</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Nómina</div>
+        <a href="./nomina.html"         class="bo-sidebar-item"><i data-lucide="wallet"></i>Nómina</a>
+        <a href="./adelantos.html"       class="bo-sidebar-item"><i data-lucide="clock"></i>Adelantos</a>
+        <a href="./nomina-empleado.html" class="bo-sidebar-item"><i data-lucide="user-check"></i>Empleados</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Finanzas</div>
+        <a href="./facturacion-dian.html" class="bo-sidebar-item"><i data-lucide="file-text"></i>Facturación DIAN</a>
+        <a href="./contabilidad.html"     class="bo-sidebar-item"><i data-lucide="book-open"></i>Contabilidad</a>
+        <a href="./reportes.html"         class="bo-sidebar-item"><i data-lucide="bar-chart-3"></i>Reportes</a>
+      </div>
+      <div class="bo-sidebar-group">
+        <div class="bo-sidebar-group-title">Config</div>
+        <a href="./configuracion.html" class="bo-sidebar-item"><i data-lucide="settings"></i>Configuración</a>
+        <a href="./usuarios.html"      class="bo-sidebar-item"><i data-lucide="user-circle"></i>Usuarios</a>
+        <a href="./roles.html"         class="bo-sidebar-item"><i data-lucide="shield"></i>Roles</a>
+      </div>
+    </nav>
+    <div class="bo-sidebar-footer">
+      <span class="bo-user-avatar">JC</span>
+      <span class="bo-user-info"><span class="name">Juan Camilo</span><span class="role">Administrador</span></span>
+      <button class="bo-logout" type="button" aria-label="Cerrar sesión"><i data-lucide="log-out"></i></button>
+    </div>
+  </aside>
+  <div class="bo-sidebar-backdrop" id="boBackdrop"></div>
+
+  <!-- CONTENT -->
+  <div class="bo-content-wrap">
+    <header class="bo-topbar">
+      <button class="bo-hamburger" type="button" data-toggle-sidebar aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+      <nav class="bo-breadcrumb">
+        <span class="bo-breadcrumb-item">Inicio</span>
+        <span class="bo-breadcrumb-sep"><i data-lucide="chevron-right"></i></span>
+        <span class="bo-breadcrumb-item is-active">Notificaciones</span>
+      </nav>
+      <div class="bo-topbar-spacer"></div>
+      <button class="bo-topbar-sucursal" type="button"><i data-lucide="store"></i><span class="label">Sede Norte</span></button>
+      <div class="bo-topbar-actions">
+        <button class="bo-topbar-icon" aria-label="Buscar"><i data-lucide="search"></i></button>
+        <button class="bo-topbar-icon" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="notification-dot"></span>
+        </button>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="bo-topbar-avatar">JC</button>
+      </div>
+    </header>
+
+    <main id="main" class="bo-content">
+
+      <div class="bo-page-header">
+        <div>
+          <div class="bo-page-title">Notificaciones</div>
+          <div class="bo-page-subtitle" id="notifSubtitle">—</div>
+        </div>
+        <div class="bo-page-actions">
+          <button class="btn btn-secondary btn-sm" id="btnMarkAll">
+            <i data-lucide="check-circle-2" style="width:13px;height:13px;"></i>
+            Marcar todas como leídas
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="notif-filters" id="notifFilters">
+        <button class="notif-filter is-active" data-f="">Todas</button>
+        <button class="notif-filter" data-f="unread">No leídas</button>
+        <button class="notif-filter" data-f="adelanto">Nómina</button>
+        <button class="notif-filter" data-f="stock">Inventario</button>
+        <button class="notif-filter" data-f="pedido">Pedidos</button>
+      </div>
+
+      <!-- Lista -->
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div class="notif-list" id="notifList"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/ui.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  if (window.lucide) window.lucide.createIcons();
+
+  var NOTIF_KEY = 'root:notifs:v1';
+  var DEFAULTS = [
+    { id:'n1', tipo:'adelanto', titulo:'Camila V. solicitó un adelanto',     meta:'$120.000 · Hace 5 min',  icon:'clock',          href:'./adelantos.html',       leida:false },
+    { id:'n2', tipo:'pedido',   titulo:'Nuevo pedido #901 · Mesa 8',         meta:'3 ítems · Hace 8 min',   icon:'shopping-bag',   href:'../pos/pedido.html',      leida:false },
+    { id:'n3', tipo:'stock',    titulo:'Papa criolla en stock bajo',         meta:'12.5 kg · Hace 15 min',  icon:'alert-triangle', href:'./inventario.html',       leida:false },
+    { id:'n4', tipo:'dian',     titulo:'Factura FE-0234 enviada a DIAN',     meta:'$45.000 · Hace 22 min',  icon:'file-text',      href:'./facturacion-dian.html', leida:true  },
+    { id:'n5', tipo:'nomina',   titulo:'Nómina mayo registrada',             meta:'$1.623.500 · Hace 1 h',  icon:'wallet',         href:'./nomina.html',           leida:true  },
+    { id:'n6', tipo:'pedido',   titulo:'Comanda Mesa 3 completada por KDS',  meta:'Hace 1 h',               icon:'check-circle-2', href:'../kds/main.html',         leida:true  },
+    { id:'n7', tipo:'stock',    titulo:'Guascas sin stock — reabastecer',    meta:'Hace 2 h',               icon:'alert-circle',   href:'./inventario.html',       leida:true  },
+    { id:'n8', tipo:'caja',     titulo:'Turno cerrado · $1.234.000',         meta:'Sede Norte · Hace 3 h',  icon:'dollar-sign',    href:'./caja.html',             leida:true  },
+    { id:'n9', tipo:'adelanto', titulo:'Adelanto aprobado a Camila V.',      meta:'$80.000 · Ayer',         icon:'check',          href:'./adelantos.html',        leida:true  },
+    { id:'n10',tipo:'sistema',  titulo:'Integración Uber Eats actualizada',  meta:'Ayer 18:30',             icon:'plug',           href:'./integraciones.html',    leida:true  },
+  ];
+
+  var TIPO_ICON_COLOR = { adelanto:'var(--warning)', pedido:'var(--accent)', stock:'var(--error)', nomina:'var(--success)', dian:'var(--info)', caja:'var(--success)', sistema:'var(--muted)' };
+
+  function getNotifs() {
+    try { return JSON.parse(localStorage.getItem(NOTIF_KEY) || 'null') || DEFAULTS.slice(); } catch(e) { return DEFAULTS.slice(); }
+  }
+  function saveNotifs(ns) { localStorage.setItem(NOTIF_KEY, JSON.stringify(ns)); }
+
+  var filtroActivo = '';
+
+  function render() {
+    var ns = getNotifs();
+    var filtradas = ns.filter(function(n) {
+      if (!filtroActivo) return true;
+      if (filtroActivo === 'unread') return !n.leida;
+      return n.tipo === filtroActivo;
+    });
+
+    var unread = ns.filter(function(n){ return !n.leida; }).length;
+    document.getElementById('notifSubtitle').textContent = unread + ' sin leer · ' + ns.length + ' total';
+
+    var list = document.getElementById('notifList');
+    if (filtradas.length === 0) {
+      list.innerHTML = '<div class="notif-empty"><div style="font-size:32px;margin-bottom:8px;">🔔</div>No hay notificaciones en esta categoría</div>';
+      return;
+    }
+
+    list.innerHTML = filtradas.map(function(n) {
+      var color = TIPO_ICON_COLOR[n.tipo] || 'var(--muted)';
+      return '<a class="notif-item ' + (n.leida ? 'read' : 'is-unread') + '" href="' + n.href + '" data-id="' + n.id + '">' +
+        '<div class="notif-icon ' + (n.leida ? 'read' : 'unread') + '">' +
+          '<i data-lucide="' + n.icon + '" style="width:14px;height:14px;color:' + (n.leida ? 'var(--muted)' : color) + ';"></i>' +
+        '</div>' +
+        '<div class="notif-content">' +
+          '<div class="notif-titulo">' + n.titulo + '</div>' +
+          '<div class="notif-meta">' + n.meta + '</div>' +
+        '</div>' +
+        (!n.leida ? '<div class="notif-dot"></div>' : '') +
+      '</a>';
+    }).join('');
+
+    list.querySelectorAll('.notif-item').forEach(function(item) {
+      item.addEventListener('click', function(e) {
+        var id = item.dataset.id;
+        var ns = getNotifs();
+        var n  = ns.find(function(x){ return x.id === id; });
+        if (n) { n.leida = true; saveNotifs(ns); }
+      });
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  // Filtros
+  document.querySelectorAll('.notif-filter').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.notif-filter').forEach(function(b){ b.classList.remove('is-active'); });
+      btn.classList.add('is-active');
+      filtroActivo = btn.dataset.f;
+      render();
+    });
+  });
+
+  // Marcar todas
+  document.getElementById('btnMarkAll').addEventListener('click', function() {
+    var ns = getNotifs();
+    ns.forEach(function(n){ n.leida = true; });
+    saveNotifs(ns);
+    render();
+    UI.toast({ type: 'success', title: 'Todas marcadas como leídas' });
+  });
+
+  render();
+</script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

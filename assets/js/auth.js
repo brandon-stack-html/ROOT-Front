@@ -156,7 +156,12 @@
       if (window.UI && typeof window.UI.toast === 'function') {
         window.UI.toast({ type: 'success', title: 'Cambiado a ' + label, sub: 'Redirigiendo al módulo…' });
       }
-      setTimeout(function () { window.location.href = home; }, 900);
+      // Fade-out antes de navegar
+      setTimeout(function () {
+        document.body.style.transition = 'opacity .2s ease';
+        document.body.style.opacity = '0';
+        setTimeout(function () { window.location.href = home; }, 220);
+      }, 700);
     },
 
     filterNavItems: function (items) {
@@ -361,12 +366,144 @@
       }
     },
 
+    // ── Notificaciones ────────────────────────────────────────────
+    _NOTIF_DEFAULTS: [
+      { id:'n1', titulo:'Camila V. solicitó un adelanto',      meta:'$120.000 · Hace 5 min',  icon:'clock',          href:'/backoffice/adelantos.html',       leida:false },
+      { id:'n2', titulo:'Nuevo pedido #901 · Mesa 8',          meta:'3 ítems · Hace 8 min',   icon:'shopping-bag',   href:'/pos/pedido.html',                  leida:false },
+      { id:'n3', titulo:'Papa criolla en stock bajo',          meta:'12.5 kg · Hace 15 min',  icon:'alert-triangle', href:'/backoffice/inventario.html',        leida:false },
+      { id:'n4', titulo:'Factura FE-0234 enviada a DIAN',      meta:'$45.000 · Hace 22 min',  icon:'file-text',      href:'/backoffice/facturacion-dian.html', leida:true  },
+      { id:'n5', titulo:'Nómina mayo registrada',              meta:'$1.623.500 · Hace 1 h',  icon:'wallet',         href:'/backoffice/nomina.html',            leida:true  },
+      { id:'n6', titulo:'Comanda Mesa 3 completada por KDS',   meta:'Hace 1 h',               icon:'check-circle-2', href:'/kds/main.html',                    leida:true  },
+      { id:'n7', titulo:'Guascas sin stock — reabastecer',     meta:'Hace 2 h',               icon:'alert-circle',   href:'/backoffice/inventario.html',        leida:true  },
+      { id:'n8', titulo:'Turno cerrado · $1.234.000',          meta:'Sede Norte · Hace 3 h',  icon:'dollar-sign',    href:'/backoffice/caja.html',              leida:true  },
+      { id:'n9', titulo:'Camila V. solicitó adelanto aprobado',meta:'$80.000 · Ayer',         icon:'check',          href:'/backoffice/adelantos.html',         leida:true  },
+      { id:'n10',titulo:'Integración Uber Eats actualizada',   meta:'Ayer 18:30',             icon:'plug',           href:'/backoffice/integraciones.html',     leida:true  },
+    ],
+
+    _getNotifs: function () {
+      var raw = localStorage.getItem('root:notifs:v1');
+      if (raw) { try { return JSON.parse(raw); } catch(e) {} }
+      localStorage.setItem('root:notifs:v1', JSON.stringify(Auth._NOTIF_DEFAULTS));
+      return Auth._NOTIF_DEFAULTS.slice();
+    },
+
+    _saveNotifs: function (notifs) {
+      localStorage.setItem('root:notifs:v1', JSON.stringify(notifs));
+    },
+
+    _injectNotifDropdown: function () {
+      if (!DEMO_MODE) return;
+      var bells = document.querySelectorAll('.bo-topbar-icon[aria-label="Notificaciones"]');
+      if (!bells.length) return;
+
+      if (!document.getElementById('notifDropdown')) {
+        var dd = document.createElement('div');
+        dd.id = 'notifDropdown';
+        dd.style.cssText = [
+          'display:none;position:fixed;z-index:9000;',
+          'background:var(--bg-elevated,var(--alt));',
+          'border:1px solid var(--border);border-radius:12px;',
+          'width:340px;max-height:480px;overflow:hidden;display:none;',
+          'flex-direction:column;box-shadow:var(--shadow-lg,0 16px 40px rgba(0,0,0,.2));',
+        ].join('');
+        document.body.appendChild(dd);
+      }
+      var dropdown = document.getElementById('notifDropdown');
+
+      bells.forEach(function (bell) {
+        if (bell.dataset.notifAttached) return;
+        bell.dataset.notifAttached = 'true';
+        bell.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var rect = bell.getBoundingClientRect();
+          var isVisible = dropdown.style.display === 'flex';
+          if (isVisible) { dropdown.style.display = 'none'; return; }
+          Auth._renderNotifDropdown(dropdown);
+          dropdown.style.display = 'flex';
+          dropdown.style.top  = (rect.bottom + 8) + 'px';
+          dropdown.style.right = (window.innerWidth - rect.right) + 'px';
+        });
+      });
+
+      document.addEventListener('click', function () { if (dropdown) dropdown.style.display = 'none'; });
+      dropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+
+      Auth._updateNotifBadge();
+    },
+
+    _renderNotifDropdown: function (dd) {
+      var notifs = Auth._getNotifs();
+      var unread  = notifs.filter(function (n) { return !n.leida; }).length;
+
+      var header = '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border);flex-shrink:0;">' +
+        '<div style="font-size:13px;font-weight:700;color:var(--text);">Notificaciones' + (unread > 0 ? ' <span style="font-size:10px;background:var(--accent);color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;">' + unread + '</span>' : '') + '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          (unread > 0 ? '<button id="notifMarkAll" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--ff-base);font-weight:500;">Marcar leídas</button>' : '') +
+          '<a href="/backoffice/notificaciones.html" style="font-size:11px;color:var(--muted);text-decoration:none;" onclick="document.getElementById(\'notifDropdown\').style.display=\'none\'">Ver todas →</a>' +
+        '</div>' +
+      '</div>';
+
+      var rows = notifs.map(function (n) {
+        return '<a href="' + n.href + '" onclick="Auth._markRead(\'' + n.id + '\');document.getElementById(\'notifDropdown\').style.display=\'none\'" style="display:flex;align-items:flex-start;gap:10px;padding:11px 16px;text-decoration:none;background:' + (n.leida ? 'transparent' : 'rgba(79,70,229,.04)') + ';border-bottom:1px solid var(--border-subtle,var(--border));transition:background .12s;">' +
+          '<div style="width:28px;height:28px;border-radius:7px;background:' + (n.leida ? 'var(--alt)' : 'rgba(79,70,229,.1)') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">' +
+            '<i data-lucide="' + n.icon + '" style="width:12px;height:12px;color:' + (n.leida ? 'var(--muted)' : 'var(--accent)') + ';"></i>' +
+          '</div>' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="font-size:12px;font-weight:' + (n.leida ? '400' : '600') + ';color:var(--text);line-height:1.4;">' + n.titulo + '</div>' +
+            '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + n.meta + '</div>' +
+          '</div>' +
+          (!n.leida ? '<div style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px;"></div>' : '') +
+        '</a>';
+      }).join('');
+
+      dd.innerHTML = header + '<div style="overflow-y:auto;flex:1;">' + rows + '</div>';
+
+      var markAllBtn = dd.querySelector('#notifMarkAll');
+      if (markAllBtn) {
+        markAllBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          var ns = Auth._getNotifs();
+          ns.forEach(function (n) { n.leida = true; });
+          Auth._saveNotifs(ns);
+          Auth._renderNotifDropdown(dd);
+          Auth._updateNotifBadge();
+        });
+      }
+
+      if (window.lucide) window.lucide.createIcons({ nodes: [dd] });
+    },
+
+    _markRead: function (id) {
+      var ns = Auth._getNotifs();
+      var n  = ns.find(function (x) { return x.id === id; });
+      if (n) n.leida = true;
+      Auth._saveNotifs(ns);
+      Auth._updateNotifBadge();
+    },
+
+    _updateNotifBadge: function () {
+      var notifs = Auth._getNotifs();
+      var count  = notifs.filter(function (n) { return !n.leida; }).length;
+      document.querySelectorAll('.bo-topbar-icon[aria-label="Notificaciones"]').forEach(function (bell) {
+        var dot = bell.querySelector('.notification-dot');
+        if (count > 0) {
+          if (dot) {
+            dot.textContent = count > 9 ? '9+' : String(count);
+            dot.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:8px;background:var(--error);color:#fff;font-size:9px;font-weight:700;padding:0 3px;';
+          }
+        } else {
+          if (dot) dot.style.display = 'none';
+        }
+      });
+    },
+
     // ── Init general ──
     init: function () {
       Auth.applySidebar();
       Auth.applyRequires();
       Auth.injectRoleSwitcher();
       Auth._wireSidebarLogout();
+      Auth._injectNotifDropdown();
     },
   };
 
