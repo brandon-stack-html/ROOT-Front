@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     F6 — Confirmación (mobile + desktop). Pedido confirmado + tracker.
+     Sprint 9.6.
+     ============================================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>¡Pedido confirmado! · El Buen Sabor</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/storefront.css" />
+</head>
+<body class="sf-mobile-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="sf-desktop-shell" style="background: var(--alt);">
+
+    <!-- Header simplificado -->
+    <header class="sf-public-header">
+      <div class="sf-public-header-inner">
+        <a href="./tienda.html" class="sf-public-brand">
+          <div class="sf-bs-logo is-sm">BS</div>
+          <div>
+            <div class="sf-public-brand-name">El Buen Sabor</div>
+            <div class="sf-public-brand-sub">Confirmación de pedido</div>
+          </div>
+        </a>
+        <div style="flex: 1;"></div>
+        <div class="sf-public-actions">
+          <a href="./tienda.html" class="login-link"><i data-lucide="home" style="width: 13px; height: 13px; vertical-align: -2px;"></i> Volver al inicio</a>
+          <button class="sf-icon-btn" data-toggle-theme aria-label="Cambiar tema" style="background: var(--bg);">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="sf-confirm-wrap">
+
+      <!-- Badge canal confirmación -->
+      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;" id="canalBadges">
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(16,185,129,.10);color:var(--success);border:1px solid rgba(16,185,129,.2);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Confirmación enviada por WhatsApp
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(59,130,246,.08);color:var(--info);border:1px solid rgba(59,130,246,.18);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Copia a maria@correo.co
+        </span>
+      </div>
+
+      <!-- Auto-refresh indicator -->
+      <div id="refreshIndicator" style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:6px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        <span id="refreshText">Actualizado ahora</span>
+        <a href="#" onclick="manualRefresh();return false;" style="color:var(--accent);font-weight:500;">Ver en tiempo real</a>
+      </div>
+
+      <!-- ===== HERO ===== -->
+      <div class="sf-confirm-hero">
+        <div class="sf-confirm-checkmark">
+          <svg viewBox="0 0 80 80" width="92" height="92" aria-hidden="true">
+            <circle class="ring" cx="40" cy="40" r="36" stroke-width="3" fill="none"/>
+            <path class="tick" d="M 24 42 L 36 54 L 56 30" stroke-width="4" fill="none"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1 class="sf-confirm-title">¡Pedido confirmado!</h1>
+        <div class="sf-confirm-sub">
+          Tu pedido
+          <button id="ordenBtn" onclick="copiarOrden()" style="background:none;border:none;cursor:pointer;font-weight:700;color:var(--text);font-size:inherit;font-family:inherit;text-decoration:underline dotted;padding:0 2px;" title="Click para copiar">
+            #ORD-4821
+          </button>
+          está siendo preparado
+        </div>
+        <div class="sf-confirm-eta">
+          <i data-lucide="clock"></i>
+          Llega entre 13:45 — 14:00
+        </div>
+      </div>
+
+      <!-- ===== TRACKER ===== -->
+      <div class="sf-tracker">
+        <div class="sf-tracker-step is-done">
+          <div class="sf-tracker-icon"><i data-lucide="check"></i></div>
+          <div class="sf-tracker-body">
+            <div class="sf-tracker-step-title">Pedido recibido</div>
+            <div class="sf-tracker-step-meta">13:12 · Confirmado</div>
+          </div>
+        </div>
+        <div class="sf-tracker-step is-current" id="trackerCurrent">
+          <div class="sf-tracker-icon"><i data-lucide="chef-hat"></i></div>
+          <div class="sf-tracker-body">
+            <div class="sf-tracker-step-title">En preparación</div>
+            <div class="sf-tracker-step-meta">13:18 · Tiempo estimado 25 min</div>
+          </div>
+        </div>
+        <div class="sf-tracker-step is-pending" id="trackerNext">
+          <div class="sf-tracker-icon"><i data-lucide="bike"></i></div>
+          <div class="sf-tracker-body">
+            <div class="sf-tracker-step-title">En camino</div>
+            <div class="sf-tracker-step-meta">~ 13:45</div>
+          </div>
+        </div>
+        <div class="sf-tracker-step is-pending">
+          <div class="sf-tracker-icon"><i data-lucide="home"></i></div>
+          <div class="sf-tracker-body">
+            <div class="sf-tracker-step-title">Entregado</div>
+            <div class="sf-tracker-step-meta">¡Disfruta tu comida!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DETALLES ===== -->
+      <div class="sf-info-card">
+        <div class="sf-info-card-title">Detalles del pedido</div>
+        <div class="sf-info-row">
+          <span class="label">Número</span>
+          <span class="value">
+            <button onclick="copiarOrden()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-weight:700;font-size:inherit;font-family:inherit;padding:0;display:inline-flex;align-items:center;gap:4px;" title="Copiar número de orden">
+              #ORD-4821
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
+          </span>
+        </div>
+        <div class="sf-info-row">
+          <span class="label">Fecha</span>
+          <span class="value">14 mar 2026, 13:12</span>
+        </div>
+        <div class="sf-info-row">
+          <span class="label">Sucursal</span>
+          <span class="value">Sede Norte — Chapinero</span>
+        </div>
+        <div class="sf-info-row">
+          <span class="label">Tipo</span>
+          <span class="value">A domicilio</span>
+        </div>
+      </div>
+
+      <!-- ===== ITEMS ===== -->
+      <div class="sf-info-card">
+        <div class="sf-info-card-title">Tu pedido</div>
+        <div id="confirmItems"></div>
+        <div class="sf-info-row" style="border-top: 1px solid var(--border); margin-top: 10px; padding-top: 12px;">
+          <span class="label">Subtotal</span>
+          <span class="value" id="cSubtotal">$0</span>
+        </div>
+        <div class="sf-info-row">
+          <span class="label">Envío</span>
+          <span class="value">$5.000</span>
+        </div>
+        <div class="sf-info-row is-total">
+          <span class="label">Total pagado</span>
+          <span class="value" id="cTotal">$0</span>
+        </div>
+      </div>
+
+      <!-- ===== DIRECCIÓN ===== -->
+      <div class="sf-info-card">
+        <div class="sf-info-card-title">Dirección de entrega</div>
+        <div style="font-size: 14px; color: var(--text); font-weight: 500; line-height: 1.5; margin-bottom: 8px;">
+          Cra. 15 #80-32, Apto 401 · Torre B<br>
+          Chapinero Alto · Bogotá
+        </div>
+        <div style="font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+          <i data-lucide="phone" style="width: 12px; height: 12px;"></i>
+          Llamar al <strong style="color: var(--text);">+57 315 472 8810</strong> al llegar
+        </div>
+
+        <div class="sf-map-placeholder" style="margin-top: 14px; height: 160px;">
+          <div class="sf-map-pin">
+            <i data-lucide="map-pin"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PAGO ===== -->
+      <div class="sf-info-card">
+        <div class="sf-info-card-title">Método de pago</div>
+        <div class="sf-info-row">
+          <span class="label" style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="credit-card" style="width: 16px; height: 16px;"></i>
+            Tarjeta Visa
+          </span>
+          <span class="value">···· 4521</span>
+        </div>
+      </div>
+
+      <!-- ===== ACCIONES ===== -->
+      <div class="sf-confirm-actions">
+        <a class="btn btn-primary" href="./tienda.html">
+          Hacer otro pedido
+          <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+        </a>
+        <button class="btn btn-secondary" type="button">
+          <i data-lucide="list" style="width: 14px; height: 14px;"></i>
+          Ver mis pedidos
+        </button>
+        <button class="btn btn-ghost" type="button" data-open-modal="cancelOrder" style="color: var(--error);">
+          <i data-lucide="x-circle" style="width: 14px; height: 14px;"></i>
+          Cancelar pedido
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Modal cancelar -->
+  <div class="modal-backdrop" id="cancelOrder">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        ¿Cancelar pedido?
+        <button class="modal-close" data-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="modal-body" style="font-size: 13px; color: var(--muted); line-height: 1.5;">
+        Tu pedido ya está en preparación. Si lo cancelas ahora, podríamos no poder reembolsar
+        el valor total.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Conservar</button>
+        <button class="btn btn-destructive" id="confirmCancel">Sí, cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="../assets/js/storefront.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    // ----- Items: si el carrito está vacío, usar mock -----
+    let items = SF.cart.length > 0 ? SF.cart.slice() : [
+      { nombre: 'Bandeja Paisa',    qty: 1, precio: 32000, grad: 'sf-grad-paisa',    icon: 'beef' },
+      { nombre: 'Ajiaco Bogotano',  qty: 2, precio: 28000, grad: 'sf-grad-ajiaco',   icon: 'soup' },
+      { nombre: 'Limonada Natural', qty: 2, precio: 9000,  grad: 'sf-grad-limonada', icon: 'glass-water' },
+    ];
+
+    const SHIPPING = 5000;
+    const subtotal = items.reduce((acc, i) => acc + i.qty * i.precio, 0);
+    const total = subtotal + SHIPPING;
+
+    document.getElementById('confirmItems').innerHTML = items.map(i => `
+      <div class="sf-info-row">
+        <span class="label">${i.qty} × ${i.nombre}</span>
+        <span class="value">${SF.fmtCOP(i.qty * i.precio)}</span>
+      </div>
+    `).join('');
+
+    document.getElementById('cSubtotal').textContent = SF.fmtCOP(subtotal);
+    document.getElementById('cTotal').textContent = SF.fmtCOP(total);
+
+    // ----- Limpiar carrito (el pedido ya fue confirmado) -----
+    SF.clearCart();
+
+    // ----- Copiar número de orden -----
+    function copiarOrden() {
+      var num = '#ORD-4821';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(num).then(function() {
+          UI.toast({ type: 'success', title: 'Copiado', sub: num + ' en tu portapapeles', duration: 1800 });
+        });
+      } else {
+        UI.toast({ type: 'success', title: 'Copiado', sub: num, duration: 1800 });
+      }
+    }
+    window.copiarOrden = copiarOrden;
+
+    // ----- Auto-refresh y tracker -----
+    var lastRefresh = Date.now();
+    var trackerAdvanced = false;
+
+    function updateRefreshText() {
+      var sec = Math.round((Date.now() - lastRefresh) / 1000);
+      var el = document.getElementById('refreshText');
+      if (!el) return;
+      if (sec < 5) {
+        el.textContent = 'Actualizado ahora';
+      } else if (sec < 60) {
+        el.textContent = 'Actualizado hace ' + sec + 's';
+      } else {
+        el.textContent = 'Actualizado hace ' + Math.round(sec / 60) + ' min';
+      }
+    }
+
+    function manualRefresh() {
+      lastRefresh = Date.now();
+      updateRefreshText();
+      UI.toast({ type: 'info', title: 'Estado actualizado', duration: 1500 });
+      window.manualRefresh = manualRefresh;
+    }
+    window.manualRefresh = manualRefresh;
+
+    setInterval(updateRefreshText, 5000);
+
+    // Avanzar tracker cada 30s (demo)
+    setInterval(function() {
+      lastRefresh = Date.now();
+      updateRefreshText();
+      if (!trackerAdvanced) {
+        trackerAdvanced = true;
+        var current = document.getElementById('trackerCurrent');
+        var next = document.getElementById('trackerNext');
+        if (current && next) {
+          current.classList.remove('is-current');
+          current.classList.add('is-done');
+          current.querySelector('.sf-tracker-icon').innerHTML = '<i data-lucide="check"></i>';
+          next.classList.remove('is-pending');
+          next.classList.add('is-current');
+          if (window.lucide) window.lucide.createIcons();
+          UI.toast({ type: 'info', title: 'Tu pedido salió a domicilio', sub: 'Llega en aprox. 12 min', duration: 3000 });
+        }
+      }
+    }, 30000);
+
+    // ----- Modal cancelar -----
+    document.getElementById('confirmCancel').addEventListener('click', () => {
+      UI.closeModal('cancelOrder');
+      UI.toast({ type: 'success', title: 'Pedido cancelado', sub: 'Procesaremos tu reembolso en 24h.', duration: 2500 });
+      setTimeout(() => window.location.href = './tienda.html', 1800);
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

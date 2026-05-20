@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     F4 — Catálogo tienda (desktop). Filtros + grid de productos.
+     Sprint 9.4.
+     ============================================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Carta · El Buen Sabor</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/storefront.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="sf-desktop-shell">
+
+    <!-- ====================== HEADER PÚBLICO ====================== -->
+    <header class="sf-public-header">
+      <div class="sf-public-header-inner">
+        <button class="sf-public-burger" data-open-nav-drawer aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+        <a href="./tienda.html" class="sf-public-brand">
+          <div class="sf-bs-logo is-sm">BS</div>
+          <div>
+            <div class="sf-public-brand-name">El Buen Sabor</div>
+            <div class="sf-public-brand-sub">Restaurante · Bogotá</div>
+          </div>
+        </a>
+        <nav class="sf-public-nav">
+          <a href="./tienda.html">Inicio</a>
+          <a href="./tienda-catalogo.html" class="is-active">Carta</a>
+          <a href="./tienda.html#sucursales">Sucursales</a>
+          <a href="./tienda.html#nosotros">Nosotros</a>
+          <a href="./tienda.html#contacto">Contacto</a>
+        </nav>
+        <div class="sf-public-actions">
+          <button class="sf-icon-btn" aria-label="Buscar" style="background: var(--bg);">
+            <i data-lucide="search"></i>
+          </button>
+          <a class="login-link" href="../auth/login.html">Iniciar sesión</a>
+          <a href="./checkout.html" id="sfCartBtn" class="sf-cart-btn">
+            <i data-lucide="shopping-cart"></i>
+            <span class="sf-cart-btn-label">Carrito</span>
+            <span class="sf-cart-btn-count">0</span>
+          </a>
+          <button class="sf-icon-btn" data-toggle-theme aria-label="Cambiar tema" style="background: var(--bg);">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="sf-nav-drawer-backdrop" id="navDrawerBackdrop"></div>
+    <aside class="sf-nav-drawer" id="navDrawer">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="sf-public-brand">
+          <div class="sf-bs-logo is-sm">BS</div>
+          <div class="sf-public-brand-name">El Buen Sabor</div>
+        </div>
+        <button class="sf-icon-btn" id="navDrawerClose" aria-label="Cerrar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <a href="./tienda.html"><i data-lucide="home"></i> Inicio</a>
+      <a href="./tienda-catalogo.html" class="is-active"><i data-lucide="utensils"></i> Carta</a>
+      <a href="./tienda.html#sucursales"><i data-lucide="map-pin"></i> Sucursales</a>
+      <a href="./tienda.html#nosotros"><i data-lucide="info"></i> Nosotros</a>
+      <a href="./tienda.html#contacto"><i data-lucide="mail"></i> Contacto</a>
+    </aside>
+
+    <main id="main" class="sf-content">
+
+      <!-- ===== HEAD ===== -->
+      <div class="sf-catalog-breadcrumb">
+        <a href="./tienda.html">Inicio</a>
+        <i data-lucide="chevron-right"></i>
+        <a href="./tienda-catalogo.html">Carta</a>
+        <i data-lucide="chevron-right"></i>
+        <span class="current">Platos fuertes</span>
+      </div>
+
+      <div class="sf-catalog-head" style="display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap;">
+        <div>
+          <h1 class="sf-catalog-title">Platos fuertes</h1>
+          <div class="sf-catalog-sub">Lo mejor de la cocina colombiana, hecho con receta de abuela.</div>
+        </div>
+        <button class="sf-filters-btn-mobile" id="openFiltersMobile">
+          <i data-lucide="sliders-horizontal"></i> Filtros
+        </button>
+      </div>
+
+      <!-- ===== LAYOUT ===== -->
+      <div class="sf-catalog-layout">
+
+        <!-- ===== SIDEBAR FILTROS ===== -->
+        <aside class="sf-filters" id="filtersSidebar">
+          <div class="sf-filters-head">
+            <span class="sf-filters-title">Filtros</span>
+            <button class="sf-filters-clear" id="clearFilters">Limpiar</button>
+          </div>
+
+          <div class="sf-filter-group">
+            <div class="sf-filter-group-title">Categorías</div>
+            <label class="sf-filter-check">
+              <input type="checkbox" data-filter="cat" value="entradas" />
+              <span class="sf-filter-check-box"><i data-lucide="check"></i></span>
+              <span class="sf-filter-check-label">Entradas</span>
+              <span class="sf-filter-check-count">12</span>
+            </label>
+            <label class="sf-filter-check">
+              <input type="checkbox" data-filter="cat" value="platos" checked />
+              <span class="sf-filter-check-box"><i data-lucide="check"></i></span>
+              <span class="sf-filter-check-label">Platos fuertes</span>
+              <span class="sf-filter-check-count">18</span>
+            </label>
+            <label class="sf-filter-check">
+              <input type="checkbox" data-filter="cat" value="bebidas" />
+              <span class="sf-filter-check-box"><i data-lucide="check"></i></span>
+              <span class="sf-filter-check-label">Bebidas</span>
+              <span class="sf-filter-check-count">24</span>
+            </label>
+            <label class="sf-filter-check">
+              <input type="checkbox" data-filter="cat" value="postres" />
+              <span class="sf-filter-check-box"><i data-lucide="check"></i></span>
+              <span class="sf-filter-check-label">Postres</span>
+              <span class="sf-filter-check-count">8</span>
+            </label>
+            <label class="sf-filter-check">
+              <input type="checkbox" data-filter="cat" value="combos" />
+              <span class="sf-filter-check-box"><i data-lucide="check"></i></span>
+              <span class="sf-filter-check-label">Combos</span>
+              <span class="sf-filter-check-count">6</span>
+            </label>
+          </div>
+
+          <div class="sf-filter-group">
+            <div class="sf-filter-group-title">Precio</div>
+            <div class="sf-filter-range">
+              <div class="sf-filter-range-track">
+                <div class="sf-filter-range-fill"></div>
+                <div class="sf-filter-range-thumb" style="left: 18%;"></div>
+                <div class="sf-filter-range-thumb" style="left: 78%;"></div>
+              </div>
+              <div class="sf-filter-range-inputs">
+                <input type="number" value="8000" min="0" />
+                <input type="number" value="45000" min="0" />
+              </div>
+            </div>
+          </div>
+
+          <div class="sf-filter-group">
+            <div class="sf-filter-group-title">Dietarias</div>
+            <div class="sf-filter-chips">
+              <button class="sf-filter-chip" data-diet="vegetariano">Vegetariano</button>
+              <button class="sf-filter-chip" data-diet="vegano">Vegano</button>
+              <button class="sf-filter-chip" data-diet="sin-gluten">Sin gluten</button>
+              <button class="sf-filter-chip" data-diet="sin-lactosa">Sin lactosa</button>
+              <button class="sf-filter-chip" data-diet="picante">Picante</button>
+            </div>
+          </div>
+
+          <div class="sf-filter-group">
+            <div class="sf-filter-group-title">Calificación</div>
+            <div class="sf-filter-chips">
+              <button class="sf-filter-chip is-active" data-rate="all">Todas</button>
+              <button class="sf-filter-chip" data-rate="4">★ 4+</button>
+              <button class="sf-filter-chip" data-rate="3">★ 3+</button>
+            </div>
+          </div>
+
+          <div class="sf-filter-group">
+            <div class="sf-filter-group-title">Tiempo de preparación</div>
+            <label class="sf-filter-radio">
+              <input type="radio" name="time" checked />
+              <span class="sf-filter-radio-dot"></span>
+              <span class="sf-filter-check-label">Cualquiera</span>
+            </label>
+            <label class="sf-filter-radio">
+              <input type="radio" name="time" />
+              <span class="sf-filter-radio-dot"></span>
+              <span class="sf-filter-check-label">Menos de 15 min</span>
+            </label>
+            <label class="sf-filter-radio">
+              <input type="radio" name="time" />
+              <span class="sf-filter-radio-dot"></span>
+              <span class="sf-filter-check-label">15 – 30 min</span>
+            </label>
+            <label class="sf-filter-radio">
+              <input type="radio" name="time" />
+              <span class="sf-filter-radio-dot"></span>
+              <span class="sf-filter-check-label">Más de 30 min</span>
+            </label>
+          </div>
+        </aside>
+
+        <!-- ===== CONTENIDO ===== -->
+        <div>
+          <!-- Toolbar -->
+          <div class="sf-catalog-toolbar">
+            <div class="sf-active-chips" id="activeChips">
+              <span class="sf-active-chip" data-chip="cat:platos">
+                Platos fuertes
+                <button data-remove-chip="cat:platos" aria-label="Quitar"><i data-lucide="x"></i></button>
+              </span>
+            </div>
+
+            <div class="field" style="margin:0;min-width:200px;flex:1;max-width:280px;">
+              <input type="text" id="catalogoSearch" class="field-input" placeholder="Buscar plato..." aria-label="Buscar plato">
+            </div>
+
+            <select class="sf-catalog-select" id="sortSelect">
+              <option value="rel">Más relevantes</option>
+              <option value="asc">Precio: menor a mayor</option>
+              <option value="desc">Precio: mayor a menor</option>
+              <option value="pop">Más vendidos</option>
+              <option value="rate">Mejor calificados</option>
+            </select>
+
+            <div class="sf-view-toggle">
+              <button class="is-active" data-view="grid" aria-label="Cuadrícula"><i data-lucide="layout-grid"></i></button>
+              <button data-view="list" aria-label="Lista"><i data-lucide="list"></i></button>
+            </div>
+          </div>
+
+          <!-- Grid -->
+          <div class="sf-prod-grid" id="catalogGrid"></div>
+
+          <!-- Empty state -->
+          <div class="empty-state" id="catalogoEmpty" hidden>
+            <div class="empty-state-icon"><i data-lucide="search-x"></i></div>
+            <div class="empty-state-title" id="catalogoEmptyTitle">No encontramos platos</div>
+            <div class="empty-state-text">Probá buscando por categoría:</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0 12px;">
+              <button class="btn btn-ghost btn-sm cat-suggest" data-cat="Platos fuertes">🍽 Platos fuertes</button>
+              <button class="btn btn-ghost btn-sm cat-suggest" data-cat="Bebidas">🥤 Bebidas</button>
+              <button class="btn btn-ghost btn-sm cat-suggest" data-cat="Postres">🍰 Postres</button>
+            </div>
+            <button type="button" class="btn btn-secondary empty-state-action" id="catalogoClearSearch">
+              Limpiar búsqueda
+            </button>
+          </div>
+
+          <!-- Paginación -->
+          <div class="sf-pagination">
+            <button class="sf-icon-btn" aria-label="Anterior" disabled><i data-lucide="chevron-left"></i></button>
+            <div class="sf-pagination-pages">
+              <button class="is-active">1</button>
+              <button>2</button>
+              <button>3</button>
+            </div>
+            <button class="sf-icon-btn" aria-label="Siguiente"><i data-lucide="chevron-right"></i></button>
+            <span style="margin-left: 12px;">Mostrando 1-9 de 24</span>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Cart bar mobile (visible solo si hay ítems) -->
+    <button class="sf-cart-bar" id="sfCartBarMobile" type="button" style="display:none;" onclick="window.location.href='./checkout.html'">
+      <div class="sf-cart-bar-count" id="mobileCartCount">0</div>
+      <div class="sf-cart-bar-info">
+        <div class="sf-cart-bar-title">Ver carrito</div>
+        <div class="sf-cart-bar-sub" id="mobileCartSub"></div>
+      </div>
+      <div class="sf-cart-bar-total">
+        <span class="sf-cart-bar-total-amount" id="mobileCartTotal">$0</span>
+        <i data-lucide="arrow-right"></i>
+      </div>
+    </button>
+
+    <!-- FOOTER (versión compacta — el largo está en tienda.html) -->
+    <footer class="sf-public-footer">
+      <div class="sf-public-footer-inner">
+        <div class="sf-public-footer-bottom" style="border: none; padding: 0;">
+          <div class="sf-public-footer-copy">© 2026 El Buen Sabor SAS · NIT 900.123.456-7</div>
+          <div class="sf-public-footer-pays">
+            <span class="sf-public-footer-pays-label">Pagos:</span>
+            <span class="sf-public-footer-pay">Visa</span>
+            <span class="sf-public-footer-pay">MC</span>
+            <span class="sf-public-footer-pay">PSE</span>
+            <span class="sf-public-footer-pay">Wompi</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="../assets/js/storefront.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    const CATALOGO = [
+      { id:1, nombre:'Bandeja Paisa',       desc:'Frijoles, arroz, carne molida, chicharrón, huevo, plátano y aguacate.', precio:32000, grad:'sf-grad-paisa',    icon:'beef',          flag:'Más pedido' },
+      { id:2, nombre:'Ajiaco Bogotano',     desc:'Sopa con tres papas, mazorca, pollo, crema y alcaparras.',              precio:28000, grad:'sf-grad-ajiaco',   icon:'soup' },
+      { id:3, nombre:'Sancocho de Gallina', desc:'Caldo robusto con yuca, plátano y mazorca.',                            precio:25000, grad:'sf-grad-sancocho', icon:'soup' },
+      { id:4, nombre:'Lomo al Trapo',       desc:'Lomo de res con sal, envuelto en trapo y cocido a las brasas.',         precio:45000, grad:'sf-grad-lomo',     icon:'beef',          flag:'Nuevo' },
+      { id:5, nombre:'Cazuela de Mariscos', desc:'Camarones, calamares, almejas y pescado en salsa de coco.',             precio:42000, grad:'sf-grad-cazuela',  icon:'shell',         flag:'Más pedido' },
+      { id:6, nombre:'Trucha en Salsa',     desc:'Trucha fresca en salsa criolla con arroz blanco.',                      precio:38000, grad:'sf-grad-trucha',   icon:'fish' },
+      { id:7, nombre:'Mojarra Frita',       desc:'Mojarra entera frita con patacones y ensalada.',                        precio:35000, grad:'sf-grad-mojarra',  icon:'fish' },
+      { id:8, nombre:'Sobrebarriga',        desc:'Sobrebarriga al horno con papas chorreadas.',                           precio:30000, grad:'sf-grad-paisa',    icon:'beef',          sinStock:true },
+      { id:9, nombre:'Pollo a la Plancha',  desc:'Pechuga marinada con limón y especias colombianas.',                    precio:22000, grad:'sf-grad-sancocho', icon:'beef' },
+    ];
+
+    let state = {
+      sort: 'rel',
+      cats: new Set(['platos']),
+    };
+
+    function render() {
+      const q = (document.getElementById('catalogoSearch')?.value || '').toLowerCase().trim();
+      let list = CATALOGO.filter(p =>
+        q === '' ||
+        p.nombre.toLowerCase().includes(q) ||
+        (p.desc || '').toLowerCase().includes(q)
+      );
+      if (state.sort === 'asc')  list.sort((a, b) => a.precio - b.precio);
+      if (state.sort === 'desc') list.sort((a, b) => b.precio - a.precio);
+
+      const grid = document.getElementById('catalogGrid');
+      const empty = document.getElementById('catalogoEmpty');
+      const emptyTitle = document.getElementById('catalogoEmptyTitle');
+      if (emptyTitle && q) {
+        emptyTitle.textContent = 'No encontramos productos para "' + q + '"';
+      } else if (emptyTitle) {
+        emptyTitle.textContent = 'No encontramos platos';
+      }
+      if (empty) empty.hidden = list.length > 0;
+      if (grid) grid.hidden = list.length === 0;
+      grid.innerHTML = list.map(p => `
+        <div class="sf-prod-card ${p.sinStock ? 'is-out' : ''}" data-prod="${p.id}">
+          <div class="sf-prod-card-photo ${p.grad}">
+            <i data-lucide="${p.icon}"></i>
+            ${p.flag ? `<span class="sf-prod-card-flag ${p.flag === 'Nuevo' ? 'is-new' : ''}">${p.flag}</span>` : ''}
+            ${p.sinStock ? `<span class="sf-prod-card-flag is-out">Sin stock</span>` : ''}
+            <button class="sf-prod-card-heart" type="button" aria-label="Favorito"><i data-lucide="heart"></i></button>
+          </div>
+          <div class="sf-prod-card-body">
+            <div class="sf-prod-card-cat">Platos fuertes</div>
+            <div class="sf-prod-card-name">${p.nombre}</div>
+            <div class="sf-prod-card-desc">${p.desc}</div>
+            <div class="sf-prod-card-meta">
+              <span class="sf-prod-card-meta-item"><i data-lucide="star"></i> 4.7</span>
+              <span class="sf-prod-card-meta-item"><i data-lucide="clock"></i> 25 min</span>
+            </div>
+            <div class="sf-prod-card-foot">
+              <span class="sf-prod-card-price">${SF.fmtCOP(p.precio)}</span>
+              <button class="sf-prod-card-add" type="button" data-add="${p.id}" ${p.sinStock ? 'disabled' : ''}>
+                <i data-lucide="${p.sinStock ? 'x' : 'plus'}"></i> ${p.sinStock ? 'Sin stock' : 'Agregar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      if (window.lucide) window.lucide.createIcons();
+
+      grid.querySelectorAll('[data-add]:not([disabled])').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.dataset.add, 10);
+          const p = CATALOGO.find(x => x.id === id);
+          if (!p) return;
+          SF.addToCart({ id: p.id, nombre: p.nombre, precio: p.precio, grad: p.grad, icon: p.icon });
+          UI.toast({ type: 'success', title: 'Agregado al carrito', sub: p.nombre, duration: 1500 });
+        });
+      });
+
+      grid.querySelectorAll('.sf-prod-card-heart').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          btn.classList.toggle('is-active');
+        });
+      });
+    }
+
+    // ----- Filtros ----- (mock visual: solo agregar/remover chips)
+    function renderActiveChips() {
+      const chips = document.getElementById('activeChips');
+      const items = [];
+      state.cats.forEach(c => {
+        const label = { entradas: 'Entradas', platos: 'Platos fuertes', bebidas: 'Bebidas', postres: 'Postres', combos: 'Combos' }[c] || c;
+        items.push({ key: 'cat:' + c, label });
+      });
+      chips.innerHTML = items.map(i => `
+        <span class="sf-active-chip" data-chip="${i.key}">
+          ${i.label}
+          <button data-remove-chip="${i.key}" aria-label="Quitar"><i data-lucide="x"></i></button>
+        </span>
+      `).join('');
+      if (window.lucide) window.lucide.createIcons();
+      chips.querySelectorAll('[data-remove-chip]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const [type, val] = btn.dataset.removeChip.split(':');
+          if (type === 'cat') {
+            state.cats.delete(val);
+            const cb = document.querySelector(`input[data-filter="cat"][value="${val}"]`);
+            if (cb) cb.checked = false;
+            renderActiveChips();
+          }
+        });
+      });
+    }
+
+    document.querySelectorAll('input[data-filter="cat"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) state.cats.add(cb.value);
+        else state.cats.delete(cb.value);
+        renderActiveChips();
+      });
+    });
+
+    document.querySelectorAll('.sf-filter-chip[data-diet]').forEach(c => {
+      c.addEventListener('click', () => c.classList.toggle('is-active'));
+    });
+    document.querySelectorAll('.sf-filter-chip[data-rate]').forEach(c => {
+      c.addEventListener('click', () => {
+        document.querySelectorAll('.sf-filter-chip[data-rate]').forEach(x => x.classList.remove('is-active'));
+        c.classList.add('is-active');
+      });
+    });
+
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      state.cats.clear();
+      document.querySelectorAll('input[data-filter="cat"]').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.sf-filter-chip[data-diet]').forEach(c => c.classList.remove('is-active'));
+      renderActiveChips();
+    });
+
+    document.getElementById('sortSelect').addEventListener('change', (e) => {
+      state.sort = e.target.value;
+      render();
+    });
+
+    document.getElementById('catalogoSearch')?.addEventListener('input', render);
+    document.getElementById('catalogoClearSearch')?.addEventListener('click', () => {
+      const s = document.getElementById('catalogoSearch');
+      if (s) s.value = '';
+      render();
+    });
+
+    document.querySelectorAll('.sf-view-toggle button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sf-view-toggle button').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+      });
+    });
+
+    // ----- Filtros mobile como drawer -----
+    document.getElementById('openFiltersMobile').addEventListener('click', () => {
+      const side = document.getElementById('filtersSidebar');
+      side.style.display = side.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // ----- Nav drawer mobile -----
+    const navDrawer = document.getElementById('navDrawer');
+    const navBackdrop = document.getElementById('navDrawerBackdrop');
+    document.querySelectorAll('[data-open-nav-drawer]').forEach(b => b.addEventListener('click', () => {
+      navDrawer.classList.add('is-open'); navBackdrop.classList.add('is-open');
+    }));
+    document.getElementById('navDrawerClose').addEventListener('click', () => {
+      navDrawer.classList.remove('is-open'); navBackdrop.classList.remove('is-open');
+    });
+    navBackdrop.addEventListener('click', () => {
+      navDrawer.classList.remove('is-open'); navBackdrop.classList.remove('is-open');
+    });
+
+    render();
+    renderActiveChips();
+    if (window.lucide) window.lucide.createIcons();
+    SF.renderCartBtn();
+
+    // Mobile cart bar
+    function updateMobileCartBar() {
+      var bar = document.getElementById('sfCartBarMobile');
+      var count = SF.totalItems();
+      if (!bar) return;
+      var show = count > 0 && window.innerWidth < 1024;
+      bar.style.display = show ? 'flex' : 'none';
+      if (show) {
+        document.getElementById('mobileCartCount').textContent = count;
+        document.getElementById('mobileCartTotal').textContent = SF.fmtCOP(SF.totalPrice());
+        document.getElementById('mobileCartSub').textContent = count + ' producto' + (count > 1 ? 's' : '');
+        if (window.lucide) window.lucide.createIcons();
+      }
+    }
+    updateMobileCartBar();
+    window.addEventListener('resize', updateMobileCartBar);
+    window.addEventListener('sf-cart-updated', updateMobileCartBar);
+
+    // Sugerencias de categoría en empty state
+    document.querySelectorAll('.cat-suggest').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var search = document.getElementById('catalogoSearch');
+        if (search) {
+          search.value = btn.dataset.cat;
+          render();
+        }
+      });
+    });
+
+    // Limpiar búsqueda
+    document.getElementById('catalogoClearSearch').addEventListener('click', function() {
+      var search = document.getElementById('catalogoSearch');
+      if (search) search.value = '';
+      render();
+    });
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

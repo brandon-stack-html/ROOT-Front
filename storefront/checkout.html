@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     F5 — Checkout (desktop). 3 pasos: Entrega · Pago · Confirmación.
+     Sprint 9.5.
+     ============================================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Checkout · El Buen Sabor</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/storefront.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="sf-desktop-shell">
+
+    <!-- Header simplificado -->
+    <header class="sf-public-header">
+      <div class="sf-public-header-inner">
+        <a href="./tienda.html" class="sf-public-brand">
+          <div class="sf-bs-logo is-sm">BS</div>
+          <div>
+            <div class="sf-public-brand-name">El Buen Sabor</div>
+            <div class="sf-public-brand-sub">Checkout seguro · Wompi</div>
+          </div>
+        </a>
+        <div style="flex: 1;"></div>
+        <div class="sf-public-actions">
+          <a href="./tienda-catalogo.html" class="login-link"><i data-lucide="arrow-left" style="width: 13px; height: 13px; vertical-align: -2px;"></i> Volver al menú</a>
+          <button class="sf-icon-btn" data-toggle-theme aria-label="Cambiar tema" style="background: var(--bg);">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ====================== STEPPER ====================== -->
+    <div class="sf-stepper" id="stepper">
+      <div class="sf-step is-active" data-step="1">
+        <div class="sf-step-circle"><span>1</span></div>
+        <div class="sf-step-label">Entrega</div>
+      </div>
+      <div class="sf-step-line" data-line="1-2"></div>
+      <div class="sf-step" data-step="2">
+        <div class="sf-step-circle"><span>2</span></div>
+        <div class="sf-step-label">Pago</div>
+      </div>
+      <div class="sf-step-line" data-line="2-3"></div>
+      <div class="sf-step" data-step="3">
+        <div class="sf-step-circle"><span>3</span></div>
+        <div class="sf-step-label">Confirmación</div>
+      </div>
+    </div>
+
+    <!-- ====================== LAYOUT ====================== -->
+    <div class="sf-checkout-layout">
+
+      <!-- ========== FORMULARIO ========== -->
+      <div>
+
+        <!-- ===== Paso 1 — Entrega ===== -->
+        <section class="sf-checkout-step is-active" data-step-content="1">
+
+          <div class="sf-checkout-card">
+            <div class="sf-checkout-card-title">Información de contacto</div>
+            <div class="sf-grid-2" style="margin-bottom: 12px;">
+              <div class="field">
+                <label class="field-label">Nombre *</label>
+                <input class="field-input" type="text" id="fNombre" value="María" />
+                <div class="field-error" id="errNombre" style="display:none;font-size:11px;color:var(--error);margin-top:4px;">Campo requerido</div>
+              </div>
+              <div class="field">
+                <label class="field-label">Apellido *</label>
+                <input class="field-input" type="text" id="fApellido" value="Restrepo" />
+                <div class="field-error" id="errApellido" style="display:none;font-size:11px;color:var(--error);margin-top:4px;">Campo requerido</div>
+              </div>
+            </div>
+            <div class="sf-grid-2">
+              <div class="field">
+                <label class="field-label">Email *</label>
+                <input class="field-input" type="email" id="fEmail" value="maria@correo.co" />
+                <div class="field-error" id="errEmail" style="display:none;font-size:11px;color:var(--error);margin-top:4px;">Email inválido</div>
+              </div>
+              <div class="field">
+                <label class="field-label">Teléfono *</label>
+                <input class="field-input" type="tel" id="fTel" value="+57 315 472 8810" />
+                <div class="field-error" id="errTel" style="display:none;font-size:11px;color:var(--error);margin-top:4px;">Campo requerido</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sf-checkout-card">
+            <div class="sf-checkout-card-title">¿Cómo quieres recibirlo?</div>
+
+            <div class="sf-radio-card is-selected" data-entrega="domicilio">
+              <div class="sf-radio-card-icon"><i data-lucide="bike"></i></div>
+              <div class="sf-radio-card-body">
+                <div class="sf-radio-card-name">A domicilio</div>
+                <div class="sf-radio-card-meta">30-45 min</div>
+              </div>
+              <div class="sf-radio-card-price">$5.000</div>
+            </div>
+
+            <div class="sf-radio-card" data-entrega="recoger">
+              <div class="sf-radio-card-icon"><i data-lucide="store"></i></div>
+              <div class="sf-radio-card-body">
+                <div class="sf-radio-card-name">Recoger en local</div>
+                <div class="sf-radio-card-meta">15 min</div>
+              </div>
+              <div class="sf-radio-card-price" style="color: var(--success);">Gratis</div>
+            </div>
+
+            <div class="sf-radio-card" data-entrega="local">
+              <div class="sf-radio-card-icon"><i data-lucide="utensils"></i></div>
+              <div class="sf-radio-card-body">
+                <div class="sf-radio-card-name">Para comer aquí</div>
+                <div class="sf-radio-card-meta">Tu mesa lista en 10 min</div>
+              </div>
+              <div class="sf-radio-card-price" style="color: var(--success);">Gratis</div>
+            </div>
+          </div>
+
+          <!-- Dirección (visible si domicilio) -->
+          <div class="sf-checkout-card" id="cardDireccion">
+            <div class="sf-checkout-card-title">Dirección de entrega</div>
+            <div class="field">
+              <label class="field-label">Dirección</label>
+              <input class="field-input" type="text" value="Cra. 15 #80-32" />
+            </div>
+            <div class="field">
+              <label class="field-label">Apto / torre / detalles</label>
+              <input class="field-input" type="text" value="Apto 401, Torre B" />
+              <div class="field-hint">Referencias para el repartidor (portería, color del edificio, etc.)</div>
+            </div>
+            <div class="sf-grid-2">
+              <div class="field">
+                <label class="field-label">Ciudad</label>
+                <select class="field-input">
+                  <option>Bogotá</option>
+                  <option>Medellín</option>
+                  <option>Cali</option>
+                  <option>Barranquilla</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label">Barrio</label>
+                <select class="field-input">
+                  <option>Chapinero Alto</option>
+                  <option>Chicó</option>
+                  <option>Usaquén</option>
+                  <option>Cedritos</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="sf-map-placeholder">
+              <div class="sf-map-pin">
+                <i data-lucide="map-pin"></i>
+              </div>
+              <button class="btn btn-primary sf-map-confirm" type="button">
+                <i data-lucide="check" style="width: 13px; height: 13px;"></i> Confirmar ubicación
+              </button>
+            </div>
+          </div>
+
+          <!-- Sucursal (visible si recoger) -->
+          <div class="sf-checkout-card" id="cardSucursal" style="display: none;">
+            <div class="sf-checkout-card-title">Elige sucursal</div>
+            <div class="sf-radio-card is-selected" data-suc="norte">
+              <div class="sf-radio-card-icon"><i data-lucide="store"></i></div>
+              <div class="sf-radio-card-body">
+                <div class="sf-radio-card-name">Sede Norte — Chapinero</div>
+                <div class="sf-radio-card-meta">Cra. 15 #80-32 · Abierto hasta las 22:00</div>
+              </div>
+            </div>
+            <div class="sf-radio-card" data-suc="centro">
+              <div class="sf-radio-card-icon"><i data-lucide="store"></i></div>
+              <div class="sf-radio-card-body">
+                <div class="sf-radio-card-name">Sede Centro — Centro Internacional</div>
+                <div class="sf-radio-card-meta">Cl. 26 #13-49 · Abierto hasta las 21:00</div>
+              </div>
+            </div>
+            <div class="sf-radio-card" data-suc="sur" style="opacity: .5; cursor: not-allowed;">
+              <div class="sf-radio-card-icon"><i data-lucide="store"></i></div>
+              <div class="sf-radio-card-body">
+                <div class="sf-radio-card-name">Sede Sur — Restrepo</div>
+                <div class="sf-radio-card-meta">Inactiva temporalmente</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sf-checkout-actions">
+            <a class="btn btn-secondary" href="./tienda-catalogo.html">
+              <i data-lucide="arrow-left" style="width: 13px; height: 13px;"></i>
+              Seguir comprando
+            </a>
+            <button class="btn btn-primary" type="button" data-goto-step="2">
+              Continuar al pago
+              <i data-lucide="arrow-right" style="width: 13px; height: 13px;"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- Banner pago fallido (oculto por defecto) -->
+        <div id="pagoErrorBanner" style="display:none;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 18px;margin-bottom:16px;align-items:center;gap:14px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:200px;">
+            <i data-lucide="x-circle" style="width:20px;height:20px;color:var(--error);flex-shrink:0;"></i>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--error);margin-bottom:2px;">El pago no se completó</div>
+              <div id="pagoErrorMsg" style="font-size:12px;color:var(--muted);">Fondos insuficientes o tarjeta rechazada</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary btn-sm" id="btnReintentarPago">
+              <i data-lucide="refresh-cw" style="width:11px;height:11px;"></i> Reintentar
+            </button>
+            <button class="btn btn-ghost btn-sm" id="btnCambiarMetodo">Cambiar método</button>
+          </div>
+        </div>
+
+        <!-- ===== Paso 2 — Pago ===== -->
+        <section class="sf-checkout-step" data-step-content="2">
+
+          <div class="sf-checkout-card">
+            <div class="sf-checkout-card-title">Método de pago</div>
+
+            <div class="sf-radio-card is-selected" data-pago="tarjeta">
+              <div class="sf-radio-card-icon"><i data-lucide="credit-card"></i></div>
+              <div class="sf-radio-card-body">
+                <div class="sf-radio-card-name">Tarjeta crédito / débito</div>
+                <div class="sf-radio-card-meta">Visa, Mastercard, Amex</div>
+              </div>
+              <div class="sf-radio-card-price"><i data-lucide="shield-check" style="width: 14px; height: 14px; color: var(--success);"></i></div>
+            </div>
+
+            <div class="sf-radio-card" data-pago="pse">
+              <div class="sf-radio-card-icon"><i data-lucide="building-2"></i></div>
+              <div class="sf-radio-card-body">
+                <div class="sf-radio-card-name">PSE</div>
+                <div class="sf-radio-card-meta">Débito desde tu banco</div>
+              </div>
+            </div>
+
+            <div class="sf-radio-card" data-pago="efectivo">
+              <div class="sf-radio-card-icon"><i data-lucide="banknote"></i></div>
+              <div class="sf-radio-card-body">
+                <div class="sf-radio-card-name">Pago contra entrega</div>
+                <div class="sf-radio-card-meta">Efectivo o datáfono</div>
+              </div>
+            </div>
+
+            <!-- Form tarjeta -->
+            <div id="formTarjeta" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+              <div class="field">
+                <label class="field-label">Número de tarjeta</label>
+                <input class="field-input" type="text" placeholder="•••• •••• •••• ••••" />
+              </div>
+              <div class="field">
+                <label class="field-label">Nombre del titular</label>
+                <input class="field-input" type="text" placeholder="Como aparece en la tarjeta" />
+              </div>
+              <div class="sf-grid-2">
+                <div class="field">
+                  <label class="field-label">Vencimiento</label>
+                  <input class="field-input" type="text" placeholder="MM / AA" />
+                </div>
+                <div class="field">
+                  <label class="field-label">CVV</label>
+                  <input class="field-input" type="text" placeholder="•••" maxlength="4" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sf-checkout-card">
+            <div class="sf-checkout-card-title">¿Tienes un cupón?</div>
+            <div class="sf-cupon-row">
+              <input class="field-input" id="cuponInput" type="text" placeholder="Ingresa tu código" />
+              <button class="btn btn-primary" id="cuponApply" type="button">Aplicar</button>
+            </div>
+            <div class="field-hint">Prueba con: <code style="background: var(--alt); padding: 1px 6px; border-radius: 4px; font-size: 11px;">BUENSABOR10</code></div>
+          </div>
+
+          <div class="sf-checkout-card">
+            <div class="sf-checkout-card-title">Notas para el restaurante</div>
+            <textarea class="sf-textarea" placeholder="Ej: sin cebolla, dejar en portería, llamar al llegar..."></textarea>
+          </div>
+
+          <div class="sf-checkout-actions">
+            <button class="btn btn-secondary" type="button" data-goto-step="1">
+              <i data-lucide="arrow-left" style="width: 13px; height: 13px;"></i>
+              Volver
+            </button>
+            <button class="btn btn-primary" type="button" id="confirmOrderBtn">
+              <i data-lucide="lock" style="width: 13px; height: 13px;"></i>
+              Confirmar pedido
+            </button>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ========== RESUMEN ========== -->
+      <aside class="sf-order-summary" id="orderSummary">
+        <div class="sf-order-head">
+          <div class="sf-order-head-title">Tu pedido</div>
+          <span class="badge badge-muted badge-sm" id="orderCount">0 ítems</span>
+        </div>
+
+        <div class="sf-order-items" id="orderItems">
+          <!-- generado por JS -->
+        </div>
+
+        <div class="sf-order-summary-rows">
+          <div class="sf-order-row">
+            <span class="label">Subtotal</span>
+            <span class="value" id="rowSubtotal">$0</span>
+          </div>
+          <div class="sf-order-row is-discount" id="rowDiscount" style="display: none;">
+            <span class="label"><i data-lucide="tag" style="width: 12px; height: 12px; vertical-align: -1px;"></i> Cupón BUENSABOR10</span>
+            <span class="value" id="rowDiscountVal">−$0</span>
+          </div>
+          <div class="sf-order-row">
+            <span class="label">Envío</span>
+            <span class="value" id="rowShipping">$5.000</span>
+          </div>
+          <div class="sf-order-row">
+            <span class="label">IVA incluido</span>
+            <span class="value">—</span>
+          </div>
+        </div>
+
+        <div class="sf-order-total">
+          <span class="label">Total</span>
+          <span class="value" id="rowTotal">$0</span>
+        </div>
+
+        <div class="sf-order-eta">
+          <i data-lucide="clock"></i>
+          <span>Entrega estimada: <strong>35-45 min</strong></span>
+        </div>
+      </aside>
+
+    </div>
+
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="../assets/js/storefront.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    // ----- Items mock si el carrito está vacío -----
+    if (SF.cart.length === 0) {
+      SF.cart = [
+        { id: 1, nombre: 'Bandeja Paisa',    qty: 1, precio: 32000, grad: 'sf-grad-paisa',   icon: 'beef' },
+        { id: 2, nombre: 'Ajiaco Bogotano',  qty: 2, precio: 28000, grad: 'sf-grad-ajiaco',  icon: 'soup' },
+        { id: 7, nombre: 'Limonada Natural', qty: 2, precio: 9000,  grad: 'sf-grad-limonada', icon: 'glass-water' },
+      ];
+    }
+
+    let shipping = 5000;
+    let discount = 0;
+    let cuponApplied = false;
+
+    function renderItems() {
+      const wrap = document.getElementById('orderItems');
+      const countEl = document.getElementById('orderCount');
+      countEl.textContent = SF.totalItems() + ' ítems';
+
+      wrap.innerHTML = SF.cart.map((it, idx) => `
+        <div class="sf-order-item">
+          <div class="sf-order-item-thumb ${it.grad || 'sf-grad-paisa'}">
+            <i data-lucide="${it.icon || 'utensils'}"></i>
+          </div>
+          <div class="sf-order-item-body">
+            <div class="sf-order-item-name">${it.nombre}</div>
+            ${it.modifs ? `<div class="sf-order-item-meta">${it.modifs}</div>` : ''}
+            <div class="sf-order-item-foot">
+              <span class="sf-order-item-qty">× ${it.qty}</span>
+              <span class="sf-order-item-price">${SF.fmtCOP(it.precio * it.qty)}</span>
+            </div>
+          </div>
+          <button class="sf-order-item-remove" data-remove="${idx}" aria-label="Quitar"><i data-lucide="x"></i></button>
+        </div>
+      `).join('');
+
+      if (window.lucide) window.lucide.createIcons();
+
+      wrap.querySelectorAll('[data-remove]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.dataset.remove, 10);
+          SF.removeFromCart(idx);
+          if (SF.cart.length === 0) {
+            UI.toast({ type: 'warning', title: 'Carrito vacío', sub: 'Volviendo al menú...', duration: 1500 });
+            setTimeout(() => window.location.href = './tienda-catalogo.html', 1200);
+          }
+          renderItems();
+          renderTotals();
+        });
+      });
+    }
+
+    function renderTotals() {
+      const sub = SF.totalPrice();
+      discount = cuponApplied ? Math.round(sub * 0.10) : 0;
+      document.getElementById('rowSubtotal').textContent = SF.fmtCOP(sub);
+      document.getElementById('rowShipping').textContent = shipping === 0 ? 'Gratis' : SF.fmtCOP(shipping);
+      const total = Math.max(0, sub + shipping - discount);
+      document.getElementById('rowTotal').textContent = SF.fmtCOP(total);
+
+      const rowDisc = document.getElementById('rowDiscount');
+      if (cuponApplied) {
+        rowDisc.style.display = 'flex';
+        document.getElementById('rowDiscountVal').textContent = '−' + SF.fmtCOP(discount);
+      } else {
+        rowDisc.style.display = 'none';
+      }
+    }
+
+    // ----- Radio cards (tipo entrega + sucursal + pago) -----
+    function bindRadioCards(selector, onChange) {
+      const cards = document.querySelectorAll(selector);
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          if (card.style.cursor === 'not-allowed') return;
+          cards.forEach(c => c.classList.remove('is-selected'));
+          card.classList.add('is-selected');
+          if (onChange) onChange(card);
+        });
+      });
+    }
+
+    bindRadioCards('[data-entrega]', (card) => {
+      const val = card.dataset.entrega;
+      const dir = document.getElementById('cardDireccion');
+      const suc = document.getElementById('cardSucursal');
+      if (val === 'domicilio') {
+        dir.style.display = 'block';
+        suc.style.display = 'none';
+        shipping = 5000;
+      } else if (val === 'recoger') {
+        dir.style.display = 'none';
+        suc.style.display = 'block';
+        shipping = 0;
+      } else {
+        dir.style.display = 'none';
+        suc.style.display = 'none';
+        shipping = 0;
+      }
+      renderTotals();
+    });
+    bindRadioCards('[data-suc]');
+    bindRadioCards('[data-pago]');
+
+    // ----- Cupón -----
+    document.getElementById('cuponApply').addEventListener('click', () => {
+      const code = document.getElementById('cuponInput').value.trim().toUpperCase();
+      if (code === 'BUENSABOR10') {
+        if (cuponApplied) {
+          UI.toast({ type: 'info', title: 'Ya aplicado', duration: 1500 });
+          return;
+        }
+        cuponApplied = true;
+        renderTotals();
+        UI.toast({ type: 'success', title: 'Cupón aplicado', sub: '10% de descuento', duration: 2000 });
+      } else if (code) {
+        UI.toast({ type: 'error', title: 'Cupón inválido', sub: 'Verifica el código', duration: 2000 });
+      }
+    });
+
+    // ----- Stepper navigation -----
+    function goToStep(n) {
+      document.querySelectorAll('.sf-checkout-step').forEach(s => s.classList.remove('is-active'));
+      document.querySelector(`[data-step-content="${n}"]`)?.classList.add('is-active');
+
+      document.querySelectorAll('.sf-step').forEach(s => {
+        const step = parseInt(s.dataset.step, 10);
+        s.classList.remove('is-active', 'is-done');
+        if (step < n) s.classList.add('is-done');
+        if (step === n) s.classList.add('is-active');
+        const circle = s.querySelector('.sf-step-circle');
+        circle.innerHTML = step < n
+          ? '<i data-lucide="check"></i>'
+          : `<span>${step}</span>`;
+      });
+
+      document.querySelectorAll('.sf-step-line').forEach(l => {
+        const [from] = l.dataset.line.split('-').map(x => parseInt(x, 10));
+        l.classList.toggle('is-done', from < n);
+      });
+
+      if (window.lucide) window.lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ----- Validaciones paso 1 -----
+    function validateStep1() {
+      var ok = true;
+      var first = null;
+      function check(id, errId, validator) {
+        var el = document.getElementById(id);
+        var err = document.getElementById(errId);
+        var valid = validator(el ? el.value.trim() : '');
+        if (err) err.style.display = valid ? 'none' : 'block';
+        if (el) el.classList.toggle('is-error', !valid);
+        if (!valid && !first) first = el;
+        if (!valid) ok = false;
+      }
+      check('fNombre',   'errNombre',   function(v){ return v.length > 0; });
+      check('fApellido', 'errApellido', function(v){ return v.length > 0; });
+      check('fEmail',    'errEmail',    function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); });
+      check('fTel',      'errTel',      function(v){ return v.length >= 7; });
+      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return ok;
+    }
+
+    document.querySelectorAll('[data-goto-step]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        var target = parseInt(btn.dataset.gotoStep, 10);
+        if (target === 2 && !validateStep1()) return; // bloquear si inválido
+        goToStep(target);
+      });
+    });
+
+    // ----- Confirmar pedido → estado procesando → F6 o error -----
+    var procesandoPago = false;
+    document.getElementById('confirmOrderBtn').addEventListener('click', () => {
+      if (procesandoPago) return;
+      procesandoPago = true;
+      var btn = document.getElementById('confirmOrderBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader-2" style="width:13px;height:13px;animation:spin 1s linear infinite;"></i> Procesando pago...';
+      if (window.lucide) window.lucide.createIcons();
+
+      // Demo: mostrar banner "Redirigiendo a Wompi"
+      UI.toast({ type: 'info', title: 'Redirigiendo a Wompi…', sub: 'La ventana de pago se abrió en una nueva pestaña.', duration: 2500 });
+
+      setTimeout(() => {
+        procesandoPago = false;
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="lock" style="width:13px;height:13px;"></i> Confirmar pedido';
+        if (window.lucide) window.lucide.createIcons();
+
+        // 70% éxito, 30% fallo en demo
+        if (Math.random() > 0.3) {
+          window.location.href = './confirmacion.html';
+        } else {
+          var banner = document.getElementById('pagoErrorBanner');
+          if (banner) {
+            banner.style.display = 'flex';
+            banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }, 2500);
+    });
+
+    // Reintentar pago
+    document.getElementById('btnReintentarPago').addEventListener('click', function() {
+      document.getElementById('pagoErrorBanner').style.display = 'none';
+      document.getElementById('confirmOrderBtn').click();
+    });
+
+    // Cambiar método
+    document.getElementById('btnCambiarMetodo').addEventListener('click', function() {
+      document.getElementById('pagoErrorBanner').style.display = 'none';
+      document.querySelector('[data-pago="pse"]').click();
+      document.querySelector('[data-pago="pse"]').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    renderItems();
+    renderTotals();
+    if (window.lucide) window.lucide.createIcons();
+    SF.renderCartBtn();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

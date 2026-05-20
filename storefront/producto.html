@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     F2 — Detalle de producto (mobile). Personalización con modificadores.
+     Sprint 9.2.
+     ============================================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Ajiaco Bogotano · El Buen Sabor</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/storefront.css" />
+</head>
+<body class="sf-mobile-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="sf-mobile-shell">
+
+    <!-- ====================== HERO FOTO ====================== -->
+    <div class="sf-detail-hero sf-grad-ajiaco">
+      <i data-lucide="soup" class="hero-icon"></i>
+
+      <button class="sf-icon-btn" style="position: absolute; top: 14px; left: 14px;" onclick="history.back()" aria-label="Volver">
+        <i data-lucide="arrow-left"></i>
+      </button>
+
+      <div style="position: absolute; top: 14px; right: 14px; display: flex; gap: 8px;">
+        <button class="sf-icon-btn" aria-label="Favorito" id="heartBtn">
+          <i data-lucide="heart"></i>
+        </button>
+        <button class="sf-icon-btn" aria-label="Compartir">
+          <i data-lucide="share-2"></i>
+        </button>
+      </div>
+
+      <div style="position: absolute; bottom: 14px; left: 14px; display: inline-flex; align-items: center; gap: 5px;
+                  padding: 4px 10px; border-radius: 11px; background: rgba(0,0,0,.6); color: #fff;
+                  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); font-size: 11px; font-weight: 600;">
+        <i data-lucide="flame" style="width: 11px; height: 11px; color: #FBBF24;"></i>
+        Popular esta semana
+      </div>
+    </div>
+
+    <!-- ====================== BODY ====================== -->
+    <div class="sf-detail-body">
+
+      <div class="sf-detail-main-card">
+        <div style="font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: .06em;
+                    text-transform: uppercase; margin-bottom: 6px;">
+          Platos fuertes · Plato del día
+        </div>
+        <div class="sf-detail-name" id="prodName">Ajiaco Bogotano</div>
+        <div class="sf-detail-meta">
+          <span class="sf-detail-meta-item"><i data-lucide="clock"></i> 15-20 min</span>
+          <span class="sf-detail-meta-item"><i data-lucide="flame"></i> 420 kcal</span>
+          <span class="sf-detail-meta-item"><i data-lucide="star"></i> 4.8 (124)</span>
+        </div>
+        <div class="sf-detail-desc">
+          Nuestra versión del ajiaco santafereño, preparado con tres tipos de papa, mazorca tierna,
+          pollo desmechado y crema de leche. Servido con arroz blanco y aguacate.
+        </div>
+        <div class="sf-detail-price" id="basePrice">$28.000</div>
+      </div>
+
+      <!-- ===== Nutricional ===== -->
+      <div class="sf-detail-section">
+        <div class="sf-detail-section-title">Información nutricional</div>
+        <div class="sf-nutri-chips">
+          <div class="sf-nutri-chip">
+            <div class="sf-nutri-chip-value">420</div>
+            <div class="sf-nutri-chip-label">kcal</div>
+          </div>
+          <div class="sf-nutri-chip">
+            <div class="sf-nutri-chip-value">25g</div>
+            <div class="sf-nutri-chip-label">Proteínas</div>
+          </div>
+          <div class="sf-nutri-chip">
+            <div class="sf-nutri-chip-value">18g</div>
+            <div class="sf-nutri-chip-label">Grasas</div>
+          </div>
+          <div class="sf-nutri-chip">
+            <div class="sf-nutri-chip-value">32g</div>
+            <div class="sf-nutri-chip-label">Carbs</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Alergenos ===== -->
+      <div class="sf-detail-section">
+        <div class="sf-detail-section-title">Contiene</div>
+        <div class="sf-allergen-chips">
+          <span class="sf-allergen-chip"><i data-lucide="alert-triangle"></i> Lactosa</span>
+          <span class="sf-allergen-chip"><i data-lucide="alert-triangle"></i> Gluten</span>
+        </div>
+      </div>
+
+      <!-- ===== Modificadores ===== -->
+      <div class="sf-detail-section">
+        <div class="sf-detail-section-title">
+          Personaliza tu pedido
+          <span class="sub">Algunos ajustes tienen costo adicional</span>
+        </div>
+
+        <div class="sf-mod-card">
+          <div class="sf-mod-card-head">
+            <div class="sf-mod-card-title">Término del pollo</div>
+            <span class="sf-mod-card-req is-required">Obligatorio</span>
+          </div>
+          <label class="sf-mod-option">
+            <input type="radio" name="termino" value="0" checked />
+            <span class="sf-mod-radio"></span>
+            <span class="sf-mod-option-label">Desmechado</span>
+          </label>
+          <label class="sf-mod-option">
+            <input type="radio" name="termino" value="0" />
+            <span class="sf-mod-radio"></span>
+            <span class="sf-mod-option-label">Entero</span>
+          </label>
+          <label class="sf-mod-option">
+            <input type="radio" name="termino" value="5000" />
+            <span class="sf-mod-radio"></span>
+            <span class="sf-mod-option-label">Extra pollo</span>
+            <span class="sf-mod-option-price">+ $5.000</span>
+          </label>
+        </div>
+
+        <div class="sf-mod-card">
+          <div class="sf-mod-card-head">
+            <div class="sf-mod-card-title">Acompañamiento</div>
+            <span class="sf-mod-card-req is-optional">Opcional</span>
+          </div>
+          <label class="sf-mod-option">
+            <input type="radio" name="acomp" value="0" />
+            <span class="sf-mod-radio"></span>
+            <span class="sf-mod-option-label">Sin arroz</span>
+          </label>
+          <label class="sf-mod-option">
+            <input type="radio" name="acomp" value="0" checked />
+            <span class="sf-mod-radio"></span>
+            <span class="sf-mod-option-label">Con arroz</span>
+          </label>
+          <label class="sf-mod-option">
+            <input type="radio" name="acomp" value="2000" />
+            <span class="sf-mod-radio"></span>
+            <span class="sf-mod-option-label">Extra aguacate</span>
+            <span class="sf-mod-option-price">+ $2.000</span>
+          </label>
+        </div>
+
+        <div class="sf-mod-card">
+          <div class="sf-mod-card-head">
+            <div class="sf-mod-card-title">Adiciones</div>
+            <span class="sf-mod-card-req is-optional">Hasta 3</span>
+          </div>
+          <label class="sf-mod-option">
+            <input type="checkbox" name="addon" value="2500" data-addon />
+            <span class="sf-mod-checkbox"><i data-lucide="check"></i></span>
+            <span class="sf-mod-option-label">Queso extra</span>
+            <span class="sf-mod-option-price">+ $2.500</span>
+          </label>
+          <label class="sf-mod-option">
+            <input type="checkbox" name="addon" value="3000" data-addon />
+            <span class="sf-mod-checkbox"><i data-lucide="check"></i></span>
+            <span class="sf-mod-option-label">Tocineta crocante</span>
+            <span class="sf-mod-option-price">+ $3.000</span>
+          </label>
+          <label class="sf-mod-option">
+            <input type="checkbox" name="addon" value="1500" data-addon />
+            <span class="sf-mod-checkbox"><i data-lucide="check"></i></span>
+            <span class="sf-mod-option-label">Salsa picante de la casa</span>
+            <span class="sf-mod-option-price">+ $1.500</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ===== Cantidad ===== -->
+      <div class="sf-detail-section">
+        <div class="sf-detail-section-title">Cantidad</div>
+        <div class="sf-mod-card" style="padding: 6px 0;">
+          <div class="sf-qty">
+            <button class="sf-qty-btn" id="qtyMinus" aria-label="Menos" type="button">−</button>
+            <span class="sf-qty-value" id="qtyValue">1</span>
+            <button class="sf-qty-btn" id="qtyPlus" aria-label="Más" type="button">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Observaciones ===== -->
+      <div class="sf-detail-section">
+        <div class="sf-detail-section-title">Notas especiales</div>
+        <textarea class="sf-textarea" id="notesField" maxlength="200"
+                  placeholder="Ej: sin sal, sin cebolla, alergias..."></textarea>
+        <div style="text-align: right; font-size: 10px; color: var(--muted); margin-top: 4px;">
+          <span id="notesCount">0</span> / 200
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ====================== FOOTER STICKY ====================== -->
+    <div class="sf-detail-footer">
+      <div class="sf-detail-footer-total">
+        <div class="label">Total</div>
+        <div class="value" id="totalLive">$28.000</div>
+      </div>
+      <!-- CTA condicional: desde QR o desde tienda -->
+      <button class="btn btn-primary" id="addToCartBtn" type="button">
+        <i data-lucide="plus" style="width: 14px; height: 14px;" id="ctaIcon"></i>
+        <span id="ctaLabel">Agregar al pedido</span>
+      </button>
+    </div>
+
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="../assets/js/storefront.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    const BASE_PRICE = 28000;
+    let qty = 1;
+    const FROM = new URLSearchParams(location.search).get('from') || 'tienda';
+
+    // Adaptar CTA según origen
+    if (FROM === 'qr') {
+      document.getElementById('ctaLabel').textContent = 'Llamar al mesero';
+      document.getElementById('ctaIcon').setAttribute('data-lucide', 'bell');
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function calcUnitExtra() {
+      let extra = 0;
+      document.querySelectorAll('input[name="termino"]:checked, input[name="acomp"]:checked').forEach(el => {
+        extra += parseInt(el.value, 10) || 0;
+      });
+      document.querySelectorAll('input[data-addon]:checked').forEach(el => {
+        extra += parseInt(el.value, 10) || 0;
+      });
+      return extra;
+    }
+
+    function recalc() {
+      const unit  = BASE_PRICE + calcUnitExtra();
+      const total = unit * qty;
+      document.getElementById('totalLive').textContent = SF.fmtCOP(total);
+    }
+
+    // ----- Inputs -----
+    document.querySelectorAll('input[type="radio"], input[data-addon]').forEach(el => {
+      el.addEventListener('change', recalc);
+    });
+
+    // Limitar adiciones a máximo 3
+    const addonInputs = document.querySelectorAll('input[data-addon]');
+    addonInputs.forEach(el => {
+      el.addEventListener('change', () => {
+        const checked = Array.from(addonInputs).filter(a => a.checked);
+        if (checked.length > 3) {
+          el.checked = false;
+          UI.toast({ type: 'warning', title: 'Máximo 3 adiciones', duration: 1800 });
+          recalc();
+        }
+      });
+    });
+
+    // ----- Cantidad -----
+    document.getElementById('qtyMinus').addEventListener('click', () => {
+      if (qty > 1) { qty--; document.getElementById('qtyValue').textContent = qty; recalc(); }
+    });
+    document.getElementById('qtyPlus').addEventListener('click', () => {
+      if (qty < 99) { qty++; document.getElementById('qtyValue').textContent = qty; recalc(); }
+    });
+
+    // ----- Notas -----
+    document.getElementById('notesField').addEventListener('input', (e) => {
+      document.getElementById('notesCount').textContent = e.target.value.length;
+    });
+
+    // ----- Favorito -----
+    document.getElementById('heartBtn').addEventListener('click', () => {
+      document.getElementById('heartBtn').classList.toggle('is-active');
+    });
+
+    // ----- Agregar / Llamar al mesero -----
+    document.getElementById('addToCartBtn').addEventListener('click', () => {
+      if (FROM === 'qr') {
+        // Desde carta QR: solo notificar al mesero
+        UI.toast({ type: 'info', title: 'Mesero notificado', sub: 'Un mesero vendrá a tomar tu pedido en un momento.', duration: 3000 });
+        setTimeout(() => history.back(), 2000);
+      } else {
+        // Desde tienda: agregar al carrito
+        const unit = BASE_PRICE + calcUnitExtra();
+        SF.addToCart({
+          id: 2,
+          nombre: document.getElementById('prodName').textContent,
+          precio: unit,
+          qty: qty,
+          grad: 'sf-grad-ajiaco',
+          icon: 'soup',
+          modifs: calcUnitExtra() > 0 ? 'Personalizado' : null,
+        });
+        UI.toast({ type: 'success', title: 'Agregado al carrito', sub: qty + ' × ' + document.getElementById('prodName').textContent, duration: 1500 });
+        setTimeout(() => history.back(), 800);
+      }
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+    recalc();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

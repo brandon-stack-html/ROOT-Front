@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     F3 — Tienda home (desktop). E-commerce de pedidos a domicilio.
+     Sprint 9.3.
+     ============================================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tienda · El Buen Sabor</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/storefront.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="sf-desktop-shell">
+
+    <!-- ====================== HEADER PÚBLICO ====================== -->
+    <header class="sf-public-header">
+      <div class="sf-public-header-inner">
+        <button class="sf-public-burger" data-open-nav-drawer aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+
+        <a href="./tienda.html" class="sf-public-brand">
+          <div class="sf-bs-logo is-sm">BS</div>
+          <div>
+            <div class="sf-public-brand-name">El Buen Sabor</div>
+            <div class="sf-public-brand-sub">Restaurante · Bogotá</div>
+          </div>
+        </a>
+
+        <nav class="sf-public-nav">
+          <a href="./tienda.html" class="is-active">Inicio</a>
+          <a href="./tienda-catalogo.html">Carta</a>
+          <a href="#sucursales">Sucursales</a>
+          <a href="#nosotros">Nosotros</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+
+        <div class="sf-public-actions">
+          <button class="sf-icon-btn" aria-label="Buscar" style="background: var(--bg);">
+            <i data-lucide="search"></i>
+          </button>
+          <a class="login-link" href="../auth/login.html">Iniciar sesión</a>
+          <a href="./checkout.html" id="sfCartBtn" class="sf-cart-btn">
+            <i data-lucide="shopping-cart"></i>
+            <span class="sf-cart-btn-label">Carrito</span>
+            <span class="sf-cart-btn-count">0</span>
+          </a>
+          <button class="sf-icon-btn" data-toggle-theme aria-label="Cambiar tema" style="background: var(--bg);">
+            <i data-lucide="sun" class="theme-icon-light"></i>
+            <i data-lucide="moon" class="theme-icon-dark"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Drawer nav móvil -->
+    <div class="sf-nav-drawer-backdrop" id="navDrawerBackdrop"></div>
+    <aside class="sf-nav-drawer" id="navDrawer">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div class="sf-public-brand">
+          <div class="sf-bs-logo is-sm">BS</div>
+          <div class="sf-public-brand-name">El Buen Sabor</div>
+        </div>
+        <button class="sf-icon-btn" id="navDrawerClose" aria-label="Cerrar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <a href="./tienda.html" class="is-active"><i data-lucide="home"></i> Inicio</a>
+      <a href="./tienda-catalogo.html"><i data-lucide="utensils"></i> Carta</a>
+      <a href="#sucursales"><i data-lucide="map-pin"></i> Sucursales</a>
+      <a href="#nosotros"><i data-lucide="info"></i> Nosotros</a>
+      <a href="#contacto"><i data-lucide="mail"></i> Contacto</a>
+      <a href="../auth/login.html"><i data-lucide="user"></i> Iniciar sesión</a>
+    </aside>
+
+    <!-- ====================== CONTENIDO ====================== -->
+    <main id="main" class="sf-content">
+
+      <!-- ===== HERO ===== -->
+      <section class="sf-hero">
+        <div class="sf-hero-pattern" aria-hidden="true">
+          <!-- 50 íconos en grid 10x5 -->
+          <script>
+            // se rellena por JS abajo
+          </script>
+        </div>
+
+        <div class="sf-hero-content">
+          <div class="sf-hero-eyebrow">
+            <i data-lucide="map-pin" style="width: 12px; height: 12px; vertical-align: -2px;"></i>
+            Bogotá · Domicilios y para llevar
+          </div>
+          <h1 class="sf-hero-title">El sabor de Colombia<br>en tu puerta</h1>
+          <p class="sf-hero-subtitle">
+            Pedidos a domicilio sin comisiones, hechos directamente por nosotros.
+            Recibe tu comida fresca y caliente en 30-45 minutos.
+          </p>
+          <a class="sf-hero-cta" href="./tienda-catalogo.html">
+            Pedir ahora
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="sf-hero-chips">
+          <div class="sf-hero-chip"><i data-lucide="truck"></i> Envío gratis desde $30.000</div>
+          <div class="sf-hero-chip"><i data-lucide="clock"></i> Promedio 35 min</div>
+          <div class="sf-hero-chip"><i data-lucide="star"></i> 4.8 · 240 reseñas</div>
+        </div>
+      </section>
+
+      <!-- ===== CATEGORÍAS ===== -->
+      <section style="margin-bottom: 36px;">
+        <div class="sf-section-head">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px;">Explora</div>
+            <div class="sf-section-title">Categorías destacadas</div>
+          </div>
+          <a href="./tienda-catalogo.html" class="sf-section-link">Ver todas <i data-lucide="arrow-right"></i></a>
+        </div>
+
+        <div class="sf-cat-scroller" id="catScroller">
+          <a href="./tienda-catalogo.html" class="sf-cat-card sf-grad-paisa">
+            <div class="sf-cat-card-overlay"></div>
+            <div class="sf-cat-card-title">Entradas</div>
+          </a>
+          <a href="./tienda-catalogo.html" class="sf-cat-card sf-grad-lomo">
+            <div class="sf-cat-card-overlay"></div>
+            <div class="sf-cat-card-title">Platos fuertes</div>
+          </a>
+          <a href="./tienda-catalogo.html" class="sf-cat-card sf-grad-empanada">
+            <div class="sf-cat-card-overlay"></div>
+            <div class="sf-cat-card-title">Hamburguesas</div>
+          </a>
+          <a href="./tienda-catalogo.html" class="sf-cat-card sf-grad-limonada">
+            <div class="sf-cat-card-overlay"></div>
+            <div class="sf-cat-card-title">Bebidas</div>
+          </a>
+          <a href="./tienda-catalogo.html" class="sf-cat-card sf-grad-postre">
+            <div class="sf-cat-card-overlay"></div>
+            <div class="sf-cat-card-title">Postres</div>
+          </a>
+          <a href="./tienda-catalogo.html" class="sf-cat-card sf-grad-arepa">
+            <div class="sf-cat-card-overlay"></div>
+            <div class="sf-cat-card-title">Combos</div>
+          </a>
+        </div>
+      </section>
+
+      <!-- ===== COMBO DEL DÍA ===== -->
+      <section class="sf-combo">
+        <div>
+          <div class="sf-combo-eyebrow">Combo del día</div>
+          <h2 class="sf-combo-title">Bandeja paisa familiar</h2>
+          <p class="sf-combo-desc">
+            Para 4 personas: frijoles, arroz, carne molida, chicharrón, chorizo, huevo, plátano,
+            arepa y aguacate. Servida con jugo natural de la casa.
+          </p>
+          <div class="sf-combo-prices">
+            <span class="sf-combo-old">$89.000</span>
+            <span class="sf-combo-new">$69.000</span>
+          </div>
+          <div class="sf-countdown-wrap">
+            <i data-lucide="clock"></i>
+            Termina en
+            <span class="sf-countdown" id="combo-countdown">03:00:00</span>
+          </div>
+          <div>
+            <a class="btn btn-primary btn-lg" href="./tienda-catalogo.html">
+              Pedir ahora
+              <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+            </a>
+          </div>
+        </div>
+        <div class="sf-combo-photo sf-grad-paisa">
+          <i data-lucide="beef"></i>
+        </div>
+      </section>
+
+      <!-- ===== LO MÁS PEDIDO ===== -->
+      <section>
+        <div class="sf-section-head">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px;">Recomendados</div>
+            <div class="sf-section-title">Lo más pedido esta semana</div>
+          </div>
+          <a href="./tienda-catalogo.html" class="sf-section-link">Ver todo <i data-lucide="arrow-right"></i></a>
+        </div>
+
+        <div class="sf-prod-grid" id="topGrid"></div>
+      </section>
+
+      <!-- ===== TESTIMONIOS ===== -->
+      <section>
+        <div class="sf-section-head">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px;">Comunidad</div>
+            <div class="sf-section-title">Lo que dicen nuestros clientes</div>
+          </div>
+        </div>
+
+        <div class="sf-testimonials">
+          <article class="sf-testimonial">
+            <div class="sf-testimonial-stars">
+              <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+            </div>
+            <p class="sf-testimonial-quote">
+              "El ajiaco es exactamente como el que hacía mi abuela. Llegó caliente, en 28 minutos
+              y la mazorca tierna. Cliente fiel desde el primer pedido."
+            </p>
+            <div class="sf-testimonial-author">
+              <div class="sf-testimonial-avatar">CM</div>
+              <div>
+                <div class="sf-testimonial-name">Carolina M.</div>
+                <div class="sf-testimonial-meta">Chapinero · hace 3 días</div>
+              </div>
+            </div>
+          </article>
+
+          <article class="sf-testimonial">
+            <div class="sf-testimonial-stars">
+              <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+            </div>
+            <p class="sf-testimonial-quote">
+              "Pedí el combo familiar para el almuerzo del domingo. Excelente porción y la
+              bandeja paisa estaba completa. La app fácil de usar y el domiciliario amable."
+            </p>
+            <div class="sf-testimonial-author">
+              <div class="sf-testimonial-avatar">JR</div>
+              <div>
+                <div class="sf-testimonial-name">Julián R.</div>
+                <div class="sf-testimonial-meta">Usaquén · hace 1 semana</div>
+              </div>
+            </div>
+          </article>
+
+          <article class="sf-testimonial">
+            <div class="sf-testimonial-stars">
+              <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star-half"></i>
+            </div>
+            <p class="sf-testimonial-quote">
+              "La trucha sale espectacular, fresca y bien sazonada. Lo único: el domicilio se
+              demoró un poco más esa vez, pero el sabor compensa. ¡Volveré pronto!"
+            </p>
+            <div class="sf-testimonial-author">
+              <div class="sf-testimonial-avatar">SP</div>
+              <div>
+                <div class="sf-testimonial-name">Sandra P.</div>
+                <div class="sf-testimonial-meta">Cedritos · hace 2 semanas</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===== FAQ ===== -->
+      <section style="margin-top: 24px;">
+        <div class="sf-section-head" style="justify-content: center; text-align: center;">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px;">Ayuda</div>
+            <div class="sf-section-title">Preguntas frecuentes</div>
+          </div>
+        </div>
+
+        <div class="sf-faq">
+          <details class="sf-faq-item">
+            <summary>¿Cuánto tarda la entrega a domicilio?</summary>
+            <div class="sf-faq-item-body">
+              Nuestro tiempo promedio es de 30-45 minutos dependiendo de la zona. En horas pico
+              (12:00-14:00 y 19:00-21:00) puede extenderse hasta 60 minutos. Recibirás
+              actualizaciones del estado por SMS.
+            </div>
+          </details>
+          <details class="sf-faq-item">
+            <summary>¿Aceptan tarjeta de crédito o débito?</summary>
+            <div class="sf-faq-item-body">
+              Sí, aceptamos Visa, Mastercard, American Express y todas las tarjetas habilitadas
+              en PSE. También puedes pagar contra entrega en efectivo o con datáfono.
+            </div>
+          </details>
+          <details class="sf-faq-item">
+            <summary>¿Hacen pedidos para eventos o catering?</summary>
+            <div class="sf-faq-item-body">
+              ¡Por supuesto! Tenemos menús especiales para grupos de 10+ personas. Escríbenos a
+              eventos@elbuensabor.co con al menos 48 horas de anticipación.
+            </div>
+          </details>
+          <details class="sf-faq-item">
+            <summary>¿Cuál es el monto mínimo de pedido?</summary>
+            <div class="sf-faq-item-body">
+              El pedido mínimo a domicilio es de $20.000. Para envío gratis, el pedido debe
+              superar los $30.000.
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ===== SUCURSALES ===== -->
+      <section id="sucursales" style="margin-bottom: 48px;">
+        <div class="sf-section-head">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px;">Encuéntranos</div>
+            <div class="sf-section-title">Nuestras sucursales</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px;">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Sede Norte — Chapinero</div>
+            <div style="font-size: 12px; color: var(--muted); line-height: 1.6;">Cra. 15 #80-32, Bogotá<br>Lun–Dom 11:00–22:00<br><span style="color: var(--success); font-weight: 500;">Abierto ahora</span></div>
+          </div>
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px;">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Sede Centro</div>
+            <div style="font-size: 12px; color: var(--muted); line-height: 1.6;">Cl. 13 #6-55, Bogotá<br>Lun–Sáb 10:00–21:00<br><span style="color: var(--success); font-weight: 500;">Abierto ahora</span></div>
+          </div>
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; opacity: .6;">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Sede Sur</div>
+            <div style="font-size: 12px; color: var(--muted); line-height: 1.6;">Av. 68 #3-12, Bogotá<br>Temporalmente cerrada<br><span style="color: var(--muted);">Reapertura en 2026</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== NOSOTROS ===== -->
+      <section id="nosotros" style="margin-bottom: 48px;">
+        <div class="sf-section-head">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px;">Historia</div>
+            <div class="sf-section-title">Quiénes somos</div>
+          </div>
+        </div>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; max-width: 720px; line-height: 1.7; font-size: 14px; color: var(--text);">
+          <p style="margin-bottom: 12px;">Somos un restaurante familiar fundado en 2010 en Bogotá, especializado en cocina tradicional colombiana. Nuestra misión es traer los sabores auténticos de la cocina casera colombiana a cada mesa.</p>
+          <p style="color: var(--muted);">Más de 15 años sirviendo platos con ingredientes frescos, sin conservantes y con el cariño de siempre. Hoy contamos con 2 sucursales y un equipo de 40 personas comprometidas con la calidad.</p>
+        </div>
+      </section>
+
+      <!-- ===== CONTACTO ===== -->
+      <section id="contacto" style="margin-bottom: 48px;">
+        <div class="sf-section-head">
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px;">Háblanos</div>
+            <div class="sf-section-title">Contacto</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 600px;">
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px;">WhatsApp</div>
+            <a href="#" style="font-size: 14px; font-weight: 600; color: var(--accent); text-decoration: none;">+57 601 234 5678</a>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 3px;">Respuesta en &lt; 5 min</div>
+          </div>
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px;">Email</div>
+            <a href="#" style="font-size: 14px; font-weight: 600; color: var(--accent); text-decoration: none;">hola@buen-sabor.co</a>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 3px;">Respuesta en &lt; 24h</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ====================== FOOTER PÚBLICO ====================== -->
+    <footer class="sf-public-footer">
+      <div class="sf-public-footer-inner">
+
+        <div class="sf-public-footer-grid">
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+              <div class="sf-bs-logo is-sm">BS</div>
+              <div style="font-size: 14px; font-weight: 700; color: var(--text);">El Buen Sabor</div>
+            </div>
+            <div class="sf-public-footer-brand-text">
+              Sabor casero hecho con receta de abuela.<br>
+              Cra. 15 #80-32, Bogotá<br>
+              Lun a Dom · 11:00 — 22:00
+            </div>
+          </div>
+
+          <div>
+            <div class="sf-public-footer-col-title">Tienda</div>
+            <div class="sf-public-footer-col-links">
+              <a href="./tienda-catalogo.html">Carta</a>
+              <a href="./tienda-catalogo.html">Lo más pedido</a>
+              <a href="./tienda-catalogo.html">Combos del día</a>
+              <a href="./checkout.html">Domicilios</a>
+            </div>
+          </div>
+
+          <div>
+            <div class="sf-public-footer-col-title">Negocio</div>
+            <div class="sf-public-footer-col-links">
+              <a>Nosotros</a>
+              <a>Sucursales</a>
+              <a>Trabaja con nosotros</a>
+              <a>Reservas</a>
+            </div>
+          </div>
+
+          <div>
+            <div class="sf-public-footer-col-title">Soporte</div>
+            <div class="sf-public-footer-col-links">
+              <a>Contacto</a>
+              <a>Estado del pedido</a>
+              <a>Términos y condiciones</a>
+              <a>Privacidad</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="sf-public-footer-bottom">
+          <div class="sf-public-footer-copy">
+            © 2026 El Buen Sabor SAS · NIT 900.123.456-7 · Hecho con
+            <i data-lucide="heart" style="width: 11px; height: 11px; color: var(--error); vertical-align: -1px;"></i>
+            en Bogotá
+          </div>
+          <div style="display: flex; align-items: center; gap: 18px;">
+            <div class="sf-public-footer-socials">
+              <a class="sf-public-footer-social" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+              <a class="sf-public-footer-social" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+              <a class="sf-public-footer-social" aria-label="YouTube"><i data-lucide="youtube"></i></a>
+              <a class="sf-public-footer-social" aria-label="Twitter"><i data-lucide="twitter"></i></a>
+            </div>
+            <div style="width: 1px; height: 22px; background: var(--border);"></div>
+            <div class="sf-public-footer-pays">
+              <span class="sf-public-footer-pays-label">Pagos:</span>
+              <span class="sf-public-footer-pay">Visa</span>
+              <span class="sf-public-footer-pay">MC</span>
+              <span class="sf-public-footer-pay">PSE</span>
+              <span class="sf-public-footer-pay">Wompi</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="../assets/js/storefront.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    // ----- Patrón del hero (50 íconos) -----
+    (function buildHeroPattern() {
+      const pat = document.querySelector('.sf-hero-pattern');
+      if (!pat) return;
+      const icons = ['utensils', 'soup', 'beef', 'fish', 'cake', 'glass-water'];
+      let html = '';
+      for (let i = 0; i < 50; i++) {
+        html += `<div><i data-lucide="${icons[i % icons.length]}"></i></div>`;
+      }
+      pat.innerHTML = html;
+    })();
+
+    // ----- Lo más pedido -----
+    const TOP = [
+      { id: 1, nombre: 'Bandeja Paisa',     desc: 'La clásica colombiana completa',     precio: 32000, grad: 'sf-grad-paisa',    icon: 'beef',         flag: 'Más pedido' },
+      { id: 2, nombre: 'Ajiaco Bogotano',   desc: 'Sopa tradicional con papa y pollo',  precio: 28000, grad: 'sf-grad-ajiaco',   icon: 'soup' },
+      { id: 3, nombre: 'Trucha en Salsa',   desc: 'Fresca del día, criolla',            precio: 38000, grad: 'sf-grad-trucha',   icon: 'fish' },
+      { id: 7, nombre: 'Limonada Natural',  desc: 'Hierbabuena, jengibre o tradicional', precio: 9000, grad: 'sf-grad-limonada', icon: 'glass-water' },
+    ];
+
+    function renderTop() {
+      const grid = document.getElementById('topGrid');
+      grid.innerHTML = TOP.map(p => `
+        <div class="sf-prod-card" data-prod="${p.id}">
+          <div class="sf-prod-card-photo ${p.grad}">
+            <i data-lucide="${p.icon}"></i>
+            ${p.flag ? `<span class="sf-prod-card-flag">${p.flag}</span>` : ''}
+            <button class="sf-prod-card-heart" type="button" aria-label="Favorito"><i data-lucide="heart"></i></button>
+          </div>
+          <div class="sf-prod-card-body">
+            <div class="sf-prod-card-name">${p.nombre}</div>
+            <div class="sf-prod-card-desc">${p.desc}</div>
+            <div class="sf-prod-card-meta">
+              <span class="sf-prod-card-meta-item"><i data-lucide="star"></i> 4.8</span>
+              <span class="sf-prod-card-meta-item"><i data-lucide="clock"></i> 25 min</span>
+            </div>
+            <div class="sf-prod-card-foot">
+              <span class="sf-prod-card-price">${SF.fmtCOP(p.precio)}</span>
+              <button class="sf-prod-card-add" type="button" data-add="${p.id}">
+                <i data-lucide="plus"></i> Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      if (window.lucide) window.lucide.createIcons();
+
+      grid.querySelectorAll('[data-add]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.dataset.add, 10);
+          const p = TOP.find(x => x.id === id);
+          if (!p) return;
+          SF.addToCart({ id: p.id, nombre: p.nombre, precio: p.precio, grad: p.grad, icon: p.icon });
+          UI.toast({ type: 'success', title: 'Agregado al carrito', sub: p.nombre, duration: 1500 });
+        });
+      });
+
+      grid.querySelectorAll('.sf-prod-card-heart').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          btn.classList.toggle('is-active');
+        });
+      });
+    }
+    renderTop();
+
+    // ----- Countdown combo del día -----
+    (function countdown() {
+      const el = document.getElementById('combo-countdown');
+      if (!el) return;
+      const end = Date.now() + 1000 * 60 * 60 * 3; // 3h
+      function tick() {
+        const diff = Math.max(0, end - Date.now());
+        const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+        const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+        const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+        el.textContent = `${h}:${m}:${s}`;
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+
+    // ----- Nav drawer mobile -----
+    const navDrawer = document.getElementById('navDrawer');
+    const navBackdrop = document.getElementById('navDrawerBackdrop');
+    function openNav()  { navDrawer.classList.add('is-open'); navBackdrop.classList.add('is-open'); }
+    function closeNav() { navDrawer.classList.remove('is-open'); navBackdrop.classList.remove('is-open'); }
+    document.querySelectorAll('[data-open-nav-drawer]').forEach(b => b.addEventListener('click', openNav));
+    document.getElementById('navDrawerClose').addEventListener('click', closeNav);
+    navBackdrop.addEventListener('click', closeNav);
+
+    if (window.lucide) window.lucide.createIcons();
+    SF.renderCartBtn();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

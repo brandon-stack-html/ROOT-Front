@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     F1 — Carta QR (mobile). El cliente escanea el QR en su mesa y pide.
+     Sprint 9.1.
+     ============================================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Carta · El Buen Sabor</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/storefront.css" />
+</head>
+<body class="sf-mobile-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="sf-mobile-shell">
+
+    <!-- ====================== HERO BANNER ====================== -->
+    <div class="sf-qr-banner">
+      <div class="sf-qr-banner-pattern" aria-hidden="true">
+        <div><i data-lucide="utensils"></i></div>
+        <div><i data-lucide="soup"></i></div>
+        <div><i data-lucide="beef"></i></div>
+        <div><i data-lucide="fish"></i></div>
+        <div><i data-lucide="cake"></i></div>
+        <div><i data-lucide="utensils"></i></div>
+        <div><i data-lucide="soup"></i></div>
+        <div><i data-lucide="beef"></i></div>
+        <div><i data-lucide="fish"></i></div>
+        <div><i data-lucide="cake"></i></div>
+        <div><i data-lucide="utensils"></i></div>
+        <div><i data-lucide="soup"></i></div>
+        <div><i data-lucide="beef"></i></div>
+        <div><i data-lucide="fish"></i></div>
+        <div><i data-lucide="cake"></i></div>
+        <div><i data-lucide="utensils"></i></div>
+        <div><i data-lucide="soup"></i></div>
+        <div><i data-lucide="beef"></i></div>
+        <div><i data-lucide="fish"></i></div>
+        <div><i data-lucide="cake"></i></div>
+        <div><i data-lucide="utensils"></i></div>
+        <div><i data-lucide="soup"></i></div>
+        <div><i data-lucide="beef"></i></div>
+        <div><i data-lucide="fish"></i></div>
+      </div>
+
+      <button class="sf-qr-banner-info-btn" aria-label="Información">
+        <i data-lucide="info"></i>
+      </button>
+
+      <div class="sf-qr-banner-overlay">
+        <div class="sf-bs-logo is-ring">BS</div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="sf-qr-restaurant-name">El Buen Sabor</div>
+          <div class="sf-qr-restaurant-meta">
+            <i data-lucide="map-pin"></i>
+            Cra. 15 #80-32 · Mesa 6
+          </div>
+          <div class="sf-qr-restaurant-status">
+            <span class="dot"></span>
+            Abierto · Cierra a las 22:00
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================== WELCOME ====================== -->
+    <div class="sf-qr-welcome">
+      <div class="sf-qr-welcome-eyebrow">Hola Mesa 6 👋</div>
+      <div class="sf-qr-welcome-title">¿Qué se te antoja hoy?</div>
+    </div>
+
+    <!-- ====================== TABS CATEGORÍAS ====================== -->
+    <nav class="sf-qr-cat-tabs">
+      <div class="sf-qr-cat-tabs-inner">
+        <button class="sf-qr-tab" data-cat="entradas">
+          <i data-lucide="salad"></i> Entradas
+        </button>
+        <button class="sf-qr-tab is-active" data-cat="platos">
+          <i data-lucide="utensils-crossed"></i> Platos fuertes
+        </button>
+        <button class="sf-qr-tab" data-cat="bebidas">
+          <i data-lucide="glass-water"></i> Bebidas
+        </button>
+        <button class="sf-qr-tab" data-cat="postres">
+          <i data-lucide="cake"></i> Postres
+        </button>
+        <button class="sf-qr-tab" data-cat="combos">
+          <i data-lucide="package"></i> Combos
+        </button>
+      </div>
+    </nav>
+
+    <!-- ====================== SECTION ====================== -->
+    <div class="sf-qr-section-header">
+      <div class="sf-qr-section-title">Platos fuertes</div>
+      <div class="sf-qr-section-count">6 platos</div>
+    </div>
+
+    <!-- ====================== GRID ====================== -->
+    <div class="sf-qr-grid" id="qrGrid">
+      <!-- Generado por JS desde QR_PRODUCTOS -->
+    </div>
+
+    <!-- ====================== CART BAR ====================== -->
+    <button class="sf-cart-bar" id="sfCartBar" type="button">
+      <div class="sf-cart-bar-count">0</div>
+      <div class="sf-cart-bar-info">
+        <div class="sf-cart-bar-title">Tu pedido</div>
+        <div class="sf-cart-bar-sub"></div>
+      </div>
+      <div class="sf-cart-bar-total">
+        <span class="sf-cart-bar-total-amount">$0</span>
+        <i data-lucide="arrow-right"></i>
+      </div>
+    </button>
+
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="../assets/js/storefront.js"></script>
+  <!-- Cargamos lucide antes del script en línea -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    // ----- Catálogo mock del F1 -----
+    const QR_PRODUCTOS = [
+      { id: 1, nombre: 'Bandeja Paisa',        desc: 'La clásica colombiana completa',          precio: 32000, grad: 'sf-grad-paisa',    icon: 'beef',  badge: 'popular' },
+      { id: 2, nombre: 'Ajiaco Bogotano',      desc: 'Sopa tradicional con papa y pollo',       precio: 28000, grad: 'sf-grad-ajiaco',   icon: 'soup',  badge: 'popular' },
+      { id: 3, nombre: 'Sancocho de Gallina',  desc: 'Receta de abuela, sabor de hogar',        precio: 25000, grad: 'sf-grad-sancocho', icon: 'soup' },
+      { id: 4, nombre: 'Lomo al Trapo',        desc: 'Carne envuelta en trapo a las brasas',    precio: 45000, grad: 'sf-grad-lomo',     icon: 'beef',  badge: 'premium' },
+      { id: 5, nombre: 'Cazuela de Mariscos',  desc: 'Mar en tu mesa',                          precio: 42000, grad: 'sf-grad-cazuela',  icon: 'shell' },
+      { id: 6, nombre: 'Trucha en Salsa',      desc: 'Fresca del día, criolla',                 precio: 38000, grad: 'sf-grad-trucha',   icon: 'fish' },
+    ];
+
+    function renderQRGrid() {
+      const grid = document.getElementById('qrGrid');
+      grid.innerHTML = QR_PRODUCTOS.map(p => `
+        <a class="sf-qr-card" href="./producto.html?id=${p.id}&from=qr">
+          <div class="sf-qr-card-photo ${p.grad}">
+            <i data-lucide="${p.icon}"></i>
+            ${p.badge === 'popular' ? '<span class="sf-qr-card-badge is-popular"><i data-lucide="flame"></i>Popular</span>' : ''}
+            ${p.badge === 'premium' ? '<span class="sf-qr-card-badge is-premium">Premium</span>' : ''}
+          </div>
+          <div class="sf-qr-card-body">
+            <div class="sf-qr-card-name">${p.nombre}</div>
+            <div class="sf-qr-card-desc">${p.desc}</div>
+            <div class="sf-qr-card-foot">
+              <span class="sf-qr-card-price">${SF.fmtCOP(p.precio)}</span>
+              <button class="sf-qr-card-add" type="button" data-add="${p.id}" aria-label="Agregar">
+                <i data-lucide="plus"></i>
+              </button>
+            </div>
+          </div>
+        </a>
+      `).join('');
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      } else {
+        // Fallback por si la CDN de Lucide tarda en cargar
+        window.addEventListener('load', () => {
+          if (window.lucide) window.lucide.createIcons();
+        });
+      }
+
+      grid.querySelectorAll('[data-add]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const id = parseInt(btn.dataset.add, 10);
+          const p = QR_PRODUCTOS.find(x => x.id === id);
+          if (!p) return;
+          SF.addToCart({ id: p.id, nombre: p.nombre, precio: p.precio, grad: p.grad, icon: p.icon });
+          SF.bounceCartBar();
+          UI.toast({ type: 'success', title: 'Agregado al pedido', sub: p.nombre, duration: 1800 });
+        });
+      });
+    }
+
+    // ----- Tabs categorías (mock — todas comparten el mismo set por ahora) -----
+    document.querySelectorAll('.sf-qr-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.sf-qr-tab').forEach(t => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        // Demo: scroll-into-view del grid
+        document.getElementById('qrGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // ----- Cart bar click → checkout -----
+    document.getElementById('sfCartBar').addEventListener('click', () => {
+      if (SF.totalItems() === 0) return;
+      window.location.href = './checkout.html';
+    });
+
+    renderQRGrid();
+    if (window.lucide) {
+      window.lucide.createIcons();
+    } else {
+      window.addEventListener('load', () => {
+        if (window.lucide) window.lucide.createIcons();
+      });
+    }
+    SF.renderCartBar();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>
