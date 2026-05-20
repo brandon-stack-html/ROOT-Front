@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Selector de sala · App Mesero</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    .e2-intro {
+      padding: 18px 18px 0;
+    }
+    .e2-intro h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .e2-intro p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .e2-list {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sala-card {
+      padding: 16px 18px;
+      border-radius: 13px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      transition: border-color .12s ease, background .12s ease, box-shadow .12s ease;
+    }
+    .sala-card.is-selected {
+      background: rgba(79, 70, 229, 0.05);
+      border: 2px solid var(--accent);
+      box-shadow: 0 4px 16px rgba(79, 70, 229, 0.13);
+      padding: 15px 17px; /* compensar border de 2px */
+    }
+    [data-theme="dark"] .sala-card.is-selected {
+      background: rgba(79, 70, 229, 0.12);
+    }
+    .sala-card.is-disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .sala-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--alt);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .sala-card-icon svg { width: 22px; height: 22px; stroke-width: 1.7; }
+    .sala-card.is-selected .sala-card-icon {
+      background: var(--accent);
+      color: #fff;
+    }
+    .sala-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .sala-card-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .sala-card-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .sala-card-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 5px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .sala-card-badge.tone-info {
+      background: #EFF6FF;
+      color: #1E40AF;
+    }
+    [data-theme="dark"] .sala-card-badge.tone-info {
+      background: rgba(59, 130, 246, 0.18);
+      color: #93C5FD;
+    }
+    .sala-card-badge.tone-info .badge-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 3px;
+      background: var(--info);
+    }
+    .sala-card-badge.tone-muted {
+      background: var(--alt);
+      color: var(--muted);
+    }
+    .sala-card-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fff;
+    }
+    .sala-card-check svg { width: 14px; height: 14px; stroke-width: 3; }
+    .e2-footer {
+      padding: 12px 18px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- ============= TOPBAR ============= -->
+        <header class="mesero-topbar">
+          <div class="mesero-topbar-side">
+            <div class="mesero-topbar-user">
+              <span class="mb-avatar">AG</span>
+              <div>
+                <div class="mesero-topbar-user-name">Andrea García</div>
+                <a href="./login.html" class="mesero-topbar-user-link">Cambiar cuenta</a>
+              </div>
+            </div>
+          </div>
+          <div class="mesero-topbar-center"></div>
+          <div class="mesero-topbar-side">
+            <a href="./login.html" class="mesero-icon-btn" aria-label="Cerrar sesión">
+              <i data-lucide="log-out"></i>
+            </a>
+          </div>
+        </header>
+
+        <!-- ============= CONTENT ============= -->
+        <main id="main" class="mesero-content">
+          <section class="e2-intro">
+            <h1>¿En qué sala trabajas hoy?</h1>
+            <p>Tus mesas asignadas aparecerán según la sala</p>
+          </section>
+
+          <div class="e2-list">
+
+            <!-- Salón Principal (seleccionada) -->
+            <a href="./mapa.html" class="sala-card is-selected">
+              <div class="sala-card-icon">
+                <i data-lucide="utensils-crossed"></i>
+              </div>
+              <div class="sala-card-info">
+                <div class="sala-card-name">Salón Principal</div>
+                <div class="sala-card-meta">12 mesas · 4 a tu cargo</div>
+                <span class="sala-card-badge tone-info">
+                  <span class="badge-dot"></span>
+                  3 mesas ocupadas
+                </span>
+              </div>
+              <div class="sala-card-check">
+                <i data-lucide="check"></i>
+              </div>
+            </a>
+
+            <!-- Terraza -->
+            <a href="./mapa.html" class="sala-card">
+              <div class="sala-card-icon">
+                <i data-lucide="umbrella"></i>
+              </div>
+              <div class="sala-card-info">
+                <div class="sala-card-name">Terraza</div>
+                <div class="sala-card-meta">8 mesas · 2 a tu cargo</div>
+                <span class="sala-card-badge tone-muted">Sin mesas ocupadas</span>
+              </div>
+            </a>
+
+            <!-- Barra (disabled) -->
+            <div class="sala-card is-disabled">
+              <div class="sala-card-icon">
+                <i data-lucide="wine"></i>
+              </div>
+              <div class="sala-card-info">
+                <div class="sala-card-name">Barra</div>
+                <div class="sala-card-meta">6 puestos · 0 a tu cargo</div>
+                <span class="sala-card-badge tone-muted">No asignado</span>
+              </div>
+            </div>
+
+          </div>
+        </main>
+
+        <!-- ============= FOOTER (sticky) ============= -->
+        <div class="e2-footer">
+          <a href="./mapa.html" class="mb-btn mb-btn-primary">
+            Continuar a mis mesas
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- ============= BOTTOM NAV ============= -->
+        <nav class="mesero-bottom-nav">
+          <a href="./mapa.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="layout-grid"></i>
+            </span>
+            <span>Mesas</span>
+          </a>
+          <a href="./comandas.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="clipboard-list"></i>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Nómina</span>
+          </a>
+          <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <div class="mesero-home-indicator"></div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>
