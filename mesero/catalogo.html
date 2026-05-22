@@ -42,7 +42,7 @@
       cursor: not-allowed;
     }
     .product-photo {
-      height: 96px;
+      height: 120px;
       position: relative;
       display: flex;
       align-items: center;
@@ -52,6 +52,26 @@
       width: 28px;
       height: 28px;
       color: rgba(0, 0, 0, 0.35);
+    }
+    /* Inicial del producto cuando no hay foto */
+    .product-initial {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: rgba(0,0,0,0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      letter-spacing: -0.01em;
+    }
+    /* Badge "Top" */
+    .product-flag.top {
+      background: rgba(0,0,0,0.55);
     }
     .product-flag {
       position: absolute;
@@ -135,8 +155,7 @@
     /* Footer sticky */
     .e5-footer {
       padding: 12px 16px;
-      background: var(--bg);
-      border-top: 1px solid var(--border);
+      background: var(--accent);
       display: flex;
       align-items: center;
       gap: 12px;
@@ -147,14 +166,22 @@
     }
     .e5-footer-meta {
       font-size: 11px;
-      color: var(--muted);
+      color: rgba(255,255,255,0.75);
     }
     .e5-footer-total {
       font-size: 18px;
       font-weight: 700;
-      color: var(--text);
+      color: #fff;
       font-variant-numeric: tabular-nums;
       margin-top: 2px;
+    }
+    .e5-footer .mb-btn-primary {
+      background: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.25);
+      color: #fff;
+    }
+    .e5-footer .mb-btn-primary:hover {
+      background: rgba(255,255,255,0.28);
     }
 
     /* ============= BOTTOM SHEET (E6) ============= */
@@ -458,6 +485,13 @@
           </div>
         </header>
 
+        <!-- Stepper: Mesa › Pedido › Cobro -->
+        <div class="mesero-flow-stepper">
+          <span class="step is-done"><span class="step-dot"></span>Mesa</span>
+          <span class="step is-current"><span class="step-dot"></span>Pedido</span>
+          <span class="step"><span class="step-dot"></span>Cobro</span>
+        </div>
+
         <!-- ============= SEARCH BAR (oculta por default) ============= -->
         <div id="e5SearchBar" style="display:none; padding:8px 14px 4px; background:var(--bg); border-bottom:1px solid var(--border);">
           <div style="display:flex; align-items:center; gap:8px; background:var(--alt); border:1px solid var(--border); border-radius:10px; padding:0 12px;">
@@ -487,10 +521,11 @@
           <div class="e5-grid-wrap">
             <div class="e5-grid">
 
-              <!-- 1. Bandeja Paisa -->
+              <!-- 1. Bandeja Paisa (Top) -->
               <div class="product-card" data-open-sheet="sheetProducto" data-product="bandeja" data-name="Bandeja Paisa" data-price="32000">
-                <div class="product-photo" style="background:#FED7AA;">
-                  <i data-lucide="utensils"></i>
+                <div class="product-photo" style="background:linear-gradient(135deg,#FED7AA,#FDBA74);">
+                  <span class="product-initial">B</span>
+                  <span class="product-flag top">🔥 Top</span>
                   <span class="product-counter">1</span>
                 </div>
                 <div class="product-info">
@@ -502,10 +537,10 @@
                 </div>
               </div>
 
-              <!-- 2. Ajiaco Bogotano (popular) -->
+              <!-- 2. Ajiaco Bogotano (Popular) -->
               <div class="product-card" data-open-sheet="sheetProducto" data-product="ajiaco" data-name="Ajiaco Bogotano" data-price="28000">
-                <div class="product-photo" style="background:#FECACA;">
-                  <i data-lucide="utensils"></i>
+                <div class="product-photo" style="background:linear-gradient(135deg,#FECACA,#FCA5A5);">
+                  <span class="product-initial">A</span>
                   <span class="product-flag popular">🔥 POPULAR</span>
                   <span class="product-counter">1</span>
                 </div>
@@ -518,10 +553,11 @@
                 </div>
               </div>
 
-              <!-- 3. Sancocho -->
+              <!-- 3. Sancocho (Top) -->
               <div class="product-card" data-open-sheet="sheetProducto" data-product="sancocho" data-name="Sancocho" data-price="25000">
-                <div class="product-photo" style="background:#FEF3C7;">
-                  <i data-lucide="utensils"></i>
+                <div class="product-photo" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);">
+                  <span class="product-initial">S</span>
+                  <span class="product-flag top">🔥 Top</span>
                 </div>
                 <div class="product-info">
                   <div class="product-name">Sancocho</div>
@@ -534,8 +570,8 @@
 
               <!-- 4. Lomo al Trapo -->
               <div class="product-card" data-open-sheet="sheetProducto" data-product="lomo" data-name="Lomo al Trapo" data-price="45000">
-                <div class="product-photo" style="background:#FCA5A5;">
-                  <i data-lucide="utensils"></i>
+                <div class="product-photo" style="background:linear-gradient(135deg,#FCA5A5,#F87171);">
+                  <span class="product-initial">L</span>
                   <span class="product-counter">1</span>
                 </div>
                 <div class="product-info">
@@ -549,8 +585,8 @@
 
               <!-- 5. Cazuela de Mariscos (sin stock) -->
               <div class="product-card is-disabled">
-                <div class="product-photo" style="background:#A5F3FC;">
-                  <i data-lucide="utensils"></i>
+                <div class="product-photo" style="background:linear-gradient(135deg,#A5F3FC,#67E8F9);">
+                  <span class="product-initial">C</span>
                   <span class="product-flag sin-stock">SIN STOCK</span>
                 </div>
                 <div class="product-info">
@@ -564,8 +600,8 @@
 
               <!-- 6. Trucha en Salsa -->
               <div class="product-card" data-open-sheet="sheetProducto" data-product="trucha" data-name="Trucha en Salsa" data-price="38000">
-                <div class="product-photo" style="background:#D9F99D;">
-                  <i data-lucide="utensils"></i>
+                <div class="product-photo" style="background:linear-gradient(135deg,#D9F99D,#BEF264);">
+                  <span class="product-initial">T</span>
                 </div>
                 <div class="product-info">
                   <div class="product-name">Trucha en Salsa</div>
@@ -902,13 +938,24 @@
         return;
       }
 
-      // Modo normal: quedarse en catálogo (flujo en lote)
-      UI.toast({
-        type: 'success',
-        title: 'Agregado a Mesa ' + _mesaNum,
-        sub: obs ? '↳ ' + (obs.length > 60 ? obs.slice(0, 60) + '…' : obs) : ''
-      });
-      UI.closeBottomSheet('sheetProducto');
+      // Modo normal: animación check en botón → luego cierra sheet
+      var btn = document.getElementById('btnAgregarSheet');
+      var originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" style="vertical-align:-3px;"><polyline points="20 6 9 17 4 12"/></svg> Agregado';
+      btn.style.background = 'var(--success)';
+      btn.style.borderColor = 'var(--success)';
+
+      setTimeout(function() {
+        UI.closeBottomSheet('sheetProducto');
+        // Restaurar botón después de que el sheet cierra
+        setTimeout(function() {
+          btn.disabled = false;
+          btn.innerHTML = originalHTML;
+          btn.style.background = '';
+          btn.style.borderColor = '';
+        }, 320);
+      }, 220);
     });
 
     // ── Search ────────────────────────────────────────────────────────────────

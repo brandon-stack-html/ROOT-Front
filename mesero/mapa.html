@@ -101,22 +101,123 @@
       -webkit-user-select: none;
       user-select: none;
     }
-    .mm-grid .mesa-card-num { font-size: 22px; }
+    .mm-grid .mesa-card-num { font-size: 24px; }
     .mm-grid .mesa-card-cap { font-size: 10px; }
     .mm-grid .mesa-card-total { font-size: 13px; }
     .mm-grid .mesa-card-mesero { font-size: 10px; }
+    /* "Libre" centrado verticalmente en la card */
+    .mm-grid .mesa-card-libre-label {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    /* Skeleton cards */
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .mesa-card.is-skeleton {
+      pointer-events: none;
+      border-color: var(--border) !important;
+    }
+    .mesa-card.is-skeleton::before { display: none; }
+    .skeleton-line {
+      border-radius: 4px;
+      background: linear-gradient(
+        90deg,
+        var(--alt) 0%,
+        var(--bg-overlay, #EBEBEB) 40%,
+        var(--alt) 80%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.2s linear infinite;
+    }
+    [data-theme="dark"] .skeleton-line {
+      background: linear-gradient(
+        90deg,
+        var(--alt) 0%,
+        rgba(255,255,255,0.06) 40%,
+        var(--alt) 80%
+      );
+      background-size: 200% 100%;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .skeleton-line { animation: none; background: var(--alt); }
+    }
 
     /* Estado vacío de sala */
     .mm-empty {
       grid-column: 1 / -1;
       text-align: center;
-      padding: 30px 0;
-      font-size: 13px;
+      padding: 32px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .mm-empty-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .mm-empty-icon svg { width: 24px; height: 24px; stroke-width: 1.5; }
+    .mm-empty-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .mm-empty-sub {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 240px;
     }
 
     /* ── Bottom sheet de acciones long-press ── */
     #sheetAcciones .bottom-sheet-body { padding: 0; }
+    #sheetCambiarMesero .bottom-sheet-body { padding: 0; }
+    .mm-mesero-item {
+      width: 100%;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border-subtle, var(--border));
+      cursor: pointer;
+      font-family: var(--ff-base);
+      text-align: left;
+    }
+    .mm-mesero-item:last-child { border-bottom: none; }
+    .mm-mesero-item:active { background: var(--alt); }
+    .mm-mesero-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .mm-mesero-info { flex: 1; min-width: 0; }
+    .mm-mesero-nombre { font-size: 14px; font-weight: 600; color: var(--text); }
+    .mm-mesero-rol { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .mm-mesero-check { color: var(--success); flex-shrink: 0; }
+    .mm-mesero-check svg { width: 18px; height: 18px; }
     .mm-accion-list { list-style: none; padding: 0; margin: 0; }
     .mm-accion-list li {
       border-bottom: 1px solid var(--border-subtle, var(--border));
@@ -200,6 +301,29 @@
         <!-- CONTENT -->
         <main id="main" class="mesero-content">
 
+          <!-- Banner post-cobro (visible solo si llega ?cobrada=N) -->
+          <div id="bannerCobro" style="display:none; margin:10px 12px 0; padding:12px 14px; border-radius:11px; background:#D1FAE5; border:1px solid rgba(16,185,129,0.30); display:none; align-items:center; gap:10px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;">
+              <i data-lucide="check"></i>
+            </div>
+            <div style="flex:1;">
+              <div id="bannerCobroText" style="font-size:13px;font-weight:600;color:#065F46;"></div>
+              <div style="font-size:11px;color:#047857;margin-top:1px;">Mesa lista para un nuevo turno</div>
+            </div>
+            <button type="button" id="bannerCobrarClose" style="background:transparent;border:none;cursor:pointer;color:#047857;padding:4px;border-radius:6px;" aria-label="Cerrar">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          <style>
+            [data-theme="dark"] #bannerCobro {
+              background: rgba(16,185,129,0.15);
+              border-color: rgba(16,185,129,0.25);
+            }
+            [data-theme="dark"] #bannerCobroText { color: #A7F3D0; }
+            [data-theme="dark"] #bannerCobro > div:last-child,
+            [data-theme="dark"] #bannerCobrarClose { color: #6EE7B7; }
+          </style>
+
           <!-- Chip resumen -->
           <div class="mm-resumen" id="mmResumen"></div>
 
@@ -210,66 +334,85 @@
             </div>
           </div>
 
-          <!-- Bottom sheet: ¿Cuántos comensales? (tap en mesa libre) -->
-          <div class="bottom-sheet-backdrop" data-sheet="sheetComensales"></div>
-          <div id="sheetComensales" class="bottom-sheet">
-            <div class="bottom-sheet-handle" data-close></div>
-            <div class="bottom-sheet-header">
-              <h3 class="bottom-sheet-title">¿Cuántos comensales?</h3>
-              <p class="bottom-sheet-subtitle" id="sheetComensalesMesa">Mesa —</p>
-            </div>
-            <div class="bottom-sheet-body" style="padding: 16px 20px 8px;">
-              <div style="display:flex; align-items:center; justify-content:center; gap:20px; padding:12px 0;">
-                <button type="button" id="stepperMinus" style="width:48px;height:48px;border-radius:50%;border:1.5px solid var(--border);background:var(--alt);font-size:24px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button>
-                <span id="stepperValue" style="font-size:40px;font-weight:700;color:var(--text);min-width:48px;text-align:center;font-variant-numeric:tabular-nums;">2</span>
-                <button type="button" id="stepperPlus" style="width:48px;height:48px;border-radius:50%;border:1.5px solid var(--border);background:var(--alt);font-size:24px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button>
-              </div>
-              <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:4px;">Podés ajustarlo después desde la mesa</p>
-            </div>
-            <div class="bottom-sheet-footer">
-              <button type="button" id="btnConfirmarComensales" class="mb-btn mb-btn-primary h-48">
-                Abrir mesa
-                <i data-lucide="arrow-right"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Bottom sheet acciones (long-press) -->
-          <div class="bottom-sheet-backdrop" data-sheet="sheetAcciones"></div>
-          <div id="sheetAcciones" class="bottom-sheet">
-            <div class="bottom-sheet-handle" data-close></div>
-            <div class="mm-accion-title" id="sheetAccionesTitle">Mesa —</div>
-            <div class="bottom-sheet-body">
-              <ul class="mm-accion-list">
-                <li>
-                  <button class="mm-accion-btn" id="accionVerPedido" type="button">
-                    <i data-lucide="clipboard-list"></i>
-                    Ver pedido
-                  </button>
-                </li>
-                <li>
-                  <button class="mm-accion-btn" id="accionCambiarMesero" type="button">
-                    <i data-lucide="user"></i>
-                    Cambiar mesero
-                  </button>
-                </li>
-                <li>
-                  <button class="mm-accion-btn" id="accionLimpieza" type="button">
-                    <i data-lucide="sparkles"></i>
-                    Marcar limpieza
-                  </button>
-                </li>
-                <li>
-                  <button class="mm-accion-btn is-destructive" data-close type="button">
-                    <i data-lucide="x"></i>
-                    Cancelar
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </div>
-
         </main>
+
+        <!-- ════════════════════════════════════════════════════════════════════
+             Bottom sheets — fuera de <main> para que no scrolleen con contenido
+             ════════════════════════════════════════════════════════════════════ -->
+
+        <!-- Bottom sheet: ¿Cuántos comensales? (tap en mesa libre) -->
+        <div class="bottom-sheet-backdrop" data-sheet="sheetComensales"></div>
+        <div id="sheetComensales" class="bottom-sheet">
+          <div class="bottom-sheet-handle" data-close></div>
+          <div class="bottom-sheet-header">
+            <h3 class="bottom-sheet-title">¿Cuántos comensales?</h3>
+            <p class="bottom-sheet-subtitle" id="sheetComensalesMesa">Mesa —</p>
+          </div>
+          <div class="bottom-sheet-body" style="padding: 16px 20px 8px;">
+            <div style="display:flex; align-items:center; justify-content:center; gap:20px; padding:12px 0;">
+              <button type="button" id="stepperMinus" style="width:48px;height:48px;border-radius:50%;border:1.5px solid var(--border);background:var(--alt);font-size:24px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button>
+              <span id="stepperValue" style="font-size:40px;font-weight:700;color:var(--text);min-width:48px;text-align:center;font-variant-numeric:tabular-nums;">2</span>
+              <button type="button" id="stepperPlus" style="width:48px;height:48px;border-radius:50%;border:1.5px solid var(--border);background:var(--alt);font-size:24px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button>
+            </div>
+            <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:4px;">Podés ajustarlo después desde la mesa</p>
+          </div>
+          <div class="bottom-sheet-footer">
+            <button type="button" id="btnConfirmarComensales" class="mb-btn mb-btn-primary h-48">
+              Abrir mesa
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom sheet acciones (long-press) -->
+        <div class="bottom-sheet-backdrop" data-sheet="sheetAcciones"></div>
+        <div id="sheetAcciones" class="bottom-sheet">
+          <div class="bottom-sheet-handle" data-close></div>
+          <div class="mm-accion-title" id="sheetAccionesTitle">Mesa —</div>
+          <div class="bottom-sheet-body">
+            <ul class="mm-accion-list">
+              <li>
+                <button class="mm-accion-btn" id="accionVerPedido" type="button">
+                  <i data-lucide="clipboard-list"></i>
+                  Ver pedido
+                </button>
+              </li>
+              <li>
+                <button class="mm-accion-btn" id="accionCambiarMesero" type="button">
+                  <i data-lucide="users"></i>
+                  Cambiar mesero
+                </button>
+              </li>
+              <li>
+                <button class="mm-accion-btn" id="accionLimpieza" type="button">
+                  <i data-lucide="sparkles"></i>
+                  Marcar limpieza
+                </button>
+              </li>
+              <li>
+                <button class="mm-accion-btn" data-close type="button">
+                  <i data-lucide="x"></i>
+                  Cancelar
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Bottom sheet: Cambiar mesero -->
+        <div class="bottom-sheet-backdrop" data-sheet="sheetCambiarMesero"></div>
+        <div id="sheetCambiarMesero" class="bottom-sheet">
+          <div class="bottom-sheet-handle" data-close></div>
+          <div class="bottom-sheet-header">
+            <h3 class="bottom-sheet-title">Cambiar mesero</h3>
+            <p class="bottom-sheet-subtitle" id="sheetCambiarMesaLabel">Mesa —</p>
+          </div>
+          <div class="bottom-sheet-body" style="padding: 8px 0;">
+            <ul class="mm-accion-list" id="listaMeseros">
+              <!-- Renderizado por JS -->
+            </ul>
+          </div>
+        </div>
 
         <!-- BOTTOM NAV -->
         <nav class="mesero-bottom-nav">
@@ -372,13 +515,13 @@
       } else {
         // Dots, mesero, total, tiempo
         html += buildDots(mesa.comensales, mesa.capacidad);
+        if (mesa.total > 0) {
+          html += '<div class="mesa-card-total">' + fmtCOP(mesa.total) + '</div>';
+        }
         if (mesa.meseroNombre) {
           var parts = mesa.meseroNombre.split(' ');
           var short = parts[0] + (parts[1] ? ' ' + parts[1][0] + '.' : '');
           html += '<div class="mesa-card-mesero">' + escapeHtml(short) + '</div>';
-        }
-        if (mesa.total > 0) {
-          html += '<div class="mesa-card-total">' + fmtCOP(mesa.total) + '</div>';
         }
         if (ti.text) {
           html += '<div class="mesa-card-tiempo ' + ti.cls + '">'
@@ -391,6 +534,25 @@
       return html;
     }
 
+    // ─── Skeleton grid ───────────────────────────────────────────────────────
+    function renderSkeletons(count) {
+      var grid = document.getElementById('mmGrid');
+      if (!grid) return;
+      var html = '';
+      for (var i = 0; i < count; i++) {
+        html += '<div class="mesa-card is-skeleton" data-estado="libre">'
+          + '<div class="mesa-card-header">'
+          + '<span class="skeleton-line" style="width:32px;height:22px;display:block;border-radius:5px;"></span>'
+          + '<span class="skeleton-line" style="width:20px;height:12px;display:block;border-radius:4px;"></span>'
+          + '</div>'
+          + '<div class="skeleton-line" style="height:8px;width:60%;margin-top:8px;border-radius:4px;"></div>'
+          + '<div class="skeleton-line" style="height:12px;width:70%;margin-top:6px;border-radius:4px;"></div>'
+          + '<div class="skeleton-line" style="height:10px;width:40%;margin-top:6px;border-radius:4px;"></div>'
+          + '</div>';
+      }
+      grid.innerHTML = html;
+    }
+
     // ─── Render grid ─────────────────────────────────────────────────────────
     function render() {
       var mesas = StoreMesas.listMesas({ sala: salaActiva });
@@ -398,7 +560,11 @@
       if (!grid) return;
 
       if (mesas.length === 0) {
-        grid.innerHTML = '<div class="mm-empty">No hay mesas en esta sala.</div>';
+        grid.innerHTML = '<div class="mm-empty">'
+          + '<div class="mm-empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>'
+          + '<div class="mm-empty-title">Sala sin mesas configuradas</div>'
+          + '<div class="mm-empty-sub">Pedile al admin que agregue mesas desde Backoffice → Configuración → Mesas.</div>'
+          + '</div>';
       } else {
         grid.innerHTML = mesas.map(buildCard).join('');
       }
@@ -427,8 +593,9 @@
       _pressStartEl = el;
       longPressId = mesaId;
       _pressTimer = setTimeout(function() {
-        // Long-press confirmado → abrir sheet de acciones
+        // Long-press confirmado → haptic + sheet de acciones
         _pressTimer = null;
+        if (navigator.vibrate) navigator.vibrate(20);
         openAcciones(mesaId);
       }, LONG_PRESS_MS);
     }
@@ -528,12 +695,25 @@
       _accionMesaId = mesaId;
       var mesa = StoreMesas.getMesa(mesaId);
       if (!mesa) return;
+
+      // Título con nombre del mesero actual
       var titleEl = document.getElementById('sheetAccionesTitle');
       if (titleEl) {
-        var mesero = mesa.meseroNombre ? ' · ' + mesa.meseroNombre.split(' ')[0] + ' ' + (mesa.meseroNombre.split(' ')[1] ? mesa.meseroNombre.split(' ')[1][0] + '.' : '') : '';
+        var mesero = mesa.meseroNombre
+          ? ' · ' + mesa.meseroNombre.split(' ')[0] + ' ' + (mesa.meseroNombre.split(' ')[1] ? mesa.meseroNombre.split(' ')[1][0] + '.' : '')
+          : '';
         titleEl.textContent = 'Mesa #' + mesa.numero + mesero;
       }
+
+      // Mostrar/ocultar acciones según estado
+      var esLibre = mesa.estado === 'libre' || mesa.estado === 'limpieza';
+      var btnVerPedido     = document.getElementById('accionVerPedido');
+      var btnCambiarMesero = document.getElementById('accionCambiarMesero');
+      if (btnVerPedido)     btnVerPedido.closest('li').style.display     = esLibre ? 'none' : '';
+      if (btnCambiarMesero) btnCambiarMesero.closest('li').style.display = esLibre ? 'none' : '';
+
       UI.openBottomSheet('sheetAcciones');
+      if (window.lucide) window.lucide.createIcons();
     }
 
     document.getElementById('accionVerPedido').addEventListener('click', function() {
@@ -543,9 +723,54 @@
       if (mesa) location.href = './detalle.html?mesa=' + mesa.numero;
     });
 
+    // ─── Datos de meseros disponibles ────────────────────────────────────────
+    var MESEROS = [
+      { id: 'emp-001', nombre: 'Camila Rojas',    iniciales: 'CR', rol: 'Mesera · Turno activo',   color: '#4F46E5' },
+      { id: 'emp-002', nombre: 'Andrés Moreno',   iniciales: 'AM', rol: 'Mesero · Turno activo',   color: '#059669' },
+      { id: 'emp-003', nombre: 'Valentina Cruz',  iniciales: 'VC', rol: 'Mesera · Turno activo',   color: '#D97706' },
+    ];
+
     document.getElementById('accionCambiarMesero').addEventListener('click', function() {
+      if (!_accionMesaId) return;
+      var mesa = StoreMesas.getMesa(_accionMesaId);
       UI.closeBottomSheet('sheetAcciones');
-      UI.toast({ type: 'info', title: 'Función disponible próximamente' });
+
+      // Actualizar título del sheet
+      var label = document.getElementById('sheetCambiarMesaLabel');
+      if (label) label.textContent = 'Mesa #' + (mesa ? mesa.numero : '—');
+
+      // Renderizar lista de meseros
+      var lista = document.getElementById('listaMeseros');
+      if (lista) {
+        lista.innerHTML = MESEROS.map(function(m) {
+          var esActual = mesa && mesa.meseroId === m.id;
+          return '<li>'
+            + '<button class="mm-mesero-item" type="button" data-mesero-id="' + m.id + '" data-mesero-nombre="' + m.nombre + '">'
+            + '<div class="mm-mesero-avatar" style="background:' + m.color + '">' + m.iniciales + '</div>'
+            + '<div class="mm-mesero-info">'
+            + '<div class="mm-mesero-nombre">' + m.nombre + (esActual ? ' <span style="font-size:11px;font-weight:500;color:var(--muted);">(actual)</span>' : '') + '</div>'
+            + '<div class="mm-mesero-rol">' + m.rol + '</div>'
+            + '</div>'
+            + (esActual ? '<span class="mm-mesero-check"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>' : '')
+            + '</button>'
+            + '</li>';
+        }).join('');
+
+        // Eventos de selección
+        lista.querySelectorAll('.mm-mesero-item').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var empId     = btn.dataset.meseroId;
+            var empNombre = btn.dataset.meseroNombre;
+            StoreMesas.cambiarMesero(_accionMesaId, empId, empNombre);
+            UI.closeBottomSheet('sheetCambiarMesero');
+            UI.toast({ type: 'success', title: empNombre + ' asignado/a a la mesa' });
+            if (window.lucide) window.lucide.createIcons();
+          });
+        });
+      }
+
+      UI.openBottomSheet('sheetCambiarMesero');
+      if (window.lucide) window.lucide.createIcons();
     });
 
     document.getElementById('accionLimpieza').addEventListener('click', function() {
@@ -562,8 +787,12 @@
         document.querySelectorAll('.mm-tab').forEach(function(b) { b.classList.remove('is-active'); });
         btn.classList.add('is-active');
         salaActiva = btn.dataset.sala;
-        render();
-        renderResumen();
+        // Skeletons durante el "cambio de sala" (simula fetch en producción)
+        renderSkeletons(6);
+        setTimeout(function() {
+          render();
+          renderResumen();
+        }, 280);
       });
     });
 
@@ -579,6 +808,33 @@
       render();
       renderResumen();
     });
+
+    // ─── Banner post-cobro ────────────────────────────────────────────────────
+    (function() {
+      var params = new URLSearchParams(location.search);
+      var cobrada = params.get('cobrada');
+      var total   = params.get('total');
+      if (!cobrada) return;
+
+      var banner = document.getElementById('bannerCobro');
+      var text   = document.getElementById('bannerCobroText');
+      if (!banner || !text) return;
+
+      var totalStr = total ? ' · $' + Number(total).toLocaleString('es-CO') : '';
+      text.textContent = '✓ Mesa #' + cobrada + ' cobrada' + totalStr;
+      banner.style.display = 'flex';
+
+      // Limpiar URL sin reload
+      history.replaceState(null, '', location.pathname);
+
+      // Auto-dismiss en 8s
+      var autoDismiss = setTimeout(function() { banner.style.display = 'none'; }, 8000);
+
+      document.getElementById('bannerCobrarClose').addEventListener('click', function() {
+        clearTimeout(autoDismiss);
+        banner.style.display = 'none';
+      });
+    })();
 
     // ─── Init ─────────────────────────────────────────────────────────────────
     render();

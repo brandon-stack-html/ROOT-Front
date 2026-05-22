@@ -207,6 +207,7 @@
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
+  (function() {
     if (window.lucide) window.lucide.createIcons();
 
     var NM = window.NominaMock;
@@ -217,7 +218,7 @@
     if (!emp || !per) {
       document.getElementById('availAmount').textContent = 'Sin datos';
       document.getElementById('btnEnviar').disabled = true;
-      throw new Error('Sin datos de nómina');
+      return;
     }
 
     // Verificar si ya hay adelanto pendiente/aprobado en el periodo
@@ -233,7 +234,7 @@
       document.getElementById('btnEnviar').disabled = true;
       document.getElementById('previewCard').style.display = 'none';
       if (window.lucide) window.lucide.createIcons();
-      throw new Error('Adelanto existente');
+      return;
     }
 
     var devengado = NM.calcularDevengado(emp, per);
@@ -318,6 +319,7 @@
 
       window.location.href = './adelantos-historial.html?highlight=' + encodeURIComponent(nuevoAdv.id) + '&toast=enviado';
     });
+  })();
   </script>
   <script src="../assets/js/nav.js"></script>
 </body>

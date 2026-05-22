@@ -6,49 +6,59 @@
 /* --------------------------------------------------------------------------
    Tokens de estado de mesa
    -------------------------------------------------------------------------- */
-/* Sprint 14: translúcidos Vercel — bajar saturación en ambos modos */
+/* Paleta mejorada — más contraste, barra lateral de acento, reservada=púrpura */
 :root {
-  --mesa-libre-bg:      var(--bg-surface, #FFFFFF);
-  --mesa-libre-border:  var(--border-default, rgba(0,0,0,0.08));
-  --mesa-libre-text:    var(--muted, #71717A);
+  --mesa-libre-bg:      #FFFFFF;
+  --mesa-libre-border:  #E4E4E7;
+  --mesa-libre-text:    #52525B;
+  --mesa-libre-accent:  #A1A1AA;
 
-  --mesa-ocupada-bg:    rgba(239,68,68,0.06);
-  --mesa-ocupada-border:rgba(239,68,68,0.20);
-  --mesa-ocupada-text:  #B91C1C;
+  --mesa-ocupada-bg:     rgba(239, 68, 68, 0.10);
+  --mesa-ocupada-border: rgba(239, 68, 68, 0.30);
+  --mesa-ocupada-text:   #991B1B;
+  --mesa-ocupada-accent: #EF4444;
 
-  --mesa-por-cobrar-bg:    rgba(245,158,11,0.07);
-  --mesa-por-cobrar-border:rgba(245,158,11,0.22);
-  --mesa-por-cobrar-text:  #92400E;
+  --mesa-por-cobrar-bg:     rgba(245, 158, 11, 0.12);
+  --mesa-por-cobrar-border: rgba(245, 158, 11, 0.35);
+  --mesa-por-cobrar-text:   #92400E;
+  --mesa-por-cobrar-accent: #F59E0B;
 
-  --mesa-reservada-bg:    rgba(59,130,246,0.06);
-  --mesa-reservada-border:rgba(59,130,246,0.20);
-  --mesa-reservada-text:  #1E40AF;
+  --mesa-reservada-bg:     rgba(139, 92, 246, 0.10);
+  --mesa-reservada-border: rgba(139, 92, 246, 0.30);
+  --mesa-reservada-text:   #5B21B6;
+  --mesa-reservada-accent: #8B5CF6;
 
-  --mesa-limpieza-bg:    rgba(113,113,122,0.06);
-  --mesa-limpieza-border:rgba(113,113,122,0.18);
-  --mesa-limpieza-text:  var(--muted, #71717A);
+  --mesa-limpieza-bg:     rgba(113, 113, 122, 0.08);
+  --mesa-limpieza-border: rgba(113, 113, 122, 0.22);
+  --mesa-limpieza-text:   #52525B;
+  --mesa-limpieza-accent: #71717A;
 }
 
 [data-theme="dark"] {
-  --mesa-libre-bg:      var(--bg-surface, #111111);
-  --mesa-libre-border:  var(--border-default, rgba(255,255,255,0.10));
-  --mesa-libre-text:    var(--muted, #A1A1AA);
+  --mesa-libre-bg:      #111111;
+  --mesa-libre-border:  rgba(255,255,255,0.10);
+  --mesa-libre-text:    #A1A1AA;
+  --mesa-libre-accent:  #52525B;
 
-  --mesa-ocupada-bg:    rgba(244,63,94,0.08);
-  --mesa-ocupada-border:rgba(244,63,94,0.22);
-  --mesa-ocupada-text:  #FDA4AF;
+  --mesa-ocupada-bg:     rgba(244, 63, 94, 0.14);
+  --mesa-ocupada-border: rgba(244, 63, 94, 0.35);
+  --mesa-ocupada-text:   #FDA4AF;
+  --mesa-ocupada-accent: #F43F5E;
 
-  --mesa-por-cobrar-bg:    rgba(234,179,8,0.08);
-  --mesa-por-cobrar-border:rgba(234,179,8,0.22);
-  --mesa-por-cobrar-text:  #FDE047;
+  --mesa-por-cobrar-bg:     rgba(234, 179, 8, 0.14);
+  --mesa-por-cobrar-border: rgba(234, 179, 8, 0.35);
+  --mesa-por-cobrar-text:   #FDE047;
+  --mesa-por-cobrar-accent: #EAB308;
 
-  --mesa-reservada-bg:    rgba(96,165,250,0.08);
-  --mesa-reservada-border:rgba(96,165,250,0.22);
-  --mesa-reservada-text:  #93C5FD;
+  --mesa-reservada-bg:     rgba(167, 139, 250, 0.14);
+  --mesa-reservada-border: rgba(167, 139, 250, 0.32);
+  --mesa-reservada-text:   #C4B5FD;
+  --mesa-reservada-accent: #A78BFA;
 
-  --mesa-limpieza-bg:    rgba(161,161,170,0.06);
-  --mesa-limpieza-border:rgba(161,161,170,0.18);
-  --mesa-limpieza-text:  var(--muted, #A1A1AA);
+  --mesa-limpieza-bg:     rgba(161, 161, 170, 0.08);
+  --mesa-limpieza-border: rgba(161, 161, 170, 0.22);
+  --mesa-limpieza-text:   #A1A1AA;
+  --mesa-limpieza-accent: #71717A;
 }
 
 /* --------------------------------------------------------------------------
@@ -58,7 +68,7 @@
   border-radius: 12px;
   border: 1.5px solid var(--mesa-libre-border);
   background: var(--mesa-libre-bg);
-  padding: 10px;
+  padding: 10px 10px 10px 14px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -68,6 +78,34 @@
   overflow: hidden;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* Barra lateral de acento (señal primaria de estado) */
+.mesa-card::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--mesa-libre-accent);
+}
+.mesa-card[data-estado="ocupada"]::before    { background: var(--mesa-ocupada-accent); }
+.mesa-card[data-estado="por-cobrar"]::before { background: var(--mesa-por-cobrar-accent); }
+.mesa-card[data-estado="reservada"]::before  { background: var(--mesa-reservada-accent); }
+.mesa-card[data-estado="limpieza"]::before   { background: var(--mesa-limpieza-accent); }
+
+/* Pulse en "por cobrar" — atención sin ser invasivo */
+@keyframes mesa-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.40; }
+}
+.mesa-card[data-estado="por-cobrar"]::before {
+  animation: mesa-pulse 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mesa-card[data-estado="por-cobrar"]::before { animation: none; }
 }
 
 .mesa-card:hover {

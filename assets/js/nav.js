@@ -366,9 +366,11 @@
   function loadAuth() {
     if (window.Auth) { window.Auth.init(); return; }
     var s = document.createElement('script');
-    // Ruta relativa a /assets/js/ desde cualquier profundidad
+    // Ruta relativa a /assets/js/ desde cualquier profundidad.
+    // pathname='/mesero/mapa.html' → split=['','mesero','mapa.html'] (len 3) → depth=1 → prefix='../'
+    // pathname='/index.html'        → split=['','index.html']        (len 2) → depth=0 → prefix=''
     var depth = location.pathname.split('/').length - 2;
-    var prefix = depth <= 1 ? '' : '../'.repeat(depth - 1);
+    var prefix = '../'.repeat(Math.max(0, depth));
     s.src = prefix + 'assets/js/auth.js';
     s.onload = function () { if (window.Auth) window.Auth.init(); };
     document.head.appendChild(s);

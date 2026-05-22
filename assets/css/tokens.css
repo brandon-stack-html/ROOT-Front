@@ -5,6 +5,10 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* View Transitions — navegación suave entre pantallas (Chromium 111+, Safari 18) */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+
 /* ---------- Reset minimal ---------- */
 *,
 *::before,

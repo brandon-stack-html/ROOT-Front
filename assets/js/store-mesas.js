@@ -313,6 +313,15 @@
     emit('mesa-actualizada', { mesaId: mesaId });
   };
 
+  StoreMesas.cambiarMesero = function (mesaId, empId, empNombre) {
+    var idx = findIdx(mesaId);
+    if (idx === -1) return;
+    _mesas[idx].meseroId = empId;
+    _mesas[idx].meseroNombre = empNombre;
+    save(_mesas);
+    emit('mesa-actualizada', { mesaId: mesaId });
+  };
+
   StoreMesas.liberar = function (mesaId) {
     var idx = findIdx(mesaId);
     if (idx === -1) return;

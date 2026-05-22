@@ -12,24 +12,25 @@
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/mesero.css" />
   <style>
-    /* Banner verde ¡Listo! */
+    /* Banner → chip compacto (no compite con el contenido principal) */
     .e4-banner {
-      margin: 12px 14px 0;
-      padding: 12px 14px;
-      border-radius: 11px;
-      background: #D1FAE5;
-      border: 1px solid rgba(16, 185, 129, 0.33);
+      margin: 10px 14px 0;
+      padding: 7px 12px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.10);
+      border: 1px solid rgba(16, 185, 129, 0.25);
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 8px;
     }
     [data-theme="dark"] .e4-banner {
-      background: rgba(16, 185, 129, 0.18);
+      background: rgba(16, 185, 129, 0.14);
+      border-color: rgba(16, 185, 129, 0.22);
     }
     .e4-banner-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 18px;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
       background: var(--success);
       display: flex;
       align-items: center;
@@ -37,9 +38,9 @@
       flex-shrink: 0;
       color: #fff;
     }
-    .e4-banner-icon svg { width: 18px; height: 18px; }
+    .e4-banner-icon svg { width: 12px; height: 12px; }
     .e4-banner-title {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       color: #065F46;
     }
@@ -47,7 +48,7 @@
     .e4-banner-meta {
       font-size: 11px;
       color: #047857;
-      margin-top: 1px;
+      margin-left: auto;
     }
     [data-theme="dark"] .e4-banner-meta { color: #6EE7B7; }
 
@@ -86,8 +87,17 @@
     }
     .ronda-header-line {
       flex: 1;
-      height: 1px;
+      height: 2px;
       background: var(--border);
+      border-radius: 1px;
+    }
+    .ronda-header::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
     }
     .ronda-hora {
       font-weight: 500;
@@ -314,6 +324,13 @@
           </div>
         </header>
 
+        <!-- Stepper: Mesa › Pedido › Cobro -->
+        <div class="mesero-flow-stepper">
+          <span class="step is-done"><span class="step-dot"></span>Mesa</span>
+          <span class="step is-current"><span class="step-dot"></span>Pedido</span>
+          <span class="step"><span class="step-dot"></span>Cobro</span>
+        </div>
+
         <!-- ============= CONTENT ============= -->
         <main id="main" class="mesero-content">
 
@@ -386,13 +403,12 @@
               <i data-lucide="plus"></i>
               Agregar
             </a>
-            <a id="linkVoz" href="./catalogo.html?mesa=4&mode=voice" class="mb-btn mb-btn-secondary h-48" title="Grabar por voz">
+            <a id="linkVoz" href="./catalogo.html?mesa=4&mode=voice" class="mb-btn mb-btn-secondary h-48" title="Grabar pedido por voz" style="padding: 0 14px;">
               <i data-lucide="mic"></i>
-              Grabar
             </a>
             <button type="button" class="mb-btn mb-btn-success h-48" id="btnComanda">
               <i data-lucide="send"></i>
-              Comanda
+              Enviar comanda
             </button>
           </div>
         </div>
@@ -637,7 +653,7 @@
     renderComanda();
     if (window.lucide) window.lucide.createIcons();
 
-    // Actualizar links y total del footer con datos del store si están disponibles
+    // Actualizar total del footer con datos del store si están disponibles
     if (_storeData) {
       var totalEl = document.querySelector('.e4-total-value');
       if (totalEl) totalEl.textContent = fmtCOP(_storeData.total);

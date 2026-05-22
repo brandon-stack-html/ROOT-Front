@@ -23,24 +23,46 @@
       gap: 10px;
     }
     .comanda-card {
-      padding: 14px;
+      padding: 14px 14px 14px 18px;
       border-radius: 12px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Barra lateral — misma señal visual que las cards del mapa */
+    .comanda-card::before {
+      content: '';
+      position: absolute;
+      top: 8px; bottom: 8px; left: 0;
+      width: 4px;
+      border-radius: 0 4px 4px 0;
+      background: var(--border);
     }
     .comanda-card.estado-listo {
-      background: #D1FAE5;
-      border: 1.5px solid var(--success);
+      background: rgba(16, 185, 129, 0.10);
+      border: 1px solid rgba(16, 185, 129, 0.30);
     }
+    .comanda-card.estado-listo::before { background: var(--success); }
     [data-theme="dark"] .comanda-card.estado-listo {
-      background: rgba(16, 185, 129, 0.15);
+      background: rgba(16, 185, 129, 0.14);
+      border-color: rgba(16, 185, 129, 0.25);
     }
-    .comanda-card.estado-preparando,
+    .comanda-card.estado-preparando {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+    .comanda-card.estado-preparando::before { background: var(--warning); }
+    [data-theme="dark"] .comanda-card.estado-preparando {
+      background: rgba(234, 179, 8, 0.10);
+      border-color: rgba(234, 179, 8, 0.22);
+    }
     .comanda-card.estado-enviado {
       background: var(--bg);
       border: 1px solid var(--border);
     }
+    .comanda-card.estado-enviado::before { background: var(--muted); }
     .comanda-card-header {
       display: flex;
       align-items: center;
@@ -48,11 +70,13 @@
       gap: 10px;
     }
     .comanda-card-title {
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 17px;
+      font-weight: 700;
       color: var(--text);
+      letter-spacing: -0.01em;
     }
     .comanda-card-title .ronda {
+      font-size: 13px;
       color: var(--muted);
       font-weight: 500;
     }

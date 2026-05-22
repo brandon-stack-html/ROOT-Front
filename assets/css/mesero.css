@@ -168,6 +168,52 @@ body.mesero-body {
   line-height: 1.2;
 }
 
+/* ── Stepper de flujo (Mesa › Pedido › Cobro) ─────────────────────────────── */
+.mesero-flow-stepper {
+  display: flex;
+  align-items: center;
+  padding: 7px 16px 8px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-subtle, var(--border));
+  flex-shrink: 0;
+}
+.mesero-flow-stepper .step {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.mesero-flow-stepper .step + .step::before {
+  content: '›';
+  margin: 0 6px;
+  color: var(--border-strong, var(--border));
+  font-size: 13px;
+  line-height: 1;
+}
+.mesero-flow-stepper .step.is-done {
+  color: var(--success);
+}
+.mesero-flow-stepper .step.is-done .step-dot {
+  background: var(--success);
+}
+.mesero-flow-stepper .step.is-current {
+  color: var(--accent);
+  font-weight: 600;
+}
+.mesero-flow-stepper .step.is-current .step-dot {
+  background: var(--accent);
+}
+.step-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
 /* Botón ícono cuadrado 34×34 */
 .mesero-icon-btn {
   width: 34px;
@@ -362,6 +408,15 @@ body.mesero-body {
   color: #fff;
   box-shadow: 0 8px 24px rgba(79, 70, 229, 0.33);
 }
+.mb-avatar.size-96 {
+  width: 96px;
+  height: 96px;
+  border-radius: 48px;
+  font-size: 34px;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(79, 70, 229, 0.35);
+}
 
 /* ── Botones mobile ──────────────────────────────────────────────────────── */
 .mb-btn {
@@ -484,13 +539,20 @@ body.mesero-body {
   border-radius: 18px 18px 0 0;
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.3);
   transform: translateY(100%);
-  transition: transform 280ms cubic-bezier(.4, 0, .2, 1);
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 280ms cubic-bezier(.4, 0, .2, 1), visibility 0s linear 280ms;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   z-index: 60;
 }
-.bottom-sheet.is-open { transform: translateY(0); }
+.bottom-sheet.is-open {
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition: transform 280ms cubic-bezier(.4, 0, .2, 1), visibility 0s linear 0s;
+}
 
 .bottom-sheet-handle {
   display: flex;
