@@ -8,6 +8,17 @@
 (function () {
   'use strict';
 
+  // Detect base path for GitHub Pages deployments (e.g. /ROOT-Front)
+  const BASE = (function () {
+    var seg = location.pathname.split('/').filter(Boolean);
+    // If first segment is not a known page folder, it's the repo subfolder
+    var knownFolders = ['auth', 'backoffice', 'pos', 'mesero', 'kds', 'storefront', 'assets', 'design-system'];
+    if (seg.length > 0 && knownFolders.indexOf(seg[0]) === -1 && seg[0].indexOf('.html') === -1) {
+      return '/' + seg[0];
+    }
+    return '';
+  })();
+
   const PAGES = [
     { name: 'Inicio del demo',           path: '/index.html',                       module: 'General' },
 
@@ -72,7 +83,7 @@
   // --------------------------------------------------------------------------
   function isIndexPage() {
     const p = location.pathname;
-    return p === '/' || p === '/index.html' || p.endsWith('/index.html');
+    return p === '/' || p.endsWith('/index.html');
   }
 
   function refreshLucide() {
@@ -88,7 +99,7 @@
     if (isIndexPage()) return;
     if (document.querySelector('.nav-back-home')) return;
     const a = document.createElement('a');
-    a.href = '/index.html';
+    a.href = BASE + '/index.html';
     a.className = 'nav-back-home';
     a.setAttribute('aria-label', 'Volver al demo');
     a.setAttribute('title', 'Volver al demo');
@@ -192,7 +203,7 @@
         e.preventDefault();
         if (currentResults.length > 0 && currentResults[selectedIdx]) {
           pushReciente(currentResults[selectedIdx]);
-          location.href = currentResults[selectedIdx].path;
+          location.href = BASE + currentResults[selectedIdx].path;
         }
       }
     });
@@ -238,7 +249,7 @@
       });
       btn.addEventListener('click', function () {
         pushReciente(currentResults[i]);
-        location.href = currentResults[i].path;
+        location.href = BASE + currentResults[i].path;
       });
     });
   }
@@ -296,7 +307,7 @@
         var path = btn.dataset.path;
         var page = PAGES.find(function(p) { return p.path === path; });
         if (page) pushReciente(page);
-        window.location.href = path;
+        window.location.href = BASE + path;
         closeJump();
       });
       btn.addEventListener('mouseenter', function() {
@@ -366,10 +377,9 @@
   function loadAuth() {
     if (window.Auth) { window.Auth.init(); return; }
     var s = document.createElement('script');
-    // Ruta relativa a /assets/js/ desde cualquier profundidad.
-    // pathname='/mesero/mapa.html' → split=['','mesero','mapa.html'] (len 3) → depth=1 → prefix='../'
-    // pathname='/index.html'        → split=['','index.html']        (len 2) → depth=0 → prefix=''
-    var depth = location.pathname.split('/').length - 2;
+    // Strip the BASE prefix so depth only counts real folder levels.
+    var stripped = BASE ? location.pathname.slice(BASE.length) : location.pathname;
+    var depth = stripped.split('/').length - 2;
     var prefix = '../'.repeat(Math.max(0, depth));
     s.src = prefix + 'assets/js/auth.js';
     s.onload = function () { if (window.Auth) window.Auth.init(); };

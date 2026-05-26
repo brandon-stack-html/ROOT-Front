@@ -5,6 +5,16 @@
 (function () {
   'use strict';
 
+  // Detect base path for GitHub Pages (e.g. /ROOT-Front) vs localhost (empty)
+  const BASE = (function () {
+    var seg = location.pathname.split('/').filter(Boolean);
+    var knownFolders = ['auth', 'backoffice', 'pos', 'mesero', 'kds', 'storefront', 'assets', 'design-system'];
+    if (seg.length > 0 && knownFolders.indexOf(seg[0]) === -1 && seg[0].indexOf('.html') === -1) {
+      return '/' + seg[0];
+    }
+    return '';
+  })();
+
   const DEMO_MODE = true;
   const STORAGE_KEY = 'root:auth:v1';
 
@@ -136,12 +146,12 @@
 
     logout: function () {
       localStorage.removeItem(STORAGE_KEY);
-      window.location.href = '/auth/login.html';
+      window.location.href = BASE + '/auth/login.html';
     },
 
     requireRole: function (role) {
       var user = Auth.current();
-      if (user.role !== role) window.location.href = '/index.html';
+      if (user.role !== role) window.location.href = BASE + '/index.html';
       return user;
     },
 
@@ -152,7 +162,7 @@
       Auth.login(demo);
       var roleLabels = { admin:'Administrador', gerente:'Gerente', cajero:'Cajero', mesero:'Mesero', cocina:'Cocina' };
       var label = roleLabels[role] || role;
-      var home = ROLE_HOMES[role] || '/backoffice/dashboard.html';
+      var home = BASE + (ROLE_HOMES[role] || '/backoffice/dashboard.html');
       if (window.UI && typeof window.UI.toast === 'function') {
         window.UI.toast({ type: 'success', title: 'Cambiado a ' + label, sub: 'Redirigiendo al módulo…' });
       }
@@ -177,7 +187,7 @@
       if (!rule) return; // admin: todo visible
 
       if (typeof rule === 'string' && rule.startsWith('__redirect__')) {
-        var target = rule.replace('__redirect__', '');
+        var target = BASE + rule.replace('__redirect__', '');
         var path = window.location.pathname;
         if (path.indexOf('/backoffice/') !== -1 || path.indexOf('/pos/') !== -1) {
           window.location.href = target;
@@ -439,7 +449,7 @@
         '<div style="font-size:13px;font-weight:700;color:var(--text);">Notificaciones' + (unread > 0 ? ' <span style="font-size:10px;background:var(--accent);color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;">' + unread + '</span>' : '') + '</div>' +
         '<div style="display:flex;align-items:center;gap:8px;">' +
           (unread > 0 ? '<button id="notifMarkAll" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--ff-base);font-weight:500;">Marcar leídas</button>' : '') +
-          '<a href="/backoffice/notificaciones.html" style="font-size:11px;color:var(--muted);text-decoration:none;" onclick="document.getElementById(\'notifDropdown\').style.display=\'none\'">Ver todas →</a>' +
+          '<a href="' + BASE + '/backoffice/notificaciones.html" style="font-size:11px;color:var(--muted);text-decoration:none;" onclick="document.getElementById(\'notifDropdown\').style.display=\'none\'">Ver todas →</a>' +
         '</div>' +
       '</div>';
 
