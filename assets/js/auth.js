@@ -475,7 +475,7 @@
       '</div>';
 
       var rows = notifs.map(function (n) {
-        return '<a href="' + n.href + '" onclick="Auth._markRead(\'' + n.id + '\');document.getElementById(\'notifDropdown\').style.display=\'none\'" style="display:flex;align-items:flex-start;gap:10px;padding:11px 16px;text-decoration:none;background:' + (n.leida ? 'transparent' : 'rgba(79,70,229,.04)') + ';border-bottom:1px solid var(--border-subtle,var(--border));transition:background .12s;">' +
+        return '<a href="' + BASE + n.href + '" onclick="Auth._markRead(\'' + n.id + '\');document.getElementById(\'notifDropdown\').style.display=\'none\'" style="display:flex;align-items:flex-start;gap:10px;padding:11px 16px;text-decoration:none;background:' + (n.leida ? 'transparent' : 'rgba(79,70,229,.04)') + ';border-bottom:1px solid var(--border-subtle,var(--border));transition:background .12s;">' +
           '<div style="width:28px;height:28px;border-radius:7px;background:' + (n.leida ? 'var(--alt)' : 'rgba(79,70,229,.1)') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">' +
             '<i data-lucide="' + n.icon + '" style="width:12px;height:12px;color:' + (n.leida ? 'var(--muted)' : 'var(--accent)') + ';"></i>' +
           '</div>' +

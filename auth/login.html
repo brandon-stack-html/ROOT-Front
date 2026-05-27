@@ -148,15 +148,15 @@
         var multiUser = MULTI_ROLE[email.toLowerCase()] || null;
         if (multiUser) {
           localStorage.setItem('root:pending-roles', JSON.stringify(multiUser));
-          window.location.href = '/auth/selector-rol.html';
+          window.location.href = './selector-rol.html';
           return;
         }
 
         // Regla A1: >1 sucursal → A5; single branch → B1
         var singleBranch = localStorage.getItem('demo:single-branch') === '1';
         window.location.href = singleBranch
-          ? '/backoffice/dashboard.html'
-          : '/auth/selector-sucursal.html';
+          ? '../backoffice/dashboard.html'
+          : './selector-sucursal.html';
       } else {
         // Mostrar error inline
         wrapE.classList.add('is-error');
