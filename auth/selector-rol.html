@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Seleccionar rol — ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/auth.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    /* Role cards — ancho máximo más angosto para 2 cols */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      width: 100%;
+      max-width: 560px;
+    }
+    /* Checkmark visible en card seleccionada */
+    .sucursal-card .rol-check {
+      display: none;
+    }
+    .sucursal-card.is-selected .rol-check {
+      display: flex;
+    }
+    /* Descripción del rol */
+    .rol-card-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+    /* Botón continuar wrapper */
+    .selector-continue {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="selector-page">
+
+    <!-- Topbar -->
+    <div class="selector-topbar">
+      <div class="selector-topbar-logo">
+        <span class="root-wordmark" style="font-size:15px">[ROOT]</span>
+      </div>
+      <div class="selector-topbar-user">
+        <span class="selector-topbar-username" id="topbarUser"></span>
+        <div class="selector-avatar" id="topbarAvatar">?</div>
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light" style="width:15px;height:15px;"></i>
+          <i data-lucide="moon" class="theme-icon-dark" style="width:15px;height:15px;"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Centro -->
+    <div class="selector-center" id="main">
+
+      <!-- Encabezado -->
+      <div class="selector-heading">
+        <h1 class="selector-title" id="greetingTitle">Elegí tu rol 👤</h1>
+        <p class="selector-subtitle" id="greetingSub">Tenés roles activos. ¿Con cuál querés ingresar hoy?</p>
+      </div>
+
+      <!-- Grid de roles -->
+      <div class="roles-grid" id="rolesGrid">
+        <!-- Generado por JS -->
+      </div>
+
+      <!-- Botón continuar -->
+      <div class="selector-continue">
+        <button
+          type="button"
+          id="btnContinuar"
+          class="btn btn-primary"
+          style="min-width:200px;padding:11px 28px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;"
+          disabled
+          onclick="confirmarRol()"
+        >
+          Continuar <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+        </button>
+        <a href="./login.html" style="font-size:11px;color:var(--muted);text-decoration:none;">
+          Cerrar sesión
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script>
+    // Base path para GitHub Pages
+    var BASE = (function () {
+      var seg = location.pathname.split('/').filter(Boolean);
+      var known = ['auth','backoffice','pos','mesero','kds','storefront','assets','design-system'];
+      if (seg.length > 0 && known.indexOf(seg[0]) === -1 && seg[0].indexOf('.html') === -1) {
+        return '/' + seg[0];
+      }
+      return '';
+    })();
+
+    // Configuración visual por rol
+    var ROLE_META = {
+      admin:   { label: 'Administrador', desc: 'Acceso completo al sistema',   icon: 'shield',    bg: '#EDE9FE', color: 'rgba(139,92,246,1)' },
+      gerente: { label: 'Encargado',      desc: 'Operaciones y gestión',        icon: 'briefcase', bg: '#DBEAFE', color: 'rgba(59,130,246,1)'  },
+      cajero:  { label: 'Cajero',         desc: 'Ventas y caja',                icon: 'banknote',  bg: '#DCFCE7', color: 'rgba(16,185,129,1)'  },
+      mesero:  { label: 'Mesero',         desc: 'Atención de mesas',            icon: 'utensils',  bg: '#FCE7F3', color: 'rgba(236,72,153,1)'  },
+      cocina:  { label: 'Cocina',         desc: 'Pantalla de cocina (KDS)',     icon: 'chef-hat',  bg: '#FFEDD5', color: 'rgba(249,115,22,1)'  },
+    };
+
+    // Destino tras elegir rol
+    var ROLE_NEXT = {
+      admin:   '/auth/selector-sucursal.html',
+      gerente: '/auth/selector-sucursal.html',
+      cajero:  '/pos/apertura.html',
+      mesero:  '/mesero/mapa.html',
+      cocina:  '/kds/main.html',
+    };
+
+    // Leer pending-roles del localStorage
+    var pendingData = null;
+    try {
+      var raw = localStorage.getItem('root:pending-roles');
+      if (raw) pendingData = JSON.parse(raw);
+    } catch (e) {}
+
+    // Si no hay pendiente, volver al login
+    if (!pendingData || !Array.isArray(pendingData.roles) || pendingData.roles.length === 0) {
+      window.location.replace(BASE + '/auth/login.html');
+    }
+
+    // Topbar
+    if (pendingData) {
+      document.getElementById('topbarUser').textContent = pendingData.name;
+      document.getElementById('topbarAvatar').textContent = pendingData.initials;
+      var firstName = pendingData.name.split(' ')[0];
+      document.getElementById('greetingTitle').textContent = 'Hola, ' + firstName + ' 👋';
+      var n = pendingData.roles.length;
+      document.getElementById('greetingSub').textContent =
+        'Tenés ' + n + ' rol' + (n !== 1 ? 'es' : '') + ' activo' + (n !== 1 ? 's' : '') + '. ¿Con cuál querés ingresar hoy?';
+    }
+
+    // Renderizar tarjetas de rol
+    var selectedRole = null;
+    var grid = document.getElementById('rolesGrid');
+
+    if (pendingData) {
+      pendingData.roles.forEach(function (role) {
+        var meta = ROLE_META[role] || {
+          label: role.charAt(0).toUpperCase() + role.slice(1),
+          desc: '',
+          icon: 'user',
+          bg: '#F3F4F6',
+          color: '#6B7280',
+        };
+
+        var card = document.createElement('div');
+        card.className = 'sucursal-card';
+        card.dataset.role = role;
+        card.style.cursor = 'pointer';
+        card.innerHTML =
+          '<div class="sucursal-selected-check rol-check" style="display:none">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+          '</div>' +
+          '<div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:' + meta.bg + ';">' +
+            '<i data-lucide="' + meta.icon + '" style="width:22px;height:22px;stroke-width:1.7;color:' + meta.color + ';"></i>' +
+          '</div>' +
+          '<div>' +
+            '<div class="sucursal-info-name" style="font-size:15px;font-weight:700;">' + meta.label + '</div>' +
+            '<div class="rol-card-desc">' + meta.desc + '</div>' +
+          '</div>';
+
+        card.addEventListener('click', function () {
+          grid.querySelectorAll('.sucursal-card').forEach(function (c) {
+            c.classList.remove('is-selected');
+            var chk = c.querySelector('.rol-check');
+            if (chk) chk.style.display = 'none';
+          });
+          card.classList.add('is-selected');
+          var chk = card.querySelector('.rol-check');
+          if (chk) chk.style.display = '';
+          selectedRole = role;
+          document.getElementById('btnContinuar').disabled = false;
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    lucide.createIcons();
+
+    function confirmarRol() {
+      if (!selectedRole || !pendingData) return;
+
+      var btn = document.getElementById('btnContinuar');
+      btn.disabled = true;
+      btn.textContent = 'Entrando…';
+
+      Auth.login({
+        userId: pendingData.userId,
+        name: pendingData.name,
+        initials: pendingData.initials,
+        role: selectedRole,
+      });
+
+      localStorage.removeItem('root:pending-roles');
+
+      var next = ROLE_NEXT[selectedRole] || '/backoffice/dashboard.html';
+      window.location.href = BASE + next;
+    }
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

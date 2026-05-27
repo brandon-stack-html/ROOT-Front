@@ -136,6 +136,22 @@
       var valid = email.indexOf('gomez@restaurante.com') !== -1 && pwd.length > 0;
 
       if (valid) {
+        // Detectar usuario multi-rol
+        var MULTI_ROLE = {
+          'andrea.gomez@restaurante.com': {
+            userId: 'usr-006',
+            name: 'Andrea Gómez',
+            initials: 'AG',
+            roles: ['gerente', 'cajero'],
+          },
+        };
+        var multiUser = MULTI_ROLE[email.toLowerCase()] || null;
+        if (multiUser) {
+          localStorage.setItem('root:pending-roles', JSON.stringify(multiUser));
+          window.location.href = '/auth/selector-rol.html';
+          return;
+        }
+
         // Regla A1: >1 sucursal → A5; single branch → B1
         var singleBranch = localStorage.getItem('demo:single-branch') === '1';
         window.location.href = singleBranch

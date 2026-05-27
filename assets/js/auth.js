@@ -32,14 +32,14 @@
       'dashboard:read',
       'catalog:read', 'catalog:write', 'catalog:delete',
       'inventory:read', 'inventory:write',
-      'cash:read', 'cash:write',
+      'cash:read', 'cash:write', 'cash:delete',
       'clients:read', 'clients:write', 'clients:delete',
       'suppliers:read', 'suppliers:write',
       'expenses:read', 'expenses:write',
       'payroll:read', 'payroll:write',
       'integrations:read', 'integrations:write',
       'tables:read', 'tables:write',
-      'orders:read', 'orders:write',
+      'orders:read', 'orders:write', 'orders:delete',
     ],
     gerente: [
       'catalog:read', 'catalog:write', 'catalog:delete',
@@ -54,7 +54,7 @@
       'expenses:read', 'expenses:write',
       'payroll:read', 'payroll:write',
       'tables:read', 'tables:write',
-      'orders:read', 'orders:write',
+      'orders:read', 'orders:write', 'orders:delete',
     ],
     cajero: [
       'pos:read', 'pos:write',
@@ -90,9 +90,26 @@
     cocina:  { userId: 'usr-005', name: 'Carlos F.',   initials: 'CF', role: 'cocina' },
   };
 
+  // Usuarios con múltiples roles asignados (demo)
+  const MULTI_ROLE_USERS = {
+    'andrea.gomez@restaurante.com': {
+      userId: 'usr-006',
+      name: 'Andrea Gómez',
+      initials: 'AG',
+      roles: ['gerente', 'cajero'],
+    },
+  };
+
+  // Etiquetas legibles de cada rol (para sidebar footer)
+  var ROLE_LABELS = {
+    admin: 'Administrador', gerente: 'Encargado',
+    cajero: 'Cajero', mesero: 'Mesero', cocina: 'Cocina',
+  };
+
   // Ítems de nav restringidos por rol
   const SIDEBAR_RESTRICTIONS = {
-    gerente:  ['usuarios.html', 'roles.html', 'integraciones.html', 'facturacion-dian.html'],
+    gerente:  ['usuarios.html', 'roles.html', 'integraciones.html', 'facturacion-dian.html',
+               'sucursales.html', 'configuracion.html', 'contabilidad.html'],
     cajero:   ['usuarios.html', 'roles.html', 'integraciones.html', 'facturacion-dian.html',
                'contabilidad.html', 'proveedores.html', 'clientes.html', 'catalogo.html',
                'inventario.html', 'categorias.html', 'conteo.html', 'fichas.html',
@@ -119,6 +136,11 @@
   // API pública
   // ──────────────────────────────────────────────────────────────
   var Auth = {
+
+    getAvailableRoles: function (email) {
+      var key = (email || '').toLowerCase().trim();
+      return MULTI_ROLE_USERS[key] || null;
+    },
 
     current: function () {
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -160,8 +182,7 @@
       var demo = DEMO_USERS[role];
       if (!demo) return;
       Auth.login(demo);
-      var roleLabels = { admin:'Administrador', gerente:'Gerente', cajero:'Cajero', mesero:'Mesero', cocina:'Cocina' };
-      var label = roleLabels[role] || role;
+      var label = ROLE_LABELS[role] || role;
       var home = BASE + (ROLE_HOMES[role] || '/backoffice/dashboard.html');
       if (window.UI && typeof window.UI.toast === 'function') {
         window.UI.toast({ type: 'success', title: 'Cambiado a ' + label, sub: 'Redirigiendo al módulo…' });
@@ -507,10 +528,23 @@
       });
     },
 
+    // ── Actualizar footer del sidebar con datos del usuario actual ──
+    _applyUserInfo: function () {
+      var s = Auth.current();
+      if (!s) return;
+      var avatarEl = document.querySelector('.bo-sidebar-footer .bo-user-avatar');
+      var nameEl   = document.querySelector('.bo-sidebar-footer .bo-user-info .name');
+      var roleEl   = document.querySelector('.bo-sidebar-footer .bo-user-info .role');
+      if (avatarEl) avatarEl.textContent = s.initials || (s.name || '').slice(0, 2).toUpperCase();
+      if (nameEl)   nameEl.textContent   = s.name || '';
+      if (roleEl)   roleEl.textContent   = ROLE_LABELS[s.role] || s.role || '';
+    },
+
     // ── Init general ──
     init: function () {
       Auth.applySidebar();
       Auth.applyRequires();
+      Auth._applyUserInfo();
       Auth.injectRoleSwitcher();
       Auth._wireSidebarLogout();
       Auth._injectNotifDropdown();

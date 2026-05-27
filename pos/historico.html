@@ -149,7 +149,7 @@
             <div class="pos-historico-sub">12:03 a 19:47 · Caja 1 · Juan Camilo Restrepo</div>
           </div>
           <div class="pos-historico-actions">
-            <button class="btn btn-secondary btn-sm" type="button">
+            <button class="btn btn-secondary btn-sm" type="button" data-requires="reports:export">
               <i data-lucide="download"></i> Exportar
             </button>
             <button class="btn btn-secondary btn-sm" type="button">
@@ -400,7 +400,7 @@
           <button class="btn btn-secondary btn-sm" type="button" id="tdBtnReimprimir">
             <i data-lucide="printer"></i> Re-imprimir
           </button>
-          <button class="btn btn-destructive btn-sm" type="button" id="tdBtnAnular">
+          <button class="btn btn-destructive btn-sm" type="button" id="tdBtnAnular" data-requires="orders:delete">
             <i data-lucide="x-circle"></i> Anular
           </button>
         </div>
@@ -409,6 +409,7 @@
     </div>
   </div>
 
+  <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>

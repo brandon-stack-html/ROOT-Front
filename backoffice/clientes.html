@@ -360,7 +360,7 @@
             <option>Corporativo</option>
           </select>
           <div class="toolbar-spacer"></div>
-          <button class="btn btn-ghost"><i data-lucide="download"></i> Exportar</button>
+          <button class="btn btn-ghost" data-requires="reports:export"><i data-lucide="download"></i> Exportar</button>
         </div>
 
         <!-- Tabla clientes -->
@@ -529,6 +529,11 @@
             </div>
 
             <div class="drawer-footer">
+              <button class="btn btn-destructive btn-sm" id="btnEliminarCliente" data-requires="clients:delete"
+                style="margin-right:auto;"
+                onclick="UI.toast({type:'warning',title:'Eliminar cliente',sub:'Esta acción no se puede deshacer.'})">
+                <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Eliminar
+              </button>
               <button class="btn btn-secondary" data-close>Cerrar</button>
               <button class="btn btn-primary" id="btnAbonoDrawer">
                 <i data-lucide="plus"></i> Registrar abono
@@ -853,6 +858,7 @@
     renderTabla();
     if (window.lucide) window.lucide.createIcons();
   </script>
+  <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/nav.js"></script>
 </body>
 </html>

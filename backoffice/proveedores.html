@@ -438,7 +438,7 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="btn btn-destructive" data-close>Desactivar</button>
+        <button class="btn btn-destructive" data-close data-requires="suppliers:delete">Desactivar</button>
         <div style="flex:1;"></div>
         <button class="btn btn-secondary" data-close>Cerrar</button>
         <button class="btn btn-primary" onclick="UI.toast({type:'success',title:'Cambios guardados'})">Editar</button>
@@ -460,7 +460,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" data-close>Cancelar</button>
-        <button class="btn btn-destructive" id="btnConfirmarElimProv">Eliminar</button>
+        <button class="btn btn-destructive" id="btnConfirmarElimProv" data-requires="suppliers:delete">Eliminar</button>
       </div>
     </div>
   </div>
@@ -715,8 +715,10 @@
       m.innerHTML =
         '<button type="button" class="prov-menu-item" data-action="editar" style="width:100%;text-align:left;padding:8px 12px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:13px;color:var(--text);font-family:var(--ff-base);display:flex;align-items:center;gap:8px;">' +
           '<i data-lucide="pencil" style="width:13px;height:13px;color:var(--muted);"></i> Editar</button>' +
-        '<button type="button" class="prov-menu-item" data-action="eliminar" style="width:100%;text-align:left;padding:8px 12px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:13px;color:var(--error);font-family:var(--ff-base);display:flex;align-items:center;gap:8px;">' +
-          '<i data-lucide="trash-2" style="width:13px;height:13px;color:var(--error);"></i> Eliminar</button>';
+        (window.Auth && window.Auth.can('suppliers:delete') ?
+          '<button type="button" class="prov-menu-item" data-action="eliminar" style="width:100%;text-align:left;padding:8px 12px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:13px;color:var(--error);font-family:var(--ff-base);display:flex;align-items:center;gap:8px;">' +
+            '<i data-lucide="trash-2" style="width:13px;height:13px;color:var(--error);"></i> Eliminar</button>'
+          : '');
       document.body.appendChild(m);
       provContextMenu = m;
       var rect = anchor.getBoundingClientRect();
@@ -727,7 +729,8 @@
         cerrarMenuProv();
         abrirDrawer(idx);
       });
-      m.querySelector('[data-action="eliminar"]').addEventListener('click', function(){
+      var elimBtn = m.querySelector('[data-action="eliminar"]');
+      if (elimBtn) elimBtn.addEventListener('click', function(){
         cerrarMenuProv();
         document.getElementById('elimProvNombre').textContent = PROVEEDORES[idx].nombre;
         UI.openModal('modalEliminarProv');
@@ -789,6 +792,7 @@
 
     if(window.lucide) window.lucide.createIcons();
   </script>
+  <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/nav.js"></script>
 </body>
 </html>

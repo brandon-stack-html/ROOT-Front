@@ -458,13 +458,13 @@
       </div>
       <div class="modal-footer" style="gap:6px;">
         <button class="btn btn-secondary" data-close>Cancelar</button>
-        <button class="btn btn-secondary" id="btnDescPDF" style="display:flex;align-items:center;gap:5px;">
+        <button class="btn btn-secondary" id="btnDescPDF" data-requires="reports:export" style="display:flex;align-items:center;gap:5px;">
           <i data-lucide="file-text" style="width:12px;height:12px;"></i> PDF
         </button>
-        <button class="btn btn-secondary" id="btnDescExcel" style="display:flex;align-items:center;gap:5px;">
+        <button class="btn btn-secondary" id="btnDescExcel" data-requires="reports:export" style="display:flex;align-items:center;gap:5px;">
           <i data-lucide="table" style="width:12px;height:12px;"></i> Excel
         </button>
-        <button class="btn btn-primary" id="btnEnviarEmail" style="display:flex;align-items:center;gap:5px;">
+        <button class="btn btn-primary" id="btnEnviarEmail" data-requires="reports:export" style="display:flex;align-items:center;gap:5px;">
           <i data-lucide="mail" style="width:12px;height:12px;"></i> Por email
         </button>
       </div>
@@ -503,6 +503,7 @@
       UI.toast({ type: 'success', title: reporteActual + ' enviado', sub: 'A ' + email });
     });
   </script>
+  <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/nav.js"></script>
 </body>
 </html>
