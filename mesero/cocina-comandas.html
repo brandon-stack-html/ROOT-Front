@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Cocina · Comandas</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    :root {
+      --cocina-warn-bg:    rgba(245, 158, 11, 0.08);
+      --cocina-warn-border: rgba(245, 158, 11, 0.28);
+      --cocina-urgent-bg:  rgba(239, 68, 68, 0.08);
+      --cocina-urgent-border: rgba(239, 68, 68, 0.28);
+    }
+
+    /* ── Topbar estación ── */
+    .ck-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 11;
+      background: var(--bg);
+      padding: 10px 16px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ck-topbar-row1 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ck-estacion {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ck-estacion-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #FFEDD5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(249,115,22,1);
+      flex-shrink: 0;
+    }
+    [data-theme="dark"] .ck-estacion-icon {
+      background: rgba(249,115,22,0.18);
+    }
+    .ck-estacion-icon svg { width: 16px; height: 16px; stroke-width: 1.8; }
+    .ck-estacion-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .ck-estacion-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+    .ck-turno-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--success);
+      background: rgba(16,185,129,0.10);
+      border: 1px solid rgba(16,185,129,0.25);
+      border-radius: 999px;
+      padding: 3px 9px 3px 6px;
+    }
+    .ck-turno-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: dotPulse 2.5s ease-out infinite;
+    }
+    @keyframes dotPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+      80%  { box-shadow: 0 0 0 5px rgba(16,185,129,0); }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+
+    /* ── Pill tabs ── */
+    .ck-tabs-wrap {
+      padding: 10px 14px 12px;
+      flex-shrink: 0;
+    }
+
+    /* ── Lista de comandas ── */
+    .ck-list {
+      padding: 4px 14px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Comanda card ── */
+    .ck-card {
+      padding: 14px 14px 14px 18px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 120ms, box-shadow 120ms;
+    }
+    .ck-card:active { opacity: 0.85; }
+    .ck-card::before {
+      content: '';
+      position: absolute;
+      top: 8px; bottom: 8px; left: 0;
+      width: 4px;
+      border-radius: 0 4px 4px 0;
+      background: var(--border);
+    }
+
+    /* Urgencia normal — sin color extra, ya es el default */
+    .ck-card.ck-warn {
+      background: var(--cocina-warn-bg);
+      border-color: var(--cocina-warn-border);
+    }
+    .ck-card.ck-warn::before { background: var(--warning); }
+    [data-theme="dark"] .ck-card.ck-warn {
+      background: rgba(234,179,8,0.10);
+      border-color: rgba(234,179,8,0.22);
+    }
+    .ck-card.ck-urgent {
+      background: var(--cocina-urgent-bg);
+      border-color: var(--cocina-urgent-border);
+      animation: ck-pulse 1.8s ease-in-out infinite;
+    }
+    .ck-card.ck-urgent::before { background: var(--error); }
+    [data-theme="dark"] .ck-card.ck-urgent {
+      background: rgba(239,68,68,0.10);
+      border-color: rgba(239,68,68,0.25);
+    }
+    @keyframes ck-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+      50%       { box-shadow: 0 0 0 3px rgba(239,68,68,0.18); }
+    }
+
+    /* En prep */
+    .ck-card.ck-prep {
+      background: rgba(245, 158, 11, 0.06);
+      border-color: rgba(245, 158, 11, 0.20);
+    }
+    .ck-card.ck-prep::before { background: var(--warning); }
+
+    /* Lista */
+    .ck-card.ck-lista {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+    .ck-card.ck-lista::before { background: var(--success); }
+
+    .ck-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .ck-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .ck-card-num {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* Badge urgencia */
+    .ck-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .ck-badge.tone-nuevo {
+      background: rgba(59,130,246,0.12);
+      color: #2563EB;
+      border: 1px solid rgba(59,130,246,0.22);
+    }
+    [data-theme="dark"] .ck-badge.tone-nuevo {
+      background: rgba(59,130,246,0.18);
+      color: #93C5FD;
+    }
+    .ck-badge.tone-warn {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid rgba(245,158,11,0.25);
+    }
+    [data-theme="dark"] .ck-badge.tone-warn {
+      background: rgba(245,158,11,0.18);
+      color: #FDE68A;
+      border-color: rgba(245,158,11,0.25);
+    }
+    .ck-badge.tone-urgent {
+      background: rgba(239,68,68,0.10);
+      color: #DC2626;
+      border: 1px solid rgba(239,68,68,0.25);
+    }
+    [data-theme="dark"] .ck-badge.tone-urgent {
+      background: rgba(239,68,68,0.18);
+      color: #FCA5A5;
+    }
+    .ck-badge.tone-prep {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+    [data-theme="dark"] .ck-badge.tone-prep {
+      background: rgba(245,158,11,0.20);
+      color: #FDE68A;
+    }
+    .ck-badge.tone-lista {
+      background: var(--success);
+      color: #fff;
+    }
+    .ck-badge svg { width: 9px; height: 9px; stroke-width: 3; }
+
+    /* Items resumen */
+    .ck-items {
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .ck-item-mod {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      padding-left: 10px;
+    }
+    .ck-item-mod.plus { color: #059669; }
+    .ck-item-mod.minus { color: #DC2626; }
+
+    /* Footer de card */
+    .ck-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ck-timer {
+      font-size: 11px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .ck-timer svg { width: 11px; height: 11px; }
+    .ck-timer.warn { color: #D97706; font-weight: 600; }
+    .ck-timer.urgent { color: var(--error); font-weight: 700; }
+
+    /* Botón acción */
+    .ck-btn-action {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--ff-base);
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: opacity 120ms;
+    }
+    .ck-btn-action:active { opacity: 0.75; }
+    .ck-btn-action.start {
+      background: var(--accent);
+      color: #fff;
+    }
+    .ck-btn-action.done {
+      background: var(--success);
+      color: #fff;
+    }
+    .ck-btn-action svg { width: 12px; height: 12px; stroke-width: 2.4; }
+
+    /* Empty state */
+    .ck-empty {
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .ck-empty-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: var(--alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      color: var(--muted);
+    }
+    .ck-empty-icon svg { width: 28px; height: 28px; stroke-width: 1.5; }
+    .ck-empty-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .ck-empty-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* Bottom nav cocinera */
+    .ck-bottom-nav {
+      position: sticky;
+      bottom: 0;
+    }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- TOPBAR -->
+        <header class="ck-topbar">
+          <div class="ck-topbar-row1">
+            <div class="ck-estacion">
+              <div class="ck-estacion-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+              </div>
+              <div>
+                <div class="ck-estacion-name">Est. Caliente</div>
+                <div class="ck-estacion-sub" id="ckUserSub">Cocinero · Turno tarde</div>
+              </div>
+            </div>
+            <div class="ck-turno-chip">
+              <div class="ck-turno-dot"></div>
+              En turno
+            </div>
+          </div>
+        </header>
+
+        <!-- PILL TABS -->
+        <div class="ck-tabs-wrap">
+          <div class="mesero-pill-tabs" id="ckTabs">
+            <button class="mesero-pill-tab is-active" data-tab="pendientes">
+              Pendientes <span class="count" id="cntPend">(3)</span>
+            </button>
+            <button class="mesero-pill-tab" data-tab="preparando">
+              En Prep <span class="count" id="cntPrep">(2)</span>
+            </button>
+            <button class="mesero-pill-tab" data-tab="listos">
+              Listos <span class="count" id="cntList">(1)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CONTENT -->
+        <main id="main" class="mesero-content">
+          <div class="ck-list" id="ckList">
+            <!-- Renderizado por JS -->
+          </div>
+        </main>
+
+        <!-- BOTTOM NAV -->
+        <nav class="mesero-bottom-nav ck-bottom-nav">
+          <a href="./cocina-comandas.html" class="mesero-bottom-nav-tab is-active">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="flame"></i>
+            </span>
+            <span>Comandas</span>
+          </a>
+          <a href="./nomina.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="wallet"></i>
+            </span>
+            <span>Mi nómina</span>
+          </a>
+          <a href="./perfil.html" class="mesero-bottom-nav-tab">
+            <span class="mesero-bottom-nav-tab-icon-wrap">
+              <i data-lucide="user"></i>
+            </span>
+            <span>Mi perfil</span>
+          </a>
+        </nav>
+
+      </div><!-- /.mesero-body-inner -->
+
+      <div class="mesero-home-indicator"></div>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // ── Nombre del cocinero desde sesión ───────────────────────────────────────
+    try {
+      var rawSess = localStorage.getItem('root:auth:v1');
+      if (rawSess) {
+        var sess = JSON.parse(rawSess);
+        var parts = (sess.name || '').split(' ');
+        var shortName = parts[0] + (parts[1] ? ' ' + parts[1][0] + '.' : '');
+        var subEl = document.getElementById('ckUserSub');
+        if (subEl && shortName.trim()) subEl.textContent = shortName + ' · Turno tarde';
+      }
+    } catch (e) {}
+
+    // ── Mock data ──────────────────────────────────────────────────────────────
+    // startedAt: timestamp simulado (offset en segundos desde ahora)
+    var COMANDAS = [
+      {
+        id: 'cmd-047',
+        mesa: 4,
+        num: '#047',
+        estado: 'pendientes',
+        startedAt: Date.now() - 3 * 60 * 1000,  // hace 3 min
+        items: [
+          { qty: 2, nombre: 'Pechuga a la plancha', mods: [{ text: 'sin sal', kind: 'minus' }, { text: 'término medio', kind: 'neutral' }] },
+          { qty: 1, nombre: 'Ensalada César',       mods: [{ text: 'sin ajo', kind: 'minus' }] },
+        ],
+      },
+      {
+        id: 'cmd-051',
+        mesa: 7,
+        num: '#051',
+        estado: 'pendientes',
+        startedAt: Date.now() - 7 * 60 * 1000,  // hace 7 min → warn
+        items: [
+          { qty: 1, nombre: 'Bandeja Paisa',        mods: [] },
+          { qty: 1, nombre: 'Ajiaco Bogotano',      mods: [{ text: 'extra caldo', kind: 'plus' }] },
+          { qty: 2, nombre: 'Limonada de panela',   mods: [] },
+        ],
+      },
+      {
+        id: 'cmd-039',
+        mesa: 11,
+        num: '#039',
+        estado: 'pendientes',
+        startedAt: Date.now() - 12 * 60 * 1000, // hace 12 min → urgent
+        items: [
+          { qty: 1, nombre: 'Lomo al Trapo',        mods: [{ text: 'término bien cocido', kind: 'neutral' }] },
+          { qty: 1, nombre: 'Trucha al ajillo',     mods: [{ text: 'sin cilantro', kind: 'minus' }] },
+        ],
+      },
+      {
+        id: 'cmd-044',
+        mesa: 2,
+        num: '#044',
+        estado: 'preparando',
+        startedAt: Date.now() - 6 * 60 * 1000,  // hace 6 min
+        items: [
+          { qty: 2, nombre: 'Bandeja Paisa',        mods: [] },
+          { qty: 3, nombre: 'Limonada de panela',   mods: [] },
+        ],
+      },
+      {
+        id: 'cmd-046',
+        mesa: 5,
+        num: '#046',
+        estado: 'preparando',
+        startedAt: Date.now() - 4 * 60 * 1000,  // hace 4 min
+        items: [
+          { qty: 1, nombre: 'Sopa de mondongo',     mods: [{ text: 'bien caliente', kind: 'neutral' }] },
+          { qty: 1, nombre: 'Arroz con pollo',      mods: [] },
+        ],
+      },
+      {
+        id: 'cmd-041',
+        mesa: 9,
+        num: '#041',
+        estado: 'listos',
+        startedAt: Date.now() - 9 * 60 * 1000,
+        items: [
+          { qty: 2, nombre: 'Ajiaco Bogotano',      mods: [] },
+          { qty: 1, nombre: 'Agua con gas',         mods: [] },
+        ],
+      },
+    ];
+
+    // Estado activo de tabs
+    var activeTab = 'pendientes';
+
+    // ── Timer helpers ──────────────────────────────────────────────────────────
+    function elapsedMin(cmd) {
+      return Math.floor((Date.now() - cmd.startedAt) / 60000);
+    }
+
+    function urgencyClass(min, estado) {
+      if (estado === 'preparando') return 'ck-prep';
+      if (estado === 'listos')     return 'ck-lista';
+      if (min >= 10) return 'ck-urgent';
+      if (min >= 5)  return 'ck-warn';
+      return '';
+    }
+
+    function timerClass(min, estado) {
+      if (estado !== 'pendientes') return '';
+      if (min >= 10) return 'urgent';
+      if (min >= 5)  return 'warn';
+      return '';
+    }
+
+    function badgeHtml(min, estado) {
+      if (estado === 'listos')     return '<span class="ck-badge tone-lista"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>Listo</span>';
+      if (estado === 'preparando') return '<span class="ck-badge tone-prep">En prep.</span>';
+      if (min >= 10) return '<span class="ck-badge tone-urgent">Urgente</span>';
+      if (min >= 5)  return '<span class="ck-badge tone-warn">Atención</span>';
+      return '<span class="ck-badge tone-nuevo">Nuevo</span>';
+    }
+
+    function fmtTimer(ts) {
+      var sec = Math.floor((Date.now() - ts) / 1000);
+      var m = Math.floor(sec / 60);
+      var s = sec % 60;
+      return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    // ── Build HTML de una card ─────────────────────────────────────────────────
+    function buildCard(cmd) {
+      var min = elapsedMin(cmd);
+      var uCls  = urgencyClass(min, cmd.estado);
+      var tCls  = timerClass(min, cmd.estado);
+      var badge = badgeHtml(min, cmd.estado);
+
+      var itemsHtml = cmd.items.map(function(it) {
+        var modsHtml = it.mods.map(function(m) {
+          return '<div class="ck-item-mod ' + m.kind + '">' + (m.kind === 'plus' ? '+ ' : m.kind === 'minus' ? '− ' : '') + m.text + '</div>';
+        }).join('');
+        return '<div>× ' + it.qty + ' ' + it.nombre + modsHtml + '</div>';
+      }).join('');
+
+      var footerBtn = '';
+      if (cmd.estado === 'pendientes') {
+        footerBtn = '<button type="button" class="ck-btn-action start" data-action="start" data-id="' + cmd.id + '">'
+          + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>'
+          + 'Empezar</button>';
+      } else if (cmd.estado === 'preparando') {
+        footerBtn = '<button type="button" class="ck-btn-action done" data-action="done" data-id="' + cmd.id + '">'
+          + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>'
+          + 'Listo</button>';
+      }
+
+      return '<a href="./cocina-detalle.html?cmd=' + cmd.id + '&mesa=' + cmd.mesa + '" class="ck-card ' + uCls + '" data-id="' + cmd.id + '" data-estado="' + cmd.estado + '">'
+        + '<div class="ck-card-header">'
+        +   '<div>'
+        +     '<div class="ck-card-title">Mesa ' + cmd.mesa + '</div>'
+        +     '<div class="ck-card-num">Comanda ' + cmd.num + '</div>'
+        +   '</div>'
+        +   badge
+        + '</div>'
+        + '<div class="ck-items">' + itemsHtml + '</div>'
+        + '<div class="ck-card-footer">'
+        +   '<span class="ck-timer ' + tCls + '" data-timer="' + cmd.id + '">'
+        +     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+        +     fmtTimer(cmd.startedAt)
+        +   '</span>'
+        +   footerBtn
+        + '</div>'
+        + '</a>';
+    }
+
+    // ── Render lista ───────────────────────────────────────────────────────────
+    function render() {
+      var filtered = COMANDAS.filter(function(c) { return c.estado === activeTab; });
+      var list = document.getElementById('ckList');
+
+      if (filtered.length === 0) {
+        var labels = { pendientes: 'Nada pendiente por ahora', preparando: 'Nada en preparación', listos: 'Sin comandas listas' };
+        var subs   = { pendientes: 'Las nuevas comandas aparecerán aquí en tiempo real.', preparando: 'Marcá una comanda pendiente para empezar.', listos: 'Marcá una comanda "En Prep" cuando esté lista.' };
+        list.innerHTML = '<div class="ck-empty">'
+          + '<div class="ck-empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div>'
+          + '<div class="ck-empty-title">' + labels[activeTab] + '</div>'
+          + '<div class="ck-empty-sub">' + subs[activeTab] + '</div>'
+          + '</div>';
+        if (window.lucide) window.lucide.createIcons();
+        return;
+      }
+
+      list.innerHTML = filtered.map(buildCard).join('');
+      attachActions();
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // ── Actualizar badges de conteo ────────────────────────────────────────────
+    function updateCounts() {
+      var counts = { pendientes: 0, preparando: 0, listos: 0 };
+      COMANDAS.forEach(function(c) { if (counts[c.estado] !== undefined) counts[c.estado]++; });
+      document.getElementById('cntPend').textContent = '(' + counts.pendientes + ')';
+      document.getElementById('cntPrep').textContent = '(' + counts.preparando + ')';
+      document.getElementById('cntList').textContent = '(' + counts.listos + ')';
+    }
+
+    // ── Acciones de botones ────────────────────────────────────────────────────
+    function attachActions() {
+      // Botones start/done — no propagar click al link padre
+      document.querySelectorAll('[data-action="start"]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var id = btn.dataset.id;
+          var cmd = COMANDAS.find(function(c) { return c.id === id; });
+          if (cmd) {
+            cmd.estado = 'preparando';
+            cmd.startedAt = Date.now(); // resetear timer
+            render();
+            updateCounts();
+            UI.toast({ type: 'info', title: 'Comanda Mesa ' + cmd.mesa + ' — en preparación', duration: 2000 });
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-action="done"]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var id = btn.dataset.id;
+          var cmd = COMANDAS.find(function(c) { return c.id === id; });
+          if (cmd) {
+            cmd.estado = 'listos';
+            render();
+            updateCounts();
+            UI.toast({ type: 'success', title: '¡Listo! Mesa ' + cmd.mesa + ' notificada al mesero', duration: 3000 });
+            // Notificar cross-app (mesero escucha este evento via storage)
+            try {
+              var listas = JSON.parse(localStorage.getItem('root:comandas-listas:v1') || '[]');
+              listas.push({ mesaNum: cmd.mesa, cmdNum: cmd.num, visto: false, ts: Date.now() });
+              localStorage.setItem('root:comandas-listas:v1', JSON.stringify(listas));
+            } catch (ex) {}
+          }
+        });
+      });
+    }
+
+    // ── Tabs ───────────────────────────────────────────────────────────────────
+    document.querySelectorAll('#ckTabs .mesero-pill-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('#ckTabs .mesero-pill-tab').forEach(function(t) { t.classList.remove('is-active'); });
+        tab.classList.add('is-active');
+        activeTab = tab.dataset.tab;
+        render();
+      });
+    });
+
+    // ── Actualizar timers cada segundo ─────────────────────────────────────────
+    setInterval(function() {
+      document.querySelectorAll('[data-timer]').forEach(function(el) {
+        var id = el.dataset.timer;
+        var cmd = COMANDAS.find(function(c) { return c.id === id; });
+        if (!cmd) return;
+        el.textContent = '';
+
+        // Reinsertar icono de reloj + tiempo
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+        el.innerHTML = svg + fmtTimer(cmd.startedAt);
+
+        // Actualizar clase de urgencia en la card
+        var min = elapsedMin(cmd);
+        var card = el.closest('.ck-card');
+        if (card && cmd.estado === 'pendientes') {
+          card.classList.remove('ck-warn', 'ck-urgent');
+          if (min >= 10) card.classList.add('ck-urgent');
+          else if (min >= 5) card.classList.add('ck-warn');
+
+          el.className = 'ck-timer ' + timerClass(min, cmd.estado);
+        }
+      });
+    }, 1000);
+
+    // ── Init ───────────────────────────────────────────────────────────────────
+    updateCounts();
+    render();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

@@ -78,7 +78,7 @@
     gerente: '/backoffice/dashboard.html',
     cajero:  '/pos/apertura.html',
     mesero:  '/mesero/mapa.html',
-    cocina:  '/kds/main.html',
+    cocina:  '/mesero/cocina-comandas.html',
   };
 
   // Usuarios demo para el switcher de rol
@@ -103,7 +103,7 @@
   // Etiquetas legibles de cada rol (para sidebar footer)
   var ROLE_LABELS = {
     admin: 'Administrador', gerente: 'Encargado',
-    cajero: 'Cajero', mesero: 'Mesero', cocina: 'Cocina',
+    cajero: 'Cajero', mesero: 'Mesero', cocina: 'Cocinero/a',
   };
 
   // Ítems de nav restringidos por rol
@@ -116,7 +116,7 @@
                'producto.html', 'gastos.html', 'nomina.html', 'adelantos.html',
                'nomina-empleado.html', 'mesas.html', 'sucursales.html', 'configuracion.html'],
     mesero:   '__redirect__/mesero/mapa.html',
-    cocina:   '__redirect__/kds/main.html',
+    cocina:   '__redirect__/mesero/cocina-comandas.html',
   };
 
   // ──────────────────────────────────────────────────────────────

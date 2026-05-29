@@ -196,54 +196,26 @@
           <!-- Header con avatar -->
           <div class="e9-header">
             <div class="e9-avatar-wrap">
-              <div class="mb-avatar size-96">AG</div>
+              <div class="mb-avatar size-96" id="perfilAvatar">AG</div>
             </div>
-            <div class="e9-name">Andrea García</div>
-            <div class="e9-role">Mesera · Sede Norte</div>
+            <div class="e9-name" id="perfilName">Andrea García</div>
+            <div class="e9-role" id="perfilRole">Mesera · Sede Norte</div>
             <div class="e9-turno-badge">Turno activo desde las 12:00</div>
           </div>
 
-          <!-- KPIs -->
+          <!-- KPIs (se renderizan según rol) -->
           <section class="e9-section">
             <div class="e9-section-title">Resumen del turno</div>
-            <div class="e9-kpis">
-              <div class="e9-kpi tone-info">
-                <div class="e9-kpi-icon"><i data-lucide="layout-grid"></i></div>
-                <div class="e9-kpi-value">12</div>
-                <div class="e9-kpi-label">Mesas</div>
-              </div>
-              <div class="e9-kpi tone-success">
-                <div class="e9-kpi-icon"><i data-lucide="trending-up"></i></div>
-                <div class="e9-kpi-value">$1.234K</div>
-                <div class="e9-kpi-label">Ventas</div>
-              </div>
-              <div class="e9-kpi tone-warning">
-                <div class="e9-kpi-icon"><i data-lucide="sparkles"></i></div>
-                <div class="e9-kpi-value">$45K</div>
-                <div class="e9-kpi-label">Propinas</div>
-              </div>
+            <div class="e9-kpis" id="perfilKpis">
+              <!-- Renderizado por JS -->
             </div>
           </section>
 
-          <!-- Operación -->
+          <!-- Operación (se renderizan según rol) -->
           <section class="e9-section">
             <div class="e9-section-title">Operación</div>
-            <div class="e9-settings-card">
-              <a href="./mapa.html" class="setting-row" style="text-decoration:none;">
-                <div class="setting-row-icon"><i data-lucide="layout-grid"></i></div>
-                <span class="setting-row-label">Mapa de mesas</span>
-                <span class="setting-row-right"><i data-lucide="chevron-right"></i></span>
-              </a>
-              <a href="./comandas.html" class="setting-row" style="text-decoration:none;">
-                <div class="setting-row-icon"><i data-lucide="clipboard-list"></i></div>
-                <span class="setting-row-label">Mis comandas del día</span>
-                <span class="setting-row-right"><i data-lucide="chevron-right"></i></span>
-              </a>
-              <a href="./nomina.html" class="setting-row last" style="text-decoration:none;">
-                <div class="setting-row-icon"><i data-lucide="wallet"></i></div>
-                <span class="setting-row-label">Mi nómina</span>
-                <span class="setting-row-right"><i data-lucide="chevron-right"></i></span>
-              </a>
+            <div class="e9-settings-card" id="perfilOperacion">
+              <!-- Renderizado por JS -->
             </div>
           </section>
 
@@ -355,32 +327,9 @@
 
         </main>
 
-        <!-- ============= BOTTOM NAV ============= -->
-        <nav class="mesero-bottom-nav">
-          <a href="./mapa.html" class="mesero-bottom-nav-tab">
-            <span class="mesero-bottom-nav-tab-icon-wrap">
-              <i data-lucide="layout-grid"></i>
-            </span>
-            <span>Mesas</span>
-          </a>
-          <a href="./comandas.html" class="mesero-bottom-nav-tab">
-            <span class="mesero-bottom-nav-tab-icon-wrap">
-              <i data-lucide="clipboard-list"></i>
-            </span>
-            <span>Comandas</span>
-          </a>
-          <a href="./nomina.html" class="mesero-bottom-nav-tab">
-            <span class="mesero-bottom-nav-tab-icon-wrap">
-              <i data-lucide="wallet"></i>
-            </span>
-            <span>Nómina</span>
-          </a>
-                    <a href="./perfil.html" class="mesero-bottom-nav-tab is-active">
-            <span class="mesero-bottom-nav-tab-icon-wrap">
-              <i data-lucide="user"></i>
-            </span>
-            <span>Mi perfil</span>
-          </a>
+        <!-- ============= BOTTOM NAV (renderizado por JS según rol) ============= -->
+        <nav class="mesero-bottom-nav" id="perfilBottomNav">
+          <!-- Renderizado por JS -->
         </nav>
 
       </div>
@@ -393,6 +342,139 @@
   <script src="../assets/js/ui.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // ── Detectar usuario y rol desde localStorage ─────────────────────────────
+    var currentUser = null;
+    try {
+      var raw = localStorage.getItem('root:auth:v1');
+      if (raw) currentUser = JSON.parse(raw);
+    } catch (e) {}
+    // Fallback: si no hay sesión, asumir mesera demo (Camila)
+    if (!currentUser) {
+      currentUser = { name: 'Camila Velásquez', initials: 'CV', role: 'mesero' };
+    }
+
+    var role = currentUser.role || 'mesero';
+    var isCocina = role === 'cocina';
+
+    // ── Header: avatar, nombre, rol ───────────────────────────────────────────
+    document.getElementById('perfilAvatar').textContent = currentUser.initials || 'CV';
+    document.getElementById('perfilName').textContent   = currentUser.name || 'Usuario';
+    var roleLabel = isCocina ? 'Cocinero/a · Est. Caliente' : 'Mesera · Sede Norte';
+    document.getElementById('perfilRole').textContent = roleLabel;
+
+    // ── KPIs según rol ────────────────────────────────────────────────────────
+    var kpisHtml;
+    if (isCocina) {
+      kpisHtml =
+        '<div class="e9-kpi tone-info">' +
+          '<div class="e9-kpi-icon"><i data-lucide="utensils"></i></div>' +
+          '<div class="e9-kpi-value">14</div>' +
+          '<div class="e9-kpi-label">Platos prep.</div>' +
+        '</div>' +
+        '<div class="e9-kpi tone-success">' +
+          '<div class="e9-kpi-icon"><i data-lucide="check-circle-2"></i></div>' +
+          '<div class="e9-kpi-value">11</div>' +
+          '<div class="e9-kpi-label">Servidos</div>' +
+        '</div>' +
+        '<div class="e9-kpi tone-warning">' +
+          '<div class="e9-kpi-icon"><i data-lucide="clock"></i></div>' +
+          '<div class="e9-kpi-value">8 min</div>' +
+          '<div class="e9-kpi-label">T° promedio</div>' +
+        '</div>';
+    } else {
+      kpisHtml =
+        '<div class="e9-kpi tone-info">' +
+          '<div class="e9-kpi-icon"><i data-lucide="layout-grid"></i></div>' +
+          '<div class="e9-kpi-value">12</div>' +
+          '<div class="e9-kpi-label">Mesas</div>' +
+        '</div>' +
+        '<div class="e9-kpi tone-success">' +
+          '<div class="e9-kpi-icon"><i data-lucide="trending-up"></i></div>' +
+          '<div class="e9-kpi-value">$1.234K</div>' +
+          '<div class="e9-kpi-label">Ventas</div>' +
+        '</div>' +
+        '<div class="e9-kpi tone-warning">' +
+          '<div class="e9-kpi-icon"><i data-lucide="sparkles"></i></div>' +
+          '<div class="e9-kpi-value">$45K</div>' +
+          '<div class="e9-kpi-label">Propinas</div>' +
+        '</div>';
+    }
+    document.getElementById('perfilKpis').innerHTML = kpisHtml;
+
+    // ── Sección "Operación" según rol ─────────────────────────────────────────
+    var operHtml;
+    if (isCocina) {
+      operHtml =
+        '<a href="./cocina-comandas.html" class="setting-row" style="text-decoration:none;">' +
+          '<div class="setting-row-icon"><i data-lucide="flame"></i></div>' +
+          '<span class="setting-row-label">Comandas de cocina</span>' +
+          '<span class="setting-row-right"><i data-lucide="chevron-right"></i></span>' +
+        '</a>' +
+        '<a href="./nomina.html" class="setting-row last" style="text-decoration:none;">' +
+          '<div class="setting-row-icon"><i data-lucide="wallet"></i></div>' +
+          '<span class="setting-row-label">Mi nómina</span>' +
+          '<span class="setting-row-right"><i data-lucide="chevron-right"></i></span>' +
+        '</a>';
+    } else {
+      operHtml =
+        '<a href="./mapa.html" class="setting-row" style="text-decoration:none;">' +
+          '<div class="setting-row-icon"><i data-lucide="layout-grid"></i></div>' +
+          '<span class="setting-row-label">Mapa de mesas</span>' +
+          '<span class="setting-row-right"><i data-lucide="chevron-right"></i></span>' +
+        '</a>' +
+        '<a href="./comandas.html" class="setting-row" style="text-decoration:none;">' +
+          '<div class="setting-row-icon"><i data-lucide="clipboard-list"></i></div>' +
+          '<span class="setting-row-label">Mis comandas del día</span>' +
+          '<span class="setting-row-right"><i data-lucide="chevron-right"></i></span>' +
+        '</a>' +
+        '<a href="./nomina.html" class="setting-row last" style="text-decoration:none;">' +
+          '<div class="setting-row-icon"><i data-lucide="wallet"></i></div>' +
+          '<span class="setting-row-label">Mi nómina</span>' +
+          '<span class="setting-row-right"><i data-lucide="chevron-right"></i></span>' +
+        '</a>';
+    }
+    document.getElementById('perfilOperacion').innerHTML = operHtml;
+
+    // ── Bottom nav según rol ──────────────────────────────────────────────────
+    var navHtml;
+    if (isCocina) {
+      navHtml =
+        '<a href="./cocina-comandas.html" class="mesero-bottom-nav-tab">' +
+          '<span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="flame"></i></span>' +
+          '<span>Comandas</span>' +
+        '</a>' +
+        '<a href="./nomina.html" class="mesero-bottom-nav-tab">' +
+          '<span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="wallet"></i></span>' +
+          '<span>Mi nómina</span>' +
+        '</a>' +
+        '<a href="./perfil.html" class="mesero-bottom-nav-tab is-active">' +
+          '<span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="user"></i></span>' +
+          '<span>Mi perfil</span>' +
+        '</a>';
+    } else {
+      navHtml =
+        '<a href="./mapa.html" class="mesero-bottom-nav-tab">' +
+          '<span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="layout-grid"></i></span>' +
+          '<span>Mesas</span>' +
+        '</a>' +
+        '<a href="./comandas.html" class="mesero-bottom-nav-tab">' +
+          '<span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="clipboard-list"></i></span>' +
+          '<span>Comandas</span>' +
+        '</a>' +
+        '<a href="./nomina.html" class="mesero-bottom-nav-tab">' +
+          '<span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="wallet"></i></span>' +
+          '<span>Nómina</span>' +
+        '</a>' +
+        '<a href="./perfil.html" class="mesero-bottom-nav-tab is-active">' +
+          '<span class="mesero-bottom-nav-tab-icon-wrap"><i data-lucide="user"></i></span>' +
+          '<span>Mi perfil</span>' +
+        '</a>';
+    }
+    document.getElementById('perfilBottomNav').innerHTML = navHtml;
+
+    // Re-renderizar íconos lucide después de inyectar HTML
     if (window.lucide) window.lucide.createIcons();
 
     // Sync theme switch with current theme

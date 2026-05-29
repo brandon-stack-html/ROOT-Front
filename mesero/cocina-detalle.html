@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Detalle comanda · Cocina</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/mesero.css" />
+  <style>
+    /* ── Topbar con back ── */
+    .cd-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 11;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      height: 54px;
+      flex-shrink: 0;
+    }
+    .cd-back-btn {
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--text);
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .cd-back-btn:active { background: var(--alt); }
+    .cd-back-btn svg { width: 20px; height: 20px; }
+    .cd-topbar-info { flex: 1; min-width: 0; }
+    .cd-topbar-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .cd-topbar-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .cd-timer-live {
+      font-size: 11px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .cd-timer-live.warn    { color: #D97706; }
+    .cd-timer-live.urgent  { color: var(--error); }
+    .cd-timer-live svg { width: 10px; height: 10px; }
+
+    /* ── Banner warn ── */
+    .cd-warn-banner {
+      margin: 10px 14px 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.10);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    [data-theme="dark"] .cd-warn-banner {
+      background: rgba(234,179,8,0.13);
+      border-color: rgba(234,179,8,0.22);
+    }
+    .cd-warn-banner.urgent {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.28);
+    }
+    [data-theme="dark"] .cd-warn-banner.urgent {
+      background: rgba(239,68,68,0.13);
+      border-color: rgba(239,68,68,0.25);
+    }
+    .cd-warn-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(245,158,11,0.15);
+      color: #D97706;
+      flex-shrink: 0;
+    }
+    .cd-warn-banner.urgent .cd-warn-icon {
+      background: rgba(239,68,68,0.15);
+      color: var(--error);
+    }
+    .cd-warn-icon svg { width: 14px; height: 14px; stroke-width: 2.2; }
+    .cd-warn-text { font-size: 12px; font-weight: 600; color: var(--text); }
+    .cd-warn-sub  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    /* ── Lista de items con checkbox ── */
+    .cd-section-label {
+      padding: 14px 16px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+    .cd-items-list {
+      padding: 0 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cd-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      transition: border-color 120ms, background 120ms;
+      position: relative;
+    }
+    .cd-item.is-done {
+      background: rgba(16, 185, 129, 0.07);
+      border-color: rgba(16, 185, 129, 0.28);
+    }
+    [data-theme="dark"] .cd-item.is-done {
+      background: rgba(16, 185, 129, 0.12);
+    }
+    .cd-item.is-done .cd-item-nombre { text-decoration: line-through; color: var(--muted); }
+
+    .cd-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: border-color 140ms, background 140ms;
+    }
+    .cd-item.is-done .cd-checkbox {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    .cd-checkbox svg { width: 13px; height: 13px; stroke-width: 3; color: #fff; display: none; }
+    .cd-item.is-done .cd-checkbox svg { display: block; }
+
+    .cd-item-body { flex: 1; min-width: 0; }
+    .cd-item-qty  { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
+    .cd-item-nombre {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .cd-item-mods {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .cd-mod {
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      width: fit-content;
+    }
+    .cd-mod.plus {
+      background: rgba(5, 150, 105, 0.10);
+      color: #047857;
+      border: 1px solid rgba(5,150,105,0.20);
+    }
+    .cd-mod.minus {
+      background: rgba(239, 68, 68, 0.08);
+      color: #DC2626;
+      border: 1px solid rgba(239,68,68,0.18);
+    }
+    .cd-mod.neutral {
+      background: var(--alt);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    [data-theme="dark"] .cd-mod.plus  { background: rgba(16,185,129,0.14); color: #6EE7B7; }
+    [data-theme="dark"] .cd-mod.minus { background: rgba(239,68,68,0.14); color: #FCA5A5; }
+    .cd-mod svg { width: 9px; height: 9px; stroke-width: 2.5; }
+
+    /* ── Footer sticky ── */
+    .cd-footer {
+      position: sticky;
+      bottom: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cd-footer-row {
+      display: flex;
+      gap: 8px;
+    }
+    .cd-btn-ajuste {
+      flex: 1;
+      height: 46px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--alt);
+      color: var(--text);
+      font-family: var(--ff-base);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 120ms;
+    }
+    .cd-btn-ajuste:active { background: var(--border); }
+    .cd-btn-ajuste svg { width: 16px; height: 16px; color: var(--muted); }
+    .cd-btn-listo {
+      flex: 2;
+      height: 46px;
+      border-radius: 12px;
+      border: none;
+      background: var(--success);
+      color: #fff;
+      font-family: var(--ff-base);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: opacity 120ms;
+    }
+    .cd-btn-listo:active { opacity: 0.8; }
+    .cd-btn-listo svg { width: 16px; height: 16px; stroke-width: 2.5; }
+    .cd-progress-bar {
+      height: 3px;
+      border-radius: 2px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .cd-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--success);
+      transition: width 300ms ease;
+    }
+
+    /* ── Bottom sheet ajuste ── */
+    .cd-ajuste-tipo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 0 16px 12px;
+    }
+    .cd-ajuste-tipo-btn {
+      padding: 12px 10px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      font-family: var(--ff-base);
+      text-align: left;
+      transition: border-color 120ms, background 120ms;
+    }
+    .cd-ajuste-tipo-btn.is-active {
+      border-color: var(--accent);
+      background: rgba(79,70,229,0.06);
+    }
+    [data-theme="dark"] .cd-ajuste-tipo-btn.is-active {
+      background: rgba(79,70,229,0.14);
+    }
+    .cd-ajuste-tipo-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
+    .cd-ajuste-tipo-btn.is-active .cd-ajuste-tipo-icon {
+      background: rgba(79,70,229,0.12);
+      color: var(--accent);
+    }
+    .cd-ajuste-tipo-icon svg { width: 14px; height: 14px; }
+    .cd-ajuste-tipo-label { font-size: 12px; font-weight: 600; color: var(--text); }
+    .cd-ajuste-tipo-sub   { font-size: 10px; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+    .cd-ajuste-obs {
+      margin: 0 16px 14px;
+    }
+    .cd-ajuste-obs textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--alt);
+      color: var(--text);
+      font-family: var(--ff-base);
+      font-size: 13px;
+      resize: none;
+      outline: none;
+      transition: border-color 120ms;
+    }
+    .cd-ajuste-obs textarea:focus { border-color: var(--accent); }
+    .cd-ajuste-obs-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body class="mesero-body">
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="mesero-frame">
+    <div class="mesero-app">
+
+      <div class="mesero-statusbar">
+        <span>9:41</span>
+        <div class="mesero-statusbar-icons">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full" class="battery"></i>
+        </div>
+      </div>
+
+      <div class="mesero-body-inner">
+
+        <!-- TOPBAR con back -->
+        <header class="cd-topbar">
+          <a href="./cocina-comandas.html" class="cd-back-btn" aria-label="Volver a comandas" style="text-decoration:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </a>
+          <div class="cd-topbar-info">
+            <div class="cd-topbar-title" id="cdTitle">Mesa 7 · #051</div>
+            <div class="cd-topbar-sub">
+              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="cd-timer-live" id="cdTimer">07:45</span>
+              <span style="color:var(--border-subtle,var(--border));">·</span>
+              <span>Pendiente</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- BANNER warn (visible si > 5 min) -->
+        <div class="cd-warn-banner" id="cdWarnBanner" style="display:none;">
+          <div class="cd-warn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <div class="cd-warn-text" id="cdWarnText">Tiempo elevado — verificar prioridad</div>
+            <div class="cd-warn-sub" id="cdWarnSub">Esta comanda lleva más de 5 minutos pendiente.</div>
+          </div>
+        </div>
+
+        <!-- CONTENT -->
+        <main id="main" class="mesero-content">
+
+          <div class="cd-section-label">Ítems a preparar</div>
+          <div class="cd-items-list" id="cdItemsList">
+            <!-- Renderizado por JS -->
+          </div>
+
+        </main>
+
+        <!-- FOOTER sticky -->
+        <div class="cd-footer">
+          <div class="cd-progress-bar">
+            <div class="cd-progress-fill" id="cdProgressFill" style="width:0%"></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);text-align:right;" id="cdProgressLabel">0 / 0 ítems listos</div>
+          <div class="cd-footer-row">
+            <button type="button" class="cd-btn-ajuste" id="btnAjuste">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+              Solicitar ajuste
+            </button>
+            <button type="button" class="cd-btn-listo" id="btnMarcarListo">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+              Marcar todo listo
+            </button>
+          </div>
+        </div>
+
+        <!-- ══ Bottom sheet: Solicitar ajuste ══ -->
+        <div class="bottom-sheet-backdrop" data-sheet="sheetAjuste"></div>
+        <div id="sheetAjuste" class="bottom-sheet">
+          <div class="bottom-sheet-handle" data-close></div>
+          <div class="bottom-sheet-header">
+            <h3 class="bottom-sheet-title">Solicitar ajuste al mesero</h3>
+            <p class="bottom-sheet-subtitle" id="sheetAjusteMesa">Mesa 7 · Comanda #051</p>
+          </div>
+          <div class="bottom-sheet-body" style="padding-top:4px;">
+
+            <!-- Tipo de ajuste -->
+            <div class="cd-ajuste-tipo-grid">
+              <button class="cd-ajuste-tipo-btn is-active" data-tipo="alergia" type="button">
+                <div class="cd-ajuste-tipo-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+                </div>
+                <div class="cd-ajuste-tipo-label">Confirmar alergia</div>
+                <div class="cd-ajuste-tipo-sub">Verificar ingrediente con el comensal</div>
+              </button>
+              <button class="cd-ajuste-tipo-btn" data-tipo="ingrediente" type="button">
+                <div class="cd-ajuste-tipo-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
+                </div>
+                <div class="cd-ajuste-tipo-label">Cambio ingrediente</div>
+                <div class="cd-ajuste-tipo-sub">Sustitución o modificación</div>
+              </button>
+              <button class="cd-ajuste-tipo-btn" data-tipo="priorizar" type="button">
+                <div class="cd-ajuste-tipo-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="17 11 21 7 17 3"/><line x1="21" y1="7" x2="9" y2="7"/><polyline points="7 21 3 17 7 13"/><line x1="15" y1="17" x2="3" y2="17"/></svg>
+                </div>
+                <div class="cd-ajuste-tipo-label">Priorizar plato</div>
+                <div class="cd-ajuste-tipo-sub">Mesa con espera larga</div>
+              </button>
+              <button class="cd-ajuste-tipo-btn" data-tipo="consulta" type="button">
+                <div class="cd-ajuste-tipo-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="cd-ajuste-tipo-label">Consulta</div>
+                <div class="cd-ajuste-tipo-sub">Pregunta sobre el pedido</div>
+              </button>
+            </div>
+
+            <!-- Observación -->
+            <div class="cd-ajuste-obs">
+              <div class="cd-ajuste-obs-label">Observación (opcional)</div>
+              <textarea id="ajusteObs" rows="3" placeholder="Ej: revisar alergia a los mariscos antes de servir…"></textarea>
+            </div>
+
+          </div>
+          <div class="bottom-sheet-footer">
+            <button type="button" class="mb-btn mb-btn-primary h-48" id="btnEnviarAjuste">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Enviar al mesero
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /.mesero-body-inner -->
+
+      <div class="mesero-home-indicator"></div>
+    </div>
+  </div>
+
+  <script src="../assets/js/ui.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // ── Mock de comandas (mismo que cocina-comandas.html) ──────────────────────
+    var COMANDAS_MAP = {
+      'cmd-047': { mesa: 4, num: '#047', estado: 'pendientes', startedAt: Date.now() - 3 * 60 * 1000, items: [
+        { qty: 2, nombre: 'Pechuga a la plancha',  mods: [{ text: 'sin sal', kind: 'minus' }, { text: 'término medio', kind: 'neutral' }] },
+        { qty: 1, nombre: 'Ensalada César',         mods: [{ text: 'sin ajo', kind: 'minus' }] },
+      ]},
+      'cmd-051': { mesa: 7, num: '#051', estado: 'pendientes', startedAt: Date.now() - 7 * 60 * 1000, items: [
+        { qty: 1, nombre: 'Bandeja Paisa',          mods: [] },
+        { qty: 1, nombre: 'Ajiaco Bogotano',        mods: [{ text: 'extra caldo', kind: 'plus' }] },
+        { qty: 2, nombre: 'Limonada de panela',     mods: [] },
+      ]},
+      'cmd-039': { mesa: 11, num: '#039', estado: 'pendientes', startedAt: Date.now() - 12 * 60 * 1000, items: [
+        { qty: 1, nombre: 'Lomo al Trapo',          mods: [{ text: 'término bien cocido', kind: 'neutral' }] },
+        { qty: 1, nombre: 'Trucha al ajillo',       mods: [{ text: 'sin cilantro', kind: 'minus' }] },
+      ]},
+      'cmd-044': { mesa: 2, num: '#044', estado: 'preparando', startedAt: Date.now() - 6 * 60 * 1000, items: [
+        { qty: 2, nombre: 'Bandeja Paisa',          mods: [] },
+        { qty: 3, nombre: 'Limonada de panela',     mods: [] },
+      ]},
+      'cmd-046': { mesa: 5, num: '#046', estado: 'preparando', startedAt: Date.now() - 4 * 60 * 1000, items: [
+        { qty: 1, nombre: 'Sopa de mondongo',       mods: [{ text: 'bien caliente', kind: 'neutral' }] },
+        { qty: 1, nombre: 'Arroz con pollo',        mods: [] },
+      ]},
+      'cmd-041': { mesa: 9, num: '#041', estado: 'listos', startedAt: Date.now() - 9 * 60 * 1000, items: [
+        { qty: 2, nombre: 'Ajiaco Bogotano',        mods: [] },
+        { qty: 1, nombre: 'Agua con gas',           mods: [] },
+      ]},
+    };
+
+    // ── Leer parámetros URL ────────────────────────────────────────────────────
+    var params = new URLSearchParams(location.search);
+    var cmdId  = params.get('cmd') || 'cmd-051';
+    var mesa   = params.get('mesa') || '7';
+
+    var cmd = COMANDAS_MAP[cmdId] || COMANDAS_MAP['cmd-051'];
+
+    // Estado de items marcados — preparando o listos arranca con todos marcados
+    var allDone = cmd.estado === 'listos';
+    var itemsDone = cmd.items.map(function() { return allDone; });
+
+    // ── Render título + estado en subtitulo ───────────────────────────────────
+    document.getElementById('cdTitle').textContent = 'Mesa ' + cmd.mesa + ' · ' + cmd.num;
+    document.getElementById('sheetAjusteMesa').textContent = 'Mesa ' + cmd.mesa + ' · Comanda ' + cmd.num;
+
+    // Texto de estado en topbar
+    var estadoLabel = { pendientes: 'Pendiente', preparando: 'En preparación', listos: 'Lista' };
+    var subEl = document.querySelector('.cd-topbar-sub');
+    if (subEl) {
+      var last = subEl.children[subEl.children.length - 1];
+      if (last) last.textContent = estadoLabel[cmd.estado] || 'Pendiente';
+    }
+
+    // Ocultar botón "Marcar todo listo" si la comanda ya está lista
+    if (cmd.estado === 'listos') {
+      var btnListo = document.getElementById('btnMarcarListo');
+      if (btnListo) {
+        btnListo.disabled = true;
+        btnListo.style.opacity = '0.5';
+        btnListo.style.cursor = 'not-allowed';
+        btnListo.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>Ya está lista';
+      }
+    }
+
+    // ── Timer helpers ──────────────────────────────────────────────────────────
+    function fmtTimer(ts) {
+      var sec = Math.floor((Date.now() - ts) / 1000);
+      var m = Math.floor(sec / 60);
+      var s = sec % 60;
+      return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function elapsedMin(ts) {
+      return Math.floor((Date.now() - ts) / 60000);
+    }
+
+    // ── Render items ───────────────────────────────────────────────────────────
+    function renderItems() {
+      var list = document.getElementById('cdItemsList');
+      list.innerHTML = cmd.items.map(function(it, idx) {
+        var isDone = itemsDone[idx];
+        var modsHtml = it.mods.map(function(m) {
+          var icon = m.kind === 'plus'
+            ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+            : m.kind === 'minus'
+            ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+            : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"/></svg>';
+          return '<div class="cd-mod ' + m.kind + '">' + icon + m.text + '</div>';
+        }).join('');
+
+        return '<div class="cd-item' + (isDone ? ' is-done' : '') + '" data-idx="' + idx + '">'
+          + '<div class="cd-checkbox">'
+          +   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>'
+          + '</div>'
+          + '<div class="cd-item-body">'
+          +   '<div class="cd-item-qty">× ' + it.qty + '</div>'
+          +   '<div class="cd-item-nombre">' + it.nombre + '</div>'
+          +   (it.mods.length ? '<div class="cd-item-mods">' + modsHtml + '</div>' : '')
+          + '</div>'
+          + '</div>';
+      }).join('');
+
+      attachItemListeners();
+      updateProgress();
+    }
+
+    function updateProgress() {
+      var done  = itemsDone.filter(Boolean).length;
+      var total = itemsDone.length;
+      var pct   = total > 0 ? Math.round(done / total * 100) : 0;
+      document.getElementById('cdProgressFill').style.width = pct + '%';
+      document.getElementById('cdProgressLabel').textContent = done + ' / ' + total + ' ítems listos';
+    }
+
+    function attachItemListeners() {
+      document.querySelectorAll('.cd-item').forEach(function(el) {
+        el.addEventListener('click', function() {
+          var idx = parseInt(el.dataset.idx);
+          itemsDone[idx] = !itemsDone[idx];
+          renderItems();
+        });
+      });
+    }
+
+    // ── Timer live ─────────────────────────────────────────────────────────────
+    function updateTimer() {
+      var timerEl  = document.getElementById('cdTimer');
+      var bannerEl = document.getElementById('cdWarnBanner');
+      var min = elapsedMin(cmd.startedAt);
+
+      timerEl.textContent = fmtTimer(cmd.startedAt);
+      timerEl.className = 'cd-timer-live' + (min >= 10 ? ' urgent' : min >= 5 ? ' warn' : '');
+
+      if (min >= 5) {
+        bannerEl.style.display = 'flex';
+        if (min >= 10) {
+          bannerEl.classList.add('urgent');
+          document.getElementById('cdWarnText').textContent = '¡Urgente! Esta comanda lleva más de 10 minutos';
+          document.getElementById('cdWarnSub').textContent = 'Priorizar inmediatamente.';
+        } else {
+          bannerEl.classList.remove('urgent');
+          document.getElementById('cdWarnText').textContent = 'Tiempo elevado — verificar prioridad';
+          document.getElementById('cdWarnSub').textContent = 'Esta comanda lleva más de 5 minutos pendiente.';
+        }
+      } else {
+        bannerEl.style.display = 'none';
+      }
+    }
+
+    setInterval(updateTimer, 1000);
+
+    // ── Botón "Marcar todo listo" ──────────────────────────────────────────────
+    document.getElementById('btnMarcarListo').addEventListener('click', function() {
+      itemsDone = itemsDone.map(function() { return true; });
+      renderItems();
+
+      // Notificar cross-app
+      try {
+        var listas = JSON.parse(localStorage.getItem('root:comandas-listas:v1') || '[]');
+        listas.push({ mesaNum: cmd.mesa, cmdNum: cmd.num, visto: false, ts: Date.now() });
+        localStorage.setItem('root:comandas-listas:v1', JSON.stringify(listas));
+      } catch (ex) {}
+
+      UI.toast({ type: 'success', title: '¡Comanda lista! Mesero notificado', duration: 3000 });
+      setTimeout(function() { location.href = './cocina-comandas.html'; }, 1500);
+    });
+
+    // ── Bottom sheet ajuste ────────────────────────────────────────────────────
+    document.getElementById('btnAjuste').addEventListener('click', function() {
+      UI.openBottomSheet('sheetAjuste');
+      if (window.lucide) window.lucide.createIcons();
+    });
+
+    // Selección de tipo
+    document.querySelectorAll('.cd-ajuste-tipo-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.cd-ajuste-tipo-btn').forEach(function(b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+      });
+    });
+
+    // Enviar ajuste
+    document.getElementById('btnEnviarAjuste').addEventListener('click', function() {
+      var tipo = document.querySelector('.cd-ajuste-tipo-btn.is-active');
+      var tipoLabel = tipo ? tipo.querySelector('.cd-ajuste-tipo-label').textContent : 'Consulta';
+      UI.closeBottomSheet('sheetAjuste');
+      UI.toast({ type: 'info', title: 'Ajuste enviado al mesero · ' + tipoLabel, duration: 3000 });
+      document.getElementById('ajusteObs').value = '';
+    });
+
+    // ── Init ───────────────────────────────────────────────────────────────────
+    renderItems();
+    updateTimer();
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>

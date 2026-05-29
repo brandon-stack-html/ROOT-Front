@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Personal del turno · POS · ROOT</title>
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/utilities.css">
+  <link rel="stylesheet" href="../assets/css/pos-shell.css" />
+  <style>
+    :root {
+      --accent-rgb: 79, 70, 229;
+      --success-rgb: 16, 185, 129;
+      --error-rgb: 239, 68, 68;
+      --warning-rgb: 245, 158, 11;
+    }
+
+    /* ── Página staff ── */
+    .staff-page {
+      padding: 20px 24px 40px;
+      max-width: 900px;
+    }
+
+    /* Breadcrumb */
+    .staff-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .staff-breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
+    .staff-breadcrumb a:hover { text-decoration: underline; }
+    .staff-breadcrumb svg { width: 14px; height: 14px; }
+    .staff-breadcrumb .sep { color: var(--border); }
+    .staff-breadcrumb .here { color: var(--text); font-weight: 500; }
+
+    /* Header */
+    .staff-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .staff-header-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .staff-header-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .staff-active-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(var(--success-rgb), 0.10);
+      border: 1px solid rgba(var(--success-rgb), 0.25);
+      color: var(--success);
+      white-space: nowrap;
+    }
+    .staff-active-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    /* KPI chips del turno */
+    .staff-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 600px) {
+      .staff-kpi-row { grid-template-columns: 1fr 1fr; }
+    }
+    .staff-kpi {
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .staff-kpi-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .staff-kpi-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+    .staff-kpi-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Sección */
+    .staff-section {
+      margin-bottom: 28px;
+    }
+    .staff-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .staff-section-title svg { width: 15px; height: 15px; color: var(--muted); }
+    .staff-section-count {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* Grid de cards de staff */
+    .staff-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    /* Card de persona */
+    .staff-card {
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 120ms, box-shadow 120ms;
+    }
+    .staff-card:hover {
+      border-color: rgba(var(--accent-rgb), 0.3);
+      box-shadow: 0 2px 12px rgba(var(--accent-rgb), 0.06);
+    }
+    .staff-card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .staff-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .staff-card-info { flex: 1; min-width: 0; }
+    .staff-card-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .staff-card-role {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .staff-status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .staff-status-dot.active { background: var(--success); }
+
+    /* Stats de la card */
+    .staff-card-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .staff-stat {
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--alt);
+      border: 1px solid var(--border);
+    }
+    .staff-stat-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+    .staff-stat-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Badge de estación (cocina) */
+    .staff-estacion-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px 3px 6px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      background: #FFEDD5;
+      color: rgba(249,115,22,1);
+      border: 1px solid rgba(249,115,22,0.20);
+      width: fit-content;
+    }
+    [data-theme="dark"] .staff-estacion-badge {
+      background: rgba(249,115,22,0.15);
+      color: #FED7AA;
+      border-color: rgba(249,115,22,0.25);
+    }
+    .staff-estacion-badge svg { width: 10px; height: 10px; }
+
+    /* Mesas activas (mesero) */
+    .staff-mesas-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .staff-mesa-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      background: rgba(var(--accent-rgb), 0.08);
+      color: var(--accent);
+      border: 1px solid rgba(var(--accent-rgb), 0.18);
+    }
+    .staff-mesa-chip.por-cobrar {
+      background: rgba(var(--success-rgb), 0.10);
+      color: var(--success);
+      border-color: rgba(var(--success-rgb), 0.22);
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+  <div class="pos-shell">
+
+    <!-- ══ TOPBAR ══ -->
+    <header class="pos-topbar">
+      <div class="pos-topbar-brand">
+        <span class="root-wordmark" style="font-size:15px">[ROOT]</span>
+        <span class="pos-brand-badge">POS</span>
+      </div>
+      <nav class="pos-topbar-zones">
+        <a href="./mapa.html" class="pos-zone-tab" style="text-decoration:none;">Salón Principal</a>
+        <a href="./mapa.html" class="pos-zone-tab" style="text-decoration:none;">Terraza</a>
+        <a href="./mapa.html" class="pos-zone-tab" style="text-decoration:none;">Barra</a>
+      </nav>
+      <div class="pos-topbar-meta">
+        <div class="pos-monto-chip">
+          <i data-lucide="banknote"></i>
+          <span>$1.234.000</span>
+        </div>
+        <button class="pos-topbar-iconbtn" type="button" aria-label="Notificaciones">
+          <i data-lucide="bell"></i>
+          <span class="pos-notif-dot"></span>
+        </button>
+        <button class="btn-icon" type="button" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light"></i>
+          <i data-lucide="moon" class="theme-icon-dark"></i>
+        </button>
+        <button class="pos-topbar-avatar" type="button" aria-label="Perfil" id="staffAvatar">JC</button>
+      </div>
+    </header>
+
+    <!-- ══ CONTENT ══ -->
+    <main id="main" class="pos-content">
+      <div class="staff-page">
+
+        <!-- Breadcrumb -->
+        <div class="staff-breadcrumb">
+          <a href="./mapa.html">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+            Volver al mapa
+          </a>
+          <span class="sep">·</span>
+          <span>POS</span>
+          <i data-lucide="chevron-right" style="width:12px;height:12px;"></i>
+          <span class="here">Personal del turno</span>
+        </div>
+
+        <!-- Header -->
+        <div class="staff-header">
+          <div>
+            <div class="staff-header-title">Personal del turno</div>
+            <div class="staff-header-sub">Turno tarde · Iniciado 12:03 · Sede Norte</div>
+          </div>
+          <div class="staff-active-chip">
+            <div class="staff-active-dot"></div>
+            4 activos
+          </div>
+        </div>
+
+        <!-- KPIs del turno -->
+        <div class="staff-kpi-row">
+          <div class="staff-kpi">
+            <div class="staff-kpi-label">Meseros</div>
+            <div class="staff-kpi-val">2</div>
+            <div class="staff-kpi-sub">en turno activo</div>
+          </div>
+          <div class="staff-kpi">
+            <div class="staff-kpi-label">Cocina</div>
+            <div class="staff-kpi-val">2</div>
+            <div class="staff-kpi-sub">cocineros activos</div>
+          </div>
+          <div class="staff-kpi">
+            <div class="staff-kpi-label">Platos prep.</div>
+            <div class="staff-kpi-val">22</div>
+            <div class="staff-kpi-sub">en el turno</div>
+          </div>
+        </div>
+
+        <!-- ══ SECCIÓN MESEROS ══ -->
+        <div class="staff-section">
+          <div class="staff-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Meseros
+            <span class="staff-section-count">2 en turno</span>
+          </div>
+          <div class="staff-grid">
+
+            <!-- Camila Rojas -->
+            <div class="staff-card">
+              <div class="staff-card-top">
+                <div class="staff-avatar" style="background:#4F46E5;">CR</div>
+                <div class="staff-card-info">
+                  <div class="staff-card-name">Camila Rojas</div>
+                  <div class="staff-card-role">Mesera · Turno activo desde 12:00</div>
+                </div>
+                <div class="staff-status-dot active"></div>
+              </div>
+              <div class="staff-card-stats">
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Mesas activas</div>
+                  <div class="staff-stat-val">5</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Ventas turno</div>
+                  <div class="staff-stat-val">$248.000</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Comandas</div>
+                  <div class="staff-stat-val">12</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Propinas</div>
+                  <div class="staff-stat-val">$24.800</div>
+                </div>
+              </div>
+              <div class="staff-mesas-row">
+                <span class="staff-mesa-chip">M2</span>
+                <span class="staff-mesa-chip">M4</span>
+                <span class="staff-mesa-chip">M7</span>
+                <span class="staff-mesa-chip por-cobrar">M9 · cobrar</span>
+                <span class="staff-mesa-chip">M11</span>
+              </div>
+            </div>
+
+            <!-- Julián Ramírez -->
+            <div class="staff-card">
+              <div class="staff-card-top">
+                <div class="staff-avatar" style="background:#059669;">JR</div>
+                <div class="staff-card-info">
+                  <div class="staff-card-name">Julián Ramírez</div>
+                  <div class="staff-card-role">Mesero · Turno activo desde 12:00</div>
+                </div>
+                <div class="staff-status-dot active"></div>
+              </div>
+              <div class="staff-card-stats">
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Mesas activas</div>
+                  <div class="staff-stat-val">3</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Ventas turno</div>
+                  <div class="staff-stat-val">$187.000</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Comandas</div>
+                  <div class="staff-stat-val">8</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Propinas</div>
+                  <div class="staff-stat-val">$18.700</div>
+                </div>
+              </div>
+              <div class="staff-mesas-row">
+                <span class="staff-mesa-chip">M3</span>
+                <span class="staff-mesa-chip">M5</span>
+                <span class="staff-mesa-chip por-cobrar">M8 · cobrar</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ══ SECCIÓN COCINA ══ -->
+        <div class="staff-section">
+          <div class="staff-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+            Cocina
+            <span class="staff-section-count">2 activos</span>
+          </div>
+          <div class="staff-grid">
+
+            <!-- Carlos Fuentes -->
+            <div class="staff-card">
+              <div class="staff-card-top">
+                <div class="staff-avatar" style="background:#D97706;">CF</div>
+                <div class="staff-card-info">
+                  <div class="staff-card-name">Carlos Fuentes</div>
+                  <div class="staff-card-role">Cocinero · Turno activo desde 11:30</div>
+                </div>
+                <div class="staff-status-dot active"></div>
+              </div>
+              <div class="staff-estacion-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+                Est. Caliente
+              </div>
+              <div class="staff-card-stats">
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Platos prep.</div>
+                  <div class="staff-stat-val">14</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Pendientes</div>
+                  <div class="staff-stat-val">3</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">En preparación</div>
+                  <div class="staff-stat-val">2</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">T° promedio</div>
+                  <div class="staff-stat-val">8 min</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- María Patiño -->
+            <div class="staff-card">
+              <div class="staff-card-top">
+                <div class="staff-avatar" style="background:#EC4899;">MP</div>
+                <div class="staff-card-info">
+                  <div class="staff-card-name">María Patiño</div>
+                  <div class="staff-card-role">Cocinera · Turno activo desde 11:30</div>
+                </div>
+                <div class="staff-status-dot active"></div>
+              </div>
+              <div class="staff-estacion-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg>
+                Est. Fría
+              </div>
+              <div class="staff-card-stats">
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Platos prep.</div>
+                  <div class="staff-stat-val">8</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">Pendientes</div>
+                  <div class="staff-stat-val">1</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">En preparación</div>
+                  <div class="staff-stat-val">1</div>
+                </div>
+                <div class="staff-stat">
+                  <div class="staff-stat-label">T° promedio</div>
+                  <div class="staff-stat-val">6 min</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // Avatar del cajero/admin actual desde sesión
+    try {
+      var raw = localStorage.getItem('root:auth:v1');
+      if (raw) {
+        var u = JSON.parse(raw);
+        var av = document.getElementById('staffAvatar');
+        if (av && u.initials) {
+          av.textContent = u.initials;
+          av.setAttribute('title', u.name + ' · ' + (u.role || ''));
+        }
+      }
+    } catch (e) {}
+  </script>
+  <script src="../assets/js/nav.js"></script>
+</body>
+</html>
