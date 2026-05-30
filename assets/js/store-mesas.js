@@ -39,7 +39,7 @@
         abiertaEn: ago(23), ultimaComanda: ago(10),
         items: [
           { sku: 'BPA-001', nombre: 'Bandeja Paisa', cantidad: 2, precio: 32000, mods: [], comanda: 'enviada' },
-          { sku: 'LIM-001', nombre: 'Limonada Natural', cantidad: 2, precio: 7500, mods: [], comanda: 'enviada' },
+          { sku: 'LIM-001', nombre: 'Limonada Natural', cantidad: 2, precio: 9000, mods: [], comanda: 'enviada' },
           { sku: 'AJB-001', nombre: 'Ajiaco Bogotano', cantidad: 1, precio: 28000, mods: [], comanda: 'enviada' }
         ],
         total: 107000
@@ -117,7 +117,7 @@
         abiertaEn: ago(48), ultimaComanda: ago(30),
         items: [
           { sku: 'MEN-001', nombre: 'Menú del Día', cantidad: 2, precio: 19500, mods: [], comanda: 'lista' },
-          { sku: 'POA-001', nombre: 'Café Tinto', cantidad: 2, precio: 3500, mods: [], comanda: 'enviada' }
+          { sku: 'CAF-001', nombre: 'Café Tinto', cantidad: 2, precio: 3500, mods: [], comanda: 'enviada' }
         ],
         total: 46000
       },
@@ -144,7 +144,7 @@
         abiertaEn: ago(23), ultimaComanda: ago(10),
         items: [
           { sku: 'AJB-001', nombre: 'Ajiaco Bogotano', cantidad: 2, precio: 28000, mods: [], comanda: 'enviada' },
-          { sku: 'LIM-001', nombre: 'Limonada Natural', cantidad: 3, precio: 7500, mods: [], comanda: 'enviada' }
+          { sku: 'LIM-001', nombre: 'Limonada Natural', cantidad: 3, precio: 9000, mods: [], comanda: 'enviada' }
         ],
         total: 78500
       },

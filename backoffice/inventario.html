@@ -219,6 +219,13 @@
           <span>Todas</span>
           <i data-lucide="chevron-down"></i>
         </button>
+        <button class="btn btn-secondary btn-sm" style="margin-left:auto" onclick="descargarPlantilla()" title="Descargar plantilla CSV para llenar en Excel">
+          <i data-lucide="download" style="width:12px;height:12px"></i> Plantilla
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('fileInputInv').click()" title="Cargar inventario desde CSV">
+          <i data-lucide="upload" style="width:12px;height:12px"></i> Cargar inventario
+        </button>
+        <input type="file" id="fileInputInv" accept=".csv" style="display:none" onchange="cargarInventario(this.files[0]); this.value=''">
       </div>
 
       <!-- Tabla inventario -->
@@ -516,6 +523,128 @@
     if (invSearch) invSearch.value = '';
     invFilter();
   });
+
+  // ── Exportar plantilla CSV ──────────────────────────────────────────────
+  function descargarPlantilla() {
+    var filas = [
+      'Nombre,Categoría,Stock actual,Unidad,Stock mínimo,Bodega',
+      'Papa criolla,Vegetal,12.5,kg,5,Principal',
+      'Pollo entero,Proteína,8,unid,10,Refrigerador',
+      'Guascas,Especia,0.2,kg,0.5,Seco',
+      'Crema de leche,Lácteo,6,lt,2,Refrigerador',
+      'Mazorca,Vegetal,25,unid,20,Principal',
+      'Carne molida,Proteína,14,kg,8,Refrigerador',
+      'Aguacate,Vegetal,3,unid,12,Principal',
+      'Arroz blanco,Grano,38,kg,15,Seco'
+    ];
+    // BOM (﻿) para que Excel abra UTF-8 correctamente (acentos, ñ)
+    var csv = '﻿' + filas.join('\r\n');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'plantilla-inventario.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    UI.toast({ type: 'success', title: 'Plantilla descargada' });
+  }
+
+  // ── Importar CSV y mezclar con inventario existente ────────────────────
+  function cargarInventario(file) {
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      UI.toast({ type: 'error', title: 'Solo se aceptan archivos .csv' });
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var texto = e.target.result;
+      if (texto.charCodeAt(0) === 0xFEFF) texto = texto.slice(1); // quitar BOM
+      var lineas = texto.split(/\r?\n/).filter(function (l) { return l.trim(); });
+      if (lineas.length < 2) {
+        UI.toast({ type: 'error', title: 'El archivo está vacío o sin datos' });
+        return;
+      }
+      var cargados = 0, errores = 0;
+      var wrap = document.querySelector('.inv-table-wrap');
+
+      for (var i = 1; i < lineas.length; i++) {
+        var campos = lineas[i].split(',');
+        if (campos.length < 6) { errores++; continue; }
+
+        var nombre   = campos[0].trim();
+        var categoria = campos[1].trim();
+        var stockNum = parseFloat(campos[2].trim());
+        var unidad   = campos[3].trim();
+        var minNum   = parseFloat(campos[4].trim());
+        var bodega   = campos[5].trim();
+
+        if (!nombre || isNaN(stockNum) || isNaN(minNum)) { errores++; continue; }
+
+        var statusKey, statusIcon, statusLabel;
+        if (stockNum <= 0) {
+          statusKey = 'out'; statusIcon = 'x-circle'; statusLabel = 'Sin stock';
+        } else if (stockNum <= minNum) {
+          statusKey = 'low'; statusIcon = 'alert-triangle'; statusLabel = 'Stock bajo';
+        } else {
+          statusKey = 'ok'; statusIcon = 'check-circle-2'; statusLabel = 'Disponible';
+        }
+
+        var rowClass   = 'inv-table-row' + (statusKey === 'low' ? ' row-low' : statusKey === 'out' ? ' row-out' : '');
+        var stockHtml  = stockNum + ' <span style="font-size:10px;color:var(--muted);font-weight:400">' + unidad + '</span>';
+        var badgeHtml  = '<span class="inv-status-badge ' + statusKey + '"><i data-lucide="' + statusIcon + '" style="width:11px;height:11px"></i>' + statusLabel + '</span>';
+        var key        = nombre.toLowerCase().trim();
+        var existente  = wrap.querySelector('.inv-table-row[data-nombre="' + key + '"]');
+
+        if (existente) {
+          existente.className = rowClass;
+          existente.querySelector('[data-label="Categoría"]').textContent = categoria;
+          existente.querySelector('[data-label="Stock actual"]').innerHTML = stockHtml;
+          existente.querySelector('[data-label="Stock mín."]').textContent = minNum + ' ' + unidad;
+          existente.querySelector('[data-label="Estado"]').innerHTML = badgeHtml;
+          existente.querySelector('[data-label="Bodega"]').textContent = bodega;
+        } else {
+          var fila = document.createElement('div');
+          fila.className = rowClass;
+          fila.dataset.nombre = key;
+          fila.innerHTML =
+            '<div class="inv-cell" data-label="Nombre" style="font-weight:500">' + nombre + '</div>' +
+            '<div class="inv-cell" data-label="Categoría" style="color:var(--muted)">' + categoria + '</div>' +
+            '<div class="inv-cell inv-cell-stock" data-label="Stock actual">' + stockHtml + '</div>' +
+            '<div class="inv-cell" data-label="Stock mín." style="color:var(--muted);font-variant-numeric:tabular-nums">' + minNum + ' ' + unidad + '</div>' +
+            '<div class="inv-cell" data-label="Estado">' + badgeHtml + '</div>' +
+            '<div class="inv-cell" data-label="Bodega" style="color:var(--muted)">' + bodega + '</div>' +
+            '<div class="inv-cell" data-label="" style="justify-content:flex-end"><button class="inv-row-btn" aria-label="Más opciones"><i data-lucide="more-horizontal"></i></button></div>';
+          fila.style.cursor = 'pointer';
+          fila.addEventListener('click', function (e) {
+            if (e.target.closest('.inv-row-btn')) return;
+            var thisRow = e.currentTarget;
+            var n = thisRow.querySelector('[data-label="Nombre"]')?.textContent || thisRow.dataset.nombre || 'Ingrediente';
+            abrirDrawerIng(n.trim());
+          });
+          wrap.appendChild(fila);
+        }
+
+        // Actualizar datos del drawer
+        ING_DATA[key] = Object.assign({ precio:'—', proveedor:'—', kardex:[] }, ING_DATA[key], {
+          categoria: categoria,
+          stock: stockNum + ' ' + unidad,
+          min: minNum + ' ' + unidad,
+          bodega: bodega
+        });
+        cargados++;
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+      UI.toast({ type: 'success', title: cargados + ' producto' + (cargados !== 1 ? 's' : '') + ' cargado' + (cargados !== 1 ? 's' : '') + ' al inventario' });
+      if (errores > 0) {
+        UI.toast({ type: 'error', title: errores + ' fila' + (errores !== 1 ? 's' : '') + ' ignorada' + (errores !== 1 ? 's' : '') + ' por formato incorrecto' });
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
 </script>
   <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/nav.js"></script>

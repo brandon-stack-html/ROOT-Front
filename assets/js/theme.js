@@ -55,6 +55,13 @@
         window.lucide.createIcons();
       }
     });
+
+    // Sincronizar tema entre tabs del navegador
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'theme' && e.newValue) {
+        document.documentElement.setAttribute('data-theme', e.newValue);
+      }
+    });
   }
 
   if (document.readyState === 'loading') {

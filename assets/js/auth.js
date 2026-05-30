@@ -86,7 +86,7 @@
     admin:   { userId: 'usr-001', name: 'Juan Camilo', initials: 'JC', role: 'admin' },
     gerente: { userId: 'usr-002', name: 'Ana Lucía',   initials: 'AL', role: 'gerente' },
     cajero:  { userId: 'usr-003', name: 'Miguel R.',   initials: 'MR', role: 'cajero' },
-    mesero:  { userId: 'usr-004', name: 'Camila V.',   initials: 'CV', role: 'mesero' },
+    mesero:  { userId: 'usr-004', name: 'Camila Velásquez', initials: 'CV', role: 'mesero' },
     cocina:  { userId: 'usr-005', name: 'Carlos F.',   initials: 'CF', role: 'cocina' },
   };
 
@@ -213,6 +213,13 @@
         if (path.indexOf('/backoffice/') !== -1 || path.indexOf('/pos/') !== -1) {
           window.location.href = target;
         }
+        return;
+      }
+
+      // Si la página actual está en la lista restringida, redirigir al home del rol
+      var currentFile = window.location.pathname.split('/').pop();
+      if (rule.indexOf(currentFile) !== -1) {
+        window.location.replace(BASE + (ROLE_HOMES[user.role] || '/backoffice/dashboard.html'));
         return;
       }
 
@@ -399,7 +406,7 @@
 
     // ── Notificaciones ────────────────────────────────────────────
     _NOTIF_DEFAULTS: [
-      { id:'n1', titulo:'Camila V. solicitó un adelanto',      meta:'$120.000 · Hace 5 min',  icon:'clock',          href:'/backoffice/adelantos.html',       leida:false },
+      { id:'n1', titulo:'Camila Velásquez solicitó un adelanto',      meta:'$120.000 · Hace 5 min',  icon:'clock',          href:'/backoffice/adelantos.html',       leida:false },
       { id:'n2', titulo:'Nuevo pedido #901 · Mesa 8',          meta:'3 ítems · Hace 8 min',   icon:'shopping-bag',   href:'/pos/pedido.html',                  leida:false },
       { id:'n3', titulo:'Papa criolla en stock bajo',          meta:'12.5 kg · Hace 15 min',  icon:'alert-triangle', href:'/backoffice/inventario.html',        leida:false },
       { id:'n4', titulo:'Factura FE-0234 enviada a DIAN',      meta:'$45.000 · Hace 22 min',  icon:'file-text',      href:'/backoffice/facturacion-dian.html', leida:true  },
@@ -407,7 +414,7 @@
       { id:'n6', titulo:'Comanda Mesa 3 completada por KDS',   meta:'Hace 1 h',               icon:'check-circle-2', href:'/kds/main.html',                    leida:true  },
       { id:'n7', titulo:'Guascas sin stock — reabastecer',     meta:'Hace 2 h',               icon:'alert-circle',   href:'/backoffice/inventario.html',        leida:true  },
       { id:'n8', titulo:'Turno cerrado · $1.234.000',          meta:'Sede Norte · Hace 3 h',  icon:'dollar-sign',    href:'/backoffice/caja.html',              leida:true  },
-      { id:'n9', titulo:'Camila V. solicitó adelanto aprobado',meta:'$80.000 · Ayer',         icon:'check',          href:'/backoffice/adelantos.html',         leida:true  },
+      { id:'n9', titulo:'Camila Velásquez solicitó adelanto aprobado',meta:'$80.000 · Ayer',         icon:'check',          href:'/backoffice/adelantos.html',         leida:true  },
       { id:'n10',titulo:'Integración Uber Eats actualizada',   meta:'Ayer 18:30',             icon:'plug',           href:'/backoffice/integraciones.html',     leida:true  },
     ],
 

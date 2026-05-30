@@ -14,7 +14,7 @@
   ];
 
   var EMPLEADOS_BASE = [
-    { id: 'emp-001', nombre: 'Camila Rojas',      rol: 'mesero', sucursal_id: 'suc-norte', salario_base: 1_623_500, periodicidad: 'quincenal', tope_adelanto_pct: 50, fecha_ingreso: '2024-03-15' },
+    { id: 'emp-001', nombre: 'Camila Velásquez',  rol: 'mesero', sucursal_id: 'suc-norte', salario_base: 1_623_500, periodicidad: 'quincenal', tope_adelanto_pct: 50, fecha_ingreso: '2024-03-15' },
     { id: 'emp-002', nombre: 'Andrés Martínez',   rol: 'mesero', sucursal_id: 'suc-norte', salario_base: 1_800_000, periodicidad: 'quincenal', tope_adelanto_pct: 40, fecha_ingreso: '2023-11-01' },
     { id: 'emp-003', nombre: 'Valentina Torres',  rol: 'mesero', sucursal_id: 'suc-norte', salario_base: 1_623_500, periodicidad: 'mensual',   tope_adelanto_pct: 50, fecha_ingreso: '2025-01-10' },
     { id: 'emp-004', nombre: 'Carlos Pedraza',    rol: 'mesero', sucursal_id: 'suc-sur',   salario_base: 1_700_000, periodicidad: 'quincenal', tope_adelanto_pct: 50, fecha_ingreso: '2024-07-20' },
