@@ -27,7 +27,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <span class="root-wordmark">[ROOT]</span>
+        <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -302,6 +302,7 @@
       'class': 'mesa-el' + (m.id === selectedId ? ' is-selected' : ''),
       'tabindex': '0',
     });
+    g.style.cursor = 'move';
 
     if (m.shape === 'circle') {
       g.appendChild(makeSVGEl('circle', { cx:m.x, cy:m.y, r:m.r, class:'mesa-shape' }));
@@ -324,8 +325,68 @@
       }
     }
 
-    g.addEventListener('click', () => selectMesa(m.id));
+    attachDrag(g, m);
     svg.appendChild(g);
+  }
+
+  // Drag-and-drop con pointer events nativos — funciona en mouse y touch
+  const DRAG_THRESHOLD = 4;
+  const SNAP = 10;
+  function attachDrag(g, m) {
+    let startCX = 0, startCY = 0; // pos inicial puntero (screen)
+    let dx = 0, dy = 0;            // delta acumulado en unidades SVG
+    let dragging = false;
+    let moved = false;
+
+    function svgScale() {
+      const r = svg.getBoundingClientRect();
+      const vb = svg.viewBox.baseVal; // {x,y,width,height}
+      return { sx: vb.width / r.width, sy: vb.height / r.height };
+    }
+
+    g.addEventListener('pointerdown', (e) => {
+      if (e.button !== undefined && e.button !== 0) return;
+      dragging = true;
+      moved = false;
+      startCX = e.clientX;
+      startCY = e.clientY;
+      dx = 0; dy = 0;
+      try { g.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+
+    g.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const { sx, sy } = svgScale();
+      dx = (e.clientX - startCX) * sx;
+      dy = (e.clientY - startCY) * sy;
+      if (!moved && Math.hypot(dx, dy) >= DRAG_THRESHOLD) {
+        moved = true;
+      }
+      if (moved) {
+        g.setAttribute('transform', `translate(${dx} ${dy})`);
+      }
+    });
+
+    function endDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      try { g.releasePointerCapture(e.pointerId); } catch (_) {}
+      if (!moved) {
+        selectMesa(m.id);
+        return;
+      }
+      // Snap a la cuadrícula y persistir en MESAS_DATA
+      const snappedDX = Math.round(dx / SNAP) * SNAP;
+      const snappedDY = Math.round(dy / SNAP) * SNAP;
+      m.x = m.x + snappedDX;
+      m.y = m.y + snappedDY;
+      g.removeAttribute('transform');
+      renderAllMesas();
+      updatePropsPanel();
+    }
+
+    g.addEventListener('pointerup', endDrag);
+    g.addEventListener('pointercancel', endDrag);
   }
 
   function selectMesa(id) {

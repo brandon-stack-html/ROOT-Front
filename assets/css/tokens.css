@@ -3,7 +3,7 @@
    Sprint 0.1 · Actualizado Sprint 14 (estética Vercel)
    ============================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
 
 /* View Transitions — navegación suave entre pantallas (Chromium 111+, Safari 18) */
 @view-transition { navigation: auto; }
@@ -78,6 +78,15 @@ body {
 
   /* ---------- Tipografía ---------- */
   --ff-base: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ff-display: 'Bebas Neue', 'Inter', system-ui, sans-serif;
+
+  /* ---------- Logo ROOT POS ----------
+     Gradiente alineado con --accent (#4F46E5) para coherencia con el resto
+     del design system. El borde de POS se deriva del accent para mantener
+     una sola familia cromática. */
+  --logo-gradient: linear-gradient(135deg, var(--accent) 0%, #1e1b4b 100%);
+  --logo-pos-border: color-mix(in srgb, var(--accent) 55%, #ffffff 45%);
+  --logo-shadow: 0 6px 20px -8px color-mix(in srgb, var(--accent) 60%, transparent);
 
   --fs-display: 36px;  --fw-display: 700;  --lh-display: 1.15;  --ls-display: -0.02em;
   --fs-h1:      28px;  --fw-h1:      700;  --lh-h1:      1.2;   --ls-h1:      -0.015em;

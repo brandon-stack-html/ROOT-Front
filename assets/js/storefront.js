@@ -130,17 +130,23 @@
   //   </a>
   // ----------------------------------------------------------------------------
   SF.renderCartBtn = function () {
-    const btn = document.getElementById('sfCartBtn');
-    if (!btn) return;
     const count = SF.totalItems();
     const total = SF.totalPrice();
-    const labelEl = btn.querySelector('.sf-cart-btn-label');
-    const countEl = btn.querySelector('.sf-cart-btn-count');
-    if (labelEl) labelEl.textContent = count > 0 ? fmtCOP(total) : 'Carrito';
-    if (countEl) {
-      countEl.textContent = count;
-      countEl.classList.toggle('is-visible', count > 0);
+    const btn = document.getElementById('sfCartBtn');
+    if (btn) {
+      const labelEl = btn.querySelector('.sf-cart-btn-label');
+      const countEl = btn.querySelector('.sf-cart-btn-count');
+      if (labelEl) labelEl.textContent = count > 0 ? fmtCOP(total) : 'Carrito';
+      if (countEl) {
+        countEl.textContent = count;
+        countEl.classList.toggle('is-visible', count > 0);
+      }
     }
+    // FAB carrito flotante (móvil) — sincronizar con el botón principal
+    document.querySelectorAll('.sf-cart-fab-count').forEach(function (el) {
+      el.textContent = count;
+      el.classList.toggle('is-visible', count > 0);
+    });
   };
 
   // ----------------------------------------------------------------------------

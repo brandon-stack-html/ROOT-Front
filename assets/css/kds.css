@@ -253,21 +253,23 @@
   gap: 10px;
 }
 .kds-item-qty {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--accent);
-  min-width: 36px;
+  min-width: 44px;
   font-variant-numeric: tabular-nums;
 }
 .kds-item-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--text);
   line-height: 1.3;
 }
 .kds-item-mod {
-  font-size: 13px;
-  margin-left: 46px;
+  font-size: 12px;
+  font-weight: 400;
+  opacity: .85;
+  margin-left: 50px;
   margin-top: 2px;
 }
 .kds-item-mod.plus  { color: var(--success); }

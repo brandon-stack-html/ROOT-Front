@@ -11,99 +11,96 @@
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/auth.css">
+  <script src="../assets/js/auth-bg.js" defer></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
 
-  <div class="auth-page">
-    <div class="auth-halo"></div>
+  <div class="auth-login-shell">
 
-    <div class="auth-page-inner">
-      <div class="auth-card auth-card-w400">
+    <!-- Contenido centrado sobre el gradiente -->
+    <main class="auth-login-form-wrap" id="main">
 
-        <!-- Logo -->
-        <div class="auth-logo">
-          <span class="root-wordmark" style="font-size:28px">[ROOT]</span>
-        </div>
+      <!-- Logo -->
+      <a class="auth-login-logo" href="../index.html" aria-label="ROOT POS">
+        <span class="root-wordmark" style="font-size:22px"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+      </a>
 
-        <!-- Heading -->
-        <div class="auth-heading">
-          <h1 class="auth-title">Inicia sesión en tu cuenta</h1>
-          <p class="auth-subtitle">Bienvenido de vuelta</p>
-        </div>
+      <!-- Heading -->
+      <div class="auth-heading">
+        <h1 class="auth-title">Inicia sesión en tu cuenta</h1>
+        <p class="auth-subtitle">Bienvenido de vuelta</p>
+      </div>
 
-        <!-- Formulario -->
-        <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+      <!-- Formulario -->
+      <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
 
-          <!-- Email -->
-          <div class="auth-field">
-            <div class="auth-label-row">
-              <label class="auth-label" for="loginEmail">Correo electrónico</label>
-            </div>
-            <div class="auth-input-wrap" id="wrapEmail">
-              <input id="loginEmail" type="email" value="carlos.fuentes@restaurante.com" placeholder="tu@correo.com">
-            </div>
+        <!-- Email -->
+        <div class="auth-field">
+          <div class="auth-label-row">
+            <label class="auth-label" for="loginEmail">Correo electrónico</label>
           </div>
-
-          <!-- Contraseña -->
-          <div class="auth-field">
-            <div class="auth-label-row">
-              <label class="auth-label" for="loginPassword">Contraseña</label>
-            </div>
-            <div class="auth-input-wrap" id="wrapPwd">
-              <input id="loginPassword" type="password" value="Contraseña1." placeholder="••••••••">
-              <span class="auth-input-suffix">
-                <button type="button" data-toggle-password="loginPassword" aria-label="Mostrar contraseña">
-                  <span class="pwd-show"><i data-lucide="eye" style="width:15px;height:15px;display:block;"></i></span>
-                  <span class="pwd-hide" style="display:none;"><i data-lucide="eye-off" style="width:15px;height:15px;display:block;"></i></span>
-                </button>
-              </span>
-            </div>
-            <p class="auth-error-msg" id="loginError">
-              <i data-lucide="alert-circle" style="width:12px;height:12px;flex-shrink:0;"></i>
-              Correo o contraseña incorrectos. Intenta de nuevo.
-            </p>
+          <div class="auth-input-wrap" id="wrapEmail">
+            <input id="loginEmail" type="email" value="carlos.fuentes@restaurante.com" placeholder="tu@correo.com">
           </div>
+        </div>
 
-          <!-- Recordar + olvidé -->
-          <div class="auth-row">
-            <label class="auth-checkbox-label">
-              <input type="checkbox" checked>
-              <span class="auth-checkbox-box is-checked">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </span>
-              Mantener sesión iniciada
-            </label>
-            <a class="auth-btn-link" href="./recuperar.html">¿Olvidaste tu contraseña?</a>
+        <!-- Contraseña -->
+        <div class="auth-field">
+          <div class="auth-label-row">
+            <label class="auth-label" for="loginPassword">Contraseña</label>
+            <a class="auth-label-forgot" href="./recuperar.html">¿Olvidaste tu contraseña?</a>
           </div>
-
-          <!-- Botón submit -->
-          <button type="submit" class="auth-btn auth-btn-primary auth-btn-lg auth-btn-full">
-            Iniciar sesión
-            <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
-          </button>
-        </form>
-
-        <!-- Divider -->
-        <div class="auth-divider">
-          <div class="auth-divider-line"></div>
-          <span class="auth-divider-text">o</span>
-          <div class="auth-divider-line"></div>
+          <div class="auth-input-wrap" id="wrapPwd">
+            <input id="loginPassword" type="password" value="Contraseña1." placeholder="••••••••">
+            <span class="auth-input-suffix">
+              <button type="button" data-toggle-password="loginPassword" aria-label="Mostrar contraseña">
+                <span class="pwd-show"><i data-lucide="eye" style="width:15px;height:15px;display:block;"></i></span>
+                <span class="pwd-hide" style="display:none;"><i data-lucide="eye-off" style="width:15px;height:15px;display:block;"></i></span>
+              </button>
+            </span>
+          </div>
+          <p class="auth-error-msg" id="loginError">
+            <i data-lucide="alert-circle" style="width:12px;height:12px;flex-shrink:0;"></i>
+            Correo o contraseña incorrectos. Intenta de nuevo.
+          </p>
         </div>
 
-        <!-- Footer del card -->
-        <div class="auth-card-footer">
-          ¿Aún no tienes cuenta? <a href="./registro.html">Registra tu negocio</a>
-        </div>
+        <!-- Recordar sesión -->
+        <label class="auth-checkbox-label">
+          <input type="checkbox" checked>
+          <span class="auth-checkbox-box is-checked">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          Mantener sesión iniciada
+        </label>
 
-        <!-- Toggle tema -->
-        <div style="text-align:center; margin-top:16px;">
-          <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
-            <i data-lucide="sun" class="theme-icon-light" style="width:16px;height:16px;"></i>
-            <i data-lucide="moon" class="theme-icon-dark" style="width:16px;height:16px;"></i>
-          </button>
-        </div>
+        <!-- Botón submit -->
+        <button type="submit" class="auth-btn auth-btn-primary auth-btn-lg auth-btn-full">
+          Iniciar sesión
+          <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="auth-divider">
+        <div class="auth-divider-line"></div>
+        <span class="auth-divider-text">o</span>
+        <div class="auth-divider-line"></div>
+      </div>
+
+      <!-- Registro -->
+      <div class="auth-card-footer">
+        ¿Aún no tienes cuenta? <a href="./registro.html">Registra tu negocio</a>
+      </div>
+
+      <!-- Toggle tema -->
+      <div style="text-align:center; margin-top:12px;">
+        <button class="btn-icon" data-toggle-theme aria-label="Cambiar tema">
+          <i data-lucide="sun" class="theme-icon-light" style="width:16px;height:16px;"></i>
+          <i data-lucide="moon" class="theme-icon-dark" style="width:16px;height:16px;"></i>
+        </button>
       </div>
 
       <!-- Footer legal -->
@@ -116,7 +113,8 @@
         <span>·</span>
         <a href="#">Soporte</a>
       </div>
-    </div>
+
+    </main>
   </div>
 
   <script src="../assets/js/ui.js"></script>
@@ -132,7 +130,6 @@
       var wrapP   = document.getElementById('wrapPwd');
       var form    = document.getElementById('loginForm');
 
-      // Demo: tabla de usuarios válidos
       var DEMO_USERS = {
         'juan.camilo@restaurante.com':     { userId: 'usr-001', name: 'Juan Camilo',      initials: 'JC', roles: ['admin'] },
         'andrea.gomez@restaurante.com':    { userId: 'usr-006', name: 'Andrea Gómez',     initials: 'AG', roles: ['gerente', 'cajero'] },
@@ -144,21 +141,17 @@
       var valid = matchedUser !== null && pwd.length > 0;
 
       if (valid) {
-        // Todos pasan por selector-rol.html (maneja single y multi-rol igual)
         localStorage.setItem('root:pending-roles', JSON.stringify(matchedUser));
         window.location.href = './selector-rol.html';
       } else {
-        // Mostrar error inline
         wrapE.classList.add('is-error');
         wrapP.classList.add('is-error');
         errMsg.classList.add('is-visible');
 
-        // Shake del formulario
         form.classList.remove('auth-shake');
-        void form.offsetWidth; // reflow para reiniciar animación
+        void form.offsetWidth;
         form.classList.add('auth-shake');
 
-        // Quitar error al escribir
         function clearError() {
           wrapE.classList.remove('is-error');
           wrapP.classList.remove('is-error');
@@ -173,7 +166,6 @@
       }
     }
 
-    // Toggle visibilidad de contraseña
     document.querySelectorAll('[data-toggle-password]').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var input = document.getElementById(btn.getAttribute('data-toggle-password'));

@@ -228,9 +228,17 @@
     }
   }
 
+  const VALID_SALAS = ['principal', 'terraza', 'vip'];
+
+  function isValidSchema(mesas) {
+    return Array.isArray(mesas) && mesas.length > 0 &&
+      mesas.some(function (m) { return VALID_SALAS.indexOf(m.sala) !== -1; });
+  }
+
   function hydrate() {
-    let mesas = load();
-    if (!mesas || !Array.isArray(mesas) || mesas.length === 0) {
+    var mesas = load();
+    if (!isValidSchema(mesas)) {
+      console.info('[StoreMesas] Datos incompatibles o vacíos — reconstruyendo seed.');
       mesas = buildSeed();
       save(mesas);
     }

@@ -95,6 +95,24 @@
   border-radius: var(--radius-md);
 }
 
+/* Variante táctil para POS, login staff y FABs.
+   Mutuamente excluyente con .btn-sm y .btn-lg. */
+.btn-touch {
+  min-height: 48px;
+  padding: 14px 18px;
+  font-size: 15px;
+  border-radius: var(--radius-lg);
+}
+.btn-touch.btn-xl {
+  min-height: 56px;
+  padding: 16px 22px;
+  font-size: 16px;
+}
+.btn-primary.btn-touch:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
 
 /* ============================================================================
    INPUTS / FORM FIELDS
@@ -349,7 +367,55 @@ textarea.field-input {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   border-bottom: 1px solid var(--border);
-  background: transparent;
+  background: var(--bg-surface, var(--bg));
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Sticky headers para tablas con clases propias (nomina, usuarios, adelantos) */
+.nomina-table thead th,
+.emp-table thead th,
+.adv-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg-surface, var(--bg));
+}
+
+/* Sticky headers para "tablas" implementadas como grid de divs */
+.ct-header,
+.inv-table-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg-surface, var(--bg));
+}
+
+/* Acciones inline (Editar/Eliminar) que aparecen en hover de fila */
+.table-row-actions {
+  display: inline-flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+.table-row:hover .table-row-actions,
+.ct-row:hover .table-row-actions,
+.inv-table-row:hover .table-row-actions,
+.nomina-table tbody tr:hover .table-row-actions,
+.emp-table tbody tr:hover .table-row-actions,
+.adv-table tbody tr:hover .table-row-actions {
+  opacity: 1;
+}
+.table-row-actions .btn-icon {
+  width: 28px;
+  height: 28px;
+}
+.table-row-actions .btn-icon.is-danger:hover {
+  color: var(--error);
+}
+@media (hover: none) {
+  .table-row-actions { opacity: 1; }
 }
 
 .table td {

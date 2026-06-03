@@ -243,7 +243,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark">[ROOT]</span>
+          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -645,7 +645,10 @@
           '<div class="cell-tel">' + c.tel + '</div>' +
           saldoHtml +
           '<div class="cell-ultima">' + c.ultima + '</div>' +
-          '<div class="cell-actions"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:15px;height:15px;"></i></button></div>';
+          '<div class="cell-actions"><span class="table-row-actions">' +
+            '<button class="btn-icon" aria-label="Editar cliente" onclick="event.stopPropagation(); abrirDrawer(' + idx + ');"><i data-lucide="pencil" style="width:14px;height:14px;"></i></button>' +
+            '<button class="btn-icon is-danger" aria-label="Eliminar cliente" onclick="event.stopPropagation(); confirmarEliminar(' + idx + ');"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>' +
+          '</span></div>';
 
         row.addEventListener('click', function () {
           abrirDrawer(idx);
@@ -855,8 +858,38 @@
       '</div>';
     }
 
-    renderTabla();
-    if (window.lucide) window.lucide.createIcons();
+    function confirmarEliminar(idx) {
+      var c = CLIENTES[idx];
+      if (window.UI && UI.toast) {
+        UI.toast({ type: 'warning', title: 'Eliminar ' + c.nombre + '?', sub: 'Confirma desde el detalle del cliente.' });
+      }
+    }
+
+    // Skeleton loaders demo: muestra 3 filas placeholder durante 800ms
+    function mostrarSkeletons() {
+      var body = document.getElementById('clientesBody');
+      if (!body) return;
+      var html = '';
+      for (var i = 0; i < 3; i++) {
+        html +=
+          '<div class="ct-row skeleton-row" aria-hidden="true">' +
+            '<div class="cliente-cell"><span class="skeleton skeleton-circle" style="width:30px;height:30px;"></span><span class="skeleton skeleton-text" style="width:60%;margin-left:10px;"></span></div>' +
+            '<div class="cell-id"><span class="skeleton skeleton-text" style="width:70%;"></span></div>' +
+            '<div class="cell-email"><span class="skeleton skeleton-text" style="width:80%;"></span></div>' +
+            '<div class="cell-tel"><span class="skeleton skeleton-text" style="width:70%;"></span></div>' +
+            '<div><span class="skeleton skeleton-text" style="width:50%;"></span></div>' +
+            '<div class="cell-ultima"><span class="skeleton skeleton-text" style="width:60%;"></span></div>' +
+            '<div class="cell-actions"></div>' +
+          '</div>';
+      }
+      body.innerHTML = html;
+    }
+
+    mostrarSkeletons();
+    setTimeout(function () {
+      renderTabla();
+      if (window.lucide) window.lucide.createIcons();
+    }, 800);
   </script>
   <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/nav.js"></script>

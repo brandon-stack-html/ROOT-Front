@@ -16,17 +16,17 @@
   --mesa-ocupada-bg:     rgba(239, 68, 68, 0.10);
   --mesa-ocupada-border: rgba(239, 68, 68, 0.30);
   --mesa-ocupada-text:   #991B1B;
-  --mesa-ocupada-accent: #EF4444;
+  --mesa-ocupada-accent: #FCA5A5;
 
   --mesa-por-cobrar-bg:     rgba(245, 158, 11, 0.12);
   --mesa-por-cobrar-border: rgba(245, 158, 11, 0.35);
   --mesa-por-cobrar-text:   #92400E;
-  --mesa-por-cobrar-accent: #F59E0B;
+  --mesa-por-cobrar-accent: #FCD34D;
 
   --mesa-reservada-bg:     rgba(139, 92, 246, 0.10);
   --mesa-reservada-border: rgba(139, 92, 246, 0.30);
   --mesa-reservada-text:   #5B21B6;
-  --mesa-reservada-accent: #8B5CF6;
+  --mesa-reservada-accent: #C4B5FD;
 
   --mesa-limpieza-bg:     rgba(113, 113, 122, 0.08);
   --mesa-limpieza-border: rgba(113, 113, 122, 0.22);
@@ -43,12 +43,12 @@
   --mesa-ocupada-bg:     rgba(244, 63, 94, 0.14);
   --mesa-ocupada-border: rgba(244, 63, 94, 0.35);
   --mesa-ocupada-text:   #FDA4AF;
-  --mesa-ocupada-accent: #F43F5E;
+  --mesa-ocupada-accent: #F87171;
 
   --mesa-por-cobrar-bg:     rgba(234, 179, 8, 0.14);
   --mesa-por-cobrar-border: rgba(234, 179, 8, 0.35);
   --mesa-por-cobrar-text:   #FDE047;
-  --mesa-por-cobrar-accent: #EAB308;
+  --mesa-por-cobrar-accent: #FBBF24;
 
   --mesa-reservada-bg:     rgba(167, 139, 250, 0.14);
   --mesa-reservada-border: rgba(167, 139, 250, 0.32);

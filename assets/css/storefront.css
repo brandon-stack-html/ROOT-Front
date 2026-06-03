@@ -1038,6 +1038,50 @@
 }
 .sf-cart-btn-count.is-visible { display: flex; }
 
+/* FAB carrito flotante — solo móvil, persistente al scroll */
+.sf-cart-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  z-index: 50;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.sf-cart-fab:hover { transform: translateY(-2px); }
+.sf-cart-fab:active { transform: scale(0.97); }
+.sf-cart-fab svg { width: 22px; height: 22px; }
+.sf-cart-fab-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--accent);
+}
+.sf-cart-fab-count.is-visible { display: flex; }
+@media (max-width: 768px) { .sf-cart-fab { display: flex; } }
+.sf-checkout-page .sf-cart-fab,
+.sf-prod-page .sf-cart-fab { display: none; }
+
 /* Hamburguer mobile */
 .sf-public-burger {
   display: none;
@@ -1270,8 +1314,13 @@
   gap: 14px;
   overflow-x: auto;
   padding-bottom: 8px;
+  padding-top: 8px;
   margin-bottom: 32px;
   scrollbar-width: thin;
+  position: sticky;
+  top: 56px;
+  z-index: 9;
+  background: var(--bg);
 }
 .sf-cat-card {
   flex-shrink: 0;
@@ -1419,6 +1468,8 @@
   flex-direction: column;
   transition: transform .15s, box-shadow .15s;
   position: relative;
+  content-visibility: auto;
+  contain-intrinsic-size: 360px 320px;
 }
 .sf-prod-card:hover {
   transform: translateY(-3px);
