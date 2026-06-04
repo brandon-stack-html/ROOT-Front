@@ -521,10 +521,10 @@
             '<div class="emp-row-email">' + escapeHtml(emp.email) + '</div></div>' +
           '</div>' +
         '</td>' +
-        '<td><span class="role-chip ' + rolClass + '">' + ROL_LABEL[emp.rol] + '</span></td>' +
-        '<td>' + escapeHtml(sucursalesText(emp)) + '</td>' +
-        '<td class="num">' + fmt(emp.nomina.salarioBase) + '</td>' +
-        '<td>' + PERIODO_LABEL[emp.nomina.periodicidad] + '</td>' +
+        '<td data-label="Rol"><span class="role-chip ' + rolClass + '">' + ROL_LABEL[emp.rol] + '</span></td>' +
+        '<td data-label="Sucursal">' + escapeHtml(sucursalesText(emp)) + '</td>' +
+        '<td data-label="Salario base" class="num">' + fmt(emp.nomina.salarioBase) + '</td>' +
+        '<td data-label="Periodicidad">' + PERIODO_LABEL[emp.nomina.periodicidad] + '</td>' +
         '<td>' +
           '<div class="row-action-wrap">' +
             '<button class="btn btn-ghost" type="button" data-row-menu="' + emp.id + '" style="width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:6px;">' +

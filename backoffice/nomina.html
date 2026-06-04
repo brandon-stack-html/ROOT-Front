@@ -384,13 +384,13 @@
       tr.dataset.empId = e.id;
       tr.innerHTML =
         '<td><div class="emp-name">' + e.nombre + '</div><div class="emp-meta">Ingreso: ' + e.fecha_ingreso + '</div></td>' +
-        '<td>' + sucNombre + '</td>' +
-        '<td class="num">' + window.formatCOP(e.salario_base) + '</td>' +
-        '<td><span class="period-tag">' + (e.periodicidad === 'quincenal' ? 'Quincenal' : 'Mensual') + '</span></td>' +
-        '<td class="num">' + window.formatCOP(devengado) + '</td>' +
-        '<td>' + (advTotal > 0 ? '<span class="nomina-badge-adv">−' + window.formatCOP(advTotal) + '</span>' : '<span style="color:var(--muted)">$0</span>') +
+        '<td data-label="Sucursal">' + sucNombre + '</td>' +
+        '<td data-label="Salario base" class="num">' + window.formatCOP(e.salario_base) + '</td>' +
+        '<td data-label="Periodicidad"><span class="period-tag">' + (e.periodicidad === 'quincenal' ? 'Quincenal' : 'Mensual') + '</span></td>' +
+        '<td data-label="Devengado" class="num">' + window.formatCOP(devengado) + '</td>' +
+        '<td data-label="Adelantos">' + (advTotal > 0 ? '<span class="nomina-badge-adv">−' + window.formatCOP(advTotal) + '</span>' : '<span style="color:var(--muted)">$0</span>') +
                (advPendEmp.length > 0 ? ' <span style="font-size:10px;color:var(--warning)">+' + advPendEmp.length + ' pend.</span>' : '') + '</td>' +
-        '<td class="num neto">' + window.formatCOP(neto) + '</td>' +
+        '<td data-label="Neto a pagar" class="num neto">' + window.formatCOP(neto) + '</td>' +
         '<td style="text-align:right;white-space:nowrap">' +
           (yaPagado
             ? '<span class="badge badge-success" style="font-size:11px;"><span class="dot"></span>Pagado</span>'

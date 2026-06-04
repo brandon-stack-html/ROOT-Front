@@ -34,6 +34,11 @@
       position: sticky;
       top: 0;
       z-index: 10;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 640px) {
+      .screen-controls { padding: 12px; gap: 8px; }
+      .screen-controls-title { display: none; }
     }
     .screen-controls-brand {
       font-size: 14px;
@@ -131,6 +136,9 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin-bottom: 12px;
+    }
+    @media (max-width: 480px) {
+      .zr-kpi-row { grid-template-columns: repeat(2, 1fr); }
     }
     .zr-kpi {
       background: #f8f8f8;

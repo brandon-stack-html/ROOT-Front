@@ -447,13 +447,28 @@ textarea.field-input {
 
 /* ---------- Versión mobile: filas se vuelven cards apiladas ---------- */
 @media (max-width: 768px) {
-  .table-stack {
+  .table-stack,
+  .emp-table,
+  .adv-table,
+  .nomina-table {
     border: none;
+    min-width: 0 !important;
   }
-  .table-stack thead {
+  .emp-table-scroll,
+  .adv-table-scroll,
+  .nomina-table-scroll {
+    overflow-x: visible !important;
+  }
+  .table-stack thead,
+  .emp-table thead,
+  .adv-table thead,
+  .nomina-table thead {
     display: none;
   }
-  .table-stack tr {
+  .table-stack tr,
+  .emp-table tbody tr,
+  .adv-table tbody tr,
+  .nomina-table tbody tr {
     display: block;
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -461,7 +476,10 @@ textarea.field-input {
     padding: var(--space-2) var(--space-3);
     background: var(--bg);
   }
-  .table-stack td {
+  .table-stack td,
+  .emp-table tbody td,
+  .adv-table tbody td,
+  .nomina-table tbody td {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -469,11 +487,19 @@ textarea.field-input {
     padding: 6px 0;
     border-bottom: 1px dashed var(--border);
     font-size: 13px;
+    width: 100%;
+    text-align: left;
   }
-  .table-stack td:last-child {
+  .table-stack td:last-child,
+  .emp-table tbody td:last-child,
+  .adv-table tbody td:last-child,
+  .nomina-table tbody td:last-child {
     border-bottom: none;
   }
-  .table-stack td::before {
+  .table-stack td::before,
+  .emp-table tbody td[data-label]::before,
+  .adv-table tbody td[data-label]::before,
+  .nomina-table tbody td[data-label]::before {
     content: attr(data-label);
     font-size: 11px;
     font-weight: 600;
@@ -1254,7 +1280,7 @@ textarea.field-input {
 }
 .perm-table-card-header {
   padding: 16px 22px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
 }
 .perm-detail-icon {
   width: 38px; height: 38px; border-radius: 9px; background: var(--accent);
@@ -1310,6 +1336,9 @@ textarea.field-input {
 .config-field-grid { display: grid; gap: 14px; margin-bottom: 14px; }
 .config-field-grid.cols-2  { grid-template-columns: 1fr 1fr; }
 .config-field-grid.cols-1  { grid-template-columns: 1fr; }
+@media (max-width: 640px) {
+  .config-field-grid.cols-2 { grid-template-columns: 1fr; }
+}
 .config-field label { font-size: 12px; font-weight: 600; color: var(--text); display: block; margin-bottom: 6px; }
 .config-input-wrap {
   display: flex; align-items: center;

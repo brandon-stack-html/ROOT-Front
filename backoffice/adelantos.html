@@ -319,12 +319,12 @@
       tr.innerHTML =
         '<td><div class="emp-name">' + (emp.nombre || '—') + '</div>' +
             '<div class="emp-meta">' + (adv.motivo || 'Sin motivo') + '</div></td>' +
-        '<td>' + sucNom + '</td>' +
-        '<td class="num">' + window.formatCOP(adv.monto_solicitado) + '</td>' +
-        '<td><span class="adv-pct">' + pct + '% del devengado</span></td>' +
-        '<td>' + fmtDate(adv.fecha_solicitud) + '</td>' +
-        '<td><span class="adv-badge ' + adv.estado + '">' + (LABELS[adv.estado] || adv.estado) + '</span></td>' +
-        '<td>' + accionesHtml + '</td>';
+        '<td data-label="Sucursal">' + sucNom + '</td>' +
+        '<td data-label="Monto" class="num">' + window.formatCOP(adv.monto_solicitado) + '</td>' +
+        '<td data-label="% Devengado"><span class="adv-pct">' + pct + '% del devengado</span></td>' +
+        '<td data-label="Fecha">' + fmtDate(adv.fecha_solicitud) + '</td>' +
+        '<td data-label="Estado"><span class="adv-badge ' + adv.estado + '">' + (LABELS[adv.estado] || adv.estado) + '</span></td>' +
+        '<td data-label="Acciones">' + accionesHtml + '</td>';
 
       tbody.appendChild(tr);
     });

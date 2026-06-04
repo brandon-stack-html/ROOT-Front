@@ -167,6 +167,18 @@ textarea:focus-visible {
   height: 20px;
 }
 
+/* Si la página tiene un sticky footer de acciones (ej. producto/ficha/conteo),
+   subimos el FAB para que no quede tapado/superpuesto */
+body:has(.producto-footer) .nav-back-home,
+body:has(.bo-page-actions-bar) .nav-back-home,
+body:has(.kds-config-actions-bar) .nav-back-home,
+body:has(.conteo-footer) .nav-back-home,
+body:has(.pos-bottom-bar) .nav-back-home,
+body:has(.sf-bottom-bar) .nav-back-home,
+body:has(.sf-checkout-bar) .nav-back-home {
+  bottom: calc(16px + 56px + 12px);
+}
+
 /* ---------- Navegación: modal de salto Ctrl+K ---------- */
 .nav-jump-modal .modal-header {
   padding: 12px 14px;

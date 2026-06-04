@@ -109,6 +109,7 @@
       display: flex;
       height: calc(100vh - 56px);
       overflow: hidden;
+      width: 100%;
     }
 
     /* ════════════════════════ SIDEBAR ════════════════════════ */
@@ -452,10 +453,8 @@
 
     /* Sala group */
     .sala-group {
-      flex: 1;
       display: flex;
       flex-direction: column;
-      min-height: 0;
       margin-bottom: 26px;
     }
     .sala-group:last-child { margin-bottom: 0; }
@@ -485,11 +484,8 @@
       border: 1px solid var(--border);
     }
     .sala-group-grid {
-      flex: 1;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      grid-auto-rows: 1fr;
-      align-content: stretch;
       gap: 12px;
     }
     .pm-canvas.density-compact .sala-group-grid {
@@ -585,9 +581,8 @@
     .mesa-card-state::before {
       content: ''; width: 5px; height: 5px; border-radius: 50%;
     }
-    .pm-canvas.density-compact .mesa-card-state { font-size: 9px; padding: 1px 6px 1px 5px; }
+    .pm-canvas.density-compact .mesa-card-state { font-size: 9px; padding: 3px; }
     .pm-canvas.density-compact .mesa-card-state-label { display: none; }
-    .pm-canvas.density-compact .mesa-card-state { padding: 3px; }
     .pm-canvas.density-compact .mesa-card-state::before { width: 6px; height: 6px; margin: 0; }
 
     /* Dots comensales */
@@ -671,6 +666,8 @@
     .mesas-table tr:last-child td { border-bottom: none; }
     .mesas-table tbody tr { transition: background 130ms ease; cursor: pointer; }
     .mesas-table tbody tr:hover td { background: var(--bg); }
+    .mesas-table tbody tr.is-selected td { background: rgba(var(--accent-rgb), .06); }
+    .mesas-table tbody tr.is-selected:hover td { background: rgba(var(--accent-rgb), .09); }
 
     .mesas-estado-badge {
       display: inline-flex;
@@ -806,6 +803,12 @@
         position: fixed; inset: 56px 0 0 0;
         width: 100%; z-index: 40; display: flex;
       }
+    }
+    /* En móvil ocultamos el meta-group denso del topbar (turno · cajero · reloj)
+       y los chips secundarios para evitar overflow horizontal */
+    @media (max-width: 768px) {
+      .pm-topbar-meta-group { display: none; }
+      .pm-ventas-chip { display: none; }
     }
 
     /* ════════════════════════ EMPTY STATE ════════════════════════ */
@@ -1634,7 +1637,10 @@
       document.querySelectorAll('#pmCanvas tbody tr').forEach(row => {
         row.addEventListener('click', e => {
           if (e.target.closest('a')) return;
-          selectedId = row.dataset.id;
+          const prevId = selectedId;
+          selectedId = prevId === row.dataset.id ? null : row.dataset.id;
+          document.querySelectorAll('#pmCanvas tbody tr').forEach(r =>
+            r.classList.toggle('is-selected', r.dataset.id === selectedId));
           renderSelected();
         });
       });
@@ -1669,7 +1675,7 @@
     });
 
     document.getElementById('pmRefresh').addEventListener('click', () => {
-      render(); renderSummary();
+      render(); renderSummary(); renderSelected();
       UI.toast({ type: 'info', title: 'Mapa actualizado', duration: 1200 });
     });
 
@@ -1732,11 +1738,11 @@
       if (rawSess) {
         var sess = JSON.parse(rawSess);
         var nameParts = (sess.name || '').split(' ');
-        var shortName = nameParts[0] + (nameParts[1] ? ' ' + nameParts[1][0] + '.' : '');
+        var cajeroShort = nameParts[0] + (nameParts[1] ? ' ' + nameParts[1][0] + '.' : '');
         var lbl = document.getElementById('pmCajeroLabel');
-        if (lbl && shortName.trim()) {
+        if (lbl && cajeroShort.trim()) {
           var roleLabel = sess.role === 'cajero' ? 'Cajero' : sess.role === 'gerente' ? 'Encargado' : sess.role === 'admin' ? 'Admin' : 'Cajero';
-          lbl.innerHTML = roleLabel + ' <strong style="color:var(--text);font-weight:600;">' + shortName + '</strong>';
+          lbl.innerHTML = roleLabel + ' <strong style="color:var(--text);font-weight:600;">' + cajeroShort + '</strong>';
         }
       }
     } catch (e) {}
