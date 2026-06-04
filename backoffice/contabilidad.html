@@ -74,11 +74,28 @@
     }
     .toolbar-spacer { flex:1; min-width:8px; }
 
-    /* ── Mobile ── */
+    /* ── Tables: scroll horizontal en mobile ── */
+    .table-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+
+    /* ── Mobile 768px ── */
     @media(max-width:768px){
       .bo-ph { flex-direction:column; gap:10px; }
       .toolbar { flex-direction:column; align-items:stretch; }
       .toolbar-search input { width:100%; }
+      .cont-tabs-wrap { flex-direction:column !important; align-items:stretch !important; }
+      .cont-tabs-wrap > .btn { align-self:flex-end; order:-1; margin-bottom:4px; }
+    }
+
+    /* ── Mobile 640px ── */
+    @media(max-width:640px){
+      .pl-table td { padding:7px 10px; }
+      .pl-section td { padding-top:12px; padding-bottom:4px; padding-left:10px; padding-right:10px; }
+      .pl-item td:first-child { padding-left:22px; }
+      .comp-table th, .comp-table td { padding:8px 10px; }
+      .tree-table th, .tree-row td { padding:8px 10px; }
+      .imp-kpi-grid { grid-template-columns:1fr !important; }
+      .cont-banner-actions { width:100%; }
+      .cont-banner-actions .btn { flex:1; justify-content:center; }
     }
 
     /* ── P&L Table ── */
@@ -307,7 +324,7 @@
         </div>
 
         <!-- ── Tabs + Exportar ── -->
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+        <div class="cont-tabs-wrap" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
           <div class="cont-tabs" role="tablist">
             <button class="cont-tab is-active" data-ctab="resumen" role="tab">Resumen</button>
             <button class="cont-tab" data-ctab="plan" role="tab">Plan de cuentas</button>
@@ -332,7 +349,7 @@
               </div>
               <button class="btn btn-ghost btn-sm"><i data-lucide="download"></i> Exportar</button>
             </div>
-            <table class="pl-table">
+            <div class="table-scroll"><table class="pl-table">
               <!-- INGRESOS -->
               <tr class="pl-section"><td colspan="2">Ingresos</td></tr>
               <tr class="pl-item"><td>Ventas POS</td><td>$14.200.000</td></tr>
@@ -366,7 +383,7 @@
               <tr class="pl-imp"><td style="padding-left:34px;">Impuestos</td><td style="text-align:right;">$1.580.000</td></tr>
               <!-- UTILIDAD NETA -->
               <tr class="pl-result"><td>Utilidad neta</td><td>$3.180.000</td></tr>
-            </table>
+            </table></div>
           </div>
 
           <!-- Comparativo mensual -->
@@ -374,7 +391,7 @@
             <div class="cont-card-header">
               <div class="cont-card-title">Comparativo mensual</div>
             </div>
-            <table class="comp-table">
+            <div class="table-scroll"><table class="comp-table">
               <thead>
                 <tr>
                   <th>Concepto</th>
@@ -407,7 +424,7 @@
                   <td class="delta-up-text">+29.4%</td>
                 </tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
 
         </div>
@@ -432,7 +449,7 @@
           </div>
 
           <div class="cont-card">
-            <table class="tree-table" id="planTable">
+            <div class="table-scroll"><table class="tree-table" id="planTable">
               <thead>
                 <tr>
                   <th style="width:110px;">Código</th>
@@ -569,7 +586,7 @@
                   <td class="tree-actions"><button class="tree-btn"><i data-lucide="more-horizontal" style="width:13px;height:13px;"></i></button></td>
                 </tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
         <!-- ── PANEL LIBROS AUXILIARES ── -->
@@ -598,7 +615,7 @@
                 <div class="cont-card-sub">Marzo 2025 · Saldo: <strong style="color:var(--success);">$1.445.000</strong></div>
               </div>
             </div>
-            <table style="width:100%;border-collapse:collapse;">
+            <div class="table-scroll"><table style="width:100%;border-collapse:collapse;">
               <thead>
                 <tr style="background:var(--alt);border-bottom:1px solid var(--border);">
                   <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Fecha</th>
@@ -628,7 +645,7 @@
                   <td style="padding:10px 18px;font-size:13px;font-weight:700;text-align:right;color:var(--success);">$1.445.000</td>
                 </tr>
               </tfoot>
-            </table>
+            </table></div>
           </div>
         </div>
 
@@ -644,7 +661,7 @@
             <div class="cont-card-header">
               <div class="cont-card-title">Comparativo por sede — Marzo 2025</div>
             </div>
-            <table style="width:100%;border-collapse:collapse;">
+            <div class="table-scroll"><table style="width:100%;border-collapse:collapse;">
               <thead>
                 <tr style="background:var(--alt);border-bottom:1px solid var(--border);">
                   <th style="padding:10px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Centro de costo</th>
@@ -684,13 +701,13 @@
                   <td style="padding:12px 18px;font-size:13px;text-align:right;"><span style="color:var(--success);font-weight:700;">39.1%</span></td>
                 </tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
 
         <!-- ── PANEL IMPUESTOS ── -->
         <div id="panel-impuestos" class="cont-panel">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
+          <div class="imp-kpi-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
             <div class="kpi-card tone-warning">
               <div class="kpi-header"><span class="kpi-label">IVA por pagar</span><span class="kpi-icon"><i data-lucide="percent"></i></span></div>
               <div class="kpi-value">$1.120.000</div>
@@ -715,7 +732,7 @@
                 <i data-lucide="file-text"></i> Generar declaración
               </button>
             </div>
-            <table style="width:100%;border-collapse:collapse;">
+            <div class="table-scroll"><table style="width:100%;border-collapse:collapse;">
               <thead>
                 <tr style="background:var(--alt);border-bottom:1px solid var(--border);">
                   <th style="padding:9px 18px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:left;">Impuesto</th>
@@ -768,7 +785,7 @@
                   <td style="padding:10px 18px;"><span class="badge badge-success"><span class="dot"></span>Pagado</span></td>
                 </tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
 

@@ -122,10 +122,58 @@
     .pag-page.is-active { background: var(--accent); color: #fff; }
 
     @media (max-width: 768px) {
+      /* Page header */
+      .bo-ph { flex-direction: column; gap: 10px; }
+
+      /* DIAN banner: wrap en pantallas pequeñas */
+      .dian-banner { flex-wrap: wrap; }
+
+      /* ── Remisiones: tarjeta 2 columnas ── */
       .rem-table-head { display: none; }
-      .rem-table-row { display: block; padding: 14px 16px; }
+      .rem-table-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 4px 12px;
+        padding: 14px 16px;
+      }
+      .rem-table-row > div:nth-child(1) { grid-column: 1; grid-row: 1; }
+      .rem-table-row > div:nth-child(2) { grid-column: 1; grid-row: 2; font-size: 14px !important; font-weight: 600; }
+      .rem-table-row > div:nth-child(3) { grid-column: 2; grid-row: 2; text-align: right; }
+      .rem-table-row > div:nth-child(4) { grid-column: 2; grid-row: 1; text-align: right; }
+      .rem-table-row .prog-bar-wrap {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        margin: 10px 0 12px;
+      }
+      .rem-row-actions {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        display: flex !important;
+        gap: 8px;
+        justify-content: stretch !important;
+      }
+      .rem-row-actions .btn { flex: 1; justify-content: center; }
+
+      /* ── Historial: tarjeta 2 columnas ── */
       .hist-header { display: none; }
-      .hist-row { display: block; padding: 14px 16px; }
+      .hist-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 4px 12px;
+        padding: 12px 16px;
+      }
+      .hist-row > div:nth-child(1) { grid-column: 1; grid-row: 1; }
+      .hist-row > div:nth-child(2) { grid-column: 1; grid-row: 2; font-size: 14px !important; font-weight: 600 !important; }
+      .hist-row > div:nth-child(3) { grid-column: 1; grid-row: 3; }
+      .hist-row > div:nth-child(4) { grid-column: 2; grid-row: 2; text-align: right !important; }
+      .hist-row > div:nth-child(5) { grid-column: 2; grid-row: 1; }
+      .hist-row > div:nth-child(6) { display: none; }
+      .hist-row-actions {
+        grid-column: 2; grid-row: 3;
+        display: flex !important;
+        justify-content: flex-end;
+        align-items: center;
+      }
     }
   </style>
 </head>
@@ -337,7 +385,7 @@
               <div class="prog-bar-track"><div class="prog-bar-fill" style="width:100%;background:var(--error)"></div></div>
               <div class="prog-dot" style="background:var(--error)"></div>
             </div>
-            <div style="display:flex;justify-content:flex-end;gap:6px">
+            <div class="rem-row-actions" style="display:flex;justify-content:flex-end;gap:6px">
               <button class="btn btn-primary btn-sm">Facturar</button>
               <button class="btn btn-secondary btn-sm">Devolver</button>
             </div>
@@ -352,7 +400,7 @@
               <div class="prog-bar-track"><div class="prog-bar-fill" style="width:73%;background:var(--warning)"></div></div>
               <div class="prog-dot" style="background:var(--warning)"></div>
             </div>
-            <div style="display:flex;justify-content:flex-end;gap:6px">
+            <div class="rem-row-actions" style="display:flex;justify-content:flex-end;gap:6px">
               <button class="btn btn-primary btn-sm">Facturar</button>
               <button class="btn btn-secondary btn-sm">Devolver</button>
             </div>
@@ -367,7 +415,7 @@
               <div class="prog-bar-track"><div class="prog-bar-fill" style="width:27%;background:var(--success)"></div></div>
               <div class="prog-dot" style="background:var(--success)"></div>
             </div>
-            <div style="display:flex;justify-content:flex-end;gap:6px">
+            <div class="rem-row-actions" style="display:flex;justify-content:flex-end;gap:6px">
               <button class="btn btn-primary btn-sm">Facturar</button>
               <button class="btn btn-secondary btn-sm">Devolver</button>
             </div>
@@ -395,7 +443,7 @@
             <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$134.000</div>
             <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
             <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">19:34</div>
-            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+            <div class="hist-row-actions" style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
           </div>
           <div class="hist-row">
             <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">POS-00456</div>
@@ -404,7 +452,7 @@
             <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$88.000</div>
             <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
             <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">19:28</div>
-            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+            <div class="hist-row-actions" style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
           </div>
           <div class="hist-row">
             <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">POS-00455</div>
@@ -413,7 +461,7 @@
             <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$45.000</div>
             <div><span class="dian-chip dian-enviando"><i data-lucide="loader" style="width:10px;height:10px" class="dian-pulse"></i> Enviando…</span></div>
             <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">19:25</div>
-            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+            <div class="hist-row-actions" style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
           </div>
           <div class="hist-row">
             <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">FEV-00122</div>
@@ -422,7 +470,7 @@
             <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$210.000</div>
             <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
             <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">18:55</div>
-            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+            <div class="hist-row-actions" style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
           </div>
           <div class="hist-row">
             <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">NC-00018</div>
@@ -431,7 +479,7 @@
             <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--error)">−$30.000</div>
             <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
             <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">18:40</div>
-            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+            <div class="hist-row-actions" style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
           </div>
           <div class="hist-row">
             <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">POS-00454</div>
@@ -440,7 +488,7 @@
             <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$67.000</div>
             <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
             <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">18:12</div>
-            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+            <div class="hist-row-actions" style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
           </div>
           <div class="hist-row">
             <div style="font-size:12px;font-weight:600;font-family:monospace;color:var(--text)">FEV-00121</div>
@@ -449,7 +497,7 @@
             <div style="text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">$485.000</div>
             <div><span class="dian-chip dian-enviada">✓ Enviada</span></div>
             <div style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">17:48</div>
-            <div style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
+            <div class="hist-row-actions" style="display:flex;justify-content:flex-end"><button class="more-btn" aria-label="Más opciones"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button></div>
           </div>
 
           <!-- Empty state -->

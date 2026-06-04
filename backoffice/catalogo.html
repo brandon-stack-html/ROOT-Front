@@ -11,6 +11,43 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
+  <style>
+    /* ── Catálogo: mejoras mobile ─────────────────────────────── */
+
+    @media (max-width: 768px) {
+      /* Page header: apila título y acciones */
+      .bo-page-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .bo-page-actions { width: 100%; }
+      .bo-page-actions .btn { flex: 1; justify-content: center; }
+
+      /* Toolbar: stack vertical, search ancho completo */
+      .bo-toolbar { flex-direction: column; align-items: stretch; }
+      .bo-toolbar-search { width: 100%; flex-shrink: 1; }
+      .bo-filter-btn { justify-content: space-between; }
+      .bo-toolbar-spacer { display: none; }
+      .bo-view-btns { align-self: flex-end; }
+
+      /* Paginación: centrar */
+      .bo-pagination { flex-direction: column; align-items: center; gap: 8px; }
+    }
+
+    /* Cards compactas en mobile */
+    @media (max-width: 640px) {
+      .product-img { max-height: 100px; min-height: 72px; }
+      .product-img svg { width: 22px !important; height: 22px !important; }
+      .product-body { padding: 8px 10px; }
+      .product-cat { display: none; }
+      .product-name { font-size: 12px; margin-bottom: 4px; line-height: 1.3; }
+      .product-price { font-size: 13px; }
+      .stock-indicator { font-size: 9px; gap: 3px; }
+      .stock-dot-ind { width: 6px; height: 6px; }
+    }
+
+    /* Mantener 2 columnas hasta 320px — nunca 1 columna */
+    @media (max-width: 420px) {
+      .product-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+    }
+  </style>
 </head>
 <body>
   <a href="#main" class="skip-link">Saltar al contenido principal</a>

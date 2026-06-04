@@ -219,19 +219,37 @@
 
     /* Mobile */
     @media (max-width: 768px) {
-      .ct-header { display: none; }
-      .ct-row {
-        grid-template-columns: 1fr auto;
-        grid-template-rows: auto auto auto;
-        gap: 4px;
-        padding: 12px 14px;
-      }
-      .cliente-cell { grid-column: 1 / -1; }
-      .cell-id { font-size: 11px; }
-      .cell-email { display: none; }
+      /* Page header */
+      .bo-ph { flex-direction: column; gap: 10px; }
+
+      /* Toolbar: stack */
       .toolbar { flex-direction: column; align-items: stretch; }
       .toolbar-search input { width: 100%; }
-      .bo-ph { flex-direction: column; gap: 10px; }
+      .toolbar-spacer { display: none; }
+
+      /* Tabla: cada fila como tarjeta 2 columnas */
+      .ct-header { display: none; }
+      .ct-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 5px 12px;
+        padding: 14px 16px;
+      }
+      .ct-row .cliente-cell   { grid-column: 1; grid-row: 1; }
+      .ct-row .cell-id        { grid-column: 1; grid-row: 2; font-size: 11px; }
+      .ct-row .cell-email     { display: none; }
+      .ct-row .cell-tel       { grid-column: 1; grid-row: 3; }
+      .ct-row .cell-saldo-sin,
+      .ct-row .cell-saldo-con { grid-column: 2; grid-row: 1; text-align: right; align-self: center; }
+      .ct-row .cell-ultima    { grid-column: 2; grid-row: 2; text-align: right; font-size: 11px; }
+      .ct-row .cell-actions   { grid-column: 2; grid-row: 3; justify-content: flex-end; }
+
+      /* Paginación: centrar en móvil */
+      .pagination { flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+
+      /* Drawer: ya tiene width:100% arriba */
+      .info-grid { grid-template-columns: 1fr; }
+      .mov-table { overflow-x: auto; }
     }
   </style>
 </head>
