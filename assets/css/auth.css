@@ -1371,3 +1371,60 @@
   .auth-login-shell { padding: 36px 20px; }
   .auth-login-shell .auth-title { font-size: 24px; }
 }
+
+/* ============================================================================
+   Registro — ajustes mobile (stepper + footer-row)
+   Solo aplica a auth/registro.html (únicos consumidores de .auth-stepper
+   y .auth-footer-row en el flujo auth).
+   ============================================================================ */
+@media (max-width: 640px) {
+  .auth-stepper {
+    padding: 0;
+    margin-bottom: 20px;
+    gap: 0;
+  }
+  .auth-stepper-step {
+    gap: 8px;
+    min-width: 0;
+  }
+  /* Ocultar labels de pasos pendientes; el activo se mantiene visible */
+  .auth-stepper-step.is-pending .auth-stepper-label {
+    display: none;
+  }
+  .auth-stepper-label.is-active {
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+  /* Conectores flexibles para que el stepper se ajuste al ancho */
+  .auth-stepper-connector {
+    flex: 1 1 auto;
+    margin: 0 8px;
+    min-width: 12px;
+  }
+
+  /* Footer row: botón full-width arriba, link debajo centrado */
+  .auth-footer-row {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .auth-footer-row .auth-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .auth-footer-row .auth-btn-link {
+    text-align: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .auth-stepper-label.is-active {
+    max-width: 120px;
+  }
+  .auth-stepper-connector {
+    margin: 0 6px;
+  }
+}
