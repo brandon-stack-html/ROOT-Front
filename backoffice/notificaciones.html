@@ -43,6 +43,10 @@
     .notif-empty { text-align:center; padding:48px 24px; color:var(--muted); font-size:13px; }
     @keyframes notifIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
     .notif-item { animation:notifIn .2s ease; }
+    @media (max-width: 480px) {
+      .notif-item { padding: 12px 14px; gap: 10px; }
+      .notif-icon { width: 30px; height: 30px; border-radius: 7px; }
+    }
   </style>
 </head>
 <body>

@@ -441,7 +441,7 @@
           'display:none;position:fixed;z-index:9000;',
           'background:var(--bg-elevated,var(--alt));',
           'border:1px solid var(--border);border-radius:12px;',
-          'width:340px;max-height:480px;overflow:hidden;display:none;',
+          'width:340px;max-width:calc(100vw - 16px);max-height:480px;overflow:hidden;display:none;',
           'flex-direction:column;box-shadow:var(--shadow-lg,0 16px 40px rgba(0,0,0,.2));',
         ].join('');
         document.body.appendChild(dd);
@@ -458,8 +458,13 @@
           if (isVisible) { dropdown.style.display = 'none'; return; }
           Auth._renderNotifDropdown(dropdown);
           dropdown.style.display = 'flex';
-          dropdown.style.top  = (rect.bottom + 8) + 'px';
-          dropdown.style.right = (window.innerWidth - rect.right) + 'px';
+          var panelW   = Math.min(340, window.innerWidth - 16);
+          var rightVal = window.innerWidth - rect.right;
+          var leftEdge = window.innerWidth - rightVal - panelW;
+          if (leftEdge < 8) rightVal = window.innerWidth - panelW - 8;
+          if (rightVal < 8) rightVal = 8;
+          dropdown.style.top   = (rect.bottom + 8) + 'px';
+          dropdown.style.right = rightVal + 'px';
         });
       });
 
