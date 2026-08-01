@@ -6,8 +6,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Catálogo · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
@@ -30,32 +34,11 @@
       padding: 1px 7px; border-radius: 8px; font-size: 10px; font-weight: 600;
       background: var(--alt); color: var(--muted);
     }
-    .cat-tab.is-active .cat-tab-badge { background: #EEF2FF; color: var(--accent); }
-    [data-theme="dark"] .cat-tab.is-active .cat-tab-badge { background: rgba(99,102,241,.18); }
-
-    /* Page header */
-    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
-    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
-    .bo-ph-actions { display: flex; align-items: center; gap: 8px; }
-
-    /* Toolbar */
-    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    .toolbar-search { position: relative; }
-    .toolbar-search input {
-      padding: 8px 12px 8px 34px; border-radius: 8px;
-      border: 1px solid var(--border); background: var(--bg); color: var(--text);
-      font-family: var(--ff-base); font-size: 13px; width: 220px; outline: none;
-    }
-    .toolbar-search input:focus { border-color: var(--accent); }
-    .toolbar-search .s-icon {
-      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-      color: var(--muted); display: flex; pointer-events: none;
-    }
-    .toolbar-spacer { flex: 1; min-width: 8px; }
+    .cat-tab.is-active .cat-tab-badge { background: var(--accent-soft); color: var(--accent); }
+    [data-theme="dark"] .cat-tab.is-active .cat-tab-badge { background: color-mix(in srgb, var(--accent) 18%, transparent); }
 
     /* Tree table */
-    .tree-table { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .tree-table { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
     .tree-header {
       display: grid; grid-template-columns: 40px 30px 1.4fr 100px 90px 90px;
       padding: 12px 18px; background: var(--alt); border-bottom: 1px solid var(--border);
@@ -69,7 +52,7 @@
     .tree-row:last-child { border-bottom: none; }
     .tree-row.child { background: rgba(244,244,245,.4); }
     [data-theme="dark"] .tree-row.child { background: rgba(24,24,27,.4); }
-    @keyframes rowHighlight { 0%,100% { background: transparent; } 15% { background: rgba(79,70,229,.10); } 85% { background: rgba(79,70,229,.06); } }
+    @keyframes rowHighlight { 0%,100% { background: transparent; } 15% { background: color-mix(in srgb, var(--accent) 10%, transparent); } 85% { background: color-mix(in srgb, var(--accent) 6%, transparent); } }
     .tree-row.is-new { animation: rowHighlight 2s ease; }
 
     .row-drag { display: flex; align-items: center; justify-content: center; cursor: grab; color: var(--muted); }
@@ -114,15 +97,14 @@
 
     /* Info hint */
     .info-hint {
-      margin-top: 14px; padding: 10px 14px; border-radius: 8px;
-      background: #EFF6FF; border: 1px solid #BFDBFE;
-      display: flex; align-items: center; gap: 10px; font-size: 12px; color: #1E40AF;
+      margin-top: 14px; padding: 10px 14px; border-radius: var(--radius-md);
+      background: var(--state-info-bg); border: 1px solid var(--state-info-border);
+      display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--state-info);
     }
-    [data-theme="dark"] .info-hint { background: rgba(59,130,246,.10); border-color: rgba(59,130,246,.4); color: #93C5FD; }
 
     /* Modificadores */
     .mod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-    .mod-card { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .mod-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
     .mod-card-head {
       padding: 12px 16px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
@@ -158,10 +140,7 @@
       .row-drag { display: none; }
       .row-count { font-size: 12px; }
       .row-visible { justify-content: flex-start; }
-      .toolbar-search input { width: 100%; }
-      .toolbar { flex-direction: column; align-items: stretch; }
       .mod-grid { grid-template-columns: 1fr; }
-      .bo-ph { flex-direction: column; gap: 10px; }
     }
   </style>
 </head>
@@ -173,7 +152,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+          <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -265,12 +244,12 @@
 
       <main id="main" class="bo-content">
 
-        <div class="bo-ph">
+        <div class="bo-page-header">
           <div>
-            <div class="bo-ph-title">Catálogo</div>
-            <div class="bo-ph-sub">Organiza productos en categorías y subcategorías</div>
+            <div class="bo-page-title">Catálogo</div>
+            <div class="bo-page-subtitle">Organiza productos en categorías y subcategorías</div>
           </div>
-          <div class="bo-ph-actions">
+          <div class="bo-page-actions">
             <button class="btn btn-ghost" onclick="UI.toast({type:'info',title:'Reordenar',sub:'Arrastrá las filas para reordenar'})">Reordenar</button>
             <button class="btn btn-primary" data-open-modal="modalCategoria">
               <i data-lucide="plus"></i> Nueva categoría
@@ -294,12 +273,12 @@
 
           <!-- Panel Categorías -->
           <div data-panel="categorias" class="is-active">
-            <div class="toolbar">
-              <div class="toolbar-search">
+            <div class="bo-toolbar">
+              <div class="bo-toolbar-search">
                 <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
                 <input type="text" placeholder="Buscar categoría...">
               </div>
-              <div class="toolbar-spacer"></div>
+              <div class="bo-toolbar-spacer"></div>
               <button class="btn btn-ghost" id="btnExpandAll">
                 <i data-lucide="chevrons-down"></i> Expandir todo
               </button>
@@ -471,12 +450,12 @@
 
           <!-- Panel Modificadores -->
           <div data-panel="modificadores">
-            <div class="toolbar">
-              <div class="toolbar-search">
+            <div class="bo-toolbar">
+              <div class="bo-toolbar-search">
                 <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
                 <input type="text" placeholder="Buscar modificador...">
               </div>
-              <div class="toolbar-spacer"></div>
+              <div class="bo-toolbar-spacer"></div>
               <button class="btn btn-primary"><i data-lucide="plus"></i> Nuevo grupo</button>
             </div>
             <div class="mod-grid">
@@ -543,8 +522,8 @@
 
           <!-- Panel Listas de precios -->
           <div data-panel="listas">
-            <div class="toolbar">
-              <div class="toolbar-spacer"></div>
+            <div class="bo-toolbar">
+              <div class="bo-toolbar-spacer"></div>
               <button class="btn btn-primary"><i data-lucide="plus"></i> Nueva lista</button>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">

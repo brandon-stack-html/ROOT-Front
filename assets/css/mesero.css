@@ -406,7 +406,7 @@ body.mesero-body {
   font-size: 28px;
   background: var(--accent);
   color: #fff;
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.33);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 33%, transparent);
 }
 .mb-avatar.size-96 {
   width: 96px;
@@ -415,7 +415,7 @@ body.mesero-body {
   font-size: 34px;
   background: var(--accent);
   color: #fff;
-  box-shadow: 0 10px 28px rgba(79, 70, 229, 0.35);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 /* ── Botones mobile ──────────────────────────────────────────────────────── */

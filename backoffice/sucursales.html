@@ -6,8 +6,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Sucursales · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
@@ -21,7 +25,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+        <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -104,9 +108,11 @@
     </header>
 
     <main id="main" class="bo-content">
-      <div>
-        <h1 style="font-size:22px;font-weight:700;letter-spacing:-.01em;">Configuración</h1>
-        <p style="font-size:12px;color:var(--muted);margin-top:3px;margin-bottom:18px;">3 sucursales registradas · 2 activas</p>
+      <div class="bo-page-header">
+        <div>
+          <div class="bo-page-title">Configuración</div>
+          <div class="bo-page-subtitle">3 sucursales registradas · 2 activas</div>
+        </div>
       </div>
 
       <!-- Config Tabs -->

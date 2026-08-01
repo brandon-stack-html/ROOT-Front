@@ -13,7 +13,7 @@
   background:
     radial-gradient(
       ellipse 80% 60% at 60% 40%,
-      rgba(79, 70, 229, 0.06) 0%,
+      color-mix(in srgb, var(--accent) 6%, transparent) 0%,
       transparent 70%
     ),
     var(--bg);
@@ -54,8 +54,8 @@
     linear-gradient(
       145deg,
       rgba(255, 255, 255, 0.82) 0%,
-      rgba(245, 244, 255, 0.76) 55%,
-      rgba(232, 230, 255, 0.68) 100%
+      rgba(251, 246, 232, 0.76) 55%,
+      rgba(245, 234, 197, 0.68) 100%
     );
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
@@ -65,9 +65,9 @@
   width: 100%;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.85) inset,
-    0 -1px 0 rgba(79, 70, 229, 0.06) inset,
+    0 -1px 0 color-mix(in srgb, var(--accent) 6%, transparent) inset,
     0 1px 3px rgba(15, 23, 42, 0.04),
-    0 24px 64px -12px rgba(79, 70, 229, 0.26),
+    0 24px 64px -12px color-mix(in srgb, var(--accent) 26%, transparent),
     0 8px 24px rgba(15, 23, 42, 0.06);
   transition: box-shadow .25s ease, transform .25s ease;
 }
@@ -76,16 +76,16 @@
   background:
     linear-gradient(
       145deg,
-      rgba(22, 20, 36, 0.72) 0%,
-      rgba(18, 16, 32, 0.65) 50%,
-      rgba(30, 27, 75, 0.55) 100%
+      rgba(27, 24, 16, 0.72) 0%,
+      rgba(21, 18, 11, 0.65) 50%,
+      rgba(42, 29, 4, 0.55) 100%
     );
-  border-color: rgba(79, 70, 229, 0.22);
+  border-color: color-mix(in srgb, var(--accent) 22%, transparent);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.06) inset,
-    0 -1px 0 rgba(79, 70, 229, 0.12) inset,
+    0 -1px 0 color-mix(in srgb, var(--accent) 12%, transparent) inset,
     0 1px 3px rgba(0, 0, 0, 0.5),
-    0 30px 80px -18px rgba(79, 70, 229, 0.5),
+    0 30px 80px -18px color-mix(in srgb, var(--accent) 50%, transparent),
     0 8px 28px rgba(0, 0, 0, 0.38);
 }
 
@@ -93,7 +93,7 @@
   background:
     radial-gradient(
       ellipse 80% 60% at 60% 35%,
-      rgba(79, 70, 229, 0.11) 0%,
+      color-mix(in srgb, var(--accent) 11%, transparent) 0%,
       transparent 70%
     ),
     var(--bg);
@@ -187,14 +187,14 @@
 }
 
 .auth-input-wrap:hover {
-  border-color: rgba(79, 70, 229, 0.45);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 .auth-input-wrap:focus-within {
   border-color: var(--accent);
   box-shadow:
-    0 0 0 4px rgba(79, 70, 229, 0.18),
-    0 6px 18px -6px rgba(79, 70, 229, 0.35);
+    0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 6px 18px -6px color-mix(in srgb, var(--accent) 35%, transparent);
   background: var(--bg-elevated, var(--alt));
 }
 
@@ -209,15 +209,15 @@
 }
 
 [data-theme="dark"] .auth-input-wrap:hover {
-  border-color: rgba(129, 120, 246, 0.55);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
 [data-theme="dark"] .auth-input-wrap:focus-within {
-  background: rgba(79, 70, 229, 0.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
   border-color: var(--accent);
   box-shadow:
-    0 0 0 4px rgba(79, 70, 229, 0.25),
-    0 6px 22px -6px rgba(79, 70, 229, 0.55);
+    0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent),
+    0 6px 22px -6px color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
 /* ── Mensaje de error inline (A1) ─────────────────────────────────────────── */
@@ -457,7 +457,7 @@
 }
 
 .auth-icon-circle-accent {
-  background: rgba(79,70,229,.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
   color: var(--accent);
 }
 
@@ -467,7 +467,7 @@
 }
 
 [data-theme="dark"] .auth-icon-circle-accent {
-  background: rgba(79,70,229,.18);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 [data-theme="dark"] .auth-icon-circle-success {
@@ -525,7 +525,7 @@
 .auth-stepper-circle.is-active {
   background: var(--accent);
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(79,70,229,.13);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 13%, transparent);
 }
 
 .auth-stepper-circle.is-done {
@@ -788,7 +788,7 @@
 
 .sucursal-card.is-selected {
   border: 2px solid var(--accent);
-  box-shadow: 0 8px 24px rgba(79,70,229,.13), 0 0 0 4px rgba(79,70,229,.07);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 13%, transparent), 0 0 0 4px color-mix(in srgb, var(--accent) 7%, transparent);
 }
 
 .sucursal-selected-check {
@@ -808,7 +808,7 @@
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  background: rgba(79,70,229,.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -816,7 +816,7 @@
 }
 
 [data-theme="dark"] .sucursal-icon-wrap {
-  background: rgba(79,70,229,.18);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .sucursal-info-name {
@@ -1155,7 +1155,7 @@
 }
 
 [data-theme="dark"] .auth-feature-icon {
-  background: rgba(79, 70, 229, 0.20);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 /* ── Focus ring Vercel (scoped al shell) ─────────────────────────────────── */
@@ -1236,21 +1236,21 @@
   font-family: var(--ff-base);
   background: linear-gradient(
     140deg,
-    #ede9ff 0%,
-    #c4b0ff 30%,
-    #9e7cf5 58%,
-    #7055d8 80%,
-    #5240bf 100%
+    #FBF6E8 0%,
+    #EBB85B 30%,
+    #B98521 58%,
+    #7B570E 80%,
+    #2A1D04 100%
   );
 }
 
 [data-theme="dark"] .auth-login-shell {
   background: linear-gradient(
     140deg,
-    #1e1840 0%,
-    #130f2e 30%,
-    #1d1650 58%,
-    #110c28 100%
+    #1B1810 0%,
+    #15120B 30%,
+    #2A1D04 58%,
+    #0C0A06 100%
   );
 }
 
@@ -1328,7 +1328,7 @@
 /* Botón: blanco con texto accent */
 .auth-login-shell .auth-btn-primary {
   background: #fff;
-  color: #4F46E5;
+  color: var(--accent);
   border-color: transparent;
 }
 .auth-login-shell .auth-btn-primary:hover:not(:disabled) {

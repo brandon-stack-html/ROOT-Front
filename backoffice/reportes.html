@@ -6,28 +6,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Reportes · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
   <style>
-    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
-    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
-    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
-
     /* Hint card */
     .hint-card {
-      padding: 14px 18px; border-radius: 11px; margin-bottom: 22px;
-      background: linear-gradient(90deg, #EEF2FF, #FAFAFA);
-      border: 1px solid #E0E7FF;
+      padding: 14px 18px; border-radius: var(--radius-md); margin-bottom: 22px;
+      background: linear-gradient(90deg, var(--accent-soft), transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
       display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
     }
     .hint-card > div[style*="flex:1"] { min-width: 0; flex: 1 1 200px; }
     [data-theme="dark"] .hint-card {
-      background: linear-gradient(90deg, rgba(99,102,241,.16), transparent);
-      border-color: rgba(99,102,241,.3);
+      background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 16%, transparent), transparent);
+      border-color: color-mix(in srgb, var(--accent) 30%, transparent);
     }
     .hint-card-icon {
       width: 42px; height: 42px; border-radius: 10px; background: var(--accent);
@@ -52,7 +51,7 @@
     /* Reporte card */
     .reporte-card {
       width: 100%; padding: 16px 18px;
-      background: var(--bg); border: 1px solid var(--border); border-radius: 11px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md);
       cursor: pointer; font-family: var(--ff-base); text-align: left;
       display: flex; align-items: flex-start; gap: 14px;
       transition: border-color .15s, transform .15s, box-shadow .15s;
@@ -70,11 +69,10 @@
     .reporte-card-title-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
     .reporte-card-title { font-size: 13px; font-weight: 600; color: var(--text); }
     .badge-popular {
-      padding: 1px 6px; border-radius: 5px;
-      background: #FEF3C7; color: #92400E;
+      padding: 1px 6px; border-radius: var(--radius-sm);
+      background: var(--state-warning-bg); color: var(--state-warning);
       font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
     }
-    [data-theme="dark"] .badge-popular { background: rgba(245,158,11,.18); color: #FDE68A; }
     .reporte-card-desc { font-size: 11px; color: var(--muted); line-height: 1.4; margin-bottom: 8px; }
     .reporte-card-link { font-size: 11px; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 4px; }
 
@@ -90,7 +88,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+          <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -165,12 +163,12 @@
 
       <main id="main" class="bo-content">
         <!-- PAGE HEADER -->
-        <div class="bo-ph">
+        <div class="bo-page-header">
           <div>
-            <div class="bo-ph-title">Reportes</div>
-            <div class="bo-ph-sub">Selecciona el reporte que necesitas analizar</div>
+            <div class="bo-page-title">Reportes</div>
+            <div class="bo-page-subtitle">Selecciona el reporte que necesitas analizar</div>
           </div>
-          <div class="bo-ph-actions">
+          <div class="bo-page-actions">
             <button class="btn btn-secondary btn-sm"><i data-lucide="bookmark" style="width:13px;height:13px"></i>Mis reportes</button>
             <button class="btn btn-secondary btn-sm"><i data-lucide="clock" style="width:13px;height:13px"></i>Programados</button>
           </div>
@@ -189,8 +187,8 @@
         <!-- GRUPO: Ventas -->
         <div class="reporte-grupo">
           <div class="reporte-grupo-header">
-            <div class="reporte-grupo-icon-wrap" style="background:rgba(79,70,229,.1)">
-              <i data-lucide="trending-up" style="width:13px;height:13px;color:#4F46E5"></i>
+            <div class="reporte-grupo-icon-wrap" style="background:color-mix(in srgb, var(--accent) 10%, transparent)">
+              <i data-lucide="trending-up" style="width:13px;height:13px;color:var(--accent)"></i>
             </div>
             <span class="reporte-grupo-title">Ventas</span>
             <div class="reporte-grupo-sep"></div>
@@ -198,8 +196,8 @@
           </div>
           <div class="reporte-grid">
             <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Ventas por período')">
-              <div class="reporte-card-icon" style="background:rgba(79,70,229,.1)">
-                <i data-lucide="calendar" style="width:19px;height:19px;color:#4F46E5"></i>
+              <div class="reporte-card-icon" style="background:color-mix(in srgb, var(--accent) 10%, transparent)">
+                <i data-lucide="calendar" style="width:19px;height:19px;color:var(--accent)"></i>
               </div>
               <div class="reporte-card-body">
                 <div class="reporte-card-title-row">
@@ -211,8 +209,8 @@
               </div>
             </button>
             <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Ventas por mesero')">
-              <div class="reporte-card-icon" style="background:rgba(79,70,229,.1)">
-                <i data-lucide="user" style="width:19px;height:19px;color:#4F46E5"></i>
+              <div class="reporte-card-icon" style="background:color-mix(in srgb, var(--accent) 10%, transparent)">
+                <i data-lucide="user" style="width:19px;height:19px;color:var(--accent)"></i>
               </div>
               <div class="reporte-card-body">
                 <div class="reporte-card-title-row"><span class="reporte-card-title">Ventas por mesero</span></div>
@@ -221,8 +219,8 @@
               </div>
             </button>
             <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Ventas por canal')">
-              <div class="reporte-card-icon" style="background:rgba(79,70,229,.1)">
-                <i data-lucide="radio" style="width:19px;height:19px;color:#4F46E5"></i>
+              <div class="reporte-card-icon" style="background:color-mix(in srgb, var(--accent) 10%, transparent)">
+                <i data-lucide="radio" style="width:19px;height:19px;color:var(--accent)"></i>
               </div>
               <div class="reporte-card-body">
                 <div class="reporte-card-title-row"><span class="reporte-card-title">Ventas por canal</span></div>
@@ -231,8 +229,8 @@
               </div>
             </button>
             <button class="reporte-card" data-open-modal="modalGenerar" onclick="setReporte('Productos más vendidos')">
-              <div class="reporte-card-icon" style="background:rgba(79,70,229,.1)">
-                <i data-lucide="flame" style="width:19px;height:19px;color:#4F46E5"></i>
+              <div class="reporte-card-icon" style="background:color-mix(in srgb, var(--accent) 10%, transparent)">
+                <i data-lucide="flame" style="width:19px;height:19px;color:var(--accent)"></i>
               </div>
               <div class="reporte-card-body">
                 <div class="reporte-card-title-row">

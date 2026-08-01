@@ -445,6 +445,71 @@
 
 
 /* ============================================================================
+   Dark mode — shell buttons
+   Todos los botones de la topbar usan var(--border) que en dark es #221E14
+   (casi invisible). Aquí se sobreescriben a border-default/strong + bg-elevated.
+   ============================================================================ */
+[data-theme="dark"] .bo-hamburger {
+  border-color: var(--border-default);
+  background: var(--bg-elevated);
+}
+[data-theme="dark"] .bo-hamburger:hover {
+  background: var(--bg-overlay);
+  border-color: var(--border-strong);
+}
+[data-theme="dark"] .bo-topbar-icon {
+  border-color: var(--border-default);
+  background: var(--bg-elevated);
+}
+[data-theme="dark"] .bo-topbar-icon:hover {
+  background: var(--bg-overlay);
+  border-color: var(--border-strong);
+}
+[data-theme="dark"] .bo-topbar-sucursal {
+  background: var(--bg-elevated);
+  border-color: var(--border-default);
+}
+[data-theme="dark"] .bo-topbar-sucursal:hover {
+  background: var(--bg-overlay);
+  border-color: var(--border-strong);
+}
+[data-theme="dark"] .bo-filter-btn {
+  background: var(--bg-elevated);
+  border-color: var(--border-default);
+}
+[data-theme="dark"] .bo-filter-btn:hover {
+  background: var(--bg-overlay);
+  border-color: var(--border-strong);
+}
+[data-theme="dark"] .bo-toolbar-filter {
+  background: var(--bg-elevated);
+  border-color: var(--border-default);
+}
+[data-theme="dark"] .bo-view-btns button.is-active {
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-sm);
+}
+[data-theme="dark"] .bo-page-btn {
+  border-color: var(--border-default);
+  background: var(--bg-elevated);
+}
+[data-theme="dark"] .bo-page-btn:hover {
+  background: var(--bg-overlay);
+}
+[data-theme="dark"] .bo-page-btn.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+[data-theme="dark"] .bo-toolbar-search input {
+  background: var(--bg-elevated);
+  border-color: var(--border-default);
+}
+[data-theme="dark"] .bo-toolbar-search input:focus {
+  border-color: var(--accent);
+}
+
+
+/* ============================================================================
    Responsive del sidebar
    ============================================================================ */
 .bo-sidebar-backdrop {
@@ -523,6 +588,15 @@
   min-width: 0;
 }
 
+@media (max-width: 640px) {
+  .bo-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+  .bo-page-actions { width: 100%; }
+}
+
 /* ---------- Period Toggle (Hoy / Semana / Mes) ---------- */
 .bo-period-toggle {
   display: inline-flex;
@@ -594,6 +668,16 @@
 @media (max-width: 640px) {
   .kpi-grid { grid-template-columns: 1fr; }
 }
+
+/* Variante de 3 columnas (módulos con 3 KPIs: gastos, proveedores) */
+.kpi-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+@media (max-width: 900px)  { .kpi-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px)  { .kpi-grid-3 { grid-template-columns: 1fr; } }
 
 /* ---------- Dashboard grid rows ---------- */
 .dash-row { margin-bottom: 14px; }
@@ -866,6 +950,13 @@
 .bo-view-btns button.is-active { background: var(--bg); color: var(--accent); box-shadow: var(--shadow-sm); }
 .bo-view-btns button svg { width: 12px; height: 12px; }
 
+/* En móvil la toolbar se apila y el buscador ocupa todo el ancho */
+@media (max-width: 640px) {
+  .bo-toolbar { flex-direction: column; align-items: stretch; }
+  .bo-toolbar-search { width: 100%; }
+  .bo-toolbar-spacer { display: none; }
+}
+
 /* ---------- Paginación ---------- */
 .bo-pagination {
   display: flex;
@@ -1016,6 +1107,14 @@
   letter-spacing: .04em;
   pointer-events: none;
 }
+/* Variantes de tono (modo claro) */
+.product-img-badge.tone-warning { background: #FFFBEB; color: #78350F; }
+.product-img-badge.tone-info    { background: #EFF6FF; color: #1E3A8A; }
+.product-img-badge.tone-error   { background: #FEF2F2; color: #7F1D1D; }
+/* Variantes de tono (modo oscuro) */
+[data-theme="dark"] .product-img-badge.tone-warning { background: rgba(245, 158, 11, 0.16); color: #FCD34D; }
+[data-theme="dark"] .product-img-badge.tone-info    { background: rgba(59, 130, 246, 0.16); color: #93C5FD; }
+[data-theme="dark"] .product-img-badge.tone-error   { background: rgba(239, 68, 68, 0.16); color: #FCA5A5; }
 
 .product-img-more {
   position: absolute;
@@ -1275,10 +1374,10 @@
 
 .precio-default-chip {
   font-size: 9px; font-weight: 700; padding: 2px 6px;
-  border-radius: 4px; background: #EEF2FF; color: #3730A3;
+  border-radius: 4px; background: var(--accent-soft); color: var(--accent-hover);
   letter-spacing: .04em; text-transform: uppercase;
 }
-[data-theme="dark"] .precio-default-chip { background: rgba(99,102,241,.18); color: #C7D2FE; }
+[data-theme="dark"] .precio-default-chip { color: var(--accent); }
 
 /* Switch toggle */
 .switch {

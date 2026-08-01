@@ -1,9 +1,14 @@
 /* ============================================================================
-   tokens.css — Sistema de tokens del design system "Inventario POS"
-   Sprint 0.1 · Actualizado Sprint 14 (estética Vercel)
+   tokens.css — Sistema de tokens del design system NOVA
+   ----------------------------------------------------------------------------
+   Identidad: TOSTADO (#0C0A06 / #FBFAF7) + SAFFRON GOLD (#B98521 light /
+   #D9A445 dark). Tipografía única: DM Sans (UI/body/display) + JetBrains Mono
+   (datos/código). 4 niveles de superficie, bordes translúcidos semánticos,
+   badges de estado sin relleno sólido (triplete bg+border+text).
+   Regla inviolable: los componentes NUNCA hardcodean color — siempre vía token.
    ============================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* View Transitions — navegación suave entre pantallas (Chromium 111+, Safari 18) */
 @view-transition { navigation: auto; }
@@ -34,60 +39,85 @@ body {
    :root — Modo claro (default)
    ============================================================================ */
 :root {
-  /* ---------- Paleta base ---------- */
-  --bg: #FAFAFA;
-  --alt: #F4F4F5;
-  --text: #0A0A0A;
-  --muted: #71717A;
-  --accent: #4F46E5;
-  --accent-hover: #4338CA;
-  --border: #E4E4E7;
+  /* ---------- Marca · Saffron Gold ---------- */
+  --gold-50:  #FBF6E8;
+  --gold-100: #F5EAC5;
+  --gold-300: #E0BE6E;
+  --gold-500: #B98521;
+  --gold-600: #9A6E15;
+  --gold-700: #7B570E;
+  --gold-950: #2A1D04;
+  --gold-bright: #D9A445;
 
-  /* Escala de superficies (modo claro) */
-  --bg-base:     #FAFAFA;
-  --bg-surface:  #FFFFFF;
-  --bg-elevated: #F4F4F5;
-  --bg-overlay:  #EBEBEB;
+  /* ---------- Neutrales tostados (toasted warm) ---------- */
+  --toast-50:  #FBFAF7;
+  --toast-100: #F4F1EA;
+  --toast-200: #E7E2D6;
+  --toast-400: #9C907A;
+  --toast-500: #6B6358;
+  --toast-900: #221E14;
+  --toast-950: #0C0A06;
 
-  /* Bordes semánticos */
-  --border-subtle:  rgba(0,0,0,0.04);
-  --border-default: rgba(0,0,0,0.08);
-  --border-strong:  rgba(0,0,0,0.14);
+  /* ---------- Paleta base (modo claro) ---------- */
+  --bg:     #FBFAF7;
+  --alt:    #F4F1EA;
+  --text:   #1A1612;
+  --muted:  #6B6358;
+  --border: #E7E2D6;
 
-  /* ---------- Estados ---------- */
-  --success: #10B981;
-  --error: #EF4444;
-  --warning: #F59E0B;
-  --info: #3B82F6;
+  --accent:       #B98521;
+  --accent-hover: #9A6E15;
+  --accent-soft:  #FBF6E8;            /* ghost button hover / fondos suaves */
+  --accent-ring:  rgba(185,133,33,0.18); /* focus glow gold */
 
-  /* Aliases semánticos */
-  --state-success: #10B981;
-  --state-warning: #F59E0B;
-  --state-danger:  #EF4444;
-  --state-info:    #3B82F6;
+  /* Escala de superficies (4 niveles) */
+  --bg-base:     #FBFAF7;   /* fondo de página */
+  --bg-surface:  #FFFFFF;   /* cards nivel 1 */
+  --bg-elevated: #F4F1EA;   /* modales, drawers, card-sobre-card */
+  --bg-overlay:  #ECE7D9;   /* hover states */
 
-  /* Fondos de badge (translúcidos — Vercel style) */
-  --state-success-bg:     rgba(16,185,129,0.10);
-  --state-warning-bg:     rgba(245,158,11,0.10);
-  --state-danger-bg:      rgba(239,68,68,0.10);
-  --state-info-bg:        rgba(59,130,246,0.10);
-  --state-success-border: rgba(16,185,129,0.25);
-  --state-warning-border: rgba(245,158,11,0.25);
-  --state-danger-border:  rgba(239,68,68,0.25);
-  --state-info-border:    rgba(59,130,246,0.25);
+  /* Bordes semánticos translúcidos */
+  --border-subtle:  rgba(26,22,18,0.05);
+  --border-default: rgba(26,22,18,0.09);
+  --border-strong:  rgba(26,22,18,0.16);
+
+  /* ---------- Estados (modo claro, saturados AA-safe sobre #FBFAF7) ---------- */
+  --success: #15803D;
+  --error:   #B91C1C;
+  --warning: #B45309;
+  --info:    #1E40AF;
+
+  --state-success: #15803D;
+  --state-warning: #B45309;
+  --state-danger:  #B91C1C;
+  --state-info:    #1E40AF;
+
+  /* Fondos + bordes de badge translúcidos */
+  --state-success-bg:     rgba(21,128,61,0.10);
+  --state-warning-bg:     rgba(180,83,9,0.10);
+  --state-danger-bg:      rgba(185,28,28,0.10);
+  --state-info-bg:        rgba(30,64,175,0.10);
+  --state-success-border: rgba(21,128,61,0.25);
+  --state-warning-border: rgba(180,83,9,0.25);
+  --state-danger-border:  rgba(185,28,28,0.25);
+  --state-info-border:    rgba(30,64,175,0.25);
 
   /* ---------- Tipografía ---------- */
-  --ff-base: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --ff-display: 'Bebas Neue', 'Inter', system-ui, sans-serif;
+  --ff-base:    'DM Sans', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ff-display: 'DM Sans', system-ui, sans-serif;
+  --ff-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* ---------- Logo ROOT POS ----------
-     Gradiente alineado con --accent (#4F46E5) para coherencia con el resto
-     del design system. El borde de POS se deriva del accent para mantener
-     una sola familia cromática. */
-  --logo-gradient: linear-gradient(135deg, var(--accent) 0%, #1e1b4b 100%);
-  --logo-pos-border: color-mix(in srgb, var(--accent) 55%, #ffffff 45%);
-  --logo-shadow: 0 6px 20px -8px color-mix(in srgb, var(--accent) 60%, transparent);
+  /* ---------- Logo / wordmark gradientes ---------- */
+  --logo-gradient:   linear-gradient(135deg, #D9A445 0%, #B98521 38%, #6B4906 100%);
+  --logo-pos-border: color-mix(in srgb, var(--accent) 55%, #FFFCEF 45%);
+  --logo-shadow:     0 12px 36px -12px rgba(185,133,33,0.45);
 
+  /* Gradientes de marca (también usables como fondos) */
+  --grad-hero: linear-gradient(135deg, #D9A445 0%, #B98521 38%, #6B4906 100%);
+  --grad-soft: linear-gradient(180deg, rgba(217,164,69,0.10) 0%, rgba(217,164,69,0) 100%);
+  --grad-cta:  linear-gradient(135deg, #EBB85B 0%, #B98521 100%);
+
+  /* Escala tipográfica */
   --fs-display: 36px;  --fw-display: 700;  --lh-display: 1.15;  --ls-display: -0.02em;
   --fs-h1:      28px;  --fw-h1:      700;  --lh-h1:      1.2;   --ls-h1:      -0.015em;
   --fs-h2:      22px;  --fw-h2:      600;  --lh-h2:      1.25;  --ls-h2:      -0.01em;
@@ -98,7 +128,17 @@ body {
   --fs-caption: 12px;  --fw-caption: 500;  --lh-caption: 1.4;   --ls-caption: 0;
   --fs-overline:11px;  --fw-overline:600;  --lh-overline:1.4;   --ls-overline:0.06em;
 
-  /* ---------- Espaciado ---------- */
+  /* Pesos nombrados */
+  --fw-regular:   400;
+  --fw-medium:    500;
+  --fw-semibold:  600;
+  --fw-bold:      700;
+  --fw-extrabold: 800;
+
+  /* Dígitos tabulares */
+  --num-tabular: tabular-nums;
+
+  /* ---------- Espaciado (base 4px) ---------- */
   --space-1:  4px;
   --space-2:  8px;
   --space-3:  12px;
@@ -107,17 +147,30 @@ body {
   --space-6:  24px;
   --space-8:  32px;
   --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
 
-  /* ---------- Radios (Sprint 14) ---------- */
+  /* ---------- Radios ---------- */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 20px;
+  --radius-full: 9999px;
 
-  /* ---------- Sombras (modo claro) ---------- */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.10);
+  /* ---------- Sombras (modo claro, tono cálido) ---------- */
+  --shadow-sm: 0 1px 2px rgba(26,22,18,0.05);
+  --shadow-md: 0 8px 24px -10px rgba(26,22,18,0.10);
+  --shadow-lg: 0 24px 48px -16px rgba(26,22,18,0.16);
+
+  /* Sombra de marca — solo para CTA primario y logo hero */
+  --gold-glow: 0 12px 36px -12px rgba(185,133,33,0.45);
+
+  /* ---------- Z-index ---------- */
+  --z-sidebar:  60;
+  --z-backdrop: 55;
+  --z-overlay:  50;
+  --z-toast:    100;
+  --z-jump:     200;
 }
 
 /* Transición suave al cambiar tema */
@@ -129,49 +182,52 @@ html {
    [data-theme="dark"] — Modo oscuro
    ============================================================================ */
 [data-theme="dark"] {
-  --bg: #0A0A0A;
-  --alt: #111111;
-  --text: #FAFAFA;
-  --muted: #A1A1AA;
-  --accent: #4F46E5;
-  --accent-hover: #4338CA;
-  --border: #1F1F1F;
+  --bg:     #0C0A06;
+  --alt:    #15120B;
+  --text:   #F4EFE0;
+  --muted:  #9C907A;
+  --border: #221E14;
 
-  /* Escala de superficies Vercel */
-  --bg-base:     #0A0A0A;
-  --bg-surface:  #111111;
-  --bg-elevated: #161616;
-  --bg-overlay:  #1C1C1C;
+  --accent:       #D9A445;            /* sube luminosidad en oscuro */
+  --accent-hover: #EBB85B;
+  --accent-soft:  rgba(217,164,69,0.14);
+  --accent-ring:  rgba(217,164,69,0.32);
 
-  /* Bordes Vercel */
-  --border-subtle:  rgba(255,255,255,0.06);
-  --border-default: rgba(255,255,255,0.10);
-  --border-strong:  rgba(255,255,255,0.16);
+  --bg-base:     #0C0A06;
+  --bg-surface:  #13110A;
+  --bg-elevated: #1B1810;
+  --bg-overlay:  #251F14;
 
-  /* Estados — menor saturación, más legibles en oscuro */
-  --success: #22C55E;
-  --error:   #F43F5E;
-  --warning: #EAB308;
-  --info:    #60A5FA;
+  --border-subtle:  rgba(244,239,224,0.06);
+  --border-default: rgba(244,239,224,0.10);
+  --border-strong:  rgba(244,239,224,0.18);
 
-  /* Aliases semánticos */
-  --state-success: #22C55E;
-  --state-warning: #EAB308;
-  --state-danger:  #F43F5E;
-  --state-info:    #60A5FA;
+  /* Estados — más luminosos para legibilidad en oscuro */
+  --success: #4ADE80;
+  --error:   #FB7185;
+  --warning: #FBBF24;
+  --info:    #93C5FD;
 
-  /* Fondos de badge (translúcidos) */
-  --state-success-bg:     rgba(34,197,94,0.10);
-  --state-warning-bg:     rgba(234,179,8,0.10);
-  --state-danger-bg:      rgba(244,63,94,0.10);
-  --state-info-bg:        rgba(96,165,250,0.10);
-  --state-success-border: rgba(34,197,94,0.25);
-  --state-warning-border: rgba(234,179,8,0.25);
-  --state-danger-border:  rgba(244,63,94,0.25);
-  --state-info-border:    rgba(96,165,250,0.25);
+  --state-success: #4ADE80;
+  --state-warning: #FBBF24;
+  --state-danger:  #FB7185;
+  --state-info:    #93C5FD;
 
-  /* Sombras con ring sutil (Vercel) */
-  --shadow-sm:  0 1px 2px rgba(0,0,0,0.40);
-  --shadow-md:  0 4px 12px rgba(0,0,0,0.50), 0 0 0 1px rgba(255,255,255,0.04);
-  --shadow-lg:  0 12px 32px rgba(0,0,0,0.60), 0 0 0 1px rgba(255,255,255,0.06);
+  --state-success-bg:     rgba(74,222,128,0.10);
+  --state-warning-bg:     rgba(251,191,36,0.10);
+  --state-danger-bg:      rgba(251,113,133,0.10);
+  --state-info-bg:        rgba(147,197,253,0.10);
+  --state-success-border: rgba(74,222,128,0.25);
+  --state-warning-border: rgba(251,191,36,0.25);
+  --state-danger-border:  rgba(251,113,133,0.25);
+  --state-info-border:    rgba(147,197,253,0.25);
+
+  /* Sombras con ring sutil en oscuro */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.50);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.55), 0 0 0 1px rgba(244,239,224,0.04);
+  --shadow-lg: 0 24px 48px rgba(0,0,0,0.65), 0 0 0 1px rgba(244,239,224,0.06);
+  --gold-glow: 0 16px 48px -12px rgba(217,164,69,0.40);
+
+  /* Gradientes en oscuro — más saturados para destacar sobre tostado */
+  --grad-soft: linear-gradient(180deg, rgba(217,164,69,0.14) 0%, rgba(217,164,69,0) 100%);
 }

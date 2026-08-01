@@ -114,7 +114,7 @@
 }
 
 .mesa-card.is-selected {
-  box-shadow: 0 0 0 2px var(--primary, #4F46E5);
+  box-shadow: 0 0 0 2px var(--primary, var(--accent));
 }
 
 /* Estados */

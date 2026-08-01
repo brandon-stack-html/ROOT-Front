@@ -1,0 +1,15 @@
+/* ============================================================================
+   fonts.css — Webfonts del sistema NOVA
+   ----------------------------------------------------------------------------
+   NOVA usa dos familias, ambas servidas desde Google Fonts:
+     · DM Sans         — UI, cuerpo, datos, headings, display. Pesos 400/500/600/700/800.
+                         Geométrica con terminaciones suavemente redondeadas: tech
+                         pero con calidez, que es la personalidad de la marca.
+     · JetBrains Mono  — datos tabulares, código, KPIs, labels técnicas.
+                         Pesos 400/500/600.
+   Una sola familia para toda la UI = menos peso, menos decisiones, más coherencia.
+   Para producción puedes auto-hospedar los .woff2 y reemplazar este @import por
+   reglas @font-face locales sin cambiar tokens.
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;500;600&display=swap');

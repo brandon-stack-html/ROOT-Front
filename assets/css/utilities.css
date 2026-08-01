@@ -4,79 +4,7 @@
    navegación global (back-home, Ctrl+K jumper), skeletons.
    ============================================================================ */
 
-/* ---------- Wordmark ROOT POS ----------
-   Dos variantes:
-   · COMPACT (default): horizontal, sin caja gradiente. Se integra a sidebars,
-     topbars y landing. Color adaptable al tema (var(--text)).
-   · HERO (.is-hero):   apilado, con gradiente de marca. Para pantallas de
-     auth donde el logo es el protagonista.
-   Todo escala vía `em` desde el `font-size` inline del contexto. */
-.root-wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45em;
-  font-family: var(--ff-display);
-  font-size: 16px;
-  line-height: 1;
-  color: var(--text);
-  white-space: nowrap;
-  user-select: none;
-  text-transform: uppercase;
-}
-.root-wordmark .rw-root {
-  font-size: 1.45em;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  font-family: inherit;
-}
-.root-wordmark .rw-fill {
-  color: currentColor;
-  font-family: inherit;
-}
-.root-wordmark .rw-stroke {
-  font-family: inherit;
-  color: color-mix(in srgb, currentColor 55%, transparent);
-}
-.root-wordmark .rw-pos {
-  display: inline-block;
-  font-size: 0.78em;
-  letter-spacing: 0.28em;
-  text-indent: 0.28em;
-  padding: 0.2em 0.5em 0.14em;
-  border: 1px solid color-mix(in srgb, currentColor 38%, transparent);
-  border-radius: 0.35em;
-  line-height: 1;
-}
-
-/* HERO — pantallas de auth/login (con gradiente y caja) */
-.root-wordmark.is-hero {
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.3em;
-  padding: 0.55em 0.85em 0.5em;
-  background: var(--logo-gradient);
-  border-radius: 0.55em;
-  color: #fff;
-  box-shadow: var(--logo-shadow);
-  outline: 1px solid rgba(255, 255, 255, 0.06);
-  outline-offset: -1px;
-}
-.root-wordmark.is-hero .rw-root {
-  font-size: 2.5em;
-  line-height: 1;
-}
-.root-wordmark.is-hero .rw-stroke {
-  color: transparent;
-  -webkit-text-stroke: 0.06em #fff;
-}
-.root-wordmark.is-hero .rw-pos {
-  font-size: 0.88em;
-  letter-spacing: 0.38em;
-  text-indent: 0.38em;
-  padding: 0.18em 0.55em 0.12em;
-  border: 1px solid var(--logo-pos-border);
-  border-radius: 0.4em;
-}
+/* Wordmark NOVA: ver assets/css/brand.css (clases .nova-wordmark / .root-wordmark) */
 
 /* ---------- A11y: focus visible ---------- */
 :focus { outline: none; }
@@ -284,8 +212,3 @@ body:has(.sf-checkout-bar) .nav-back-home {
   100% { background-position: 200% 0; }
 }
 
-/* ── Logo ROOT POS oculto temporalmente ─────────────────────────────────── */
-.root-wordmark,
-.auth-login-logo,
-.auth-shell-logo,
-.auth-panel-brand { display: none !important; }

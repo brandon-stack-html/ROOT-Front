@@ -6,8 +6,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Conteo de inventario · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
@@ -30,21 +34,17 @@
     /* Modo ciego badge */
     .modo-ciego-wrap {
       display: flex; align-items: center; gap: 10px;
-      padding: 8px 14px; border-radius: 9px;
-      background: #FEF3C7; border: 1px solid #FDE68A;
+      padding: 8px 14px; border-radius: var(--radius-md);
+      background: var(--state-warning-bg); border: 1px solid var(--state-warning-border);
     }
-    [data-theme="dark"] .modo-ciego-wrap {
-      background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.4);
-    }
-    .modo-ciego-label { font-size: 12px; font-weight: 600; color: #92400E; }
-    .modo-ciego-sub { font-size: 10px; color: #92400E; opacity: .85; }
-    [data-theme="dark"] .modo-ciego-label, [data-theme="dark"] .modo-ciego-sub { color: #FDE68A; }
+    .modo-ciego-label { font-size: 12px; font-weight: 600; color: var(--warning); }
+    .modo-ciego-sub { font-size: 10px; color: var(--warning); opacity: .85; }
 
     .header-btns { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
     /* Progress card */
     .progress-card {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 11px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md);
       padding: 14px 18px; margin-bottom: 16px;
     }
     .progress-card-top {
@@ -60,26 +60,6 @@
       height: 100%; background: linear-gradient(90deg, var(--success), var(--accent));
       border-radius: 4px; transition: width .3s;
     }
-
-    /* Toolbar */
-    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    .toolbar-search { position: relative; }
-    .toolbar-search input {
-      padding: 8px 12px 8px 34px; border-radius: 8px;
-      border: 1px solid var(--border); background: var(--bg); color: var(--text);
-      font-family: var(--ff-base); font-size: 13px; width: 220px; outline: none;
-    }
-    .toolbar-search input:focus { border-color: var(--accent); }
-    .toolbar-search .s-icon {
-      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-      color: var(--muted); display: flex; pointer-events: none;
-    }
-    .toolbar-select {
-      padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text); font-family: var(--ff-base);
-      font-size: 13px; outline: none; cursor: pointer;
-    }
-    .toolbar-spacer { flex: 1; min-width: 8px; }
 
     /* Toggle switch */
     .toggle { position: relative; display: inline-flex; width: 34px; height: 18px; flex-shrink: 0; }
@@ -97,7 +77,7 @@
     .toggle input:checked + .toggle-track::before { transform: translateX(16px); }
 
     /* Conteo table */
-    .conteo-table { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .conteo-table { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
     .ct-header, .ct-row {
       display: grid;
       grid-template-columns: 1.6fr 0.9fr 1fr 1.3fr 0.9fr 1.2fr;
@@ -144,8 +124,7 @@
       padding: 0 10px; height: 32px; gap: 6px; max-width: 160px;
       background: var(--bg); transition: border-color 0.15s;
     }
-    .contado-input-wrap.pendiente { background: #FFFBEB; border-color: #FCD34D; }
-    [data-theme="dark"] .contado-input-wrap.pendiente { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.5); }
+    .contado-input-wrap.pendiente { background: var(--state-warning-bg); border-color: var(--state-warning-border); }
     .contado-input-wrap:focus-within { border-color: var(--accent); }
     .contado-input {
       flex: 1; border: none; outline: none; background: transparent;
@@ -156,19 +135,17 @@
 
     /* Estado badges */
     .badge-contado {
-      padding: 3px 9px; border-radius: 11px;
-      background: #DCFCE7; color: #14532D;
+      padding: 3px 9px; border-radius: var(--radius-full);
+      background: var(--state-success-bg); color: var(--state-success); border: 1px solid var(--state-success-border);
       font-size: 11px; font-weight: 600;
       display: inline-flex; align-items: center; gap: 5px;
     }
     .badge-pendiente {
-      padding: 3px 9px; border-radius: 11px;
-      background: #FEF3C7; color: #92400E;
+      padding: 3px 9px; border-radius: var(--radius-full);
+      background: var(--state-warning-bg); color: var(--state-warning); border: 1px solid var(--state-warning-border);
       font-size: 11px; font-weight: 600;
       display: inline-flex; align-items: center; gap: 5px;
     }
-    [data-theme="dark"] .badge-contado  { background: rgba(16,185,129,.18); color: #86EFAC; }
-    [data-theme="dark"] .badge-pendiente { background: rgba(245,158,11,.18); color: #FDE68A; }
 
     /* Nota btn */
     .nota-btn {
@@ -214,8 +191,6 @@
       .conteo-header { flex-direction: column; gap: 12px; }
       .header-btns { justify-content: flex-start; }
       .modo-ciego-wrap { align-self: flex-start; }
-      .toolbar { flex-direction: column; align-items: stretch; }
-      .toolbar-search input { width: 100%; }
       .conteo-footer { margin: 16px -14px -24px; padding: 12px 14px; flex-direction: column; align-items: flex-start; }
     }
   </style>
@@ -228,7 +203,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+          <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -335,7 +310,7 @@
           </div>
           <div class="header-btns">
             <div class="modo-ciego-wrap">
-              <i data-lucide="eye-off" style="width:14px;height:14px;color:#F59E0B;flex-shrink:0;"></i>
+              <i data-lucide="eye-off" style="width:14px;height:14px;color:var(--state-warning);flex-shrink:0;"></i>
               <div>
                 <div class="modo-ciego-label">Modo ciego</div>
                 <div class="modo-ciego-sub">Stock teórico oculto</div>
@@ -366,12 +341,12 @@
         </div>
 
         <!-- Toolbar -->
-        <div class="toolbar">
-          <div class="toolbar-search">
+        <div class="bo-toolbar">
+          <div class="bo-toolbar-search">
             <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
             <input type="text" placeholder="Buscar ingrediente...">
           </div>
-          <select class="toolbar-select">
+          <select class="bo-toolbar-filter">
             <option>Categoría: Todos</option>
             <option>Vegetal</option>
             <option>Proteína</option>
@@ -379,12 +354,12 @@
             <option>Lácteo</option>
             <option>Fruta</option>
           </select>
-          <select class="toolbar-select">
+          <select class="bo-toolbar-filter">
             <option>Estado: Todos</option>
             <option>Contados</option>
             <option>Pendientes</option>
           </select>
-          <div class="toolbar-spacer"></div>
+          <div class="bo-toolbar-spacer"></div>
           <button class="btn btn-ghost">
             <i data-lucide="download"></i> Exportar plantilla
           </button>
@@ -512,8 +487,8 @@
             </div>
             <div class="modal-body">
               <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-                <div style="width:44px;height:44px;border-radius:11px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i data-lucide="alert-triangle" style="width:20px;height:20px;color:#F59E0B;"></i>
+                <div style="width:44px;height:44px;border-radius:11px;background:var(--state-warning-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i data-lucide="alert-triangle" style="width:20px;height:20px;color:var(--state-warning);"></i>
                 </div>
                 <div>
                   <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;">¿Aplicar ajustes al inventario?</div>

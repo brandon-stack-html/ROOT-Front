@@ -6,44 +6,32 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Contabilidad · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
   <style>
-    /* ── Page header ── */
-    .bo-ph { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
-    .bo-ph-title { font-size:22px; font-weight:700; color:var(--text); letter-spacing:-.01em; }
-    .bo-ph-sub   { font-size:13px; color:var(--muted); margin-top:3px; }
-    .bo-ph-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-
     /* ── Integration banner ── */
     .cont-banner {
       display:flex; align-items:center; gap:14px; padding:14px 18px;
       border-radius:10px; margin-bottom:20px; flex-wrap:wrap;
     }
     .cont-banner.connected {
-      background: #F0FDF4; border:1px solid #BBF7D0; border-left:4px solid var(--success);
-    }
-    [data-theme="dark"] .cont-banner.connected {
-      background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.35); border-left-color: var(--success);
+      background: var(--state-success-bg); border:1px solid var(--state-success-border); border-left:4px solid var(--success);
     }
     .cont-banner-icon {
-      width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
-      background:#DCFCE7; color:var(--success);
+      width:36px; height:36px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      background:var(--state-success-bg); color:var(--success);
     }
-    [data-theme="dark"] .cont-banner-icon { background:rgba(16,185,129,.18); }
     .cont-banner-info { flex:1; min-width:200px; }
-    .cont-banner-title { font-size:13px; font-weight:600; color:#14532D; }
-    [data-theme="dark"] .cont-banner-title { color:#86EFAC; }
+    .cont-banner-title { font-size:13px; font-weight:600; color:var(--success); }
     .cont-banner-sub { font-size:12px; color:var(--muted); margin-top:2px; }
     .cont-banner-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-
-    /* ── KPI grid ── */
-    .kpi-grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
-    @media(max-width:1024px){ .kpi-grid-4{ grid-template-columns:repeat(2,1fr); } }
-    @media(max-width:480px){  .kpi-grid-4{ grid-template-columns:1fr; } }
 
     /* ── Tabs ── */
     .cont-tabs { display:flex; border-bottom:1px solid var(--border); margin-bottom:24px; overflow-x:auto; scrollbar-width:none; }
@@ -57,31 +45,11 @@
     .cont-panel { display:none; }
     .cont-panel.is-active { display:block; }
 
-    /* ── Toolbar ── */
-    .toolbar { display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
-    .toolbar-search { position:relative; }
-    .toolbar-search input {
-      padding:8px 12px 8px 34px; border-radius:8px;
-      border:1px solid var(--border); background:var(--bg); color:var(--text);
-      font-family:var(--ff-base); font-size:13px; width:240px; outline:none;
-    }
-    .toolbar-search input:focus { border-color:var(--accent); }
-    .toolbar-search .s-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--muted); display:flex; pointer-events:none; }
-    .toolbar-select {
-      padding:8px 12px; border-radius:8px; border:1px solid var(--border);
-      background:var(--bg); color:var(--text); font-family:var(--ff-base);
-      font-size:13px; outline:none; cursor:pointer;
-    }
-    .toolbar-spacer { flex:1; min-width:8px; }
-
     /* ── Tables: scroll horizontal en mobile ── */
     .table-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
 
     /* ── Mobile 768px ── */
     @media(max-width:768px){
-      .bo-ph { flex-direction:column; gap:10px; }
-      .toolbar { flex-direction:column; align-items:stretch; }
-      .toolbar-search input { width:100%; }
       .cont-tabs-wrap { flex-direction:column !important; align-items:stretch !important; }
       .cont-tabs-wrap > .btn { align-self:flex-end; order:-1; margin-bottom:4px; }
     }
@@ -99,7 +67,7 @@
     }
 
     /* ── P&L Table ── */
-    .cont-card { background:var(--bg); border:1px solid var(--border); border-radius:11px; overflow:hidden; margin-bottom:20px; }
+    .cont-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; margin-bottom:20px; }
     .cont-card-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
     .cont-card-title { font-size:14px; font-weight:700; color:var(--text); }
     .cont-card-sub { font-size:12px; color:var(--muted); }
@@ -110,10 +78,8 @@
     .pl-item td:last-child { text-align:right; font-variant-numeric:tabular-nums; color:var(--muted); }
     .pl-subtotal td { font-weight:700; color:var(--text); border-top:1px solid var(--border); }
     .pl-subtotal td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
-    .pl-result td { font-weight:700; font-size:14px; border-top:2px solid var(--border); background:#F0FDF4; }
-    [data-theme="dark"] .pl-result td { background:rgba(16,185,129,.08); }
-    .pl-result td:first-child { color:#14532D; }
-    [data-theme="dark"] .pl-result td:first-child { color:#86EFAC; }
+    .pl-result td { font-weight:700; font-size:14px; border-top:2px solid var(--border); background:var(--state-success-bg); }
+    .pl-result td:first-child { color:var(--success); }
     .pl-result td:last-child { text-align:right; color:var(--success); font-variant-numeric:tabular-nums; }
     .pl-total td { font-weight:600; color:var(--text); border-top:1px solid var(--border); }
     .pl-total td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
@@ -161,7 +127,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+          <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -258,12 +224,12 @@
       <main id="main" class="bo-content">
 
         <!-- ── Page header ── -->
-        <div class="bo-ph">
+        <div class="bo-page-header">
           <div>
-            <div class="bo-ph-title">Contabilidad</div>
-            <div class="bo-ph-sub">Marzo 2025 · El Buen Sabor — NIT 900.123.456-7</div>
+            <div class="bo-page-title">Contabilidad</div>
+            <div class="bo-page-subtitle">Marzo 2025 · El Buen Sabor — NIT 900.123.456-7</div>
           </div>
-          <div class="bo-ph-actions">
+          <div class="bo-page-actions">
             <button class="btn btn-ghost"><i data-lucide="calendar"></i> Mar 2025</button>
             <button class="btn btn-ghost"><i data-lucide="download"></i> Exportar libros</button>
             <button class="btn btn-primary" id="btnConectarSoftware"><i data-lucide="plug"></i> Conectar software</button>
@@ -288,35 +254,35 @@
         </div>
 
         <!-- ── KPIs ── -->
-        <div class="kpi-grid-4">
+        <div class="kpi-grid">
           <div class="kpi-card tone-success">
-            <div class="kpi-header">
+            <div class="kpi-card-head">
               <span class="kpi-label">Ingresos del mes</span>
-              <span class="kpi-icon"><i data-lucide="trending-up"></i></span>
+              <span class="kpi-icon-wrap"><i data-lucide="trending-up"></i></span>
             </div>
             <div class="kpi-value">$18.450.000</div>
-            <div class="kpi-delta delta-up"><i data-lucide="trending-up"></i> +12% vs feb</div>
+            <div class="kpi-delta up"><i data-lucide="trending-up"></i> +12% vs feb</div>
           </div>
           <div class="kpi-card tone-error">
-            <div class="kpi-header">
+            <div class="kpi-card-head">
               <span class="kpi-label">Gastos del mes</span>
-              <span class="kpi-icon"><i data-lucide="trending-down"></i></span>
+              <span class="kpi-icon-wrap"><i data-lucide="trending-down"></i></span>
             </div>
             <div class="kpi-value">$11.230.000</div>
-            <div class="kpi-delta delta-up"><i data-lucide="trending-up"></i> +3% vs feb</div>
+            <div class="kpi-delta up"><i data-lucide="trending-up"></i> +3% vs feb</div>
           </div>
           <div class="kpi-card tone-muted">
-            <div class="kpi-header">
+            <div class="kpi-card-head">
               <span class="kpi-label">Utilidad bruta</span>
-              <span class="kpi-icon"><i data-lucide="calculator"></i></span>
+              <span class="kpi-icon-wrap"><i data-lucide="calculator"></i></span>
             </div>
             <div class="kpi-value">$7.220.000</div>
             <div class="kpi-helper">Margen: 39.1%</div>
           </div>
           <div class="kpi-card tone-warning">
-            <div class="kpi-header">
+            <div class="kpi-card-head">
               <span class="kpi-label">Impuestos causados</span>
-              <span class="kpi-icon"><i data-lucide="percent"></i></span>
+              <span class="kpi-icon-wrap"><i data-lucide="percent"></i></span>
             </div>
             <div class="kpi-value">$1.580.000</div>
             <div class="kpi-helper">IVA + ICA + Retenciones</div>
@@ -430,12 +396,12 @@
         </div>
         <div id="panel-plan" class="cont-panel">
           <!-- Toolbar -->
-          <div class="toolbar" style="margin-bottom:16px;">
-            <div class="toolbar-search">
+          <div class="bo-toolbar" style="margin-bottom:16px;">
+            <div class="bo-toolbar-search">
               <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
               <input type="text" id="planSearch" placeholder="Buscar cuenta...">
             </div>
-            <select class="toolbar-select" id="planFiltroClase">
+            <select class="bo-toolbar-filter" id="planFiltroClase">
               <option value="">Clase: Todas</option>
               <option value="1">1 — Activo</option>
               <option value="2">2 — Pasivo</option>
@@ -444,7 +410,7 @@
               <option value="5">5 — Gastos</option>
               <option value="6">6 — Costos</option>
             </select>
-            <div class="toolbar-spacer"></div>
+            <div class="bo-toolbar-spacer"></div>
             <button class="btn btn-ghost btn-sm"><i data-lucide="plus"></i> Nueva cuenta</button>
           </div>
 
@@ -591,20 +557,20 @@
         </div>
         <!-- ── PANEL LIBROS AUXILIARES ── -->
         <div id="panel-libros" class="cont-panel">
-          <div class="toolbar" style="margin-bottom:16px;">
-            <select class="toolbar-select">
+          <div class="bo-toolbar" style="margin-bottom:16px;">
+            <select class="bo-toolbar-filter">
               <option>1105 · Caja</option>
               <option>1110 · Bancos</option>
               <option>4135 · Ingresos operacionales</option>
               <option>5105 · Gastos de personal</option>
             </select>
-            <select class="toolbar-select">
+            <select class="bo-toolbar-filter">
               <option>Marzo 2025</option>
               <option>Febrero 2025</option>
               <option>Enero 2025</option>
             </select>
             <button class="btn btn-secondary btn-sm"><i data-lucide="search"></i> Consultar</button>
-            <div class="toolbar-spacer"></div>
+            <div class="bo-toolbar-spacer"></div>
             <button class="btn btn-ghost btn-sm"><i data-lucide="download"></i> Exportar</button>
           </div>
 
@@ -651,9 +617,9 @@
 
         <!-- ── PANEL CENTRO DE COSTOS ── -->
         <div id="panel-costos" class="cont-panel">
-          <div class="toolbar" style="margin-bottom:16px;">
-            <select class="toolbar-select"><option>Marzo 2025</option><option>Febrero 2025</option></select>
-            <div class="toolbar-spacer"></div>
+          <div class="bo-toolbar" style="margin-bottom:16px;">
+            <select class="bo-toolbar-filter"><option>Marzo 2025</option><option>Febrero 2025</option></select>
+            <div class="bo-toolbar-spacer"></div>
             <button class="btn btn-ghost btn-sm"><i data-lucide="download"></i> Exportar</button>
           </div>
 
@@ -709,17 +675,17 @@
         <div id="panel-impuestos" class="cont-panel">
           <div class="imp-kpi-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
             <div class="kpi-card tone-warning">
-              <div class="kpi-header"><span class="kpi-label">IVA por pagar</span><span class="kpi-icon"><i data-lucide="percent"></i></span></div>
+              <div class="kpi-card-head"><span class="kpi-label">IVA por pagar</span><span class="kpi-icon-wrap"><i data-lucide="percent"></i></span></div>
               <div class="kpi-value">$1.120.000</div>
               <div class="kpi-helper">Período mar 2025</div>
             </div>
             <div class="kpi-card tone-warning">
-              <div class="kpi-header"><span class="kpi-label">ICA</span><span class="kpi-icon"><i data-lucide="building-2"></i></span></div>
+              <div class="kpi-card-head"><span class="kpi-label">ICA</span><span class="kpi-icon-wrap"><i data-lucide="building-2"></i></span></div>
               <div class="kpi-value">$285.000</div>
               <div class="kpi-helper">Tarifa 0.414%</div>
             </div>
             <div class="kpi-card tone-warning">
-              <div class="kpi-header"><span class="kpi-label">Retención en la fuente</span><span class="kpi-icon"><i data-lucide="file-minus"></i></span></div>
+              <div class="kpi-card-head"><span class="kpi-label">Retención en la fuente</span><span class="kpi-icon-wrap"><i data-lucide="file-minus"></i></span></div>
               <div class="kpi-value">$175.000</div>
               <div class="kpi-helper">Aplicada sobre servicios</div>
             </div>

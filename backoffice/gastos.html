@@ -6,78 +6,30 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Gastos · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
   <style>
-    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
-    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
-    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
-
-    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
-    @media (max-width: 767px) { .kpi-grid { grid-template-columns: 1fr; } }
-
-    .kpi-tone { padding: 16px 18px; border-radius: 11px; display: flex; flex-direction: column; gap: 8px; }
-    .kpi-tone-head { display: flex; align-items: center; justify-content: space-between; }
-    .kpi-tone-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .kpi-tone-label { font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
-    .kpi-tone-value { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1.1; }
-    .kpi-tone-helper { font-size: 11px; font-weight: 500; }
-
-    .kpi-warning { background: #FEF3C7; border: 1px solid #FDE68A; }
-    .kpi-warning .kpi-tone-label { color: #92400E; }
-    .kpi-warning .kpi-tone-value { color: #78350F; }
-    .kpi-warning .kpi-tone-helper { color: #92400E; }
-    .kpi-warning .kpi-tone-icon { background: rgba(245,158,11,.2); }
-    [data-theme="dark"] .kpi-warning { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.4); }
-    [data-theme="dark"] .kpi-warning .kpi-tone-label,
-    [data-theme="dark"] .kpi-warning .kpi-tone-value { color: #FDE68A; }
-    [data-theme="dark"] .kpi-warning .kpi-tone-helper { color: #FCD34D; }
-
-    .kpi-error-tone { background: #FEE2E2; border: 1px solid #FECACA; }
-    .kpi-error-tone .kpi-tone-label,
-    .kpi-error-tone .kpi-tone-value { color: #7F1D1D; }
-    .kpi-error-tone .kpi-tone-helper { color: var(--error); }
-    .kpi-error-tone .kpi-tone-icon { background: rgba(239,68,68,.2); }
-    [data-theme="dark"] .kpi-error-tone { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.4); }
-    [data-theme="dark"] .kpi-error-tone .kpi-tone-label,
-    [data-theme="dark"] .kpi-error-tone .kpi-tone-value { color: #FCA5A5; }
-
-    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    .toolbar-search { position: relative; }
-    .toolbar-search input { padding: 8px 12px 8px 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: var(--ff-base); font-size: 13px; width: 220px; outline: none; }
-    .toolbar-search input:focus { border-color: var(--accent); }
-    .toolbar-search .s-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); display: flex; pointer-events: none; }
-    .toolbar-select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: var(--ff-base); font-size: 13px; outline: none; cursor: pointer; }
-    .toolbar-spacer { flex: 1; min-width: 8px; }
-
-    .gastos-table { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .gastos-table { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
     .gt-header, .gt-row { display: grid; grid-template-columns: 70px 1.3fr 1fr 1.4fr 0.9fr 0.9fr 1fr 44px; padding: 12px 18px; align-items: center; gap: 4px; }
     .gt-header { background: var(--alt); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
     .gt-row { border-bottom: 1px solid var(--border); transition: background .12s; }
     .gt-row:last-of-type { border-bottom: none; }
     .gt-row:hover { background: var(--alt); }
-    .gt-row.is-vencido { background: rgba(254,226,226,.4); }
-    [data-theme="dark"] .gt-row.is-vencido { background: rgba(239,68,68,.06); }
+    .gt-row.is-vencido { background: var(--state-danger-bg); }
 
-    .estado-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 11px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-    .estado-pagado { background: #DCFCE7; color: #14532D; }
-    .estado-pendiente { background: #FEF3C7; color: #92400E; }
-    .estado-vencido { background: #FEE2E2; color: #7F1D1D; }
-    [data-theme="dark"] .estado-pagado { background: rgba(16,185,129,.18); color: #86EFAC; }
-    [data-theme="dark"] .estado-pendiente { background: rgba(245,158,11,.18); color: #FDE68A; }
-    [data-theme="dark"] .estado-vencido { background: rgba(239,68,68,.18); color: #FCA5A5; }
+    .estado-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: var(--radius-full); font-size: 11px; font-weight: 600; white-space: nowrap; border: 1px solid transparent; }
+    .estado-pagado { background: var(--state-success-bg); color: var(--state-success); border-color: var(--state-success-border); }
+    .estado-pendiente { background: var(--state-warning-bg); color: var(--state-warning); border-color: var(--state-warning-border); }
+    .estado-vencido { background: var(--state-danger-bg); color: var(--state-danger); border-color: var(--state-danger-border); }
 
     .venc-vencido { color: var(--error); font-weight: 600; }
-
-    .pagination { display: flex; align-items: center; justify-content: space-between; padding: 10px 18px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 8px; }
-    .pag-pages { display: flex; gap: 4px; }
-    .pag-page { width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent; color: var(--muted); cursor: pointer; font-family: var(--ff-base); font-size: 12px; }
-    .pag-page.is-active { background: var(--accent); color: #fff; }
-    .pag-page:hover:not(.is-active) { background: var(--alt); }
 
     .more-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); }
     .more-btn:hover { background: var(--alt); }
@@ -89,14 +41,6 @@
 
     @media (max-width: 1100px) { .gt-header, .gt-row { grid-template-columns: 70px 1.2fr 1fr 0.9fr 0.9fr 1fr 44px; } .gt-header > *:nth-child(4), .gt-row > *:nth-child(4) { display: none; } }
     @media (max-width: 768px) {
-      /* Page header */
-      .bo-ph { flex-direction: column; gap: 10px; }
-
-      /* Toolbar: stack */
-      .toolbar { flex-direction: column; align-items: stretch; }
-      .toolbar-search input { width: 100%; }
-      .toolbar-select { width: 100%; }
-
       /* Tabla: tarjeta 2 columnas */
       .gt-header { display: none; }
       .gt-row {
@@ -127,7 +71,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+          <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -202,19 +146,19 @@
 
       <main id="main" class="bo-content">
         <!-- PAGE HEADER -->
-        <div class="bo-ph">
+        <div class="bo-page-header">
           <div>
-            <div class="bo-ph-title">Gastos</div>
-            <div class="bo-ph-sub">Noviembre 2026 · Sede Norte</div>
+            <div class="bo-page-title">Gastos</div>
+            <div class="bo-page-subtitle">Noviembre 2026 · Sede Norte</div>
           </div>
-          <div class="bo-ph-actions">
+          <div class="bo-page-actions">
             <button class="btn btn-secondary btn-sm"><i data-lucide="download" style="width:13px;height:13px"></i>Exportar</button>
             <button class="btn btn-primary btn-sm" data-open-modal="modalGasto"><i data-lucide="plus" style="width:13px;height:13px"></i>Registrar gasto</button>
           </div>
         </div>
 
         <!-- KPIs -->
-        <div class="kpi-grid">
+        <div class="kpi-grid-3">
           <div class="kpi-card tone-muted">
             <div class="kpi-card-head">
               <span class="kpi-label">Total del mes</span>
@@ -223,31 +167,31 @@
             <div class="kpi-value">$3.420.000</div>
             <div class="kpi-delta up"><i data-lucide="trending-up" style="width:11px;height:11px"></i>8% vs octubre</div>
           </div>
-          <div class="kpi-tone kpi-warning">
-            <div class="kpi-tone-head">
-              <span class="kpi-tone-label">Pendiente de pago</span>
-              <div class="kpi-tone-icon"><i data-lucide="clock" style="width:14px;height:14px;color:#D97706"></i></div>
+          <div class="kpi-card tone-warning">
+            <div class="kpi-card-head">
+              <span class="kpi-label">Pendiente de pago</span>
+              <div class="kpi-icon-wrap"><i data-lucide="clock" style="width:14px;height:14px;color:var(--state-warning)"></i></div>
             </div>
-            <div class="kpi-tone-value">$890.000</div>
-            <div class="kpi-tone-helper">5 facturas · próximo vencimiento 18 nov</div>
+            <div class="kpi-value">$890.000</div>
+            <div class="kpi-delta flat">5 facturas · próximo vencimiento 18 nov</div>
           </div>
-          <div class="kpi-tone kpi-error-tone">
-            <div class="kpi-tone-head">
-              <span class="kpi-tone-label">Vencidos</span>
-              <div class="kpi-tone-icon"><i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--error)"></i></div>
+          <div class="kpi-card tone-error">
+            <div class="kpi-card-head">
+              <span class="kpi-label">Vencidos</span>
+              <div class="kpi-icon-wrap"><i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--error)"></i></div>
             </div>
-            <div class="kpi-tone-value">$120.000</div>
-            <div class="kpi-tone-helper">1 factura · acción inmediata</div>
+            <div class="kpi-value">$120.000</div>
+            <div class="kpi-delta down">1 factura · acción inmediata</div>
           </div>
         </div>
 
         <!-- TOOLBAR -->
-        <div class="toolbar">
-          <div class="toolbar-search">
+        <div class="bo-toolbar">
+          <div class="bo-toolbar-search">
             <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px"></i></span>
             <input type="text" placeholder="Buscar proveedor o concepto..." id="gastosSearch" />
           </div>
-          <select class="toolbar-select">
+          <select class="bo-toolbar-filter">
             <option value="">Categoría: Todas</option>
             <option>Insumos cocina</option>
             <option>Servicios</option>
@@ -256,13 +200,13 @@
             <option>Nómina</option>
             <option>Otros</option>
           </select>
-          <select class="toolbar-select">
+          <select class="bo-toolbar-filter">
             <option value="">Estado: Todos</option>
             <option>Pagado</option>
             <option>Pendiente</option>
             <option>Vencido</option>
           </select>
-          <div class="toolbar-spacer"></div>
+          <div class="bo-toolbar-spacer"></div>
         </div>
 
         <!-- TABLE -->
@@ -359,15 +303,16 @@
             </button>
           </div>
 
-          <!-- Pagination -->
-          <div class="pagination">
-            <span>Mostrando 1–7 de 28 gastos · Total $3.420.000</span>
-            <div class="pag-pages">
-              <button class="pag-page is-active">1</button>
-              <button class="pag-page">2</button>
-              <button class="pag-page">3</button>
-              <button class="pag-page">4</button>
-            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="bo-pagination">
+          <span class="bo-pagination-info">Mostrando 1–7 de 28 gastos · Total $3.420.000</span>
+          <div class="bo-pagination-pages">
+            <button class="bo-page-btn is-active">1</button>
+            <button class="bo-page-btn">2</button>
+            <button class="bo-page-btn">3</button>
+            <button class="bo-page-btn">4</button>
           </div>
         </div>
       </main>
@@ -396,7 +341,7 @@
               <option value="__nuevo__">+ Crear nuevo proveedor</option>
             </select>
             <!-- Inline: crear nuevo proveedor -->
-            <div id="nuevoProveedorInline" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(79,70,229,.04);border:1px dashed var(--accent);border-radius:8px;">
+            <div id="nuevoProveedorInline" style="display:none;margin-top:10px;padding:12px 14px;background:color-mix(in srgb, var(--accent) 4%, transparent);border:1px dashed var(--accent);border-radius:8px;">
               <div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em;">Nuevo proveedor</div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                 <div class="field" style="margin-bottom:0;"><label class="field-label" style="font-size:11px;">Nombre *</label><input class="field-input" id="nuevoProvNombre" type="text" placeholder="Distribuidora XYZ"></div>

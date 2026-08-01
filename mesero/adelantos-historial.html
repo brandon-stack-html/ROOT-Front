@@ -6,8 +6,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Mis adelantos · App Mesero</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/mesero.css" />
@@ -212,7 +216,7 @@
           : adv.estado === 'aprobada' ? 'var(--info)' : 'var(--warning)';
 
         btn.innerHTML =
-          '<div class="e12-item-icon-wrap" style="background:rgba(79,70,229,.08);color:var(--accent)">' +
+          '<div class="e12-item-icon-wrap" style="background:color-mix(in srgb, var(--accent) 8%, transparent);color:var(--accent)">' +
             '<i data-lucide="wallet"></i>' +
           '</div>' +
           '<div class="e12-item-body">' +
@@ -246,7 +250,7 @@
         target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         target.style.transition = 'box-shadow .3s, outline .3s';
         target.style.outline = '2px solid var(--accent)';
-        target.style.boxShadow = '0 0 0 4px rgba(79,70,229,.15)';
+        target.style.boxShadow = '0 0 0 4px color-mix(in srgb, var(--accent) 15%, transparent)';
         setTimeout(function () {
           target.style.outline = '';
           target.style.boxShadow = '';

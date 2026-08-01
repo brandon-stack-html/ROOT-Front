@@ -6,8 +6,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ROOT · Demo</title>
+  <link rel="icon" type="image/svg+xml" href="assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="assets/brand/nova-tile.svg">
   <script src="./assets/js/theme.js"></script>
   <link rel="stylesheet" href="./assets/css/tokens.css" />
+  <link rel="stylesheet" href="./assets/css/brand.css" />
   <link rel="stylesheet" href="./assets/css/components.css" />
   <link rel="stylesheet" href="./assets/css/utilities.css">
   <style>
@@ -128,14 +132,14 @@
       width: 40px;
       height: 40px;
       border-radius: var(--radius-md);
-      background: #EEF2FF;
+      background: var(--accent-soft);
       color: var(--accent);
       display: inline-flex;
       align-items: center;
       justify-content: center;
     }
     [data-theme="dark"] .module-card-icon {
-      background: rgba(79, 70, 229, 0.16);
+      background: color-mix(in srgb, var(--accent) 16%, transparent);
     }
     .module-card-icon svg { width: 20px; height: 20px; }
     .module-card h3 {
@@ -235,7 +239,7 @@
 
   <header class="landing-header">
     <a href="./index.html" class="landing-brand">
-      <span class="root-wordmark" style="font-size:18px"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+      <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark" style="font-size:18px">NOVA</span>
     </a>
     <div class="landing-header-actions">
       <a class="landing-header-link" href="#" aria-label="GitHub">

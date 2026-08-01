@@ -10,7 +10,7 @@
   // ── Targets con config propia ─────────────────────────────────────────────
   var TARGETS = [
     {
-      // Sprint 15 — Login full-page: puntos blancos sobre gradiente púrpura.
+      // Sprint 15 — Login full-page: puntos blancos sobre gradiente dorado (NOVA).
       selector : '.auth-login-shell',
       color    : [255, 255, 255],
       fullPage : true,
@@ -66,7 +66,7 @@
     },
     {
       selector : '.e1-top',
-      color    : [255, 255, 255], // blanco — partículas tipo estrella sobre gradiente indigo
+      color    : [255, 255, 255], // blanco — partículas tipo estrella sobre gradiente dorado
       fullPage : false,
       density  : 1 / 3200,
       minP     : 22, maxP : 60,
@@ -82,7 +82,7 @@
   // ── Helpers ────────────────────────────────────────────────────────────────
   function readAccent(varName) {
     var raw = getComputedStyle(document.documentElement)
-      .getPropertyValue(varName || '--accent').trim() || '#4F46E5';
+      .getPropertyValue(varName || '--accent').trim() || '#B98521';
     var m = raw.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
     if (m) {
       var hex = m[1].length === 3
@@ -91,7 +91,7 @@
       var n = parseInt(hex, 16);
       return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
     }
-    return [79, 70, 229];
+    return [185, 133, 33];
   }
 
   // ── Instancia por target ───────────────────────────────────────────────────

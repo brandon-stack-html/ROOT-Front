@@ -66,10 +66,7 @@
   border-color: transparent;
 }
 .btn-ghost:hover:not(:disabled) {
-  background: #EEF2FF; /* indigo-50 */
-}
-[data-theme="dark"] .btn-ghost:hover:not(:disabled) {
-  background: rgba(79, 70, 229, 0.16);
+  background: var(--accent-soft);
 }
 
 .btn-destructive {
@@ -78,8 +75,26 @@
   border-color: var(--error);
 }
 .btn-destructive:hover:not(:disabled) {
-  background: #DC2626; /* red-600 */
-  border-color: #DC2626;
+  background: color-mix(in srgb, var(--error) 88%, #000);
+  border-color: color-mix(in srgb, var(--error) 88%, #000);
+}
+
+/* ---------- Dark mode overrides para botones ---------- */
+[data-theme="dark"] .btn-secondary {
+  border-color: var(--border-default);
+  background: var(--bg-elevated);
+}
+[data-theme="dark"] .btn-secondary:hover:not(:disabled) {
+  background: var(--bg-overlay);
+  border-color: var(--border-strong);
+}
+[data-theme="dark"] .btn-icon {
+  background: var(--bg-elevated);
+  border-color: var(--border-default);
+}
+[data-theme="dark"] .btn-icon:hover {
+  background: var(--bg-overlay);
+  border-color: var(--border-strong);
 }
 
 /* ---------- Tamaños ---------- */
@@ -155,7 +170,7 @@
 
 .field-input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  box-shadow: 0 0 0 3px var(--accent-ring);
 }
 
 .field-input.is-error {
@@ -439,10 +454,7 @@ textarea.field-input {
 }
 
 .table-row.is-active {
-  background: rgba(79, 70, 229, 0.08);
-}
-[data-theme="dark"] .table-row.is-active {
-  background: rgba(79, 70, 229, 0.18);
+  background: var(--accent-soft);
 }
 
 /* ---------- Versión mobile: filas se vuelven cards apiladas ---------- */
@@ -1099,21 +1111,7 @@ textarea.field-input {
   font-size: 18px; color: var(--text); font-family: monospace;
 }
 
-/* --- Switch toggle --- */
-.switch {
-  display: inline-flex; align-items: center;
-  width: 34px; height: 20px; border-radius: 10px;
-  background: var(--border); padding: 2px; cursor: pointer;
-  flex-shrink: 0; border: none; position: relative;
-  transition: background .15s;
-}
-.switch::after {
-  content: ''; width: 16px; height: 16px; border-radius: 8px;
-  background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.18);
-  transition: transform .15s; position: absolute; left: 2px;
-}
-.switch.is-on { background: var(--accent); }
-.switch.is-on::after { transform: translateX(14px); }
+/* --- Switch toggle: definición canónica única en shells.css (.switch) --- */
 
 /* --- Switch row --- */
 .switch-row { display: flex; align-items: flex-start; gap: 14px; }
@@ -1130,10 +1128,10 @@ textarea.field-input {
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 4px 5px 10px;
-  background: #EEF2FF; color: #3730A3;
+  background: var(--accent-soft); color: var(--accent-hover);
   border-radius: 7px; font-size: 12px; font-weight: 500;
 }
-[data-theme="dark"] .chip { background: rgba(99,102,241,.18); color: #C7D2FE; }
+[data-theme="dark"] .chip { color: var(--accent); }
 .chip-remove {
   width: 18px; height: 18px; border-radius: 4px; border: none;
   background: transparent; cursor: pointer; display: flex;
@@ -1246,9 +1244,8 @@ textarea.field-input {
 .role-card-btn:hover { background: var(--alt); }
 .role-card-btn.is-active {
   background: var(--bg); border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+  box-shadow: 0 0 0 3px var(--accent-ring);
 }
-[data-theme="dark"] .role-card-btn.is-active { box-shadow: 0 0 0 3px rgba(99,102,241,.18); }
 .role-card-icon {
   width: 36px; height: 36px; border-radius: 9px; background: var(--alt);
   display: flex; align-items: center; justify-content: center;
@@ -1260,7 +1257,7 @@ textarea.field-input {
   font-size: 10px; font-weight: 600; color: var(--muted); flex-shrink: 0;
 }
 @keyframes roleCardIn {
-  0% { opacity:0; transform: translateY(-8px); background: rgba(79,70,229,.06); }
+  0% { opacity:0; transform: translateY(-8px); background: var(--accent-soft); }
   100% { opacity:1; transform: none; background: transparent; }
 }
 .roles-add-btn {
@@ -1376,9 +1373,10 @@ textarea.field-input {
 
 /* --- Sucursales Grid --- */
 .sucursal-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 18px;
 }
+@media (max-width: 980px) { .sucursal-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px) { .sucursal-grid { grid-template-columns: 1fr; } }
 
 .sucursal-card {
@@ -1387,8 +1385,7 @@ textarea.field-input {
   flex-direction: column; transition: transform .15s, box-shadow .15s;
 }
 .sucursal-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.sucursal-card.is-principal { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,70,229,.1); }
-[data-theme="dark"] .sucursal-card.is-principal { box-shadow: 0 0 0 3px rgba(99,102,241,.18); }
+.sucursal-card.is-principal { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
 .sucursal-card.is-inactive { opacity: 0.7; }
 
 .sucursal-banner {
@@ -1425,7 +1422,7 @@ textarea.field-input {
   border-radius: 11px; cursor: pointer; font-family: var(--ff-base);
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 10px; padding: 40px 20px;
-  min-height: 240px; transition: transform .15s, border-color .15s;
+  min-height: 280px; transition: transform .15s, border-color .15s;
 }
 .sucursal-add-card:hover { transform: translateY(-2px); border-color: var(--accent); }
 .sucursal-add-icon {
@@ -1464,9 +1461,8 @@ textarea.field-input {
 }
 .sala-btn:hover { background: var(--alt); color: var(--text); }
 .sala-btn.is-active {
-  background: rgba(79,70,229,.08); color: var(--text); font-weight: 600;
+  background: var(--accent-soft); color: var(--text); font-weight: 600;
 }
-[data-theme="dark"] .sala-btn.is-active { background: rgba(99,102,241,.18); }
 .sala-btn.is-active::before {
   content: ''; position: absolute; left: -12px; top: 50%;
   transform: translateY(-50%); width: 3px; height: 18px;
@@ -1562,7 +1558,7 @@ textarea.field-input {
 .legend-swatch-sel {
   width: 11px; height: 11px; border-radius: 2px;
   background: transparent; border: 1.5px solid var(--accent);
-  box-shadow: 0 0 0 2px rgba(79,70,229,.15);
+  box-shadow: 0 0 0 2px var(--accent-ring);
 }
 
 .mesas-props-panel {
@@ -1603,8 +1599,7 @@ textarea.field-input {
   font-size: 11px; font-weight: 500; transition: background .12s, border-color .12s;
 }
 .shape-radio:hover { background: var(--alt); }
-.shape-radio.is-active { background: rgba(79,70,229,.08); border-color: var(--accent); color: var(--accent); font-weight: 600; }
-[data-theme="dark"] .shape-radio.is-active { background: rgba(99,102,241,.18); }
+.shape-radio.is-active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 .props-section-title {
   font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .08em;
   text-transform: uppercase; margin-bottom: 10px;
@@ -1764,7 +1759,7 @@ textarea.field-input {
 }
 .voice-input-btn.is-recording ~ .voice-input-timer,
 .voice-input-btn.is-processing ~ .voice-input-timer { display: inline-flex; }
-.voice-input-btn.is-processing ~ .voice-input-timer { color: var(--accent); background: rgba(79, 70, 229, 0.10); }
+.voice-input-btn.is-processing ~ .voice-input-timer { color: var(--accent); background: var(--accent-soft); }
 
 /* Label "Tocá o mantené para dictar" */
 .voice-input-label {

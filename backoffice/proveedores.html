@@ -6,41 +6,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Proveedores · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
   <style>
-    /* ── Page header ── */
-    .bo-ph { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
-    .bo-ph-title { font-size:22px; font-weight:700; color:var(--text); letter-spacing:-.01em; }
-    .bo-ph-sub   { font-size:13px; color:var(--muted); margin-top:3px; }
-    .bo-ph-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-
-    /* ── KPI grid ── */
-    .kpi-grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
-    @media(max-width:768px){ .kpi-grid-3{ grid-template-columns:1fr; } }
-
-    /* ── Toolbar ── */
-    .toolbar { display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
-    .toolbar-search { position:relative; }
-    .toolbar-search input {
-      padding:8px 12px 8px 34px; border-radius:8px;
-      border:1px solid var(--border); background:var(--bg); color:var(--text);
-      font-family:var(--ff-base); font-size:13px; width:260px; outline:none;
-    }
-    .toolbar-search input:focus { border-color:var(--accent); }
-    .toolbar-search .s-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--muted); display:flex; pointer-events:none; }
-    .toolbar-select {
-      padding:8px 12px; border-radius:8px; border:1px solid var(--border);
-      background:var(--bg); color:var(--text); font-family:var(--ff-base);
-      font-size:13px; outline:none; cursor:pointer;
-    }
-    .toolbar-spacer { flex:1; min-width:8px; }
-
     /* ── Proveedores table ── */
-    .prov-table { background:var(--bg); border:1px solid var(--border); border-radius:11px; overflow:hidden; }
+    .prov-table { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; }
     .prov-header, .prov-row {
       display:grid;
       grid-template-columns: 1.8fr 1.3fr 1.4fr 1fr 1fr 90px 44px;
@@ -54,7 +31,7 @@
     .prov-row { border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s; }
     .prov-row:last-child { border-bottom:none; }
     .prov-row:hover { background:var(--alt); }
-    @keyframes provRowIn { 0% { opacity:0; transform:translateY(-6px); background:rgba(79,70,229,.10); } 60% { background:rgba(79,70,229,.06); } 100% { opacity:1; transform:none; background:transparent; } }
+    @keyframes provRowIn { 0% { opacity:0; transform:translateY(-6px); background:color-mix(in srgb, var(--accent) 10%, transparent); } 60% { background:color-mix(in srgb, var(--accent) 6%, transparent); } 100% { opacity:1; transform:none; background:transparent; } }
     .prov-row.is-new { animation: provRowIn 1.8s ease; }
 
     /* ── Provider cell ── */
@@ -75,24 +52,12 @@
     .more-btn { width:28px; height:28px; border-radius:6px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--muted); }
     .more-btn:hover { background:var(--alt); }
 
-    /* ── Pagination ── */
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:10px 18px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); }
-    .pag-btn { padding:5px 10px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--text); cursor:pointer; font-family:var(--ff-base); font-size:12px; font-weight:500; display:flex; align-items:center; gap:4px; }
-    .pag-btn:disabled { opacity:.4; cursor:default; }
-    .pag-pages { display:flex; gap:4px; }
-    .pag-page { width:28px; height:28px; border-radius:6px; border:none; background:transparent; color:var(--muted); cursor:pointer; font-family:var(--ff-base); font-size:12px; }
-    .pag-page.is-active { background:var(--accent); color:#fff; }
-    .pag-page:hover:not(.is-active) { background:var(--alt); }
-
     /* ── Mobile ── */
     @media(max-width:768px){
       .prov-header { display:none; }
       .prov-row { grid-template-columns:1fr auto; grid-template-rows:auto auto; gap:4px; padding:12px 14px; }
       .prov-cell { grid-column:1/-1; }
       .cell-nit,.cell-contact,.cell-saldo-pend,.cell-saldo-cero { font-size:11px; }
-      .toolbar { flex-direction:column; align-items:stretch; }
-      .toolbar-search input { width:100%; }
-      .bo-ph { flex-direction:column; gap:10px; }
     }
 
     /* ── Drawer ── */
@@ -104,7 +69,7 @@
     .drawer-tabs::-webkit-scrollbar{ display:none; }
     .drawer-tab{ padding:11px 16px; border:none; border-bottom:2px solid transparent; background:transparent; cursor:pointer; font-family:var(--ff-base); font-size:12px; font-weight:500; color:var(--muted); white-space:nowrap; margin-bottom:-1px; flex-shrink:0; }
     .drawer-tab.is-active{ font-weight:600; color:var(--text); border-bottom-color:var(--accent); }
-    .prov-card{ padding:14px 16px; border-radius:10px; background:var(--alt); border:1px solid var(--border); display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+    .prov-card{ padding:14px 16px; border-radius:var(--radius-md); background:var(--alt); border:1px solid var(--border); display:flex; align-items:center; gap:14px; margin-bottom:18px; }
     .prov-card-av{ width:52px; height:52px; border-radius:26px; font-weight:700; font-size:18px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
     .prov-card-nombre{ font-size:15px; font-weight:700; color:var(--text); margin-bottom:4px; }
     .prov-card-badges{ display:flex; gap:8px; flex-wrap:wrap; }
@@ -118,10 +83,10 @@
     .info-field label{ font-size:10px; color:var(--muted); font-weight:600; display:block; margin-bottom:3px; }
     .info-field .val{ font-size:13px; color:var(--text); }
     .mini-kpi-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
-    .mini-kpi{ background:var(--alt); border:1px solid var(--border); border-radius:8px; padding:10px 12px; }
+    .mini-kpi{ background:var(--alt); border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; }
     .mini-kpi-label{ font-size:10px; font-weight:600; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; margin-bottom:4px; }
     .mini-kpi-val{ font-size:16px; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums; }
-    .compras-table{ background:var(--bg); border:1px solid var(--border); border-radius:9px; overflow:hidden; }
+    .compras-table{ background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; }
     .ct2-header,.ct2-row{ display:grid; grid-template-columns:0.8fr 1fr 1fr 1fr 60px; padding:8px 12px; align-items:center; font-size:12px; }
     .ct2-header{ background:var(--alt); border-bottom:1px solid var(--border); font-size:10px; font-weight:600; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; }
     .ct2-row{ border-bottom:1px solid var(--border); }
@@ -141,7 +106,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+          <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -250,12 +215,12 @@
       <main id="main" class="bo-content">
 
         <!-- ── Page header ── -->
-        <div class="bo-ph">
+        <div class="bo-page-header">
           <div>
-            <div class="bo-ph-title">Proveedores</div>
-            <div class="bo-ph-sub">15 proveedores registrados · 4 con pagos pendientes</div>
+            <div class="bo-page-title">Proveedores</div>
+            <div class="bo-page-subtitle">15 proveedores registrados · 4 con pagos pendientes</div>
           </div>
-          <div class="bo-ph-actions">
+          <div class="bo-page-actions">
             <button class="btn btn-ghost"><i data-lucide="upload"></i> Importar CSV</button>
             <button class="btn btn-primary" id="btnNuevoProveedor"><i data-lucide="plus"></i> Nuevo proveedor</button>
           </div>
@@ -264,7 +229,7 @@
         <!-- ── KPIs ── -->
         <div class="kpi-grid-3">
           <div class="kpi-card tone-muted">
-            <div class="kpi-header">
+            <div class="kpi-card-head">
               <span class="kpi-label">Total proveedores</span>
               <span class="kpi-icon"><i data-lucide="truck"></i></span>
             </div>
@@ -272,7 +237,7 @@
             <div class="kpi-helper">3 nuevos este mes</div>
           </div>
           <div class="kpi-card tone-warning">
-            <div class="kpi-header">
+            <div class="kpi-card-head">
               <span class="kpi-label">Cuentas por pagar</span>
               <span class="kpi-icon"><i data-lucide="alert-triangle"></i></span>
             </div>
@@ -280,7 +245,7 @@
             <div class="kpi-helper">4 facturas pendientes</div>
           </div>
           <div class="kpi-card tone-error">
-            <div class="kpi-header">
+            <div class="kpi-card-head">
               <span class="kpi-label">Pagos vencidos</span>
               <span class="kpi-icon"><i data-lucide="alert-circle"></i></span>
             </div>
@@ -290,12 +255,12 @@
         </div>
 
         <!-- ── Toolbar ── -->
-        <div class="toolbar">
-          <div class="toolbar-search">
+        <div class="bo-toolbar">
+          <div class="bo-toolbar-search">
             <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
             <input type="text" id="provSearch" placeholder="Buscar por nombre, NIT o contacto...">
           </div>
-          <select class="toolbar-select" id="provFiltroCategoria">
+          <select class="bo-toolbar-filter" id="provFiltroCategoria">
             <option value="">Categoría: Todas</option>
             <option value="Alimentos">Alimentos</option>
             <option value="Bebidas">Bebidas</option>
@@ -303,13 +268,13 @@
             <option value="Servicios">Servicios</option>
             <option value="Empaques">Empaques</option>
           </select>
-          <select class="toolbar-select" id="provFiltroEstado">
+          <select class="bo-toolbar-filter" id="provFiltroEstado">
             <option value="">Estado: Todos</option>
             <option value="Activo">Activo</option>
             <option value="Inactivo">Inactivo</option>
             <option value="Suspendido">Suspendido</option>
           </select>
-          <div class="toolbar-spacer"></div>
+          <div class="bo-toolbar-spacer"></div>
           <button class="btn btn-ghost"><i data-lucide="download"></i> Exportar</button>
         </div>
 
@@ -334,16 +299,15 @@
             <button class="btn btn-secondary empty-state-action" id="provClearSearch">Limpiar búsqueda</button>
           </div>
 
-          <div class="pagination">
-            <span>Mostrando 1–10 de 15 proveedores</span>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <button class="pag-btn" disabled><i data-lucide="chevron-left" style="width:13px;height:13px;"></i> Anterior</button>
-              <div class="pag-pages">
-                <button class="pag-page is-active">1</button>
-                <button class="pag-page">2</button>
-              </div>
-              <button class="pag-btn">Siguiente <i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button>
-            </div>
+        </div>
+
+        <div class="bo-pagination">
+          <span class="bo-pagination-info">Mostrando 1–10 de 15 proveedores</span>
+          <div class="bo-pagination-pages">
+            <button class="bo-page-btn" disabled aria-label="Anterior"><i data-lucide="chevron-left" style="width:13px;height:13px;"></i></button>
+            <button class="bo-page-btn is-active">1</button>
+            <button class="bo-page-btn">2</button>
+            <button class="bo-page-btn" aria-label="Siguiente"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button>
           </div>
         </div>
 
@@ -682,7 +646,7 @@
 
         // Agregar al array y renderizar con fila animada
         var initials = razon.split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
-        PROVEEDORES.unshift({ iniciales:initials, avBg:'#EEF2FF', avFg:'#4338CA', nombre:razon, nit:nit, contactoNombre:contacto, tel:tel, categoria:cat, saldo:0, estado:'Activo', ultima:'Hoy', _isNew:true });
+        PROVEEDORES.unshift({ iniciales:initials, avBg:'var(--accent-soft)', avFg:'var(--accent-hover)', nombre:razon, nit:nit, contactoNombre:contacto, tel:tel, categoria:cat, saldo:0, estado:'Activo', ultima:'Hoy', _isNew:true });
         renderTabla();
 
         // Marcar primera fila como nueva

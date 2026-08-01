@@ -46,13 +46,13 @@
       var W = 210, margin = 20;
 
       // ── Header ──────────────────────────────────────────────────────────
-      doc.setFillColor(79, 70, 229);
+      doc.setFillColor(185, 133, 33);
       doc.rect(0, 0, W, 32, 'F');
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(20);
       doc.setTextColor(255, 255, 255);
-      doc.text('ROOT', margin, 16);
+      doc.text('NOVA', margin, 16);
 
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
@@ -148,7 +148,7 @@
       doc.text('Valor neto entregado:', margin + 6, y + 7);
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(79, 70, 229);
+      doc.setTextColor(185, 133, 33);
       doc.text(window.formatCOP ? window.formatCOP(montoAprobado) : '$' + montoAprobado, W - margin - 6, y + 10, { align: 'right' });
 
       // ── Firma mock ───────────────────────────────────────────────────────

@@ -6,27 +6,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Integraciones · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
   <style>
-    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
-    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
-    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
 
     /* Intro card */
     .intro-card {
       padding: 16px 20px; border-radius: 11px; margin-bottom: 24px;
-      background: linear-gradient(90deg, #EEF2FF, #FAFAFA);
+      background: linear-gradient(90deg, var(--accent-soft), #FAFAFA);
       border: 1px solid #E0E7FF;
       display: flex; align-items: center; gap: 14px;
     }
     [data-theme="dark"] .intro-card {
-      background: linear-gradient(90deg, rgba(99,102,241,.16), transparent);
-      border-color: rgba(99,102,241,.3);
+      background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 16%, transparent), transparent);
+      border-color: color-mix(in srgb, var(--accent) 30%, transparent);
     }
     .intro-card-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .intro-card-title { font-size: 14px; font-weight: 600; color: var(--text); }
@@ -64,11 +64,11 @@
     .servicio-nombre { font-size: 14px; font-weight: 600; color: var(--text); }
     .badge-homologado {
       padding: 1px 7px; border-radius: 5px;
-      background: #EEF2FF; color: #3730A3;
+      background: var(--accent-soft); color: var(--accent-hover);
       font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
       display: inline-flex; align-items: center; gap: 3px;
     }
-    [data-theme="dark"] .badge-homologado { background: rgba(99,102,241,.18); color: #C7D2FE; }
+    [data-theme="dark"] .badge-homologado { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
     .servicio-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
 
     /* Estado + acción */
@@ -101,7 +101,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+          <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -176,12 +176,12 @@
 
       <main id="main" class="bo-content">
         <!-- PAGE HEADER -->
-        <div class="bo-ph">
+        <div class="bo-page-header">
           <div>
-            <div class="bo-ph-title">Integraciones</div>
-            <div class="bo-ph-sub">4 de 10 servicios conectados</div>
+            <div class="bo-page-title">Integraciones</div>
+            <div class="bo-page-subtitle">4 de 10 servicios conectados</div>
           </div>
-          <div class="bo-ph-actions">
+          <div class="bo-page-actions">
             <button class="btn btn-secondary btn-sm"><i data-lucide="book-open" style="width:13px;height:13px"></i>Ver documentación</button>
           </div>
         </div>
@@ -404,7 +404,7 @@
     if (window.lucide) window.lucide.createIcons();
 
     var DRAWER_FORMS = {
-      pagos: '<div class="integ-form-section"><div class="integ-form-section-title">Credenciales</div><div class="field"><label class="field-label">API Key</label><div class="password-wrap"><input class="field-input" type="password" value="pk_test_••••••••••••••••" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div><div class="field"><label class="field-label">Secret Key</label><div class="password-wrap"><input class="field-input" type="password" value="sk_test_••••••••••••••••" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div><div class="field" style="margin-bottom:0"><label class="field-label">Webhook URL</label><input class="field-input" type="text" value="https://api.inventario.co/webhooks/pagos" readonly style="font-size:11px;color:var(--muted)" /></div></div><div class="integ-form-section"><div class="integ-form-section-title">Modo</div><div style="display:flex;gap:8px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center"><input type="radio" name="modo_pago" value="sandbox" style="accent-color:var(--accent)"> Sandbox</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--accent);border-radius:8px;flex:1;justify-content:center;background:rgba(79,70,229,.06)"><input type="radio" name="modo_pago" value="produccion" checked style="accent-color:var(--accent)"> Producción</label></div></div>',
+      pagos: '<div class="integ-form-section"><div class="integ-form-section-title">Credenciales</div><div class="field"><label class="field-label">API Key</label><div class="password-wrap"><input class="field-input" type="password" value="pk_test_••••••••••••••••" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div><div class="field"><label class="field-label">Secret Key</label><div class="password-wrap"><input class="field-input" type="password" value="sk_test_••••••••••••••••" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div><div class="field" style="margin-bottom:0"><label class="field-label">Webhook URL</label><input class="field-input" type="text" value="https://api.inventario.co/webhooks/pagos" readonly style="font-size:11px;color:var(--muted)" /></div></div><div class="integ-form-section"><div class="integ-form-section-title">Modo</div><div style="display:flex;gap:8px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center"><input type="radio" name="modo_pago" value="sandbox" style="accent-color:var(--accent)"> Sandbox</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--accent);border-radius:8px;flex:1;justify-content:center;background:color-mix(in srgb, var(--accent) 6%, transparent)"><input type="radio" name="modo_pago" value="produccion" checked style="accent-color:var(--accent)"> Producción</label></div></div>',
       delivery: '<div class="integ-form-section"><div class="integ-form-section-title">Credenciales</div><div class="field"><label class="field-label">Token de integración</label><div class="password-wrap"><input class="field-input" type="password" value="" placeholder="Pega tu token aquí" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div></div><div class="integ-form-section"><div class="integ-form-section-title">Modo</div><div style="display:flex;gap:8px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center"><input type="radio" name="modo_del" value="sandbox" checked style="accent-color:var(--accent)"> Pruebas</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;flex:1;justify-content:center"><input type="radio" name="modo_del" value="prod" style="accent-color:var(--accent)"> Producción</label></div></div>',
       fiscal: '<div class="integ-form-section"><div class="integ-form-section-title">Resolución DIAN</div><div class="field"><label class="field-label">Número de resolución</label><input class="field-input" type="text" value="18760000123" /></div><div class="field" style="margin-bottom:0"><label class="field-label">Ambiente</label><select class="field-input"><option selected>Producción</option><option>Habilitación</option></select></div></div>',
       comunicacion: '<div class="integ-form-section"><div class="integ-form-section-title">Credenciales</div><div class="field"><label class="field-label">API Key</label><div class="password-wrap"><input class="field-input" type="password" placeholder="Ingresa tu API Key" /><button class="password-toggle" onclick="togglePass(this)" aria-label="Ver"><i data-lucide="eye" style="width:14px;height:14px"></i></button></div></div><div class="field" style="margin-bottom:0"><label class="field-label">Número verificado</label><input class="field-input" type="text" placeholder="+57 310 000 0000" /></div></div>'

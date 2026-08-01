@@ -6,40 +6,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Clientes · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
   <style>
-    /* Page header */
-    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
-    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
-    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-    /* Toolbar */
-    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    .toolbar-search { position: relative; }
-    .toolbar-search input {
-      padding: 8px 12px 8px 34px; border-radius: 8px;
-      border: 1px solid var(--border); background: var(--bg); color: var(--text);
-      font-family: var(--ff-base); font-size: 13px; width: 240px; outline: none;
-    }
-    .toolbar-search input:focus { border-color: var(--accent); }
-    .toolbar-search .s-icon {
-      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-      color: var(--muted); display: flex; pointer-events: none;
-    }
-    .toolbar-select {
-      padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text); font-family: var(--ff-base);
-      font-size: 13px; outline: none; cursor: pointer;
-    }
-    .toolbar-spacer { flex: 1; min-width: 8px; }
-
     /* Tabla clientes */
-    .clientes-table { background: var(--bg); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+    .clientes-table { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
     .ct-header, .ct-row {
       display: grid;
       grid-template-columns: 1.6fr 1.4fr 1.5fr 1fr 1fr 1fr 50px;
@@ -55,8 +33,8 @@
     }
     .ct-row:last-child { border-bottom: none; }
     .ct-row:hover { background: var(--alt); }
-    .ct-row.is-active { background: #EEF2FF; }
-    [data-theme="dark"] .ct-row.is-active { background: rgba(99,102,241,.10); }
+    .ct-row.is-active { background: var(--accent-soft); }
+    [data-theme="dark"] .ct-row.is-active { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 
     /* Cliente cell */
     .cliente-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -79,27 +57,6 @@
       cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted);
     }
     .more-btn:hover { background: var(--alt); }
-
-    /* Paginación */
-    .pagination {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 18px; border-top: 1px solid var(--border);
-      font-size: 12px; color: var(--muted);
-    }
-    .pag-btn {
-      padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border);
-      background: transparent; color: var(--text); cursor: pointer;
-      font-family: var(--ff-base); font-size: 12px; font-weight: 500;
-      display: flex; align-items: center; gap: 4px;
-    }
-    .pag-btn:disabled { opacity: .4; cursor: default; }
-    .pag-pages { display: flex; gap: 4px; }
-    .pag-page {
-      width: 28px; height: 28px; border-radius: 6px; border: none; background: transparent;
-      color: var(--muted); cursor: pointer; font-family: var(--ff-base); font-size: 12px;
-    }
-    .pag-page.is-active { background: var(--accent); color: #fff; }
-    .pag-page:hover:not(.is-active) { background: var(--alt); }
 
     /* Drawer wide */
     .drawer-wide { width: 520px; }
@@ -125,12 +82,12 @@
       padding: 1px 6px; border-radius: 7px; font-size: 10px; font-weight: 600;
       background: var(--alt); color: var(--muted);
     }
-    .drawer-tab.is-active .drawer-tab-badge { background: #EEF2FF; color: var(--accent); }
-    [data-theme="dark"] .drawer-tab.is-active .drawer-tab-badge { background: rgba(99,102,241,.18); }
+    .drawer-tab.is-active .drawer-tab-badge { background: var(--accent-soft); color: var(--accent); }
+    [data-theme="dark"] .drawer-tab.is-active .drawer-tab-badge { background: color-mix(in srgb, var(--accent) 18%, transparent); }
 
     /* Drawer cliente card */
     .cliente-card {
-      padding: 14px 16px; border-radius: 10px;
+      padding: 14px 16px; border-radius: var(--radius-md);
       background: var(--alt); border: 1px solid var(--border);
       display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
     }
@@ -141,20 +98,17 @@
     }
     .cliente-card-nombre { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
     .cliente-card-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .badge-cc { padding: 2px 8px; border-radius: 11px; background: #DBEAFE; color: #1E40AF; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-    .badge-vip { padding: 2px 8px; border-radius: 11px; background: #FCE7F3; color: #9D174D; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-    [data-theme="dark"] .badge-cc { background: rgba(59,130,246,.18); color: #93C5FD; }
-    [data-theme="dark"] .badge-vip { background: rgba(236,72,153,.18); color: #FBCFE8; }
+    .badge-cc { padding: 2px 8px; border-radius: var(--radius-full); background: var(--state-info-bg); color: var(--state-info); border: 1px solid var(--state-info-border); font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+    .badge-vip { padding: 2px 8px; border-radius: var(--radius-full); background: var(--accent-soft); color: var(--accent-hover); border: 1px solid var(--accent-ring); font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+    [data-theme="dark"] .badge-vip { color: var(--accent); }
 
     /* Saldo destacado */
     .saldo-box {
-      padding: 16px 18px; border-radius: 11px;
-      background: #FEF2F2; border: 1px solid #FECACA;
+      padding: 16px 18px; border-radius: var(--radius-md);
+      background: var(--state-danger-bg); border: 1px solid var(--state-danger-border);
       display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
     }
-    [data-theme="dark"] .saldo-box { background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.4); }
-    .saldo-box-label { font-size: 11px; color: #7F1D1D; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-    [data-theme="dark"] .saldo-box-label { color: #FCA5A5; }
+    .saldo-box-label { font-size: 11px; color: var(--error); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
     .saldo-box-val { font-size: 24px; font-weight: 700; color: var(--error); font-variant-numeric: tabular-nums; letter-spacing: -.01em; margin-top: 2px; }
     .saldo-cupo { font-size: 11px; color: var(--muted); text-align: right; }
 
@@ -165,7 +119,7 @@
     .data-val { font-size: 13px; color: var(--text); font-weight: 500; }
 
     /* Movimientos */
-    .mov-table { background: var(--bg); border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+    .mov-table { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
     .mov-header, .mov-row {
       display: grid; grid-template-columns: 0.6fr 1.4fr 0.9fr 0.9fr 0.9fr;
       padding: 9px 14px; align-items: center;
@@ -219,14 +173,6 @@
 
     /* Mobile */
     @media (max-width: 768px) {
-      /* Page header */
-      .bo-ph { flex-direction: column; gap: 10px; }
-
-      /* Toolbar: stack */
-      .toolbar { flex-direction: column; align-items: stretch; }
-      .toolbar-search input { width: 100%; }
-      .toolbar-spacer { display: none; }
-
       /* Tabla: cada fila como tarjeta 2 columnas */
       .ct-header { display: none; }
       .ct-row {
@@ -244,9 +190,6 @@
       .ct-row .cell-ultima    { grid-column: 2; grid-row: 2; text-align: right; font-size: 11px; }
       .ct-row .cell-actions   { grid-column: 2; grid-row: 3; justify-content: flex-end; }
 
-      /* Paginación: centrar en móvil */
-      .pagination { flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-
       /* Drawer: ya tiene width:100% arriba */
       .info-grid { grid-template-columns: 1fr; }
       .mov-table { overflow-x: auto; }
@@ -261,7 +204,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+          <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -351,34 +294,34 @@
 
       <main id="main" class="bo-content">
 
-        <div class="bo-ph">
+        <div class="bo-page-header">
           <div>
-            <div class="bo-ph-title">Clientes</div>
-            <div class="bo-ph-sub">38 clientes registrados · 7 con cuenta corriente activa</div>
+            <div class="bo-page-title">Clientes</div>
+            <div class="bo-page-subtitle">38 clientes registrados · 7 con cuenta corriente activa</div>
           </div>
-          <div class="bo-ph-actions">
+          <div class="bo-page-actions">
             <button class="btn btn-ghost"><i data-lucide="upload"></i> Importar CSV</button>
             <button class="btn btn-primary"><i data-lucide="plus"></i> Nuevo cliente</button>
           </div>
         </div>
 
         <!-- Toolbar -->
-        <div class="toolbar">
-          <div class="toolbar-search">
-            <span class="s-icon"><i data-lucide="search" style="width:14px;height:14px;"></i></span>
+        <div class="bo-toolbar">
+          <div class="bo-toolbar-search">
+            <i data-lucide="search"></i>
             <input type="text" id="clientesSearch" placeholder="Buscar por nombre, cédula o teléfono...">
           </div>
-          <select class="toolbar-select">
+          <select class="bo-toolbar-filter">
             <option>Cuenta corriente: Todos</option>
             <option>Con saldo</option>
             <option>Sin saldo</option>
           </select>
-          <select class="toolbar-select">
+          <select class="bo-toolbar-filter">
             <option>Etiqueta: Todas</option>
             <option>VIP</option>
             <option>Corporativo</option>
           </select>
-          <div class="toolbar-spacer"></div>
+          <div class="bo-toolbar-spacer"></div>
           <button class="btn btn-ghost" data-requires="reports:export"><i data-lucide="download"></i> Exportar</button>
         </div>
 
@@ -407,20 +350,19 @@
             </button>
           </div>
 
-          <!-- Paginación -->
-          <div class="pagination">
-            <span>Mostrando 1–4 de 38 clientes</span>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <button class="pag-btn" disabled><i data-lucide="chevron-left" style="width:13px;height:13px;"></i> Anterior</button>
-              <div class="pag-pages">
-                <button class="pag-page is-active">1</button>
-                <button class="pag-page">2</button>
-                <button class="pag-page">3</button>
-                <span style="color:var(--muted);padding:0 4px;">…</span>
-                <button class="pag-page">10</button>
-              </div>
-              <button class="pag-btn">Siguiente <i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button>
-            </div>
+        </div>
+
+        <!-- Paginación -->
+        <div class="bo-pagination">
+          <span class="bo-pagination-info">Mostrando 1–4 de 38 clientes</span>
+          <div class="bo-pagination-pages">
+            <button class="bo-page-btn" disabled aria-label="Anterior"><i data-lucide="chevron-left" style="width:13px;height:13px;"></i></button>
+            <button class="bo-page-btn is-active">1</button>
+            <button class="bo-page-btn">2</button>
+            <button class="bo-page-btn">3</button>
+            <button class="bo-page-btn">…</button>
+            <button class="bo-page-btn">10</button>
+            <button class="bo-page-btn" aria-label="Siguiente"><i data-lucide="chevron-right" style="width:13px;height:13px;"></i></button>
           </div>
         </div>
 

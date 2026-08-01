@@ -6,8 +6,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Detalle comanda · Cocina</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/mesero.css" />
@@ -293,10 +297,10 @@
     }
     .cd-ajuste-tipo-btn.is-active {
       border-color: var(--accent);
-      background: rgba(79,70,229,0.06);
+      background: color-mix(in srgb, var(--accent) 6%, transparent);
     }
     [data-theme="dark"] .cd-ajuste-tipo-btn.is-active {
-      background: rgba(79,70,229,0.14);
+      background: color-mix(in srgb, var(--accent) 14%, transparent);
     }
     .cd-ajuste-tipo-icon {
       width: 28px;
@@ -310,7 +314,7 @@
       color: var(--muted);
     }
     .cd-ajuste-tipo-btn.is-active .cd-ajuste-tipo-icon {
-      background: rgba(79,70,229,0.12);
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
       color: var(--accent);
     }
     .cd-ajuste-tipo-icon svg { width: 14px; height: 14px; }

@@ -1,0 +1,61 @@
+/* Mesero UI kit — iPhone frame + shell (subset of ROOT mesero.css, token-driven) */
+
+.mesero-stage { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:var(--alt); font-family:var(--ff-base); }
+.mesero-frame { width:390px; height:844px; border:12px solid #1f1f1f; border-radius:48px; background:var(--bg); overflow:hidden; position:relative; box-shadow:0 20px 50px rgba(0,0,0,.3); flex-shrink:0; }
+.mesero-frame::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:28px; background:#1f1f1f; border-radius:0 0 16px 16px; z-index:50; }
+.mesero-app { width:100%; height:100%; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); color:var(--text); }
+
+.mesero-statusbar { height:44px; padding:0 22px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; font-size:14px; font-weight:600; color:var(--text); }
+.mesero-statusbar-icons { display:flex; gap:5px; align-items:center; }
+.mesero-statusbar-icons svg { width:15px; height:15px; }
+.mesero-home-indicator { height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.mesero-home-indicator::after { content:''; width:120px; height:4px; border-radius:2px; background:rgba(0,0,0,.85); }
+[data-theme="dark"] .mesero-home-indicator::after { background:rgba(255,255,255,.85); }
+.mesero-body-inner { flex:1; display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+
+.mesero-topbar { padding:14px 16px; flex-shrink:0; background:var(--bg); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; min-height:54px; }
+.mesero-topbar-side { flex:0 0 auto; display:flex; align-items:center; gap:8px; }
+.mesero-topbar-center { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+.mesero-topbar-title { font-size:15px; font-weight:600; color:var(--text); line-height:1.2; }
+.mesero-topbar-subtitle { font-size:10px; color:var(--muted); line-height:1.2; }
+.mesero-icon-btn { width:34px; height:34px; border-radius:8px; border:1px solid var(--border); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text); flex-shrink:0; }
+.mesero-icon-btn svg { width:18px; height:18px; }
+.mesero-zona-btn { display:inline-flex; align-items:center; gap:5px; padding:7px 11px; background:var(--alt); border:1px solid var(--border); border-radius:8px; cursor:pointer; font-family:var(--ff-base); font-size:12px; font-weight:500; color:var(--text); }
+.mesero-zona-btn svg { width:13px; height:13px; color:var(--muted); }
+
+.mesero-content { flex:1; overflow-y:auto; overflow-x:hidden; padding:16px; }
+
+.mesero-bottom-nav { border-top:1px solid var(--border); background:var(--bg); flex-shrink:0; padding:8px 0 4px; display:flex; }
+.mesero-bottom-nav-tab { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:transparent; border:none; cursor:pointer; padding:6px 4px; position:relative; color:var(--muted); text-decoration:none; font-family:var(--ff-base); }
+.mesero-bottom-nav-tab svg { width:22px; height:22px; stroke-width:1.6; }
+.mesero-bottom-nav-tab span { font-size:10px; font-weight:500; }
+.mesero-bottom-nav-tab.is-active { color:var(--accent); }
+.mesero-bottom-nav-tab.is-active svg { stroke-width:2.4; }
+.mesero-bottom-nav-tab.is-active span { font-weight:600; }
+.mesero-bottom-nav-tab-icon-wrap { position:relative; display:inline-flex; }
+.mesero-bottom-nav-tab-badge { position:absolute; top:-4px; right:-8px; min-width:16px; height:16px; border-radius:8px; padding:0 4px; background:var(--error); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+
+/* Mesa grid */
+.zona-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:6px 2px 10px; }
+.mesa-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+.mesa-card { border-radius:var(--radius-lg); border:1px solid var(--border-default); background:var(--bg-surface); padding:14px; cursor:pointer; transition:transform .12s ease, box-shadow .12s ease; min-height:96px; display:flex; flex-direction:column; justify-content:space-between; }
+.mesa-card:active { transform:scale(.98); }
+.mesa-card.ocupada { background:var(--state-danger-bg); border-color:var(--state-danger-border); }
+.mesa-card.por-cobrar { background:var(--state-warning-bg); border-color:var(--state-warning-border); }
+.mesa-card.reservada { background:var(--state-info-bg); border-color:var(--state-info-border); }
+.mesa-num { font-family:var(--ff-display); font-size:30px; line-height:.9; letter-spacing:.02em; color:var(--text); }
+.mesa-meta { font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; }
+.mesa-total { font-size:13px; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums; }
+
+/* Nómina hero */
+.nom-hero { border-radius:var(--radius-xl); padding:20px; color:#fff; background:var(--logo-gradient); box-shadow:var(--logo-shadow); margin-bottom:16px; }
+.nom-hero-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; opacity:.85; }
+.nom-hero-count { font-family:var(--ff-display); font-size:44px; line-height:1; margin:6px 0 2px; letter-spacing:.02em; }
+.nom-hero-date { font-size:12px; opacity:.85; }
+.nom-progress { height:7px; border-radius:4px; background:rgba(255,255,255,.25); margin:16px 0 6px; overflow:hidden; }
+.nom-progress > span { display:block; height:100%; background:#fff; border-radius:4px; }
+.nom-progress-meta { display:flex; justify-content:space-between; font-size:11px; opacity:.9; font-variant-numeric:tabular-nums; }
+.nom-row { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid var(--border-subtle); }
+.nom-row:last-child { border-bottom:none; }
+.nom-row .k { font-size:13px; color:var(--muted); }
+.nom-row .v { font-size:14px; font-weight:600; color:var(--text); font-variant-numeric:tabular-nums; }

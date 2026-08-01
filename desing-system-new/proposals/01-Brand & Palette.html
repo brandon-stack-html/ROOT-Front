@@ -1,0 +1,1341 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Brand & Palette — Round 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ──────────────────────────────────────────────────────────────────────────
+     PROPOSED TOKENS — dark gold accent
+     ──────────────────────────────────────────────────────────────────────── */
+  :root {
+    /* Brand — Amber/Saffron Gold */
+    --gold-50:  #FBF6E8;
+    --gold-100: #F5EAC5;
+    --gold-300: #E0BE6E;
+    --gold-500: #B98521;   /* accent base — light */
+    --gold-600: #9A6E15;   /* accent hover — light */
+    --gold-700: #7B570E;   /* deep gold */
+    --gold-950: #2A1D04;   /* gradient floor */
+    --gold-bright: #D9A445;/* accent — dark */
+
+    /* Warm neutrals (toasted) */
+    --bg:     #FBFAF7;
+    --alt:    #F4F1EA;
+    --text:   #1A1612;
+    --muted:  #6B6358;
+    --border: #E7E2D6;
+
+    --bg-base:     #FBFAF7;
+    --bg-surface:  #FFFFFF;
+    --bg-elevated: #F4F1EA;
+    --bg-overlay:  #ECE7D9;
+
+    --border-subtle:  rgba(26,22,18,0.05);
+    --border-default: rgba(26,22,18,0.09);
+    --border-strong:  rgba(26,22,18,0.16);
+
+    --accent:        var(--gold-500);
+    --accent-hover:  var(--gold-600);
+    --accent-soft:   #FBF6E8;
+    --accent-ring:   rgba(185,133,33,0.18);
+
+    --success: #15803D;
+    --warning: #B45309;
+    --danger:  #B91C1C;
+    --info:    #1E40AF;
+
+    --shadow-sm: 0 1px 2px rgba(26,22,18,0.05);
+    --shadow-md: 0 8px 24px -10px rgba(26,22,18,0.10);
+    --shadow-lg: 0 24px 48px -16px rgba(26,22,18,0.16);
+    --gold-glow: 0 12px 36px -12px rgba(185,133,33,0.45);
+
+    --grad-hero: linear-gradient(135deg, #D9A445 0%, #B98521 38%, #6B4906 100%);
+    --grad-soft: linear-gradient(180deg, rgba(217,164,69,0.10), rgba(217,164,69,0));
+  }
+
+  [data-theme="dark"] {
+    --bg:     #0C0A06;
+    --alt:    #15120B;
+    --text:   #F4EFE0;
+    --muted:  #9C907A;
+    --border: #221E14;
+
+    --bg-base:     #0C0A06;
+    --bg-surface:  #13110A;
+    --bg-elevated: #1B1810;
+    --bg-overlay:  #251F14;
+
+    --border-subtle:  rgba(244,239,224,0.06);
+    --border-default: rgba(244,239,224,0.10);
+    --border-strong:  rgba(244,239,224,0.18);
+
+    --accent:        var(--gold-bright);
+    --accent-hover:  #EBB85B;
+    --accent-soft:   rgba(217,164,69,0.14);
+    --accent-ring:   rgba(217,164,69,0.32);
+
+    --success: #4ADE80;
+    --warning: #FBBF24;
+    --danger:  #FB7185;
+    --info:    #93C5FD;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.55), 0 0 0 1px rgba(244,239,224,0.04);
+    --shadow-lg: 0 24px 48px rgba(0,0,0,0.65), 0 0 0 1px rgba(244,239,224,0.06);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color .25s ease, color .25s ease;
+  }
+
+  .page { max-width: 1280px; margin: 0 auto; padding: 80px 48px 160px; }
+
+  /* ────────────── TOP BAR ────────────── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 64px; border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 88px;
+  }
+  .topbar-meta { display: flex; flex-direction: column; gap: 4px; }
+  .topbar-meta .label { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .topbar-meta .title { font-size: 14px; font-weight: 500; color: var(--text); }
+
+  .theme-toggle {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: 9999px;
+  }
+  .theme-toggle button {
+    appearance: none; border: 0; background: transparent;
+    padding: 6px 14px; border-radius: 9999px;
+    font: inherit; font-size: 12px; font-weight: 600; color: var(--muted);
+    cursor: pointer; transition: all .15s ease;
+  }
+  .theme-toggle button[aria-pressed="true"] {
+    background: var(--bg-surface); color: var(--text);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ────────────── HERO ────────────── */
+  .hero { margin-bottom: 128px; }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(56px, 7vw, 96px);
+    font-weight: 700; letter-spacing: -0.035em; line-height: 1.02;
+    max-width: 14ch;
+    margin-bottom: 32px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: var(--grad-hero);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-lede {
+    font-size: 19px; line-height: 1.55; color: var(--muted);
+    max-width: 62ch;
+  }
+
+  /* ────────────── SECTION ────────────── */
+  section { margin-bottom: 128px; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 32px; margin-bottom: 48px; }
+  .section-head .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--accent); font-weight: 500;
+  }
+  .section-head h2 {
+    font-size: 36px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1;
+    flex: 1;
+  }
+  .section-head .aside {
+    font-size: 14px; color: var(--muted); max-width: 32ch; text-align: right;
+  }
+
+  /* ────────────── NAME GRID ────────────── */
+  .names {
+    display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px;
+  }
+  .name-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: 20px;
+    padding: 40px 32px;
+    display: flex; flex-direction: column; gap: 24px;
+    position: relative;
+    transition: all .2s ease;
+  }
+  .name-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+  .name-card.is-winner {
+    grid-column: span 12;
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-elevated) 100%);
+    border-color: rgba(185,133,33,0.30);
+    padding: 56px 48px;
+  }
+  [data-theme="dark"] .name-card.is-winner { border-color: rgba(217,164,69,0.35); }
+  .name-card.is-other { grid-column: span 3; }
+
+  .name-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--accent); font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .name-tag .dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--accent); }
+
+  .name-card h3 {
+    font-size: 56px; font-weight: 700; letter-spacing: -0.04em; line-height: 0.95;
+    color: var(--text);
+  }
+  .name-card.is-winner h3 {
+    font-size: 144px; letter-spacing: -0.055em;
+  }
+  .name-card h3 .punct { color: var(--accent); }
+  .name-card .pron {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--muted); margin-top: 8px;
+  }
+
+  .name-meta {
+    display: grid; grid-template-columns: auto 1fr; gap: 12px 20px;
+    font-size: 13px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .name-meta dt { color: var(--muted); }
+  .name-meta dd { color: var(--text); font-weight: 500; }
+
+  .name-card.is-winner .winner-grid {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: end;
+  }
+  .name-card.is-winner .reasoning {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .name-card.is-winner .reasoning p {
+    font-size: 16px; line-height: 1.6; color: var(--muted);
+  }
+  .name-card.is-winner .reasoning p strong { color: var(--text); font-weight: 600; }
+  .name-card.is-winner .name-meta { padding-top: 0; border-top: 0; grid-template-columns: 110px 1fr; }
+
+  /* ────────────── COLOR THEORY ────────────── */
+  .theory {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+    margin-bottom: 64px;
+  }
+  .theory p { font-size: 16px; line-height: 1.7; color: var(--muted); margin-bottom: 16px; }
+  .theory p strong { color: var(--text); font-weight: 600; }
+  .theory h4 { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 16px; }
+
+  .versus {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-top: 24px;
+  }
+  .versus .v-card {
+    padding: 20px; border-radius: 14px;
+    background: var(--bg-elevated); border: 1px solid var(--border-default);
+  }
+  .versus .v-card .v-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+  .versus .v-card .v-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--text); font-weight: 500;
+  }
+  .versus .v-card .v-chip .sw {
+    width: 24px; height: 24px; border-radius: 6px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  }
+
+  /* ────────────── DUAL PALETTE ────────────── */
+  .palette-pair {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  }
+  .palette-side {
+    border-radius: 24px; padding: 40px;
+    border: 1px solid;
+    transition: all .2s ease;
+  }
+  .palette-side.light {
+    background: #FBFAF7; color: #1A1612;
+    border-color: rgba(26,22,18,0.09);
+  }
+  .palette-side.dark {
+    background: #0C0A06; color: #F4EFE0;
+    border-color: rgba(244,239,224,0.10);
+  }
+  .palette-side h3 {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .palette-side h3 .mode-dot {
+    width: 10px; height: 10px; border-radius: 9999px;
+  }
+  .palette-side.light .mode-dot { background: #B98521; }
+  .palette-side.dark .mode-dot { background: #D9A445; }
+
+  .swatch-group { margin-bottom: 36px; }
+  .swatch-group .g-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    opacity: 0.55; margin-bottom: 12px;
+  }
+  .sw-row {
+    display: grid; grid-template-columns: 36px 1fr auto; gap: 14px; align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid currentColor; border-color: inherit;
+  }
+  .palette-side.light .sw-row { border-top-color: rgba(26,22,18,0.06); }
+  .palette-side.dark .sw-row { border-top-color: rgba(244,239,224,0.06); }
+  .sw-row:first-child { border-top: 0; }
+  .sw-row .sw-box {
+    width: 36px; height: 36px; border-radius: 8px;
+    box-shadow: inset 0 0 0 1px rgba(127,127,127,0.18);
+  }
+  .sw-row .sw-name { font-size: 13px; font-weight: 500; line-height: 1.2; }
+  .sw-row .sw-name small { display: block; opacity: 0.55; font-size: 11px; font-weight: 400; margin-top: 2px; }
+  .sw-row .sw-val {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    opacity: 0.7;
+  }
+
+  /* Hero accent demo inside palette */
+  .palette-side .demo {
+    margin-top: 36px; padding-top: 28px;
+    border-top: 1px solid currentColor;
+  }
+  .palette-side.light .demo { border-top-color: rgba(26,22,18,0.10); }
+  .palette-side.dark .demo { border-top-color: rgba(244,239,224,0.10); }
+  .palette-side .demo .row { display: flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+  .btn-demo {
+    appearance: none; border: 0; padding: 11px 18px; border-radius: 10px;
+    font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .palette-side.light .btn-demo.primary { background: #B98521; color: #FFFCEF; }
+  .palette-side.dark .btn-demo.primary { background: #D9A445; color: #1B1408; }
+  .palette-side.light .btn-demo.ghost { background: transparent; color: #1A1612; border: 1px solid rgba(26,22,18,0.14); }
+  .palette-side.dark .btn-demo.ghost { background: transparent; color: #F4EFE0; border: 1px solid rgba(244,239,224,0.18); }
+
+  .badge-demo {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 9999px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-demo .bd-dot { width: 6px; height: 6px; border-radius: 9999px; }
+
+  /* State badges sample */
+  .states-demo {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+  }
+
+  /* ────────────── CODE OUTPUT ────────────── */
+  .code-block {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 28px 32px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.7;
+    color: var(--text);
+  }
+  .code-block .com { color: var(--muted); }
+  .code-block .var { color: var(--accent); }
+  .code-block .val { color: var(--text); opacity: 0.85; }
+  .code-block .sel { color: var(--accent-hover); font-weight: 600; }
+
+  .code-tabs { display: flex; gap: 4px; margin-bottom: -1px; }
+  .code-tab {
+    appearance: none; border: 1px solid var(--border-default); border-bottom-color: transparent;
+    background: var(--bg-elevated); padding: 10px 18px;
+    border-radius: 12px 12px 0 0;
+    font: inherit; font-size: 12px; font-weight: 600;
+    color: var(--muted); cursor: pointer;
+  }
+  .code-tab[aria-selected="true"] { background: var(--bg-elevated); color: var(--text); }
+  .code-tab[aria-selected="false"] { background: var(--bg-base); border-color: transparent; }
+
+  /* ────────────── MIGRATION TABLE ────────────── */
+  .migration {
+    width: 100%; border-collapse: collapse;
+    border: 1px solid var(--border-default);
+    border-radius: 16px; overflow: hidden;
+    background: var(--bg-surface);
+    font-size: 13px;
+  }
+  .migration thead th {
+    background: var(--bg-elevated); padding: 14px 20px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); text-align: left;
+    border-bottom: 1px solid var(--border-default);
+  }
+  .migration tbody td {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border-subtle);
+    vertical-align: top;
+  }
+  .migration tbody tr:first-child td { border-top: 0; }
+  .migration .find, .migration .replace {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  }
+  .migration .find .chip, .migration .replace .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 8px; border-radius: 6px;
+    background: var(--bg-elevated); color: var(--text);
+  }
+  .migration .arrow {
+    color: var(--muted); font-size: 16px;
+  }
+  .migration .note { color: var(--muted); font-size: 12.5px; }
+
+  /* ────────────── NEXT-UP TEASER ────────────── */
+  .teaser {
+    margin-top: 64px; padding: 40px 48px;
+    background: var(--bg-elevated);
+    border: 1px dashed var(--border-strong);
+    border-radius: 20px;
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 32px;
+  }
+  .teaser .teaser-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); }
+  .teaser h4 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .teaser p { color: var(--muted); font-size: 14px; }
+  .teaser .pill {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 8px 14px; border-radius: 9999px;
+  }
+
+  /* utilities */
+  .hr-soft { height: 1px; background: var(--border-subtle); margin: 64px 0; border: 0; }
+
+  @media (max-width: 1080px) {
+    .name-card.is-other { grid-column: span 6; }
+    .theory, .palette-pair, .name-card.is-winner .winner-grid { grid-template-columns: 1fr; gap: 32px; }
+    .name-card.is-winner h3 { font-size: 96px; }
+  }
+  @media (max-width: 640px) {
+    .page { padding: 48px 24px 96px; }
+    .name-card.is-other { grid-column: span 12; }
+  }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-meta">
+      <span class="label">Round 01 + 02 · Brand system completo</span>
+      <span class="title">Naming · paleta · tipografía · logo · gradientes · sombras · radios</span>
+    </div>
+    <div class="theme-toggle" role="tablist" aria-label="Cambiar tema">
+      <button type="button" data-mode="light" aria-pressed="true">Claro</button>
+      <button type="button" data-mode="dark" aria-pressed="false">Oscuro</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Propuesta principal</div>
+    <h1>De un wordmark genérico a una marca con <em>sabor</em>.</h1>
+    <p class="hero-lede">
+      Reemplazamos el índigo Vercel-genérico por una paleta dark-gold tostada — premium pero cálida, tech pero
+      con raíz LATAM. La estructura del sistema (4 niveles de superficie, badges translúcidos, sombras con ring)
+      se mantiene intacta: solo cambian color, tipografía y nombre. Esta página está pintada con la propuesta
+      misma — alterna claro/oscuro arriba para verla viva.
+    </p>
+  </section>
+
+  <!-- ─────────────────────────────────── 1. NAMES ─────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <span class="num">01 / 08 · final</span>
+      <h2>Nombre del producto</h2>
+      <div class="aside">Aprobado: <strong>NOVA</strong>. Los otros 4 quedan archivados como alternativas válidas.</div>
+    </div>
+
+    <div class="names">
+
+      <!-- WINNER -->
+      <div class="name-card is-winner">
+        <div class="winner-grid">
+          <div>
+            <div class="name-tag"><span class="dot"></span>Aprobado · Ronda 02</div>
+            <h3 style="margin-top:16px"><span class="punct">[</span>NOVA<span class="punct">]</span></h3>
+            <div class="pron">/ˈno-va/ — "nó-va"</div>
+          </div>
+          <div class="reasoning">
+            <p><strong>Nova = estrella nueva, destello en el cielo.</strong> Del latín <em>novus</em> — universal en español, inglés, italiano, portugués. Dos sílabas, cuatro letras, lee igual donde sea.</p>
+            <p><strong>Conecta con el oro de la marca.</strong> Una nova es un flash dorado en el cielo nocturno — exactamente lo que tu paleta dark-gold sobre fondo tostado evoca. El símbolo natural es una <strong>chispa de 4 puntas</strong> (sparkle ✦), que también lee como "chispa de cocina".</p>
+            <p><strong>Tagline candidatos:</strong> "Tu turno, brillando." · "Una nueva forma de operar." · "Cada servicio, su nova."</p>
+            <dl class="name-meta" style="margin-top: 8px">
+              <dt>Origen</dt><dd>Latín <em>nova</em> — "nueva" (estrella nueva)</dd>
+              <dt>Dominio</dt><dd>usenova.io · novapos.io · nova.app · getnova.co</dd>
+              <dt>Símbolo</dt><dd>Chispa de 4 puntas (sparkle), oro sobre tostado</dd>
+              <dt>Vibe</dt><dd>Producto tech moderno con calidez LATAM — Linear meets Sazón</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALT 1 — CIFRA -->
+      <div class="name-card is-other">
+        <div class="name-tag"><span class="dot" style="background:var(--muted)"></span>Archivado · 02</div>
+        <h3><span class="punct">[</span>CIFRA<span class="punct">]</span></h3>
+        <div class="pron">/ˈsi-fra/</div>
+        <dl class="name-meta">
+          <dt>Vibe</dt><dd>POS = números, código, dashboard ejecutivo</dd>
+          <dt>Razón archivo</dt><dd>Muy operativo — perdía la calidez de marca</dd>
+        </dl>
+      </div>
+
+      <!-- ALT 2 -->
+      <div class="name-card is-other">
+        <div class="name-tag"><span class="dot" style="background:var(--muted)"></span>Archivado · 03</div>
+        <h3><span class="punct">[</span>MESA<span class="punct">]</span></h3>
+        <div class="pron">/ˈme-sa/</div>
+        <dl class="name-meta">
+          <dt>Vibe</dt><dd>Universal, foundational</dd>
+          <dt>Razón archivo</dt><dd>Demasiado literal</dd>
+        </dl>
+      </div>
+
+      <!-- ALT 3 -->
+      <div class="name-card is-other">
+        <div class="name-tag"><span class="dot" style="background:var(--muted)"></span>Archivado · 04</div>
+        <h3><span class="punct">[</span>AURA<span class="punct">]</span></h3>
+        <div class="pron">/ˈau-ra/</div>
+        <dl class="name-meta">
+          <dt>Vibe</dt><dd>Atmósfera, ambiente premium</dd>
+          <dt>Razón archivo</dt><dd>Demasiado etéreo</dd>
+        </dl>
+      </div>
+
+      <!-- ALT 4 -->
+      <div class="name-card is-other">
+        <div class="name-tag"><span class="dot" style="background:var(--muted)"></span>Archivado · 05</div>
+        <h3><span class="punct">[</span>BRIO<span class="punct">]</span></h3>
+        <div class="pron">/ˈbri-o/</div>
+        <dl class="name-meta">
+          <dt>Vibe</dt><dd>Italiano para vigor/ímpetu</dd>
+          <dt>Razón archivo</dt><dd>Más fitness que POS</dd>
+        </dl>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────── 2. COLOR THEORY ─────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <span class="num">02 / 08</span>
+      <h2>Teoría de color — por qué dark gold</h2>
+      <div class="aside">Justificación del salto desde índigo Vercel a oro tostado.</div>
+    </div>
+
+    <div class="theory">
+      <div>
+        <h4>Por qué oro tostado, no amarillo, no naranja</h4>
+        <p>El oro tostado <strong>(oklch ~0.65 · 0.13 · 80)</strong> ocupa el único espacio cromático que cumple tres cosas a la vez en POS:</p>
+        <p>① <strong>Es psicológicamente comida</strong> — el cerebro lee dorado tostado como pan, masa, fritura dorada, especias. Mucho más universal que rojo tomate (carne) o verde (vegetales).</p>
+        <p>② <strong>Es premium sin ser intimidante</strong> — los amarillos puros gritan "advertencia" o "tienda barata". El oro mate, con su lightness en 65 y chroma controlada en 0.13, lee como reloj suizo o whisky añejo — calidad sin estridencia.</p>
+        <p>③ <strong>Es accesible</strong> — un vendedor de empanadas no se intimida con dorado como sí se intimida con azul corporativo. El oro vive en el sancocho, en la natilla, en el bocadillo veleño.</p>
+      </div>
+
+      <div>
+        <h4>Cómo se diferencia del campo competitivo</h4>
+        <p>La industria POS-restaurantes en LATAM está dominada por:</p>
+        <p>· <strong>Naranja Rappi/iFood</strong> — energético pero plástico, identificado con delivery, no operación.</p>
+        <p>· <strong>Verde Toast/Square</strong> — corporativo americano, sin alma local.</p>
+        <p>· <strong>Negro+rojo Lightspeed</strong> — agresivo, retail, "máquina registradora".</p>
+        <p>· <strong>Azul Loyverse/Alegra</strong> — administrativo, contable, frío.</p>
+        <p>El dark gold ocupa <strong>territorio vacío</strong>. Es la pieza de mobiliario que falta en la habitación.</p>
+
+        <div class="versus">
+          <div class="v-card">
+            <div class="v-label">Saliendo de</div>
+            <div class="v-chip"><span class="sw" style="background:#4F46E5"></span>Indigo · #4F46E5</div>
+          </div>
+          <div class="v-card">
+            <div class="v-label">Entrando a</div>
+            <div class="v-chip"><span class="sw" style="background:#B98521"></span>Saffron · #B98521</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="hr-soft" />
+
+    <h4 style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 32px;">La paleta completa — claro y oscuro al mismo nivel</h4>
+
+    <!-- DUAL PALETTE -->
+    <div class="palette-pair">
+      <!-- LIGHT -->
+      <div class="palette-side light">
+        <h3><span class="mode-dot"></span>Modo claro</h3>
+
+        <div class="swatch-group">
+          <div class="g-title">Marca · accent</div>
+          <div class="sw-row"><div class="sw-box" style="background:#B98521"></div><div class="sw-name">accent<small>Saffron gold · botones, links, focus</small></div><div class="sw-val">#B98521</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#9A6E15"></div><div class="sw-name">accent-hover<small>Pressed / hover state</small></div><div class="sw-val">#9A6E15</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#FBF6E8"></div><div class="sw-name">accent-soft<small>Ghost button hover</small></div><div class="sw-val">#FBF6E8</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:rgba(185,133,33,0.18)"></div><div class="sw-name">accent-ring<small>Focus glow (rgba)</small></div><div class="sw-val">B98521 · 18%</div></div>
+        </div>
+
+        <div class="swatch-group">
+          <div class="g-title">Superficies (4 niveles)</div>
+          <div class="sw-row"><div class="sw-box" style="background:#FBFAF7"></div><div class="sw-name">bg-base<small>Página</small></div><div class="sw-val">#FBFAF7</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#FFFFFF;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.10)"></div><div class="sw-name">bg-surface<small>Cards nivel 1</small></div><div class="sw-val">#FFFFFF</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#F4F1EA"></div><div class="sw-name">bg-elevated<small>Modales · sub-cards</small></div><div class="sw-val">#F4F1EA</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#ECE7D9"></div><div class="sw-name">bg-overlay<small>Hover</small></div><div class="sw-val">#ECE7D9</div></div>
+        </div>
+
+        <div class="swatch-group">
+          <div class="g-title">Texto + bordes</div>
+          <div class="sw-row"><div class="sw-box" style="background:#1A1612"></div><div class="sw-name">text<small>Primary · 14.8:1 contrast</small></div><div class="sw-val">#1A1612</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#6B6358"></div><div class="sw-name">muted<small>Secondary · 5.3:1</small></div><div class="sw-val">#6B6358</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:rgba(26,22,18,0.05)"></div><div class="sw-name">border-subtle<small>Divisores</small></div><div class="sw-val">1A1612 · 5%</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:rgba(26,22,18,0.09)"></div><div class="sw-name">border-default<small>Cards / inputs</small></div><div class="sw-val">1A1612 · 9%</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:rgba(26,22,18,0.16)"></div><div class="sw-name">border-strong<small>Hover / focus</small></div><div class="sw-val">1A1612 · 16%</div></div>
+        </div>
+
+        <div class="swatch-group">
+          <div class="g-title">Estados (saturados, AA-safe)</div>
+          <div class="sw-row"><div class="sw-box" style="background:#15803D"></div><div class="sw-name">success</div><div class="sw-val">#15803D</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#B45309"></div><div class="sw-name">warning</div><div class="sw-val">#B45309</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#B91C1C"></div><div class="sw-name">danger</div><div class="sw-val">#B91C1C</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#1E40AF"></div><div class="sw-name">info</div><div class="sw-val">#1E40AF</div></div>
+        </div>
+
+        <div class="demo">
+          <div class="g-title" style="opacity:.55;font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Componentes en vivo</div>
+          <div class="row">
+            <button class="btn-demo primary">Enviar a cocina</button>
+            <button class="btn-demo ghost">Cancelar</button>
+          </div>
+          <div class="states-demo">
+            <span class="badge-demo" style="background:rgba(21,128,61,0.10);color:#15803D;border:1px solid rgba(21,128,61,0.25)"><span class="bd-dot" style="background:#15803D"></span>Pagada</span>
+            <span class="badge-demo" style="background:rgba(180,83,9,0.10);color:#B45309;border:1px solid rgba(180,83,9,0.25)"><span class="bd-dot" style="background:#B45309"></span>Pendiente</span>
+            <span class="badge-demo" style="background:rgba(185,28,28,0.10);color:#B91C1C;border:1px solid rgba(185,28,28,0.25)"><span class="bd-dot" style="background:#B91C1C"></span>Error</span>
+            <span class="badge-demo" style="background:rgba(30,64,175,0.10);color:#1E40AF;border:1px solid rgba(30,64,175,0.25)"><span class="bd-dot" style="background:#1E40AF"></span>Demo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DARK -->
+      <div class="palette-side dark">
+        <h3><span class="mode-dot"></span>Modo oscuro</h3>
+
+        <div class="swatch-group">
+          <div class="g-title">Marca · accent</div>
+          <div class="sw-row"><div class="sw-box" style="background:#D9A445"></div><div class="sw-name">accent<small>Saffron bright · sube luminosidad en oscuro</small></div><div class="sw-val">#D9A445</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#EBB85B"></div><div class="sw-name">accent-hover</div><div class="sw-val">#EBB85B</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:rgba(217,164,69,0.14)"></div><div class="sw-name">accent-soft<small>Ghost hover</small></div><div class="sw-val">D9A445 · 14%</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:rgba(217,164,69,0.32)"></div><div class="sw-name">accent-ring<small>Focus glow dorado</small></div><div class="sw-val">D9A445 · 32%</div></div>
+        </div>
+
+        <div class="swatch-group">
+          <div class="g-title">Superficies (4 niveles)</div>
+          <div class="sw-row"><div class="sw-box" style="background:#0C0A06"></div><div class="sw-name">bg-base<small>Página · negro tostado, no neutro</small></div><div class="sw-val">#0C0A06</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#13110A"></div><div class="sw-name">bg-surface</div><div class="sw-val">#13110A</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#1B1810"></div><div class="sw-name">bg-elevated</div><div class="sw-val">#1B1810</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#251F14"></div><div class="sw-name">bg-overlay</div><div class="sw-val">#251F14</div></div>
+        </div>
+
+        <div class="swatch-group">
+          <div class="g-title">Texto + bordes</div>
+          <div class="sw-row"><div class="sw-box" style="background:#F4EFE0"></div><div class="sw-name">text<small>Cream warm · 16.1:1</small></div><div class="sw-val">#F4EFE0</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#9C907A"></div><div class="sw-name">muted<small>5.2:1</small></div><div class="sw-val">#9C907A</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:rgba(244,239,224,0.06)"></div><div class="sw-name">border-subtle</div><div class="sw-val">F4EFE0 · 6%</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:rgba(244,239,224,0.10)"></div><div class="sw-name">border-default</div><div class="sw-val">F4EFE0 · 10%</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:rgba(244,239,224,0.18)"></div><div class="sw-name">border-strong</div><div class="sw-val">F4EFE0 · 18%</div></div>
+        </div>
+
+        <div class="swatch-group">
+          <div class="g-title">Estados (legibles en oscuro)</div>
+          <div class="sw-row"><div class="sw-box" style="background:#4ADE80"></div><div class="sw-name">success</div><div class="sw-val">#4ADE80</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#FBBF24"></div><div class="sw-name">warning</div><div class="sw-val">#FBBF24</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#FB7185"></div><div class="sw-name">danger</div><div class="sw-val">#FB7185</div></div>
+          <div class="sw-row"><div class="sw-box" style="background:#93C5FD"></div><div class="sw-name">info</div><div class="sw-val">#93C5FD</div></div>
+        </div>
+
+        <div class="demo">
+          <div class="g-title" style="opacity:.55;font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Componentes en vivo</div>
+          <div class="row">
+            <button class="btn-demo primary">Enviar a cocina</button>
+            <button class="btn-demo ghost">Cancelar</button>
+          </div>
+          <div class="states-demo">
+            <span class="badge-demo" style="background:rgba(74,222,128,0.10);color:#4ADE80;border:1px solid rgba(74,222,128,0.25)"><span class="bd-dot" style="background:#4ADE80"></span>Pagada</span>
+            <span class="badge-demo" style="background:rgba(251,191,36,0.10);color:#FBBF24;border:1px solid rgba(251,191,36,0.25)"><span class="bd-dot" style="background:#FBBF24"></span>Pendiente</span>
+            <span class="badge-demo" style="background:rgba(251,113,133,0.10);color:#FB7185;border:1px solid rgba(251,113,133,0.25)"><span class="bd-dot" style="background:#FB7185"></span>Error</span>
+            <span class="badge-demo" style="background:rgba(147,197,253,0.10);color:#93C5FD;border:1px solid rgba(147,197,253,0.25)"><span class="bd-dot" style="background:#93C5FD"></span>Demo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────── 3. TYPOGRAPHY ─────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <span class="num">03 / 08</span>
+      <h2>Tipografía — DM Sans, una sola familia</h2>
+      <div class="aside">Sale el pair Inter + Bebas Neue. Entra <strong>DM Sans</strong> para todo + <strong>JetBrains Mono</strong> para datos. Mismas proporciones, nueva personalidad: geométrica con terminaciones suavemente redondeadas.</div>
+    </div>
+
+    <!-- Hero specimen -->
+    <div style="background: var(--bg-elevated); border: 1px solid var(--border-default); border-radius: 24px; padding: 80px 48px; margin-bottom: 32px; text-align: center; position: relative; overflow: hidden;">
+      <div style="position:absolute;inset:0;background:var(--grad-soft);pointer-events:none;"></div>
+      <div style="position:relative;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:24px;">Google Fonts · DM Sans · 0 kb licensing</div>
+        <div style="font-size:clamp(96px, 14vw, 220px); font-weight: 800; letter-spacing: -0.045em; line-height: 0.9; background: var(--grad-hero); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;">Aa Gg Qq</div>
+        <div style="font-size: 16px; color: var(--muted); margin-top: 32px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;">400 · 500 · 600 · 700 · 800</div>
+      </div>
+    </div>
+
+    <!-- Glyphs + weights -->
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-bottom: 32px;">
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 32px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:20px;">Glifos</div>
+        <div style="font-size: 28px; font-weight: 500; line-height: 1.4; letter-spacing: -0.005em; color: var(--text);">
+          ABCDEFGHIJKLMNÑOPQRSTUVWXYZ<br>
+          abcdefghijklmnñopqrstuvwxyz<br>
+          0123456789 — $1.623.500 · ¿? ¡!
+        </div>
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: var(--accent); font-variant-numeric: tabular-nums;">
+          $ 1.623.500 · $ 47.900 · $ 285.300 — tabular-nums
+        </div>
+      </div>
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;">Pesos</div>
+        <div style="font-size: 22px; font-weight: 400; color: var(--text);">Regular · 400</div>
+        <div style="font-size: 22px; font-weight: 500; color: var(--text);">Medium · 500</div>
+        <div style="font-size: 22px; font-weight: 600; color: var(--text);">Semibold · 600</div>
+        <div style="font-size: 22px; font-weight: 700; color: var(--text);">Bold · 700</div>
+        <div style="font-size: 22px; font-weight: 800; color: var(--text);">ExtraBold · 800</div>
+      </div>
+    </div>
+
+    <!-- Type scale -->
+    <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; overflow: hidden;">
+      <div style="display: grid; grid-template-columns: 140px 1fr 180px; gap: 24px; padding: 14px 32px; background: var(--bg-elevated); font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid var(--border-default);">
+        <div>Token</div><div>Specimen</div><div style="text-align:right;">Size · weight · LH</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 140px 1fr 180px; gap: 24px; padding: 28px 32px; align-items: baseline; border-bottom: 1px solid var(--border-subtle);">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">--fs-display</div>
+        <div style="font-size: 36px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: var(--text);">Buenos días, Juan Camilo</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right;">36 / 700 / 1.15</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 140px 1fr 180px; gap: 24px; padding: 24px 32px; align-items: baseline; border-bottom: 1px solid var(--border-subtle);">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">--fs-h1</div>
+        <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; color: var(--text);">Pedidos del turno · Sede Norte</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right;">28 / 700 / 1.20</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 140px 1fr 180px; gap: 24px; padding: 20px 32px; align-items: baseline; border-bottom: 1px solid var(--border-subtle);">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">--fs-h2</div>
+        <div style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; color: var(--text);">Configurar pasarela de pagos</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right;">22 / 600 / 1.25</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 140px 1fr 180px; gap: 24px; padding: 18px 32px; align-items: baseline; border-bottom: 1px solid var(--border-subtle);">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">--fs-h3</div>
+        <div style="font-size: 18px; font-weight: 600; letter-spacing: -0.005em; line-height: 1.3; color: var(--text);">Detalles de la mesa 7</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right;">18 / 600 / 1.30</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 140px 1fr 180px; gap: 24px; padding: 16px 32px; align-items: baseline; border-bottom: 1px solid var(--border-subtle);">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">--fs-body-l</div>
+        <div style="font-size: 16px; font-weight: 400; line-height: 1.55; color: var(--text);">Una bandeja paisa para mesa 4, sin chicharrón extra.</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right;">16 / 400 / 1.55</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 140px 1fr 180px; gap: 24px; padding: 14px 32px; align-items: baseline; border-bottom: 1px solid var(--border-subtle);">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">--fs-body</div>
+        <div style="font-size: 14px; line-height: 1.5; color: var(--text);">Tu pedido está en cocina. Tiempo estimado: 12 min.</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right;">14 / 400 / 1.50</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 140px 1fr 180px; gap: 24px; padding: 12px 32px; align-items: baseline; border-bottom: 1px solid var(--border-subtle);">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">--fs-caption</div>
+        <div style="font-size: 12px; font-weight: 500; line-height: 1.4; color: var(--text);">Lunes, 15 de noviembre · 14:32</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right;">12 / 500 / 1.40</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 140px 1fr 180px; gap: 24px; padding: 12px 32px 16px; align-items: baseline;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">--fs-overline</div>
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.4; color: var(--muted);">Sede Norte · Caja 02</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-align: right;">11 / 600 / 0.06em ↑</div>
+      </div>
+    </div>
+
+    <!-- Before / After -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px;">
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 14px; padding: 28px; position: relative;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Antes — Inter + Bebas Neue</div>
+        <div style="font-family: 'Inter', system-ui, sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; color: var(--text);">Buenos días, Juan</div>
+        <div style="font-family: 'Inter', system-ui, sans-serif; font-size: 14px; color: var(--muted); margin-top: 6px;">Lunes, 15 de noviembre · Sede Norte</div>
+      </div>
+      <div style="background: var(--bg-surface); border: 1px solid rgba(185,133,33,0.3); border-radius: 14px; padding: 28px; position: relative; box-shadow: var(--shadow-md);">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Después — DM Sans</div>
+        <div style="font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; color: var(--text);">Buenos días, Juan</div>
+        <div style="font-size: 14px; color: var(--muted); margin-top: 6px;">Lunes, 15 de noviembre · Sede Norte</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────── 4. LOGO / WORDMARK ─────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <span class="num">04 / 08</span>
+      <h2>Logo &amp; wordmark — [NOVA]</h2>
+      <div class="aside">Wordmark tipográfico <code style="font-family:'JetBrains Mono',monospace;font-size:12px">[NOVA]</code> + símbolo de chispa de 4 puntas. Todo escalable vía <code style="font-family:'JetBrains Mono',monospace;font-size:12px">em</code>.</div>
+    </div>
+
+    <!-- HERO LOGO -->
+    <div style="background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-elevated) 100%); border: 1px solid var(--border-default); border-radius: 24px; padding: 96px 48px; margin-bottom: 24px; text-align: center; position: relative; overflow: hidden;">
+      <!-- Sparkle mark -->
+      <svg width="96" height="96" viewBox="0 0 24 24" style="margin-bottom: 32px;" aria-hidden="true">
+        <defs>
+          <linearGradient id="sparkGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#EBB85B"/>
+            <stop offset="50%" stop-color="#B98521"/>
+            <stop offset="100%" stop-color="#6B4906"/>
+          </linearGradient>
+        </defs>
+        <path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z" fill="url(#sparkGrad)"/>
+      </svg>
+      <div style="font-size: clamp(80px, 12vw, 156px); font-weight: 700; letter-spacing: -0.05em; line-height: 1; color: var(--text);">
+        <span style="background: var(--grad-hero); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">[NOVA]</span>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); margin-top: 24px; letter-spacing: 0.08em;">.nova-wordmark.is-hero</div>
+    </div>
+
+    <!-- Variants -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+
+      <!-- Default -->
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 40px 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; min-height: 220px;">
+        <div style="font-size: 28px; font-weight: 700; letter-spacing: 0.14em; line-height: 1; color: var(--text); text-indent: 0.14em;">
+          <span style="color: var(--accent);">[</span>NOVA<span style="color: var(--accent);">]</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.08em;">.nova-wordmark</div>
+          <div style="font-size: 12px; color: var(--muted);">Default · 22px · corchetes en accent</div>
+        </div>
+      </div>
+
+      <!-- Compact -->
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 40px 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; min-height: 220px;">
+        <div style="display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z" fill="var(--accent)" style="fill: #B98521;"/>
+          </svg>
+          <span style="font-size: 14px; font-weight: 700; letter-spacing: 0.14em; line-height: 1; color: var(--text); text-indent: 0.14em;">
+            <span style="color: var(--accent);">[</span>NOVA<span style="color: var(--accent);">]</span>
+          </span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.08em;">.nova-lockup.is-compact</div>
+          <div style="font-size: 12px; color: var(--muted);">Sidebar / topbar · 14px</div>
+        </div>
+      </div>
+
+      <!-- Solid (corchetes mismo color) -->
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 40px 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; min-height: 220px;">
+        <div style="font-size: 28px; font-weight: 700; letter-spacing: 0.14em; line-height: 1; color: var(--text); text-indent: 0.14em;">
+          [NOVA]
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.08em;">.nova-wordmark.is-solid</div>
+          <div style="font-size: 12px; color: var(--muted);">Sobre color · corchetes en texto</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- On dark + lockup variants -->
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px;">
+      <div style="background: #0C0A06; border: 1px solid rgba(244,239,224,0.10); border-radius: 16px; padding: 64px 48px; display: flex; align-items: center; justify-content: center; gap: 20px;">
+        <svg width="56" height="56" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="sparkGradDark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#EBB85B"/>
+              <stop offset="100%" stop-color="#9A6E15"/>
+            </linearGradient>
+          </defs>
+          <path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z" fill="url(#sparkGradDark)"/>
+        </svg>
+        <div style="font-size: 64px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: #F4EFE0;">
+          <span style="color: #D9A445;">[</span>NOVA<span style="color: #D9A445;">]</span>
+        </div>
+      </div>
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;">App icon (tile)</div>
+        <div style="width: 96px; height: 96px; border-radius: 22px; background: var(--grad-hero); display: flex; align-items: center; justify-content: center; box-shadow: var(--gold-glow);">
+          <svg width="56" height="56" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z" fill="#FFFCEF"/>
+          </svg>
+        </div>
+        <div style="font-size: 13px; color: var(--muted); line-height: 1.5;">Tile cuadrado redondeado, sparkle blanco crema sobre el gradiente de marca. Para iOS/Android, favicon grande.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────── 5. GRADIENTES ─────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <span class="num">05 / 08</span>
+      <h2>Gradientes</h2>
+      <div class="aside">3 gradientes vivos en el sistema. Todos derivados del accent gold — sin gradientes decorativos en superficies "frías".</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+
+      <!-- Hero -->
+      <div style="border-radius: 20px; overflow: hidden; border: 1px solid var(--border-default);">
+        <div style="height: 200px; background: linear-gradient(135deg, #D9A445 0%, #B98521 38%, #6B4906 100%); display: flex; align-items: end; padding: 28px;">
+          <div style="font-size: 36px; font-weight: 700; letter-spacing: -0.025em; color: #FFFCEF; line-height: 1;">[NOVA]</div>
+        </div>
+        <div style="background: var(--bg-surface); padding: 24px 28px;">
+          <div style="font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px;">--grad-hero</div>
+          <div style="font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 12px;">Logo hero, splash de auth, banners de bienvenida.</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); line-height: 1.5;">linear-gradient(135deg,<br>&nbsp;&nbsp;#D9A445 0%,<br>&nbsp;&nbsp;#B98521 38%,<br>&nbsp;&nbsp;#6B4906 100%)</div>
+        </div>
+      </div>
+
+      <!-- Soft -->
+      <div style="border-radius: 20px; overflow: hidden; border: 1px solid var(--border-default);">
+        <div style="height: 200px; background: linear-gradient(180deg, rgba(217,164,69,0.18) 0%, rgba(217,164,69,0) 100%), var(--bg-surface); display: flex; align-items: start; padding: 28px;">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em;">Bienvenido</div>
+            <div style="font-size: 22px; font-weight: 700; letter-spacing: -0.015em; color: var(--text); line-height: 1.2;">Lunes, 15 nov.<br>$ 1.623.500 hoy.</div>
+          </div>
+        </div>
+        <div style="background: var(--bg-surface); padding: 24px 28px; border-top: 1px solid var(--border-subtle);">
+          <div style="font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px;">--grad-soft</div>
+          <div style="font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 12px;">Fondo decorativo sutil: hero del dashboard, cards de bienvenida, drawers de KPIs.</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); line-height: 1.5;">linear-gradient(180deg,<br>&nbsp;&nbsp;rgba(217,164,69,.18),<br>&nbsp;&nbsp;rgba(217,164,69,0))</div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div style="border-radius: 20px; overflow: hidden; border: 1px solid var(--border-default);">
+        <div style="height: 200px; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; padding: 28px;">
+          <button style="appearance: none; border: 0; padding: 16px 32px; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: -0.005em; color: #2A1D04; background: linear-gradient(135deg, #EBB85B 0%, #B98521 100%); box-shadow: 0 8px 24px -10px rgba(185,133,33,0.55), inset 0 1px 0 rgba(255,252,239,0.4); cursor: pointer;">
+            Enviar a cocina &nbsp;→
+          </button>
+        </div>
+        <div style="background: var(--bg-surface); padding: 24px 28px;">
+          <div style="font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px;">--grad-cta</div>
+          <div style="font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 12px;">Sólo para el CTA primario del turno (enviar a cocina, cerrar mesa, cobrar). Uso escaso = jerarquía visual fuerte.</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); line-height: 1.5;">linear-gradient(135deg,<br>&nbsp;&nbsp;#EBB85B 0%,<br>&nbsp;&nbsp;#B98521 100%)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────── 6. SHADOWS + RADII ─────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <span class="num">06 / 08</span>
+      <h2>Sombras &amp; radios</h2>
+      <div class="aside">Sombras: mismas 3 escalas que ya tienes + un nuevo <code style="font-family:'JetBrains Mono',monospace;font-size:12px">--gold-glow</code>. Radios: <strong>mantener</strong> la escala Sprint 14 (6/10/14/20). Está calibrada perfecto.</div>
+    </div>
+
+    <!-- Shadows -->
+    <h4 style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px;">Sombras · 4 niveles</h4>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px;">
+      <div style="background: var(--bg-elevated); padding: 48px 24px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 32px;">
+        <div style="width: 100%; height: 90px; background: var(--bg-surface); border-radius: 12px; box-shadow: 0 1px 2px rgba(26,22,18,0.05);"></div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;">--shadow-sm</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Inputs · chips · kbd</div>
+        </div>
+      </div>
+      <div style="background: var(--bg-elevated); padding: 48px 24px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 32px;">
+        <div style="width: 100%; height: 90px; background: var(--bg-surface); border-radius: 12px; box-shadow: 0 8px 24px -10px rgba(26,22,18,0.10);"></div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;">--shadow-md</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Cards · dropdowns · hover</div>
+        </div>
+      </div>
+      <div style="background: var(--bg-elevated); padding: 48px 24px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 32px;">
+        <div style="width: 100%; height: 90px; background: var(--bg-surface); border-radius: 12px; box-shadow: 0 24px 48px -16px rgba(26,22,18,0.16);"></div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;">--shadow-lg</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Modales · drawers · toasts</div>
+        </div>
+      </div>
+      <div style="background: var(--bg-elevated); padding: 48px 24px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 32px; border: 1px solid rgba(185,133,33,0.20);">
+        <div style="width: 100%; height: 90px; background: linear-gradient(135deg, #D9A445, #B98521); border-radius: 12px; box-shadow: 0 12px 36px -12px rgba(185,133,33,0.55);"></div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;">--gold-glow</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Solo CTA primario · logo hero</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shadows in dark -->
+    <h4 style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px;">Sombras en oscuro · con ring sutil de 1px</h4>
+    <div style="background: #0C0A06; border-radius: 20px; padding: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 56px; border: 1px solid rgba(244,239,224,0.10);">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 24px;">
+        <div style="width: 100%; height: 80px; background: #13110A; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.5);"></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #D9A445; font-weight: 600;">--shadow-sm</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 24px;">
+        <div style="width: 100%; height: 80px; background: #13110A; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.55), 0 0 0 1px rgba(244,239,224,0.04);"></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #D9A445; font-weight: 600;">--shadow-md</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 24px;">
+        <div style="width: 100%; height: 80px; background: #13110A; border-radius: 12px; box-shadow: 0 24px 48px rgba(0,0,0,0.65), 0 0 0 1px rgba(244,239,224,0.06);"></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #D9A445; font-weight: 600;">--shadow-lg</div>
+      </div>
+    </div>
+
+    <!-- Radii -->
+    <h4 style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px;">Radios · mantener escala Sprint 14</h4>
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;">
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 28px 16px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div style="width: 64px; height: 64px; background: var(--accent-soft); border: 1px solid rgba(185,133,33,0.3); border-radius: 6px;"></div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;">--radius-sm</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">6px · chips · kbd</div>
+        </div>
+      </div>
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 28px 16px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div style="width: 64px; height: 64px; background: var(--accent-soft); border: 1px solid rgba(185,133,33,0.3); border-radius: 10px;"></div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;">--radius-md</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">10px · botones · inputs</div>
+        </div>
+      </div>
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 28px 16px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div style="width: 64px; height: 64px; background: var(--accent-soft); border: 1px solid rgba(185,133,33,0.3); border-radius: 14px;"></div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;">--radius-lg</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">14px · cards · KPIs</div>
+        </div>
+      </div>
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 28px 16px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div style="width: 64px; height: 64px; background: var(--accent-soft); border: 1px solid rgba(185,133,33,0.3); border-radius: 20px;"></div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;">--radius-xl</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">20px · modales · hero</div>
+        </div>
+      </div>
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: 16px; padding: 28px 16px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div style="width: 64px; height: 32px; background: var(--accent-soft); border: 1px solid rgba(185,133,33,0.3); border-radius: 9999px; margin-top: 16px;"></div>
+        <div style="text-align: center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600;">--radius-full</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">9999px · pills · avatars</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────── 7. TOKENS CSS ─────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <span class="num">07 / 08</span>
+      <h2>Tokens CSS — listos para pegar</h2>
+      <div class="aside">Reemplaza la sección <code style="font-family:'JetBrains Mono',monospace;font-size:12px">/* Marca */</code> + <code style="font-family:'JetBrains Mono',monospace;font-size:12px">[data-theme="dark"]</code> en <code style="font-family:'JetBrains Mono',monospace;font-size:12px">tokens/colors.css</code>.</div>
+    </div>
+
+    <div class="code-block">
+<span class="com">/* ────────────── Marca · saffron gold ────────────── */</span>
+<span class="sel">:root</span> {
+  <span class="com">/* Brand scale */</span>
+  <span class="var">--gold-50</span>:   <span class="val">#FBF6E8</span>;
+  <span class="var">--gold-100</span>:  <span class="val">#F5EAC5</span>;
+  <span class="var">--gold-300</span>:  <span class="val">#E0BE6E</span>;
+  <span class="var">--gold-500</span>:  <span class="val">#B98521</span>;   <span class="com">/* accent base (light) */</span>
+  <span class="var">--gold-600</span>:  <span class="val">#9A6E15</span>;   <span class="com">/* accent hover (light) */</span>
+  <span class="var">--gold-700</span>:  <span class="val">#7B570E</span>;
+  <span class="var">--gold-950</span>:  <span class="val">#2A1D04</span>;   <span class="com">/* sombra/gradiente profundo */</span>
+
+  <span class="var">--accent</span>:        <span class="val">#B98521</span>;
+  <span class="var">--accent-hover</span>:  <span class="val">#9A6E15</span>;
+  <span class="var">--accent-soft</span>:   <span class="val">#FBF6E8</span>;
+  <span class="var">--accent-ring</span>:   <span class="val">rgba(185,133,33,0.18)</span>;
+
+  <span class="com">/* Neutrales tostados (toasted warm) */</span>
+  <span class="var">--bg</span>:     <span class="val">#FBFAF7</span>;
+  <span class="var">--alt</span>:    <span class="val">#F4F1EA</span>;
+  <span class="var">--text</span>:   <span class="val">#1A1612</span>;
+  <span class="var">--muted</span>:  <span class="val">#6B6358</span>;
+  <span class="var">--border</span>: <span class="val">#E7E2D6</span>;
+
+  <span class="var">--bg-base</span>:     <span class="val">#FBFAF7</span>;
+  <span class="var">--bg-surface</span>:  <span class="val">#FFFFFF</span>;
+  <span class="var">--bg-elevated</span>: <span class="val">#F4F1EA</span>;
+  <span class="var">--bg-overlay</span>:  <span class="val">#ECE7D9</span>;
+
+  <span class="var">--border-subtle</span>:  <span class="val">rgba(26,22,18,0.05)</span>;
+  <span class="var">--border-default</span>: <span class="val">rgba(26,22,18,0.09)</span>;
+  <span class="var">--border-strong</span>:  <span class="val">rgba(26,22,18,0.16)</span>;
+
+  <span class="com">/* Estados (saturados, AA-safe sobre #FBFAF7) */</span>
+  <span class="var">--success</span>: <span class="val">#15803D</span>;
+  <span class="var">--warning</span>: <span class="val">#B45309</span>;
+  <span class="var">--error</span>:   <span class="val">#B91C1C</span>;
+  <span class="var">--info</span>:    <span class="val">#1E40AF</span>;
+
+  <span class="var">--state-success</span>: <span class="val">#15803D</span>;
+  <span class="var">--state-warning</span>: <span class="val">#B45309</span>;
+  <span class="var">--state-danger</span>:  <span class="val">#B91C1C</span>;
+  <span class="var">--state-info</span>:    <span class="val">#1E40AF</span>;
+
+  <span class="var">--state-success-bg</span>:     <span class="val">rgba(21,128,61,0.10)</span>;
+  <span class="var">--state-warning-bg</span>:     <span class="val">rgba(180,83,9,0.10)</span>;
+  <span class="var">--state-danger-bg</span>:      <span class="val">rgba(185,28,28,0.10)</span>;
+  <span class="var">--state-info-bg</span>:        <span class="val">rgba(30,64,175,0.10)</span>;
+  <span class="var">--state-success-border</span>: <span class="val">rgba(21,128,61,0.25)</span>;
+  <span class="var">--state-warning-border</span>: <span class="val">rgba(180,83,9,0.25)</span>;
+  <span class="var">--state-danger-border</span>:  <span class="val">rgba(185,28,28,0.25)</span>;
+  <span class="var">--state-info-border</span>:    <span class="val">rgba(30,64,175,0.25)</span>;
+
+  <span class="com">/* Logo / wordmark — gradiente */</span>
+  <span class="var">--logo-gradient</span>:   <span class="val">linear-gradient(135deg, #D9A445 0%, #B98521 38%, #6B4906 100%)</span>;
+  <span class="var">--logo-pos-border</span>: <span class="val">color-mix(in srgb, #B98521 55%, #FFFCEF 45%)</span>;
+  <span class="var">--logo-shadow</span>:     <span class="val">0 12px 36px -12px rgba(185,133,33,0.45)</span>;
+}
+
+<span class="com">/* ────────────── [data-theme="dark"] ────────────── */</span>
+<span class="sel">[data-theme="dark"]</span> {
+  <span class="var">--accent</span>:        <span class="val">#D9A445</span>;   <span class="com">/* sube luminosidad en oscuro */</span>
+  <span class="var">--accent-hover</span>:  <span class="val">#EBB85B</span>;
+  <span class="var">--accent-soft</span>:   <span class="val">rgba(217,164,69,0.14)</span>;
+  <span class="var">--accent-ring</span>:   <span class="val">rgba(217,164,69,0.32)</span>;
+
+  <span class="var">--bg</span>:     <span class="val">#0C0A06</span>;
+  <span class="var">--alt</span>:    <span class="val">#15120B</span>;
+  <span class="var">--text</span>:   <span class="val">#F4EFE0</span>;
+  <span class="var">--muted</span>:  <span class="val">#9C907A</span>;
+  <span class="var">--border</span>: <span class="val">#221E14</span>;
+
+  <span class="var">--bg-base</span>:     <span class="val">#0C0A06</span>;
+  <span class="var">--bg-surface</span>:  <span class="val">#13110A</span>;
+  <span class="var">--bg-elevated</span>: <span class="val">#1B1810</span>;
+  <span class="var">--bg-overlay</span>:  <span class="val">#251F14</span>;
+
+  <span class="var">--border-subtle</span>:  <span class="val">rgba(244,239,224,0.06)</span>;
+  <span class="var">--border-default</span>: <span class="val">rgba(244,239,224,0.10)</span>;
+  <span class="var">--border-strong</span>:  <span class="val">rgba(244,239,224,0.18)</span>;
+
+  <span class="var">--success</span>: <span class="val">#4ADE80</span>;
+  <span class="var">--warning</span>: <span class="val">#FBBF24</span>;
+  <span class="var">--error</span>:   <span class="val">#FB7185</span>;
+  <span class="var">--info</span>:    <span class="val">#93C5FD</span>;
+
+  <span class="var">--state-success</span>: <span class="val">#4ADE80</span>;
+  <span class="var">--state-warning</span>: <span class="val">#FBBF24</span>;
+  <span class="var">--state-danger</span>:  <span class="val">#FB7185</span>;
+  <span class="var">--state-info</span>:    <span class="val">#93C5FD</span>;
+
+  <span class="var">--state-success-bg</span>:     <span class="val">rgba(74,222,128,0.10)</span>;
+  <span class="var">--state-warning-bg</span>:     <span class="val">rgba(251,191,36,0.10)</span>;
+  <span class="var">--state-danger-bg</span>:      <span class="val">rgba(251,113,133,0.10)</span>;
+  <span class="var">--state-info-bg</span>:        <span class="val">rgba(147,197,253,0.10)</span>;
+  <span class="var">--state-success-border</span>: <span class="val">rgba(74,222,128,0.25)</span>;
+  <span class="var">--state-warning-border</span>: <span class="val">rgba(251,191,36,0.25)</span>;
+  <span class="var">--state-danger-border</span>:  <span class="val">rgba(251,113,133,0.25)</span>;
+  <span class="var">--state-info-border</span>:    <span class="val">rgba(147,197,253,0.25)</span>;
+}
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────── 4. MIGRATION TABLE ─────────────────────────────────── -->
+  <section>
+    <div class="section-head">
+      <span class="num">08 / 08</span>
+      <h2>Buscar &amp; reemplazar — migración sin romper</h2>
+      <div class="aside">Hardcoded → token. Aplica con sed o el find-in-files de tu editor en <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ROOT-Front/assets/css/</code>.</div>
+    </div>
+
+    <table class="migration">
+      <thead>
+        <tr>
+          <th style="width:30%">Buscar (hardcoded actual)</th>
+          <th style="width:8%"></th>
+          <th style="width:30%">Reemplazar con</th>
+          <th style="width:32%">Contexto / razón</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="find"><span class="chip">#4F46E5</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#B98521</span> <span class="note">o</span> <span class="chip">var(--accent)</span></td>
+          <td class="note">Accent base. Sale el índigo genérico, entra el oro tostado.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#4338CA</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#9A6E15</span> <span class="note">o</span> <span class="chip">var(--accent-hover)</span></td>
+          <td class="note">Hover/pressed del accent.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#EEF2FF</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#FBF6E8</span> <span class="note">o</span> <span class="chip">var(--accent-soft)</span></td>
+          <td class="note"><code>.btn-ghost:hover</code> en claro. Cream pálido en vez de violeta lavanda.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">rgba(79,70,229, …)</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">rgba(185,133,33, …)</span></td>
+          <td class="note">Cualquier glow/ring/translúcido del índigo. Mantén el alpha original (0.10, 0.15, 0.18, etc).</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#FAFAFA</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#FBFAF7</span></td>
+          <td class="note">Fondo base claro. Sube +1 en R para calentarlo levemente (zinc neutro → tostado).</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#F4F4F5</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#F4F1EA</span></td>
+          <td class="note">Bg-elevated claro. Tono crema en vez de gris azulado.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#E4E4E7</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#E7E2D6</span> <span class="note">o</span> <span class="chip">rgba(26,22,18,0.09)</span></td>
+          <td class="note">Border default claro. Migra al sistema translúcido si no lo está ya.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#0A0A0A</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#0C0A06</span></td>
+          <td class="note">Bg base oscuro. Negro tostado (R+2, G+0, B-4) — sutil pero unifica con el accent.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#FAFAFA</span> <span class="note">(text)</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#F4EFE0</span></td>
+          <td class="note">Texto oscuro → cream warm. Más amable a la vista en cocinas con luz incandescente.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#71717A</span> · <span class="chip">#A1A1AA</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#6B6358</span> · <span class="chip">#9C907A</span></td>
+          <td class="note">Muted claro/oscuro. Zinc → tostado, alineado con accent.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#1F1F1F</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#221E14</span></td>
+          <td class="note">Border oscuro.</td>
+        </tr>
+        <tr>
+          <td colspan="4" style="padding:14px 20px;background:var(--bg-elevated);font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)">Estados — badges en modo claro</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#ECFDF5</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">rgba(21,128,61,0.10)</span></td>
+          <td class="note">Bg badge success claro. Cambia el verde Tailwind por el saturado AA-safe.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#FEF2F2</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">rgba(185,28,28,0.10)</span></td>
+          <td class="note">Bg badge danger claro.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#FFFBEB</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">rgba(180,83,9,0.10)</span></td>
+          <td class="note">Bg badge warning claro.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#EFF6FF</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">rgba(30,64,175,0.10)</span></td>
+          <td class="note">Bg badge info claro.</td>
+        </tr>
+        <tr>
+          <td colspan="4" style="padding:14px 20px;background:var(--bg-elevated);font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)">Estados — badges en modo oscuro</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#6EE7B7</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#4ADE80</span></td>
+          <td class="note">Success en dark. Verde más vibrante y AA en #0C0A06.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#FCA5A5</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#FB7185</span></td>
+          <td class="note">Danger en dark. Salta más, pero conserva la calidez rosada.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#FCD34D</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#FBBF24</span></td>
+          <td class="note">Warning en dark. Importante: <strong>no</strong> usar el accent gold aquí — son colores distintos.</td>
+        </tr>
+        <tr>
+          <td class="find"><span class="chip">#93C5FD</span></td>
+          <td class="arrow">→</td>
+          <td class="replace"><span class="chip">#93C5FD</span></td>
+          <td class="note">Info en dark. Sin cambio — el azul claro neutral funciona igual.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- TEASER -->
+    <div class="teaser">
+      <div class="teaser-num">→ NEXT</div>
+      <div>
+        <h4>Aplicar al design system real</h4>
+        <p>Round 01 + 02 cerrados. Voy a aplicar todo esto a tus tokens reales en este proyecto: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">tokens/colors.css</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">fonts.css</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">typography.css</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">brand.css</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">spacing.css</code> + nuevo mark NOVA en <code style="font-family:'JetBrains Mono',monospace;font-size:12px">assets/brand/</code>. Las UI kits heredan automáticamente.</p>
+      </div>
+      <div class="pill">Aplicando ahora</div>
+    </div>
+
+  </section>
+
+</div>
+
+<script>
+  // Theme toggle
+  const buttons = document.querySelectorAll('.theme-toggle button');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.mode;
+      document.documentElement.setAttribute('data-theme', mode);
+      buttons.forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      try { localStorage.setItem('proposal-theme', mode); } catch(e) {}
+    });
+  });
+  // Restore
+  try {
+    const saved = localStorage.getItem('proposal-theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+      buttons.forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === saved ? 'true' : 'false'));
+    }
+  } catch(e) {}
+</script>
+
+</body>
+</html>

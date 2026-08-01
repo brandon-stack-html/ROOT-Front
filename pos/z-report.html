@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Z-Report · ROOT</title>
+  <title>Z-Report · NOVA</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -65,8 +68,8 @@
       cursor: pointer;
       text-decoration: none;
     }
-    .zr-btn-primary { background: #4F46E5; color: #fff; }
-    .zr-btn-primary:hover { background: #4338CA; }
+    .zr-btn-primary { background: var(--accent); color: #fff; }
+    .zr-btn-primary:hover { background: var(--accent-hover); }
     .zr-btn-secondary { background: #f5f5f5; color: #333; border: 1px solid #e5e5e5; }
     .zr-btn-secondary:hover { background: #eee; }
 
@@ -254,7 +257,7 @@
 
   <!-- Controles de pantalla (ocultos al imprimir) -->
   <div class="screen-controls">
-    <span class="screen-controls-brand">ROOT</span>
+    <span class="screen-controls-brand">NOVA</span>
     <span class="screen-controls-title">Z-Report · Cierre de turno</span>
     <a href="./historico.html" class="zr-btn zr-btn-secondary">Ver tickets del turno</a>
     <button class="zr-btn zr-btn-primary" onclick="window.print()">
@@ -267,7 +270,7 @@
     <!-- ── HEADER ── -->
     <div class="zr-header">
       <div>
-        <div class="zr-brand">ROOT</div>
+        <div class="zr-brand">NOVA</div>
         <div class="zr-brand-sub">Sistema de Gestión de Restaurantes</div>
         <div class="zr-brand-sub" id="zrSucursal">Sede Norte · Caja 1 - Mostrador</div>
       </div>
@@ -448,7 +451,7 @@
 
     <!-- ── FOOTER DOC ── -->
     <div class="zr-doc-footer">
-      <div>Impreso el <span id="zrTimestamp">—</span> · ROOT v1.0.0</div>
+      <div>Impreso el <span id="zrTimestamp">—</span> · NOVA v1.0.0</div>
       <div>Documento de carácter informativo. No tiene validez tributaria.</div>
       <div>Consecutivo de cierre: <span id="zrConsecFooter">#T-042</span> · Para conciliación contable use este número.</div>
     </div>

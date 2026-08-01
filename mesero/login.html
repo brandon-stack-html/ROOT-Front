@@ -5,9 +5,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Iniciar sesión · App Mesero · ROOT</title>
+  <title>Iniciar sesión · App Mesero · NOVA</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/mesero.css" />
@@ -58,7 +62,7 @@
     .e1-top {
       height: 40%;
       flex-shrink: 0;
-      background: linear-gradient(135deg, var(--accent) 0%, #6366F1 100%);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -159,13 +163,13 @@
       transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
     }
     .e1-input:hover {
-      border-color: rgba(79, 70, 229, 0.40);
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
     }
     .e1-input:focus {
       border-color: var(--accent);
       background: var(--bg-elevated, var(--alt));
-      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.18),
-                  0 4px 14px -4px rgba(79, 70, 229, 0.28);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent),
+                  0 4px 14px -4px color-mix(in srgb, var(--accent) 28%, transparent);
     }
     [data-theme="dark"] .e1-input {
       background: rgba(255,255,255,0.04);
@@ -175,10 +179,10 @@
       border-color: rgba(129,120,246,0.50);
     }
     [data-theme="dark"] .e1-input:focus {
-      background: rgba(79,70,229,0.10);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
       border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(79,70,229,0.25),
-                  0 4px 16px -4px rgba(79,70,229,0.45);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent),
+                  0 4px 16px -4px color-mix(in srgb, var(--accent) 45%, transparent);
     }
 
     /* Input con toggle ojo (contraseña) */
@@ -192,13 +196,13 @@
       transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
     }
     .e1-input-wrap-focused:hover {
-      border-color: rgba(79, 70, 229, 0.40);
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
     }
     .e1-input-wrap-focused:focus-within {
       border-color: var(--accent);
       background: var(--bg-elevated, var(--alt));
-      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.18),
-                  0 4px 14px -4px rgba(79, 70, 229, 0.28);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent),
+                  0 4px 14px -4px color-mix(in srgb, var(--accent) 28%, transparent);
     }
     [data-theme="dark"] .e1-input-wrap-focused {
       background: rgba(255,255,255,0.04);
@@ -208,10 +212,10 @@
       border-color: rgba(129,120,246,0.50);
     }
     [data-theme="dark"] .e1-input-wrap-focused:focus-within {
-      background: rgba(79,70,229,0.10);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
       border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(79,70,229,0.25),
-                  0 4px 16px -4px rgba(79,70,229,0.45);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent),
+                  0 4px 16px -4px color-mix(in srgb, var(--accent) 45%, transparent);
     }
     .e1-input-wrap-focused input {
       flex: 1;
@@ -261,18 +265,18 @@
       height: 56px;
       font-size: 16px;
       background: var(--accent);
-      box-shadow: 0 4px 18px -4px rgba(79, 70, 229, 0.55),
+      box-shadow: 0 4px 18px -4px color-mix(in srgb, var(--accent) 55%, transparent),
                   0 1px 0 rgba(255,255,255,0.12) inset;
       transition: box-shadow .2s ease, transform .15s ease, background-color .15s ease;
     }
     #loginBtn:hover:not(:disabled) {
-      box-shadow: 0 6px 22px -4px rgba(79, 70, 229, 0.70),
+      box-shadow: 0 6px 22px -4px color-mix(in srgb, var(--accent) 70%, transparent),
                   0 1px 0 rgba(255,255,255,0.12) inset;
       transform: translateY(-1px);
     }
     #loginBtn:active:not(:disabled) {
       transform: translateY(0);
-      box-shadow: 0 2px 10px -4px rgba(79, 70, 229, 0.50);
+      box-shadow: 0 2px 10px -4px color-mix(in srgb, var(--accent) 50%, transparent);
     }
     #loginBtn:disabled {
       opacity: .52;
@@ -304,7 +308,7 @@
           <div class="e1-deco-1"></div>
           <div class="e1-deco-2"></div>
           <div class="e1-brand">
-            <span class="root-wordmark is-hero" style="font-size:22px"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+            <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark is-hero" style="font-size:22px">NOVA</span>
           </div>
           <div class="e1-tagline">Toma pedidos al instante</div>
         </div>

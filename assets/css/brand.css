@@ -1,0 +1,131 @@
+/* ============================================================================
+   brand.css — Wordmark y lockups de NOVA
+   ----------------------------------------------------------------------------
+   El símbolo es una CHISPA DE 4 PUNTAS (sparkle) — nova = estrella nueva que
+   destella. Vive como SVG en /assets/brand/. El wordmark es texto vivo:
+   "[NOVA]" en DM Sans 700 con corchetes en el color accent. Todo escala vía
+   `em` desde el font-size del contexto, así el lockup se integra a topbars,
+   sidebars y heros.
+   Las clases legacy .root-wordmark / .root-lockup se mantienen como alias
+   para no romper HTML existente durante la migración.
+   ============================================================================ */
+
+/* ---------- Chispa inline (lockup compacto, theme-aware vía currentColor) ----------
+   Se inyecta antes del .nova-wordmark dentro de contenedores de marca
+   (sidebar brand, topbar brand, login logo). Default dorado; sobre fondos
+   con color (login shell, panel hero) se override a blanco. */
+.nova-mark-inline {
+  width: 1.15em;
+  height: 1.15em;
+  display: inline-block;
+  flex-shrink: 0;
+  margin-right: 0.5em;
+  vertical-align: -0.18em;
+  color: var(--accent);
+}
+.nova-mark-inline svg, .nova-mark-inline path { fill: currentColor; }
+
+/* Overrides contextuales: sobre fondos con color de marca, chispa blanca */
+.auth-login-logo .nova-mark-inline,
+.auth-login-shell .nova-mark-inline,
+.e1-brand .nova-mark-inline,
+.kds-topbar-brand .nova-mark-inline { color: #FFFCEF; }
+
+/* En sidebar del backoffice, la chispa siempre dorada (resalta sobre alt warm) */
+.bo-sidebar-brand .nova-mark-inline { color: var(--accent); }
+
+/* ---------- Wordmark: [NOVA] ---------- */
+.nova-wordmark,
+.root-wordmark /* alias legacy */ {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--ff-base);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-indent: 0.14em;
+  color: var(--text);
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+}
+.nova-wordmark::before, .root-wordmark::before { content: "["; color: var(--accent); margin-right: 0.06em; }
+.nova-wordmark::after,  .root-wordmark::after  { content: "]"; color: var(--accent); margin-left: 0.02em; }
+
+/* Variante: corchetes del mismo color que el texto (sobre fondos con color) */
+.nova-wordmark.is-solid::before, .root-wordmark.is-solid::before,
+.nova-wordmark.is-solid::after,  .root-wordmark.is-solid::after { color: currentColor; }
+
+/* Variante hero: extra-bold + tracking negativo + gradiente dorado en el texto */
+.nova-wordmark.is-hero, .root-wordmark.is-hero {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: 96px;
+  letter-spacing: -0.04em;
+  text-indent: 0;
+  background: var(--grad-hero);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+          color: transparent;
+}
+.nova-wordmark.is-hero::before, .root-wordmark.is-hero::before,
+.nova-wordmark.is-hero::after,  .root-wordmark.is-hero::after {
+  background: var(--grad-hero);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+          color: transparent;
+}
+
+/* ---------- Lockup horizontal: chispa + wordmark ---------- */
+.nova-lockup,
+.root-lockup /* alias legacy */ {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  font-size: 22px;
+  color: var(--text);
+}
+.nova-lockup .nova-lockup-mark,
+.root-lockup .root-lockup-mark,
+.nova-lockup .nova-mark,
+.root-lockup .root-mark {
+  height: 1.1em;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+}
+.nova-lockup .nova-wordmark,
+.nova-lockup .root-wordmark,
+.root-lockup .root-wordmark,
+.root-lockup .nova-wordmark { font-size: 1em; }
+
+/* Variante compacta para sidebar/topbar (~14-16px) */
+.nova-lockup.is-compact, .root-lockup.is-compact { font-size: 14px; gap: 0.5em; }
+
+/* ---------- Lockup vertical (hero / splash) ---------- */
+.nova-lockup.is-stack, .root-lockup.is-stack {
+  flex-direction: column;
+  gap: 0.5em;
+  text-align: center;
+}
+.nova-lockup.is-stack .nova-lockup-mark, .root-lockup.is-stack .root-lockup-mark,
+.nova-lockup.is-stack .nova-mark,        .root-lockup.is-stack .root-mark { height: 2.2em; }
+
+/* ---------- App tile (icon redondeado con gradiente + sparkle blanco) ---------- */
+.nova-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  background: var(--grad-hero);
+  box-shadow: var(--logo-shadow);
+  color: #FFFCEF;
+}
+.nova-tile svg { width: 56%; height: 56%; }
+.nova-tile.is-sm { width: 48px; height: 48px; border-radius: 12px; }
+.nova-tile.is-lg { width: 128px; height: 128px; border-radius: 28px; }

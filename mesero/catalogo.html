@@ -6,8 +6,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Catálogo · Mesa 4 · App Mesero</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/mesero.css" />
@@ -142,7 +146,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+      box-shadow: 0 4px 10px color-mix(in srgb, var(--accent) 25%, transparent);
     }
     .product-add-btn svg { width: 16px; height: 16px; stroke-width: 2.4; }
     .product-card.is-disabled .product-add-btn {
@@ -264,7 +268,7 @@
       background: var(--accent);
       border: none;
       color: #fff;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.33);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 33%, transparent);
     }
     .e6-qty-btn svg { width: 18px; height: 18px; stroke-width: 2.4; }
     .e6-qty-value {
@@ -358,7 +362,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(79,70,229,0.40);
+      box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 40%, transparent);
       transition: transform 150ms ease, background 150ms ease;
       position: relative;
     }

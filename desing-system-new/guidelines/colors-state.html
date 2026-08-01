@@ -1,0 +1,22 @@
+<!-- @dsCard group="Colors" viewport="700x160" name="Estados — Badges translúcidos" subtitle="Triplete bg + borde + texto. Nunca relleno sólido." -->
+<!doctype html><html lang="es"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{background:var(--bg-base);margin:0;padding:22px;font-family:var(--ff-base)}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:var(--radius-full);font-size:13px;font-weight:500;border:1px solid}
+  .dot{width:7px;height:7px;border-radius:50%}
+  .s-success{background:var(--state-success-bg);border-color:var(--state-success-border);color:var(--state-success)}
+  .s-warning{background:var(--state-warning-bg);border-color:var(--state-warning-border);color:var(--state-warning)}
+  .s-danger{background:var(--state-danger-bg);border-color:var(--state-danger-border);color:var(--state-danger)}
+  .s-info{background:var(--state-info-bg);border-color:var(--state-info-border);color:var(--state-info)}
+  .hex{display:block;margin-top:14px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;font-family:var(--ff-mono)}
+</style></head>
+<body>
+  <div class="row">
+    <span class="badge s-success"><span class="dot" style="background:var(--state-success)"></span>Pagada</span>
+    <span class="badge s-warning"><span class="dot" style="background:var(--state-warning)"></span>Pendiente</span>
+    <span class="badge s-danger"><span class="dot" style="background:var(--state-danger)"></span>Rechazada</span>
+    <span class="badge s-info"><span class="dot" style="background:var(--state-info)"></span>Reservada</span>
+  </div>
+  <span class="hex">success #15803D · warning #B45309 · danger #B91C1C · info #1E40AF &nbsp;(más luminosos en oscuro)</span>
+</body></html>

@@ -5,9 +5,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Dashboard · ROOT</title>
+  <title>Dashboard · NOVA</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
@@ -21,7 +25,7 @@
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
       <div class="bo-sidebar-brand">
-        <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+        <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
       </div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
@@ -132,7 +136,7 @@
             <button>Semana</button>
             <button>Mes</button>
           </div>
-          <button class="btn btn-secondary" style="font-size:12px;padding:7px 12px">
+          <button class="btn btn-secondary btn-sm">
             <i data-lucide="calendar" style="width:13px;height:13px"></i>
             15 nov 2026
           </button>
@@ -226,12 +230,12 @@
           <svg width="100%" viewBox="0 0 600 210" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">
             <defs>
               <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stop-color="#4F46E5" stop-opacity="0.25"/>
-                <stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/>
+                <stop offset="0%"   stop-color="var(--accent)" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
               </linearGradient>
               <linearGradient id="areaGradDark" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stop-color="#4F46E5" stop-opacity="0.40"/>
-                <stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/>
+                <stop offset="0%"   stop-color="var(--accent)" stop-opacity="0.40"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
               </linearGradient>
             </defs>
             <g transform="translate(38,12)">
@@ -250,18 +254,18 @@
                 fill="url(#areaGrad)" class="chart-area"/>
               <!-- Línea -->
               <path d="M 0,86 C 45.67,86 45.67,72.6 91.33,72.6 C 137,72.6 137,90.2 182.67,90.2 C 228.33,90.2 228.33,53.8 274,53.8 C 319.67,53.8 319.67,25.9 365.33,25.9 C 411,25.9 411,0 456.67,0 C 502.33,0 502.33,41.5 548,41.5"
-                stroke="#4F46E5" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
               <!-- Puntos -->
-              <circle cx="0"      cy="86"   r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
-              <circle cx="91.33"  cy="72.6" r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
-              <circle cx="182.67" cy="90.2" r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
-              <circle cx="274"    cy="53.8" r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
-              <circle cx="365.33" cy="25.9" r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
-              <circle cx="456.67" cy="0"    r="3.5" fill="var(--bg)" stroke="#4F46E5" stroke-width="2"/>
-              <circle cx="548"    cy="41.5" r="5"   fill="var(--bg)" stroke="#4F46E5" stroke-width="2.5"/>
+              <circle cx="0"      cy="86"   r="3.5" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/>
+              <circle cx="91.33"  cy="72.6" r="3.5" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/>
+              <circle cx="182.67" cy="90.2" r="3.5" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/>
+              <circle cx="274"    cy="53.8" r="3.5" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/>
+              <circle cx="365.33" cy="25.9" r="3.5" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/>
+              <circle cx="456.67" cy="0"    r="3.5" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/>
+              <circle cx="548"    cy="41.5" r="5"   fill="var(--bg)" stroke="var(--accent)" stroke-width="2.5"/>
               <!-- Tooltip último punto -->
               <g transform="translate(548,27.5)">
-                <rect x="-30" y="-22" width="60" height="20" rx="4" fill="#4F46E5"/>
+                <rect x="-30" y="-22" width="60" height="20" rx="4" fill="var(--accent)"/>
                 <text x="0" y="-8" text-anchor="middle" font-size="11" font-weight="600" fill="#fff" font-family="Inter,sans-serif">$1234K</text>
               </g>
               <!-- X labels -->
@@ -336,7 +340,7 @@
             <!-- Donut SVG -->
             <svg width="170" height="170" style="overflow:visible;flex-shrink:0">
               <g transform="rotate(-90 85 85)">
-                <circle cx="85" cy="85" r="73" fill="none" stroke="#4F46E5" stroke-width="22"
+                <circle cx="85" cy="85" r="73" fill="none" stroke="var(--accent)" stroke-width="22"
                   stroke-dasharray="311.9 146.77" stroke-dashoffset="0"/>
                 <circle cx="85" cy="85" r="73" fill="none" stroke="#10B981" stroke-width="22"
                   stroke-dasharray="100.91 357.76" stroke-dashoffset="-311.9"/>
@@ -351,7 +355,7 @@
             <!-- Leyenda -->
             <div style="flex:1;display:flex;flex-direction:column;gap:8px">
               <div style="display:flex;align-items:center;gap:10px">
-                <span style="width:9px;height:9px;border-radius:3px;background:#4F46E5;flex-shrink:0"></span>
+                <span style="width:9px;height:9px;border-radius:3px;background:var(--accent);flex-shrink:0"></span>
                 <span style="flex:1;font-size:12px;color:var(--text);font-weight:500">Mesa</span>
                 <span style="font-size:12px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums">68%</span>
               </div>

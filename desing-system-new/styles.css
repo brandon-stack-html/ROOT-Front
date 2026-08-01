@@ -1,0 +1,15 @@
+/* ============================================================================
+   styles.css — Entry point del Design System de ROOT
+   ----------------------------------------------------------------------------
+   SaaS POS multi-sucursal para restaurantes en Colombia.
+   Consumidores enlazan SOLO este archivo. Es una lista de @import: cada uno
+   aporta tokens (custom properties), webfonts o reglas base. No escribas
+   reglas inline aquí.
+   ============================================================================ */
+
+@import url('tokens/fonts.css');
+@import url('tokens/colors.css');
+@import url('tokens/typography.css');
+@import url('tokens/spacing.css');
+@import url('tokens/brand.css');
+@import url('tokens/base.css');

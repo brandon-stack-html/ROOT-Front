@@ -1,0 +1,133 @@
+/* ============================================================================
+   colors.css — Paleta y superficies de NOVA
+   ----------------------------------------------------------------------------
+   Identidad: TOSTADO (#0C0A06 / #FBFAF7) + SAFFRON GOLD (#B98521 light /
+   #D9A445 dark). Reemplaza el pair índigo-Vercel anterior por un sistema
+   dark-gold premium: warm, accessible, distintivo en el campo POS.
+   La estructura se mantiene: 4 niveles de superficie, bordes translúcidos
+   semánticos, badges de estado sin relleno sólido (triplete bg+border+text).
+   Regla inviolable: los componentes NUNCA hardcodean color — siempre vía token.
+   ============================================================================ */
+
+:root {
+  /* ---------- Marca · Saffron Gold ---------- */
+  --gold-50:  #FBF6E8;
+  --gold-100: #F5EAC5;
+  --gold-300: #E0BE6E;
+  --gold-500: #B98521;   /* accent base (light) */
+  --gold-600: #9A6E15;   /* accent hover (light) */
+  --gold-700: #7B570E;   /* deep gold */
+  --gold-950: #2A1D04;   /* sombra / gradiente profundo */
+  --gold-bright: #D9A445;/* accent base (dark) */
+
+  --accent:        #B98521;
+  --accent-hover:  #9A6E15;
+  --accent-soft:   #FBF6E8;            /* ghost button hover claro */
+  --accent-ring:   rgba(185,133,33,0.18); /* focus glow gold */
+
+  /* ---------- Neutrales tostados (toasted warm) ---------- */
+  --toast-50:  #FBFAF7;
+  --toast-100: #F4F1EA;
+  --toast-200: #E7E2D6;
+  --toast-400: #9C907A;
+  --toast-500: #6B6358;
+  --toast-900: #221E14;
+  --toast-950: #0C0A06;
+
+  /* ---------- Paleta base (modo claro) ---------- */
+  --bg:     #FBFAF7;
+  --alt:    #F4F1EA;
+  --text:   #1A1612;
+  --muted:  #6B6358;
+  --border: #E7E2D6;
+
+  /* Escala de superficies (4 niveles) */
+  --bg-base:     #FBFAF7;   /* fondo de página */
+  --bg-surface:  #FFFFFF;   /* cards nivel 1 */
+  --bg-elevated: #F4F1EA;   /* modales, drawers, card-sobre-card */
+  --bg-overlay:  #ECE7D9;   /* hover states */
+
+  /* Bordes semánticos translúcidos */
+  --border-subtle:  rgba(26,22,18,0.05);   /* divisores internos */
+  --border-default: rgba(26,22,18,0.09);   /* borde estándar */
+  --border-strong:  rgba(26,22,18,0.16);   /* hover / focus */
+
+  /* ---------- Estados (modo claro, saturados AA-safe sobre #FBFAF7) ---------- */
+  --success: #15803D;
+  --error:   #B91C1C;
+  --warning: #B45309;
+  --info:    #1E40AF;
+
+  --state-success: #15803D;
+  --state-warning: #B45309;
+  --state-danger:  #B91C1C;
+  --state-info:    #1E40AF;
+
+  /* Fondos + bordes de badge translúcidos */
+  --state-success-bg:     rgba(21,128,61,0.10);
+  --state-warning-bg:     rgba(180,83,9,0.10);
+  --state-danger-bg:      rgba(185,28,28,0.10);
+  --state-info-bg:        rgba(30,64,175,0.10);
+  --state-success-border: rgba(21,128,61,0.25);
+  --state-warning-border: rgba(180,83,9,0.25);
+  --state-danger-border:  rgba(185,28,28,0.25);
+  --state-info-border:    rgba(30,64,175,0.25);
+
+  /* ---------- Logo / wordmark gradientes ---------- */
+  --logo-gradient:   linear-gradient(135deg, #D9A445 0%, #B98521 38%, #6B4906 100%); /* @kind other */
+  --logo-pos-border: color-mix(in srgb, var(--accent) 55%, #FFFCEF 45%);
+  --logo-shadow:     0 12px 36px -12px rgba(185,133,33,0.45);
+
+  /* Gradientes de marca (también usables como fondos) */
+  --grad-hero: linear-gradient(135deg, #D9A445 0%, #B98521 38%, #6B4906 100%); /* @kind other */
+  --grad-soft: linear-gradient(180deg, rgba(217,164,69,0.10) 0%, rgba(217,164,69,0) 100%); /* @kind other */
+  --grad-cta:  linear-gradient(135deg, #EBB85B 0%, #B98521 100%); /* @kind other */
+}
+
+/* ============================================================================
+   [data-theme="dark"] — Modo oscuro (default del KDS)
+   ============================================================================ */
+[data-theme="dark"] {
+  --bg:     #0C0A06;
+  --alt:    #15120B;
+  --text:   #F4EFE0;
+  --muted:  #9C907A;
+  --border: #221E14;
+
+  --accent:        #D9A445;            /* sube luminosidad en oscuro */
+  --accent-hover:  #EBB85B;
+  --accent-soft:   rgba(217,164,69,0.14);
+  --accent-ring:   rgba(217,164,69,0.32);
+
+  --bg-base:     #0C0A06;
+  --bg-surface:  #13110A;
+  --bg-elevated: #1B1810;
+  --bg-overlay:  #251F14;
+
+  --border-subtle:  rgba(244,239,224,0.06);
+  --border-default: rgba(244,239,224,0.10);
+  --border-strong:  rgba(244,239,224,0.18);
+
+  /* Estados — más luminosos para legibilidad en oscuro */
+  --success: #4ADE80;
+  --error:   #FB7185;
+  --warning: #FBBF24;
+  --info:    #93C5FD;
+
+  --state-success: #4ADE80;
+  --state-warning: #FBBF24;
+  --state-danger:  #FB7185;
+  --state-info:    #93C5FD;
+
+  --state-success-bg:     rgba(74,222,128,0.10);
+  --state-warning-bg:     rgba(251,191,36,0.10);
+  --state-danger-bg:      rgba(251,113,133,0.10);
+  --state-info-bg:        rgba(147,197,253,0.10);
+  --state-success-border: rgba(74,222,128,0.25);
+  --state-warning-border: rgba(251,191,36,0.25);
+  --state-danger-border:  rgba(251,113,133,0.25);
+  --state-info-border:    rgba(147,197,253,0.25);
+
+  /* Gradientes en oscuro — más saturados para destacar sobre tostado */
+  --grad-soft: linear-gradient(180deg, rgba(217,164,69,0.14) 0%, rgba(217,164,69,0) 100%); /* @kind other */
+}

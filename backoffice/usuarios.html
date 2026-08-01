@@ -6,8 +6,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Empleados · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
@@ -37,12 +41,12 @@
     /* Role chips compactas */
     .role-chip { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; text-transform: capitalize; background: var(--alt); color: var(--muted); }
     .role-chip.admin   { background: rgba(239,68,68,.12); color: #991B1B; }
-    .role-chip.gerente { background: rgba(99,102,241,.14); color: #4338CA; }
+    .role-chip.gerente { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent-hover); }
     .role-chip.cajero  { background: rgba(34,197,94,.12); color: #166534; }
     .role-chip.mesero  { background: rgba(59,130,246,.12); color: #1E40AF; }
     .role-chip.cocina  { background: rgba(245,158,11,.14); color: #92400E; }
     [data-theme="dark"] .role-chip.admin   { background: rgba(239,68,68,.18); color: #FCA5A5; }
-    [data-theme="dark"] .role-chip.gerente { background: rgba(99,102,241,.22); color: #C4B5FD; }
+    [data-theme="dark"] .role-chip.gerente { background: color-mix(in srgb, var(--accent) 22%, transparent); color: #C4B5FD; }
     [data-theme="dark"] .role-chip.cajero  { background: rgba(34,197,94,.2); color: #86EFAC; }
     [data-theme="dark"] .role-chip.mesero  { background: rgba(59,130,246,.2); color: #93C5FD; }
     [data-theme="dark"] .role-chip.cocina  { background: rgba(245,158,11,.2); color: #FCD34D; }
@@ -77,7 +81,7 @@
     .chip-multi { display: flex; flex-wrap: wrap; gap: 6px; }
     .chip-multi label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; font-size: 12px; }
     .chip-multi input { accent-color: var(--accent); }
-    .chip-multi label.is-checked { background: rgba(79,70,229,.12); border-color: var(--accent); color: var(--accent); }
+    .chip-multi label.is-checked { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: var(--accent); color: var(--accent); }
   </style>
 </head>
 <body>
@@ -88,7 +92,7 @@
   <!-- SIDEBAR -->
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
-      <div class="bo-sidebar-brand"><span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span></div>
+      <div class="bo-sidebar-brand"><svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span></div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
         <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>
@@ -329,11 +333,11 @@
                 <input type="checkbox" id="chkInvitar" style="accent-color:var(--accent);" onchange="toggleInvitePreview()">
                 Enviar invitación por email
               </label>
-              <div id="invitePreview" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(79,70,229,.04);border:1px dashed var(--accent);border-radius:8px;font-size:12px;line-height:1.6;">
+              <div id="invitePreview" style="display:none;margin-top:10px;padding:12px 14px;background:color-mix(in srgb, var(--accent) 4%, transparent);border:1px dashed var(--accent);border-radius:8px;font-size:12px;line-height:1.6;">
                 <div style="font-weight:600;color:var(--accent);margin-bottom:6px;">Preview del email</div>
                 <div style="color:var(--text);">Para: <span id="prevEmail" style="font-weight:500;">—</span></div>
-                <div style="color:var(--muted);margin-top:4px;">Asunto: Invitación a ROOT POS — <span id="prevNegocio">El Buen Sabor</span></div>
-                <div style="color:var(--muted);margin-top:2px;">Hola, <span id="prevNombre">—</span>. Te invitamos a acceder a ROOT POS con el rol de <span id="prevRol">—</span>.</div>
+                <div style="color:var(--muted);margin-top:4px;">Asunto: Invitación a NOVA — <span id="prevNegocio">El Buen Sabor</span></div>
+                <div style="color:var(--muted);margin-top:2px;">Hola, <span id="prevNombre">—</span>. Te invitamos a acceder a NOVA con el rol de <span id="prevRol">—</span>.</div>
               </div>
             </div>
           </div>
@@ -923,7 +927,7 @@
           var row = document.querySelector('[data-id="' + savedId + '"]');
           if (row) {
             row.style.transition = 'background .1s';
-            row.style.background = 'rgba(79,70,229,.08)';
+            row.style.background = 'color-mix(in srgb, var(--accent) 8%, transparent)';
             setTimeout(function() { row.style.background = ''; row.style.transition = ''; }, 2000);
           }
         }, 50);

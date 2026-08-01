@@ -5,9 +5,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Notificaciones · ROOT</title>
+  <title>Notificaciones · NOVA</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
@@ -27,13 +31,13 @@
     }
     .notif-item:last-child { border-bottom:none; }
     .notif-item:hover { background:var(--alt); }
-    .notif-item.is-unread { background:rgba(79,70,229,.03); }
-    [data-theme="dark"] .notif-item.is-unread { background:rgba(79,70,229,.07); }
+    .notif-item.is-unread { background:color-mix(in srgb, var(--accent) 3%, transparent); }
+    [data-theme="dark"] .notif-item.is-unread { background:color-mix(in srgb, var(--accent) 7%, transparent); }
     .notif-icon {
       width:36px; height:36px; border-radius:9px; flex-shrink:0;
       display:flex; align-items:center; justify-content:center; margin-top:1px;
     }
-    .notif-icon.unread { background:rgba(79,70,229,.1); }
+    .notif-icon.unread { background:color-mix(in srgb, var(--accent) 10%, transparent); }
     .notif-icon.read   { background:var(--alt); }
     .notif-content { flex:1; min-width:0; }
     .notif-titulo { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; margin-bottom:3px; }
@@ -56,7 +60,7 @@
   <!-- SIDEBAR -->
   <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-header">
-      <div class="bo-sidebar-brand"><span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span></div>
+      <div class="bo-sidebar-brand"><svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span></div>
       <button class="bo-business-selector" type="button">
         <span class="bo-business-avatar">EB</span>
         <span class="bo-business-info"><span class="label">Negocio</span><span class="name">El Buen Sabor</span></span>

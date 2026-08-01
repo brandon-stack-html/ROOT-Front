@@ -6,34 +6,33 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Estado de Caja · Backoffice</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/nova-mark.svg">
+  <link rel="alternate icon" href="../assets/brand/nova-mark-mono.svg">
+  <link rel="apple-touch-icon" href="../assets/brand/nova-tile.svg">
   <script src="../assets/js/theme.js"></script>
   <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/brand.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/utilities.css">
   <link rel="stylesheet" href="../assets/css/shells.css" />
   <style>
-    .bo-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-    .bo-ph-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
-    .bo-ph-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
-    .bo-ph-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
 
     /* Layout 2 cols */
     .caja-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 18px; align-items: flex-start; }
     @media (max-width: 1024px) { .caja-layout { grid-template-columns: 1fr; } }
 
     /* Estado card (izq) */
-    .caja-estado-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .caja-estado-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
     .caja-estado-banner {
       padding: 18px 20px;
-      background: linear-gradient(135deg, #DCFCE7, #F0FDF4);
-      border-bottom: 1px solid var(--border);
+      background: var(--state-success-bg);
+      border-bottom: 1px solid var(--state-success-border);
     }
-    [data-theme="dark"] .caja-estado-banner { background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(16,185,129,.06)); }
 
     /* Pulse dot CAJA ABIERTA */
     @keyframes cajaPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,.5); }
-      50% { box-shadow: 0 0 0 6px rgba(16,185,129,.0); }
+      0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 50%, transparent); }
+      50% { box-shadow: 0 0 0 6px transparent; }
     }
     .caja-pulse-dot {
       width: 14px; height: 14px; border-radius: 7px;
@@ -41,10 +40,8 @@
       animation: cajaPulse 1.8s infinite;
     }
     .caja-abierta-badge { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-    .caja-abierta-text { font-size: 15px; font-weight: 700; color: #14532D; letter-spacing: .01em; }
-    [data-theme="dark"] .caja-abierta-text { color: #86EFAC; }
-    .caja-turno-sub { font-size: 11px; color: #166534; opacity: .85; margin-top: 2px; }
-    [data-theme="dark"] .caja-turno-sub { color: #86EFAC; }
+    .caja-abierta-text { font-size: 15px; font-weight: 700; color: var(--success); letter-spacing: .04em; }
+    .caja-turno-sub { font-size: 11px; color: var(--success); opacity: .8; margin-top: 2px; }
 
     .caja-info-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .caja-info-icon { width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -73,10 +70,10 @@
     .caja-action-btn.outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
     .caja-action-btn.outline:hover { background: var(--alt); }
     .caja-action-btn.danger { background: var(--error); border: none; color: #fff; font-weight: 600; }
-    .caja-action-btn.danger:hover { background: #DC2626; }
+    .caja-action-btn.danger:hover { background: color-mix(in srgb, var(--error) 88%, #000); }
 
     /* Movimientos card (der) */
-    .movimientos-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .movimientos-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
     .movimientos-head {
       padding: 12px 18px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
@@ -101,28 +98,23 @@
     .mov-header { background: var(--alt); border-bottom: 1px solid var(--border); font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
     .mov-row { border-bottom: 1px solid var(--border); transition: background .12s; }
     .mov-row:hover { background: var(--alt); }
-    .mov-row.ingreso-row { background: rgba(220,252,231,.4); }
-    .mov-row.egreso-row { background: rgba(254,226,226,.4); }
-    [data-theme="dark"] .mov-row.ingreso-row { background: rgba(16,185,129,.06); }
-    [data-theme="dark"] .mov-row.egreso-row { background: rgba(239,68,68,.06); }
+    .mov-row.ingreso-row { background: var(--state-success-bg); }
+    .mov-row.egreso-row { background: var(--state-danger-bg); }
+    .mov-row.ingreso-row:hover,
+    .mov-row.egreso-row:hover { background: var(--bg-overlay); }
 
-    /* Tipo badge inline */
-    .tipo-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 9px; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #fff; }
-    .tipo-ingreso { background: var(--success); }
-    .tipo-egreso { background: var(--error); }
+    /* Tipo badge inline — translúcido (bg + border + text), patrón del design system */
+    .tipo-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: var(--radius-full); font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; border: 1px solid transparent; }
+    .tipo-ingreso { background: var(--state-success-bg); border-color: var(--state-success-border); color: var(--success); }
+    .tipo-egreso { background: var(--state-danger-bg); border-color: var(--state-danger-border); color: var(--error); }
 
-    /* Medio de pago chips */
-    .medio-chip { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 9px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-    .medio-efectivo { background: #DCFCE7; color: #14532D; }
-    .medio-debito { background: #DBEAFE; color: #1E40AF; }
-    .medio-credito { background: #EEF2FF; color: #3730A3; }
-    .medio-cta { background: #FEF3C7; color: #92400E; }
-    .medio-nequi { background: #FCE7F3; color: #9D174D; }
-    [data-theme="dark"] .medio-efectivo { background: rgba(16,185,129,.18); color: #86EFAC; }
-    [data-theme="dark"] .medio-debito { background: rgba(59,130,246,.18); color: #93C5FD; }
-    [data-theme="dark"] .medio-credito { background: rgba(99,102,241,.18); color: #C7D2FE; }
-    [data-theme="dark"] .medio-cta { background: rgba(245,158,11,.18); color: #FDE68A; }
-    [data-theme="dark"] .medio-nequi { background: rgba(236,72,153,.18); color: #FBCFE8; }
+    /* Medio de pago chips — monocromo sobrio, un solo estilo neutro */
+    .medio-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 2px 9px; border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+      background: var(--alt); border: 1px solid var(--border); color: var(--muted);
+    }
 
     /* Totals row */
     .mov-totals { display: grid; grid-template-columns: 70px 90px 1.6fr 1fr 1fr; padding: 14px 18px; align-items: center; gap: 4px; background: var(--alt); border-top: 2px solid var(--border); }
@@ -136,7 +128,7 @@
 
     /* ── Cursor pointer en card de turno ─────────────────── */
     .caja-estado-card { cursor: pointer; transition: box-shadow 150ms ease; }
-    .caja-estado-card:hover { box-shadow: 0 0 0 2px rgba(var(--accent, 79,70,229),.25); }
+    .caja-estado-card:hover { box-shadow: var(--shadow-sm), 0 0 0 2px var(--accent-ring); }
     .caja-card-click-hint {
       font-size: 10px; color: var(--muted); opacity: .7;
       text-align: center; padding: 8px 20px 12px;
@@ -180,16 +172,16 @@
       margin-bottom: 14px;
     }
     .caja-drawer-badge.en-curso {
-      background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.28); color: var(--success);
+      background: var(--state-success-bg); border: 1px solid var(--state-success-border); color: var(--success);
     }
     .caja-drawer-badge-dot {
       width: 6px; height: 6px; border-radius: 50%; background: var(--success);
       animation: dotPulse 2.5s ease-out infinite;
     }
     @keyframes dotPulse {
-      0%   { box-shadow: 0 0 0 0 rgba(16,185,129,.6); }
-      80%  { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
-      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+      0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 60%, transparent); }
+      80%  { box-shadow: 0 0 0 6px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
     }
 
     .caja-drawer-info-grid {
@@ -253,7 +245,7 @@
     <aside class="bo-sidebar" id="boSidebar">
       <div class="bo-sidebar-header">
         <div class="bo-sidebar-brand">
-          <span class="root-wordmark"><span class="rw-root"><span class="rw-fill">RO</span><span class="rw-stroke">OT</span></span><span class="rw-pos">POS</span></span>
+          <svg class="nova-mark-inline" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z"/></svg><span class="nova-wordmark">NOVA</span>
         </div>
         <button class="bo-business-selector" type="button">
           <span class="bo-business-avatar">EB</span>
@@ -330,12 +322,12 @@
 
       <main id="main" class="bo-content">
         <!-- PAGE HEADER -->
-        <div class="bo-ph">
+        <div class="bo-page-header">
           <div>
-            <div class="bo-ph-title">Estado de caja</div>
-            <div class="bo-ph-sub">Caja 1 - Mostrador · Sede Norte</div>
+            <div class="bo-page-title">Estado de caja</div>
+            <div class="bo-page-subtitle">Caja 1 - Mostrador · Sede Norte</div>
           </div>
-          <div class="bo-ph-actions">
+          <div class="bo-page-actions">
             <button class="btn btn-secondary btn-sm"><i data-lucide="printer" style="width:13px;height:13px"></i>Imprimir resumen</button>
             <button class="btn btn-secondary btn-sm" data-requires="reports:export"><i data-lucide="download" style="width:13px;height:13px"></i>Exportar PDF</button>
           </div>
@@ -615,8 +607,8 @@
         </div>
       </div>
 
-      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
-        border-radius:9px;padding:10px 13px;margin-top:16px;font-size:11px;color:var(--text);
+      <div style="background:var(--state-warning-bg);border:1px solid var(--state-warning-border);
+        border-radius:var(--radius-md);padding:10px 13px;margin-top:16px;font-size:11px;color:var(--text);
         line-height:1.5">
         <strong style="color:var(--warning)">Turno en curso.</strong>
         El cierre y arqueo se realizan desde el POS una vez termine el turno.

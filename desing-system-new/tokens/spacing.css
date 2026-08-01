@@ -1,0 +1,52 @@
+/* ============================================================================
+   spacing.css — Espaciado, radios, sombras y elevación de NOVA
+   ----------------------------------------------------------------------------
+   Escala de 4px. Radios calibrados en Sprint 14 (suaves, consistentes).
+   Sombras: en oscuro llevan un "ring" de 1px translúcido que define el borde
+   sin blur dramático. --gold-glow es la sombra de marca para CTAs primarios
+   y el logo hero.
+   ============================================================================ */
+
+:root {
+  /* ---------- Espaciado (base 4px) ---------- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ---------- Radios (Sprint 14) ---------- */
+  --radius-sm: 6px;    /* botones sm, chips, kbd */
+  --radius-md: 10px;   /* botones, inputs, badges-count */
+  --radius-lg: 14px;   /* cards, KPIs */
+  --radius-xl: 20px;   /* modales, hero, superficies destacadas */
+  --radius-full: 9999px;
+
+  /* ---------- Sombras (modo claro, tono cálido) ---------- */
+  --shadow-sm: 0 1px 2px rgba(26,22,18,0.05);
+  --shadow-md: 0 8px 24px -10px rgba(26,22,18,0.10);
+  --shadow-lg: 0 24px 48px -16px rgba(26,22,18,0.16);
+
+  /* Sombra de marca — solo para CTA primario y logo hero */
+  --gold-glow: 0 12px 36px -12px rgba(185,133,33,0.45);
+
+  /* ---------- Z-index ---------- */
+  --z-sidebar:  60; /* @kind other */
+  --z-backdrop: 55; /* @kind other */
+  --z-overlay:  50; /* @kind other */
+  --z-toast:    100; /* @kind other */
+  --z-jump:     200; /* @kind other */
+}
+
+/* Sombras con ring sutil en oscuro */
+[data-theme="dark"] {
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.50);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.55), 0 0 0 1px rgba(244,239,224,0.04);
+  --shadow-lg: 0 24px 48px rgba(0,0,0,0.65), 0 0 0 1px rgba(244,239,224,0.06);
+  --gold-glow: 0 16px 48px -12px rgba(217,164,69,0.40);
+}

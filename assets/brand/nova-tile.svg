@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="NOVA app tile">
+  <defs>
+    <linearGradient id="tileBg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EBB85B"></stop>
+      <stop offset="50%" stop-color="#B98521"></stop>
+      <stop offset="100%" stop-color="#6B4906"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" ry="28" fill="url(#tileBg)"></rect>
+  <g transform="translate(28 28) scale(3)">
+    <path d="M12 0 L13.6 10.4 L24 12 L13.6 13.6 L12 24 L10.4 13.6 L0 12 L10.4 10.4 Z" fill="#FFFCEF"></path>
+  </g>
+</svg>
